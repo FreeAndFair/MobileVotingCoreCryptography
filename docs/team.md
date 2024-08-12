@@ -1,0 +1,42 @@
+# Team Documentation
+
+The following documents the mechanics (revision control practices, development environments, etc.) of how the team will develop this project and the communication mechanisms we will use during development.
+
+## Revision Control Standards
+
+- This repository, as the “umbrella” repository for the project, will contain all other repositories related to the project as submodules. Each repository in the project will, in turn, contain any necessary submodules. This repository will have continuous integration tasks related to the overall project, while each individual submodule will have its own self-contained continuous integration tasks (this applies recursively to submodules of submodules, etc.).
+- The default branch of each repository related to this project will be called `main`, and will use branch protection. All releases will be either tags on this default branch, or, if it becomes necessary to backport changes to old releases, on specific release branches that start from `main` at the tag for that release and also use branch protection.
+- All changes to `main` and any release branches, in any repository, must be made via pull requests (PRs).
+	- Every PR should explicitly reference at least one issue in the issue tracker (this need not be in the same repository; a submodule PR can address an issue in the umbrella repository). If there is no appropriate issue in the issue tracker, one should be filed (preferably before filing the PR) so that the PR can reference it. Issue references within PRs should take advantage of GitHub’s built-in automations; for example, if a PR is meant to _close_ a specific issue `X`, its description should contain a line `Closes #X`, so that issue `X` is automatically closed when the PR is merged.
+    - Every PR must be reviewed by at least one other team member and pass any active CI/CD checks for the repository before being merged. Note that it is _not_ required that a PR be reviewed by every reviewer tagged in the PR before being merged; however, team members should in general only tag reviewers from whom they want reviews (or acknowledgements/signoffs).
+    - As an exception to the above rule, minor repository maintenance changes (e.g., adding a new file extension to a `.gitignore`, fixing a typographical error in a README) must be made via PRs for traceability, but may be merged without additional review as long as they pass CI/CD.
+    - Only a subset of team members will have permission to merge PRs.
+- Commit messages should use the [Conventional Commits “standard”](https://www.conventionalcommits.org/en/v1.0.0/), with prefixes like `fix`, `feat`, `chore`, etc. We do not need to be exceptionally strict about this; it’s OK to write the wrong prefix, or forget it once in a while (though if you catch such mistakes before they land in `main` or a release branch, you should fix them via interactive rebase). Being consistent about commit style will make the logs more readable and make release notes easier to generate. In particular, change logs can be automatically generated from commit messages using this convention.
+- All commits that become part of releases must be _cryptographically signed_ (see [GitHub’s documentation on signing commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits)). This will be enforced on `main` and release branches as part of their branch protection. It will not be enforced on feature/development branches, but the changes will have to be signed before being merged to `main` or a release branch. Reviewed PRs need not be signed by the reviewers; it is sufficient that GitHub records the PR review results.
+- The `main` branch and every release branch must have _linear history_ (i.e., no explicit merge commits). This means, in effect, that every pull request branch must have linear history and be rebased against its target branch before it is merged, and that merges must be “fast-forwards" that preserve commit hashes and signatures. Currently, such merges cannot be done via GitHub’s UI and must be done on the command line with `git merge --ff-only`; however, command-line fast-forward merges _do_ work properly with respect to automatically closing GitHub pull requests that are merged, triggering automations like related issue closure, checking for compliance with branch protection rules, etc.
+- Squashing of commits in PRs is at the discretion of the PR author, though it can be requested by reviewers. In general, commits that are made for work in progress (e.g., to preserve completed work when logging off for the day, to test the impact of a trivial change on continuous integration results) should be squashed once they are superseded, and all commits in a PR marked “ready for review” should be “meaningful” in that reviewers can look at the changes made in each commit and understand some rationale for why they were made. This is very much in the eye of the beholder, however; thus the discretion.
+- Branches that are merged to `main` or a release branch should be deleted on GitHub. Developers can do whatever they like with respect to already-merged branches in their own sandboxes, as long as what ends up on GitHub conforms to the rules above.
+- At present, we do not use any git hooks. Once we decide on implementation language(s) for the project, we will use pre-commit hooks to enforce style and other relevant requirements as appropriate.
+- All text files (source code, Markdown, etc.) committed to repositories in this project must use UTF-8 encoding and Mac/UNIX line endings (LF), not old Mac (CR) or Windows (CRLF) line endings, unless otherwise required by tooling. This may, at some point, be enforced by a git hook.
+- At present, we do not use Git LFS; guidelines for its use will be provided if it becomes necessary for us to do so.
+
+
+## Development Environments
+
+Once we have decided what programming languages and tools will be used to carry out development, information about development environments will go here. For developing models and documentation in the initial stages of the projects, team members can use whatever text editor/IDE they are comfortable with provided that the generated output conforms to the requirements above and works with whatever analysis tools we use for models and documentation.
+
+## External Communication
+
+At this time, external communication about the project by team members (outside of the artifacts visible in this repository) is not allowed except as specifically authorized by the client.
+
+## Team Communication
+
+To the extent possible, we rely on GitHub’s features—[issues](https://github.com/FreeAndFair/TuskMobileVoting/issues), [pull requests](https://github.com/FreeAndFair/TuskMobileVoting/issues), the [project board](https://github.com/orgs/FreeAndFair/projects/2/views/2)—for ongoing discussions about specific aspects of project development, peer review of work, etc.
+
+We use [the project Slack](https://freeandfair-e2eviv.slack.com/) as the primary mechanism for asynchronous (and lightly synchronous) team communication that does not occur through GitHub’s features. The existing project Slack channels have self-explanatory names, and should suffice for this stage of development; we can create more as necessary. Team members should assume that everything posted to a non-private Slack channel may eventually become public and conduct themselves accordingly.
+
+We use email only in connection with GitHub (automatically-generated email from GitHub, and replies thereto to feed information back into GitHub), and for informal conversations (which can also be carried out on Slack private channels).
+
+## Shared Documents
+
+It is often impractical to use GitHub to actively collaborate on shared documents, though such documents, if they are project artifacts, will still end up being stored in a GitHub repository once they are complete. For such active collaboration, we use [Google Docs](https://docs.google.com/) (or other [Google Drive](https://drive.google.com) document types) for general documents, [Keynote](https://icloud.com/keynote/) for presentations, and [Overleaf](https://overleaf.com/) for LaTeX documents (e.g., [a revised version of the U.S. Vote Foundation E2E-VIV report](https://www.overleaf.com/project/66b2fd33e438104aaeb65119)).
