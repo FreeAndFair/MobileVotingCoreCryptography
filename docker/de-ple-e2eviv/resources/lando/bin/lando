@@ -1,0 +1,17 @@
+#! /bin/bash
+set -e # exit immediately upon error(s)
+
+# Obtain directory of the lando installation.
+LANDO_DIR=$(dirname -- "$(dirname -- "$(readlink -f -- "$0")")")
+
+# Obtain location of the lando application JAR file.
+LANDO_JAR=$(find $LANDO_DIR/lib -name '*.jar' -type f)
+
+# Check that LANDO_JAR points to an existing file.
+if [ ! -f $LANDO_JAR ]; then
+  echo "[error] no .jar file present under $LANDO_DIR/lib"
+  exit 1
+fi
+
+# Execute lando from jar installation file.
+java -jar "$LANDO_JAR" $*
