@@ -1,0 +1,538 @@
+system E2EVIV System
+  An end-to-end verifiable Internet voting system.
+
+indexing
+  author: Joseph Kiniry <kiniry@freeandfair.us>, Daniel M. Zimmerman <dmz@freeandfair.us>
+  organization: Free & Fair
+  keywords: OVF, end-to-end verifiable internet voting, e2e, viv, 
+    verifiable elections, software independence, 
+    high-assurance, cryptography, verification, Free & Fair
+  created: Tue Jul 15 16:18:09 PDT 2014
+  revised: August 2024
+  github: https://github.com/FreeAndFair/e2eviv -- doesn't exist yet pending copyright stuff
+
+
+subsystem Core Concepts
+  Core concepts generic to all elections.
+  
+  contains
+
+  //State transitions that take place in the course of an election.
+  events Actions
+  
+    Authenticate
+      Transitioning a person or system to an authenticated state.
+
+    Register Voter
+      The addition of a voter to the voters register.
+
+    Register Candidate
+      The addition of a candidate to the candidates register.
+
+    Unregister Voter
+      The removal of a voter from the voters register.
+
+    Unregister Candidate
+      The removal of a candidate from the candidates register.
+
+  subsystem Background
+    Background concepts relevant to elections in the general.
+  
+    contains
+
+    component Contest
+      A contest is a decision to be made, either the selection of one or more candidates for an office or the choice of a course of action. There may be multiple contests in a single election.
+
+      What are your contest choices?
+      Do you allow a write-in choice?
+      What is the maximum number of your contest choices that can be chosen on the same ballot?
+      What is your result?
+      Does the vote contain valid choices for you?
+
+      Your contest choices are the choices!
+      You do/do not allow a write-in choice!
+      Your result is the result!
+      The maximum number of your contest choices can be chosen on the same ballot!
+
+      A contest must have at least one contest choice.
+      The result must contain information about every contest choice in the contest.
+      The contest choices for a contest may only be set once.
+      The write-in allowed flag may only be set once.
+      The result for a contest may only be set once.
+      The maximum number of contest choices that can be chosen on the same ballot may only be set once.
+
+    component Democracy
+      Democracy is a system of government (of a nation, state, locality, or other organization) by an entire population or eligible members thereof, typically carried out through elections of leaders and representatives, through referenda, or both.
+
+
+    component Election
+      An election is a formal indication of choices in one or more contests.
+
+    component Electorate
+      The electorate for a given election comprises all the individuals that are eligible to vote in that election, according to applicable laws and regulations.
+
+    component Evoting
+      E-Voting, or electronic voting, is the process of voting either entirely using, or with substantial assistance from, electronic devices.
+
+    component Internet
+      The Internet is a global system of interconnected computer networks that use the standard Internet Protocol suite to link billions of connected devices.
+
+    component Party
+      A party is an organized group of people having at least roughly similar political aims and opinions, that seeks to influence public policy by getting its candidates elected to public office.
+
+    component Principle
+      A fundamental truth or proposition that serves as a foundation for a system of belief or behavior or chain of reasoning.
+
+    component Procedure
+      A procedure is an established or official way of doing something.
+
+    component System
+      A system is a set of connected digital and physical parts, including computers, people, organizations, and more, forming a complex whole.
+
+    component Voting Channel
+      A voting channel is a method by which voters are enabled to vote in elections.
+
+    subsystem Elections
+      Types and attributes of elections.
+
+      component Digital Election
+        An election carried out, in whole or in part, by electronic means.
+
+      component Internet Election
+        An election carried out, in whole or in part, using the Internet for the transmission of votes.
+
+      component Supervised Election
+        An election where election officials, and perhaps the public, watch over the election, primarily to ensure that voters have privacy when voting.
+
+      component Remote Election
+        An election in which some or all of the ballots are not cast at polling stations.
+
+      component Traditional Election
+        An election carried out entirely using physical ballots cast at polling stations during a fixed election period.
+
+      component Unsupervised Election
+        An election where there are no observers ensuring voter privacy.
+
+      component Verifiable Election
+        An election scheme whereby one or more formal properties of the election can be independently checked by voters or election officials.
+
+    subsystem Processes
+      A series of actions or steps taken in order to achieve a particular end.
+
+      component Audit
+        An audit is a review of the election artifacts to detect abnormalities and errors.
+        
+        Were any errors detected?
+
+
+      component Candidate Registration
+        The process by which a candidate is added to the candidates register.
+
+      component Candidate Validation
+        The process by which a candidate's identity and eligibility to stand for election are verified.
+
+      component Voter Registration
+        Voter registration is the process by which a member of the electorate is added to the voters' register.
+
+      component Voter Validation
+        The process by which a voter's identity and eligibility to vote are verified.
+
+      component Verification
+        Verification is a process by which the the election protocols, processes, and device implementations are proven to be correct with respect to their specifications.
+
+
+    end
+
+  subsystem Election Day Artifacts
+    Physical and digital artifacts relevant to election day.
+
+    contains
+
+    component Ballot
+      A ballot is the legally recognized means by which a voter can express his or her choices for one or more contests in an election. A ballot contains a set of votes corresponding to the contests being decided in the election.
+
+      What is your ballot style?
+      Have you been cast?
+      Have you been spoiled?
+      What votes do you contain?
+      What vote do you contain for the contest?
+
+      Your ballot style is the style!
+      You are cast!
+      You are spoiled!
+      You contain the vote for the contest!
+      You no longer contain a vote for the contest!
+
+      Initially a ballot is not cast, not spoiled, and contains no votes.
+      A ballot's style may only be set once.
+      Once a ballot is cast or spoiled, the set of votes it contains cannot be changed.
+      Once a ballot is cast, it remains cast forever.
+      Once a ballot is spoiled, it remains spoiled forever.
+      A ballot cannot be both cast and spoiled.
+      A ballot may contain at most one vote per contest.
+      A ballot may only contain votes for contests that are part of its ballot style.
+
+    component Ballot Box
+      A ballot box is the means by which ballots are stored pending being counted. It may take various forms, including physical containers (from which the name derives) and electronic storage media.
+
+      Are you empty?
+      Are you full?
+      What is your capacity?
+      How many ballots do you contain?
+      What ballots do you contain?
+      What seals are applied to you?
+      Are you sealed?
+
+      You contain the ballot!
+      You no longer contain the ballot!
+      The seal is applied to you!
+
+      A ballot box is initially empty and has no seals.
+      Only cast ballots may be added to a ballot box.
+      Ballots that are not in a ballot box cannot be removed from the ballot box.
+      A ballot box is sealed if and only if it has one or more unbroken seals applied to it.
+      Ballots may not be added to a full or sealed ballot box.
+      Ballots may not be removed from an empty or sealed ballot box.
+      A ballot box's capacity is non-negative.
+      A ballot box is full if and only if it contains a number of ballots equal to its capacity.
+
+    component Ballot Configuration
+      A ballot configuration is the set of contests in which voters of a particular group are eligible to vote.
+
+      What contests do you contain?
+      Are you locked?
+
+      You contain the contest!
+      You do not contain the contest!
+      You are locked!
+
+      A ballot configuration is initially unlocked and contains no contests.
+      A contest may not be added to a ballot configuration more than once.
+      Ballot configurations that contain no contests may not be locked.
+      A contest may not be added to or removed from a locked ballot configuration.
+      Once locked, a ballot configuration remains locked forever.
+
+    component Ballot Question inherit Contest
+      A ballot question is a decision among two or more courses of action. In most cases, ballot questions take the form of yes/no questions.
+
+      The maximum number of choices that may be chosen on the same ballot is 1.
+      Each choice represents a course of action.
+
+    component Ballot Style
+      A ballot style is the concrete presentation of a ballot configuration. A single ballot configuration may be realized by several ballot styles, e.g. for different languages or different orderings of contests or contest choices.
+
+      What is your ballot configuration?
+      What are the details of your presentation? // highly implementation dependent
+
+      Your ballot configuration is the configuration!
+
+      A ballot style's ballot configuration may only be set once.
+      A ballot style's ballot configuration may only be set to a locked ballot configuration.
+
+    component Candidates Register
+      A candidates' register contains all the candidates standing for election and the offices for which they are standing.
+
+      Do you contain the candidate?
+      What candidates do you contain?
+      Are you locked?
+
+      You contain the candidate!
+      You do not contain the candidate!
+      You are locked!
+
+      A register is initially empty and unlocked.
+      A candidate may not be added to the register more than once.
+      A candidate who is not in the register cannot be removed from the register.
+      Candidates may not be added to or removed from a locked register.
+      A locked register may not be unlocked.
+      A candidate added to the register must be alive at the time of addition.
+
+    component Contest Choice
+      A selection from among the possible outcomes of a contest.
+
+    component Contest For Office inherit Contest
+      A contest for office is a selection of some subset of candidates standing for election to a particular office.
+
+      The contest choices represent individual candidates for an office.
+
+    component Result
+      A result is the outcome of a contest.
+
+      What contest choices do you contain counts for?
+      What is the count for the choice?
+
+      The count for the choice is the number of votes!
+
+      The count for each contest choice may only be set once.
+
+    component Seal
+      A seal provides some evidence of the integrity of another entity (such as a ballot or ballot box). Its form depends on the form of the entity being sealed, as well as other system characteristics.
+
+      Are you applied?
+      What are you applied to?
+      Are you broken?
+
+      You are applied to the entity!
+      Break!
+
+      A seal is initially not applied and not broken.
+      A seal may only be applied if it has not previously been applied or broken.
+      A seal may only be broken if it has not previously been broken.
+      Once applied, a seal remains applied forever.
+      Once broken, a seal remains broken forever.
+
+    component Tally
+      The tally is the count of all the votes in an election.
+
+    component Vote
+      A vote is an expression of a contest choice made by a voter during an election.
+
+      What contest choice do you represent?
+
+      You represent the choice!
+
+      The choice represented by a vote may only be set once.
+
+    component Voters Register
+      A voters' register contains all the voters eligible to vote in an election, as well as information indicating the ballot configuration each voter should use and whether each has participated in the election.
+
+      Is the voter in the register?
+      What ballot configuration should be used with the voter?
+      Has the voter voted?
+
+      Add the voter to the register!
+      Remove the voter from the register!
+      Set the voter's ballot configuration to the configuration!
+      The voter has voted!
+
+      A voter may not be added to the register more than once.
+      A voter may not be removed from the register if he has voted.
+      Once a voter is marked as having voted, he remains so marked forever.
+      Once a voter is marked as having voted, his ballot configuration may not change.
+
+    component Voting Interface
+      A voting interface is the medium through which a voter makes his or her contest choices known to the voting system.
+
+    subsystem Physical Artifacts
+      Physical artifacts relevant to election day.
+
+      component Device
+        A physical artifact that is fit for a particular purpose.
+
+      component Physical Ballot Box inherit Ballot Box
+        A physical ballot box is a box used to store paper ballots pending being counted.
+
+        What is your chain of custody?
+
+        Add the entry to your chain of custody!
+
+        The capacity of a physical ballot box is finite.
+        A physical ballot box may only be sealed with physical seals.
+        A physical ballot box may only contain paper ballots.
+        Entries may not be removed from the chain of custody.
+        Each entry added to the chain of custody must represent one or more individuals.
+
+      component Paper Ballot inherit Ballot
+        A paper ballot is a ballot implemented using paper, which a voter marks in some fashion to indicate his or her choice.
+
+      component Polling Station
+        A polling station is a location at which physical ballot boxes and devices are available for members of the electorate to use during an election. Polling stations are typically staffed by poll workers and have well-publicized hours of operation.
+
+      // queries, commands, constraints to do with legibility and
+      // interpretation of voter intent?
+      component Paper Vote inherit Vote
+        A paper vote is a vote expressed with a paper ballot.
+
+      component Physical Seal inherit Seal
+        A physical seal is a piece of material (such as tape) that serves as evidence that a physical artifact has not been tampered with. Such a seal typically has a distinctive design and other features that make it obvious when a sealed artifact has been tampered with.
+
+        What is your identifier?
+
+        Your identifier is the identifier!
+
+        The identifier of a physical seal may only be set once.
+
+    subsystem Digital Artifacts
+      Digital artifacts relevant to election day.
+
+      component Digital Ballot inherit Ballot
+        A digital ballot is a ballot comprised of one or more digital artifacts.
+
+      component Digital Ballot Box inherit Ballot Box
+        A digital ballot box is the electronic means by which digital ballots are stored pending being counted.
+
+      component Digital Vote
+        A vote expressed with a digital ballot.
+
+      component Digital Seal inherit Seal
+        A digital seal is a piece of evidence that a digital artifact has not been tampered with. Such seals typically take the form of cryptographic hashes.
+
+    end
+
+  subsystem People
+    The people that are part of an electoral system. These are the most general concepts explaining roles in an election from a legal standpoint. Personas, as specified in the Personas subsystem, further concretize these general classes into specific UX-centric roles.
+
+    // various constraints apply to candidates for various offices,
+    // depending on the office (e.g., >= 35 yrs old, permanent
+    // resident in the U.S. for >= 14 yrs, and born a U.S.
+    // citizen are constraints on candidates for President of the
+    // United States).
+    component Candidate inherit Citizen
+      A candidate is a citizen who is listed on the ballot as a possible choice to fill some position.
+
+    component Citizen inherit Person
+      A citizen is a person who legally belongs to a place and has the rights and protections of that place. The place can be at any election scope; for example, a particular person may be a citizen of the United States, of Oregon, and of Portland simultaneously.
+
+      What is your current residence address?
+      What is your citizenship information?
+
+      Your current residence address is the address!
+      Your citizenship information is the information!
+
+    component Electoral Authority
+      An electoral authority is an individual or group responsible for setting up, running, and disclosing the results of an election.
+
+      Who are your members?
+
+      The citizen is one of your members!
+      The citizen is not one of your members!
+
+      An electoral authority must have at least one member.
+
+    component Identity
+      The fact of being who or what a person or system is.
+
+    component Person
+      A person is an individual with a unique identity.
+
+      What is your name?
+      What is your date of birth?
+      Are you alive?
+
+      Your name is the name!
+      Your date of birth is the date!
+      You are not alive!
+
+      A person is initially alive.
+      A person's date of birth may only be set once.
+      A person's date of birth must be in the past.
+      Once a person is not alive, he stays not alive forever.
+
+    component Voter inherit Citizen
+      A voter is a person who is eligible to vote in an election. A voter has affiliations with various groups (districts, political parties, etc.) that determine the voter's eligibility to vote in specific contests.
+
+      What groups are you in?
+
+      You are in the group!
+      You are not in the group!
+
+  subsystem Properties
+    Properties of elections and related artifacts.
+
+    contains
+
+    //indexing
+    //applicable law: "http://www.section508.gov"
+    component Accessible
+      An artifact is accessible if it is usable by and useful to the disabled. The details of such a notion are often codified in federal law (e.g., U.S. Section 508) and are the results of researchers focused on user experiences for the disabled.
+      
+    component Authenticated
+      A person or system that has properly identified itself.
+
+    component Confident
+      A person or system that is certain about a proposition.
+
+    component Digital
+      An artifact that is manifested via information, rather than as a tangible artifact.
+
+    component Disabled
+      An individual is disabled if he or she has a physical or mental condition that limits movements, senses, or activities in a way that affects his or her ability to participate in an election.
+
+    component Efficient
+      A system that operates in a productive fashion with little wasted effort or expense.
+
+    component Remote
+      Something is remote if it is located somewhere other than a polling station.
+
+    component Robust
+      A process or system is robust if it is able to withstand adverse conditions.
+
+    component Physical
+      Manifested as a tangible artifact.
+
+    component Supervised
+      A person or system that is directly observed.
+
+    component Turnout
+      Turnout is the level of participation of voters in a contest.
+
+    component Unsupervised
+      A person or system that has no observers.
+
+    component Verifiable
+      A system or algorithm is verifiable if it has properties that can be checked by people or digital systems.
+
+    subsystem Election Properties
+      Properties specific to elections.
+
+      contains
+
+      component Security
+        Security is the attestation that a system is free of certain classes of dangers or threats.
+
+      subsystem Scope
+        The geographic or logical area affected by an election.
+
+        component International
+          An international scope is comprised of multiple nations; for example, the European Union.
+
+        component Local
+          A local scope is comprised of a single locality or a small group of localities. Examples include individual towns and counties.
+
+        component National
+          A national scope is comprised of a single nation.
+
+        component Regional
+          A regional scope is comprised of a large group of localities or a single state, territory, or similar region. For example, the state of California.
+
+      end
+
+    subsystem System Properties
+      Properties held by election systems, digital or physical.
+
+    component Accessible
+      An artifact is accessible if it is usable by and useful to the disabled. The details of such a notion are often codified in federal law (e.g., U.S. Section 508) and are the results of researchers focused on user experiences for the disabled.
+      
+      //indexing
+      //applicable law: "http://www.section508.gov"
+      //this comment parses incorrectly it is attached to reliable but it should be attached to acessible.
+
+      component Reliable
+        An artifact is reliable if it is guaranteed to be available for use, and to work properly, for a specified percentage of time.
+
+        What is your reliability percentage?
+
+        The reliability percentage must be between 0 and 100, inclusive.
+
+      component Usable
+        An artifact is usable if it can successfully be used for its stated purpose.
+
+    end
+
+  subsystem Others
+    Placeholder for concepts waiting to be clustered.
+
+  end
+
+
+
+subsystem Legal Standards
+  Basic legal standards generic to democratic elections.
+
+  component Legislation
+    Legislation is a set of laws. In this context, it is the set of laws dealing with the conduct of elections.
+
+
+subsystem Personas
+  Archetypical personas for actors participating in elections.
+
