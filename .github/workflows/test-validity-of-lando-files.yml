@@ -1,0 +1,65 @@
+# .github/workflows/test-validity-of-lando-files.yml
+# Author: Luke Myers, Daniel M. Zimmerman
+# Created: 2024-09-17
+# Modified: 2024-09-19
+
+name: Test Validity of Lando Files
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - '**.lando'
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      lando-files: ${{ steps.generate-matrix.outputs.lando-files }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate Matrix
+        id: generate-matrix
+        shell: bash
+        run: |
+          # Find all .lando files and convert to JSON array
+          files=$(find . -type f -name '*.lando' -print0 | xargs -0 -n1 printf "%s\n" | jq -R . | jq -s .)
+          # Set the output using multiline syntax
+          echo "lando-files<<EOF" >> $GITHUB_OUTPUT
+          echo "$files" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+  test:
+    needs: build-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lando-file: ${{ fromJson(needs.build-matrix.outputs.lando-files) }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_READ_ONLY_TOKEN_USERNAME }}
+          password: ${{ secrets.DOCKER_READ_ONLY_TOKEN }}
+
+      - name: Pull Docker Image
+        run: docker pull freeandfair/de-ple-e2eviv:latest
+
+      - name: Run `lando validate` on ${{ matrix.lando-file }}
+        run: |
+          echo "Processing ${{ matrix.lando-file }}"
+          docker run --rm \
+            -v "${{ github.workspace }}":/workspace \
+            -w /workspace \
+            freeandfair/de-ple-e2eviv:latest \
+            lando validate "/workspace/${{ matrix.lando-file }}"
