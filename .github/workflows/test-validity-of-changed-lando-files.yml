@@ -1,35 +1,34 @@
-# .github/workflows/test-validity-of-lando-files.yml
+# .github/workflows/test-validity-of-changed-lando-files.yml
 # Author: Luke Myers, Daniel M. Zimmerman
-# Created: 2024-09-17
+# Created: 2024-09-25
 # Modified: 2024-09-28
 
-name: Test Validity of Lando Files
+name: Test Validity of Changed Lando Files
 
 on:
-  push:
-    branches:
-      - 'main'
-  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - '**.lando'
 
 jobs:
   build-matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      lando-files: ${{ steps.generate-matrix.outputs.lando-files }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Generate Matrix
-        id: generate-matrix
-        shell: bash
-        run: |
-          # Find all .lando files and convert to JSON array
-          files=$(find . -type f -name '*.lando' -print0 | xargs -0 -n1 printf "%s\n" | jq -R . | jq -s .)
-          # Set the output using multiline syntax
-          echo "lando-files<<EOF" >> $GITHUB_OUTPUT
-          echo "$files" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+      name: Generate Matrix of Changed Lando Files
+      runs-on: ubuntu-latest
+      outputs:
+        matrix: ${{ steps.changed-files.outputs.all_changed_files }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: Get changed files
+          id: changed-files
+          uses: tj-actions/changed-files@v45
+          with:
+            matrix: true
+            files: |
+             **.lando
 
   test:
     needs: build-matrix
@@ -37,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        lando-file: ${{ fromJson(needs.build-matrix.outputs.lando-files) }}
+        lando-file: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

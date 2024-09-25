@@ -1,9 +1,9 @@
-# .github/workflows/test-validity-of-lando-files.yml
+# .github/workflows/test-validity-of-clafer-files.yml
 # Author: Luke Myers, Daniel M. Zimmerman
-# Created: 2024-09-17
+# Created: 2024-09-25
 # Modified: 2024-09-28
 
-name: Test Validity of Lando Files
+name: Test Validity of Clafer Files
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
   build-matrix:
     runs-on: ubuntu-latest
     outputs:
-      lando-files: ${{ steps.generate-matrix.outputs.lando-files }}
+      clafer-files: ${{ steps.generate-matrix.outputs.clafer-files }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -24,10 +24,10 @@ jobs:
         id: generate-matrix
         shell: bash
         run: |
-          # Find all .lando files and convert to JSON array
-          files=$(find . -type f -name '*.lando' -print0 | xargs -0 -n1 printf "%s\n" | jq -R . | jq -s .)
+          # Find all .cfr files and convert to JSON array
+          files=$(find . -type f -name '*.cfr' -print0 | xargs -0 -n1 printf "%s\n" | jq -R . | jq -s .)
           # Set the output using multiline syntax
-          echo "lando-files<<EOF" >> $GITHUB_OUTPUT
+          echo "clafer-files<<EOF" >> $GITHUB_OUTPUT
           echo "$files" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        lando-file: ${{ fromJson(needs.build-matrix.outputs.lando-files) }}
+        clafer-file: ${{ fromJson(needs.build-matrix.outputs.clafer-files) }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -51,11 +51,12 @@ jobs:
       - name: Pull Docker Image
         run: docker pull freeandfair/de-ple-e2eviv:latest
 
-      - name: Run `lando validate` on ${{ matrix.lando-file }}
+      - name: Run `clafer` on ${{ matrix.clafer-file }}
         run: |
-          echo "Processing ${{ matrix.lando-file }}"
+          echo "Processing ${{ matrix.clafer-file }}"
           docker run --rm \
             -v "${{ github.workspace }}":/workspace \
             -w /workspace \
             freeandfair/de-ple-e2eviv:latest \
-            lando validate "/workspace/${{ matrix.lando-file }}"
+            clafer "/workspace/${{ matrix.clafer-file }}"
+          

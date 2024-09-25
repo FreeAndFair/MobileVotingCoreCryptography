@@ -1,0 +1,60 @@
+# .github/workflows/test-validity-of-changed-clafer-files.yml
+# Author: Luke Myers, Daniel M. Zimmerman
+# Created: 2024-09-25
+# Modified: 2024-09-28
+
+name: Test Validity of Changed Clafer Files
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - '**.cfr'
+
+jobs:
+  build-matrix:
+      name: Generate Matrix of Changed Clafer Files
+      runs-on: ubuntu-latest
+      outputs:
+        matrix: ${{ steps.changed-files.outputs.all_changed_files }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: Get changed files
+          id: changed-files
+          uses: tj-actions/changed-files@v45
+          with:
+            matrix: true
+            files: |
+             **.cfr
+
+  test:
+    needs: build-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        clafer-file: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_READ_ONLY_TOKEN_USERNAME }}
+          password: ${{ secrets.DOCKER_READ_ONLY_TOKEN }}
+
+      - name: Pull Docker Image
+        run: docker pull freeandfair/de-ple-e2eviv:latest
+
+      - name: Run `clafer` on ${{ matrix.clafer-file }}
+        run: |
+          echo "Processing ${{ matrix.clafer-file }}"
+          docker run --rm \
+            -v "${{ github.workspace }}":/workspace \
+            -w /workspace \
+            freeandfair/de-ple-e2eviv:latest \
+            clafer "/workspace/${{ matrix.clafer-file }}"
