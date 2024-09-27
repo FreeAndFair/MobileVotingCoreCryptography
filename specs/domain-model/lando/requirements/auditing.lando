@@ -1,0 +1,91 @@
+// partof: Technical Requirements
+// General requirements pertaining to auditing systems and digital election systems.
+requirements Auditing Requirements
+
+// Reference: Rec(2004)11 Audit, I. General
+// Reference: Rec(2004)11 Appendix III, E. I. 100.
+Audit Systems
+The audit system shall be designed and implemented as part of the e-voting system. Audit facilities shall be present on different levels of the system: logical, technical, and application.
+
+// Reference: Rec(2004)11 Appendix III, E. I. 101.
+Auditing Completeness
+End-to-end auditing of an e-voting system shall include recording, providing monitoring facilities, and providing verification facilities.
+
+// Reference: Rec(2004)11 Audit, II. Recording
+// Reference: Rec(2004)11 Appendix III, E. II. 102.
+Audit System Baseline
+The audit system shall be open and comprehensive, and actively report on potential issues and threats.
+
+// Reference: Rec(2004)11 Appendix III, E. II. 103.
+Audit System Data
+The audit system shall record times, events, and actions, including: 
+a. all voting-related information, including the number of eligible voters, the number of votes cast, the number of invalid votes, the counts and recounts, etc.; 
+b. any attacks on the operation of the e-voting system and its communications infrastructure; 
+c. system failures, malfunctions, and other threats to the system.
+
+// Reference: Rec(2004)11 Audit, III. Monitoring
+// Reference: Rec(2004)11 Appendix III, E. III. 104.
+Audit System Evidence
+The audit system shall provide the ability to oversee the election or referendum and to verify that the results and procedures are in accordance with the applicable legal provisions.
+
+// Reference: Rec(2004)11 Appendix III, E. III. 105.
+Audit Data Security
+Disclosure of the audit information to unauthorized persons shall be prevented.
+
+// Reference: Rec(2004)11 Appendix III, E. III. 106.
+Audit Data Secrecy
+The audit system shall maintain voter anonymity at all times.
+
+// Reference: Rec(2004)11 Audit, II. Verifiability
+// Reference: Rec(2004)11 Appendix III, E. IV. 107.
+Audit System Capability
+The audit system shall provide the ability to cross-check and verify the correct operation of the e-voting system and the accuracy of the result, to detect voter fraud, and to prove that all counted votes are authentic and that all votes have been counted.
+
+// Reference: Rec(2004)11 Appendix III, E. IV. 108.
+Audit System for Legal Compliance
+The audit system shall provide the ability to verify that an e-election or e-referendum has complied with the applicable legal provisions.
+
+// Reference: Rec(2004)11 Audit, II. Other
+// Reference: Rec(2004)11 Appendix III, E. V. 109.
+Audit Data Validity
+The audit system shall be protected against attacks that may corrupt, alter, or lose records in the audit system.
+
+// Reference: Rec(2004)11 Appendix III, E. V. 110.
+Audit Data Confidentiality
+The electoral authority shall take adequate steps to ensure that the confidentiality of any information obtained by any person while carrying out auditing functions is guaranteed.
+
+// Reference: David Jefferson
+Log Basics
+The Internet voting system should keep detailed logs of all relevant activity.
+
+// Reference: David Jefferson
+Log Immutability
+Log entries must be unmodifiable once written.
+
+// Reference: Ron Rivest
+Log Commitment
+Log entries must accurately reflect the commitment character of elections and the relationships among election events (e.g., ballot, vote, voter, and election state transitions).
+
+// Reference: David Jefferson
+Log Data Completeness
+The log data should be as complete as possible, consistent with maximum possible vote privacy.
+
+// Reference: David Jefferson
+Privacy vs Fraud Tradeoff
+If there is a tradeoff between vote privacy and the identification of the perpetrators of fraud, the decision should be made in favor of vote privacy.
+
+// Reference: David Jefferson
+Voter List
+The list of voters who voted online should be published.
+
+// partof: Auditing Requirements
+// Requirements specific to auditing verifiable elections.
+requirements Auditing Requirements Verification
+
+// Reference: David Jefferson
+Verification Partial Failure
+The system, in the event that it does not verify the online votes cast, must be capable of giving an upper bound on the number of ballots that may have been affected.
+
+// Reference: David Jefferson
+Verification Source
+Official verification applications, like the voting software itself, must be published in source form along with documentation, build directions, and a standard cryptographic hash of the source code.

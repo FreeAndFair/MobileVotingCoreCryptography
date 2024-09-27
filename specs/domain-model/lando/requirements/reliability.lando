@@ -1,0 +1,51 @@
+// partof: System Operational Requirements
+// General reliability requirements for any internet election system.
+requirements Reliability Requirements
+
+// Reference: David Jefferson
+General MTBF
+The entire voting service (server side) must have a proven MTBF of >168 hours (1 week) under peak expected voting loads the entire time.
+
+// Reference: David Jefferson
+Live Election MTBF
+MTBF validation must be demonstrated in multiple tests of actual mock elections.
+
+// Reference: David Jefferson
+MTBF Contra DDoS
+MTBF requirements apply only during normal peak operation, not during attacks (e.g., DDoS).
+
+// Reference: David Jefferson
+System Recovery Time
+If service goes down for any reason other than regional natural disaster or malicious attack, service must be restored in no more than 10 minutes.
+
+// Reference: David Jefferson
+Uptime
+The system must have three nines (99.9%) uptime.
+
+// Reference: David Jefferson
+Failure Validation
+Uptime must be demonstrated by failures in actual mock election situations, e.g., tested by sudden loss of power to any server.
+
+// Reference: David Jefferson
+Mirrored Failover Service
+The system must have a warm spare in a second data center that can take over in case of major failure.
+
+// Reference: David Jefferson
+Failover Staffing
+The system must be staffed at all times to guarantee the 10-minute recovery time.
+
+// Reference: David Jefferson
+Operation Under DDoS
+In a federal election, the voting system must remain available even during a large distributed denial of service attack. It must be able to continue correct operation during a sustained DDoS attack on any combination of server-side IP addresses (whether at the primary server data center or its ISP) at a total level of 100 Gb/s with no more than 15 seconds degradation of response time to voters during the attack.
+
+// Reference: David Jefferson
+DDoS Refresh Periodicity
+The DDoS threshold (initially 100 Gb/s) should be evaluated every election cycle to see if it has to be raised due to newer DDoS attack technologies.
+
+// Reference: David Jefferson
+DDoS Attack Validation
+The ability to survive a DDoS attack must be actually demonstrated in the actual network configuration to be used prior to each federal election.
+
+// Reference: David Jefferson
+DDoS Local Election
+Reduced DDoS defense requirements might be acceptable for non-federal elections.

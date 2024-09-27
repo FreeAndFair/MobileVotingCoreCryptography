@@ -1,0 +1,87 @@
+// partof: Non Functional Requirements
+// General legal requirements relating to legal matters and digital election systems.
+requirements Legal Requirements
+
+// Reference: Rec(2004)11 Universal Suffrage
+// Reference: Rec(2004)11 Appendix I, A. I. 1.
+Usable UI
+The voter interface of an e-voting system shall be understandable and easily usable.
+
+// Reference: Rec(2004)11 Appendix I, A. I. 2.
+Unimpeded Registration
+Possible registration requirements for e-voting shall not pose an impediment to the voter participating in e-voting.
+
+// Reference: Rec(2004)11 Appendix I, A. I. 3.
+Maximize Disabled Accessibility
+E-voting systems shall be designed, as far as it is practicable, to maximize the opportunities that such systems can provide for persons with disabilities.
+
+// Reference: Rec(2004)11 Appendix I, A. I. 4.
+Remote Only Supplementary
+Unless channels of remote e-voting are universally accessible, they shall be only an additional and optional means of voting.
+
+// Reference: Rec(2004)11 Equal Suffrage
+// Reference: Rec(2004)11 Appendix I, A. II. 5--6.
+At Most One Vote Per Voter
+The e-voting system shall ensure that at most one electronic vote from each voter is included in the final tally.
+
+// Reference: Rec(2004)11 Appendix I, A. II. 7.
+Valid Tally
+Every vote deposited in an electronic ballot box shall be counted, and each vote cast in the election or referendum shall be counted only once.
+
+// Reference: Rec(2004)11 Appendix I, A. II. 8.
+Vote Aggregation
+Where electronic and non-electronic voting channels are used in the same election or referendum, there shall be a secure and reliable method to aggregate all votes and to calculate the correct result.
+
+// Reference: Rec(2004)11 Free Suffrage
+// Reference: Rec(2004)11 Appendix I, A. III. 9.
+Free Suffrage
+The organization of e-voting shall secure the free formation and expression of the voter's opinion and, where required, the personal exercise of the right to vote.
+
+// Reference: Rec(2004)11 Appendix I, A. III. 10.
+Reflective Voting Process
+The way in which voters are guided through the e-voting process shall be such as to prevent their voting precipitately or without reflection.
+
+// Reference: Rec(2004)11 Appendix I, A. III. 11.
+Flexible Voting Process
+Voters shall be able to alter their choice at any point in the e-voting process before casting their vote, or to break off the procedure, without their previous choices being recorded or made available to any other person.
+
+// Reference: Rec(2004)11 Appendix I, A. III. 12.
+No Voter Manipulation
+The e-voting system shall not permit any manipulative influence to be exercised over the voter during the voting.
+
+// Reference: Rec(2004)11 Appendix I, A. III. 13.
+Blank Vote
+The e-voting system shall provide the voter with a means of participating in an election or referendum without the voter exercising a preference for any of the voting options, for example, by casting a blank vote.
+
+// Reference: Rec(2004)11 Appendix I, A. III. 14.
+Conclusion of Voting Process
+The e-voting system shall indicate clearly to the voter when the vote has been cast successfully and when the whole voting procedure has been completed.
+
+// Reference: Rec(2004)11 Appendix I, A. III. 15.
+Immutable Votes
+Except in systems supporting Multi Ballot Record, the e-voting system shall prevent the changing of a vote once that vote has been cast.
+
+// Reference: Rec(2004)11 Secret Suffrage
+// Reference: Rec(2004)11 Appendix I, A. IV. 16.
+Secret Suffrage
+E-voting shall be organized in such a way as to exclude at any stage of the voting procedure and, in particular, at voter authentication, anything that would endanger the secrecy of the vote.
+
+// Reference: Rec(2004)11 Appendix I, A. IV. 17.
+Anonymous Votes
+The e-voting system shall guarantee that votes in the electronic ballot box and votes being counted are, and will remain, anonymous, and that it is not possible to reconstruct a link between the vote and the voter.
+
+// Reference: Rec(2004)11 Appendix I, A. IV. 18.
+No Indirect Secrecy Violation
+The e-voting system shall be so designed that the expected number of votes in any electronic ballot box will not allow the result to be linked to individual voters.
+
+// Reference: Rec(2004)11 Appendix I, A. IV. 19.
+No Secret Suffrage Side Channel
+Measures shall be taken to ensure that the information needed during electronic processing cannot be used to breach the secrecy of the vote.
+
+// Reference: David Jefferson 22-6-2014
+No NDAs for Study
+No nondisclosure agreement or any other contract shall be required to download and study the Internet voting system.
+
+// Reference: David Jefferson 22-6-2014
+No NDAs for Audit
+No nondisclosure agreement or any other contract shall be required to download, instrument, build, test, and publish test results for an E2EV Internet voting system.

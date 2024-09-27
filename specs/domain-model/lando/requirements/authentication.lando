@@ -1,0 +1,23 @@
+// partof: Technical Requirements
+// General requirements relating to the authentication of principals (both computers and humans) involved in any digital election system.
+requirements Authentication Requirements
+
+// Reference: David Jefferson
+Voter Authentication
+The voting service must by itself securely authenticate the voter (verify the identity of the voter and verify his/her registration and/or eligibility according to law to vote in the election) before allowing him/her to cast a ballot (or modify or replace a previously cast ballot).
+
+// Reference: David Jefferson
+No Third Party Authentication
+Authentication must not be done through third party intermediaries such as Facebook, iCloud, Google, Yahoo, Amazon, etc., that offer authentication services.
+
+// Reference: David Jefferson
+Secret Authentication Shared Secrets
+Authentication for remote voting systems must not use personal information, government or commercial account identifiers, etc.
+
+// Reference: David Jefferson
+Authentication Data Updates
+Authentication secrets must be changeable or revocable at any time at the behest of either the voter or election officials.
+
+// Reference: David Jefferson
+Authentication Data Refresh Periodicity
+All voter authentication secrets must be changed at least once in every election cycle.

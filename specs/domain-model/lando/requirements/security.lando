@@ -1,0 +1,238 @@
+// partof: Technical Requirements
+// General security requirements for digital election systems.
+requirements Security Requirements
+
+// Reference: Rec(2004)11 Security, I. General requirements
+// Reference: Rec(2004)11 Appendix III, D. I. 77.
+No Data Loss
+Technical and organizational measures shall be taken to ensure that no data will be permanently lost in the event of a breakdown or a fault affecting the e-voting system.
+
+// Reference: Rec(2004)11 Appendix III, D. I. 78.
+Voter Privacy Invariants
+The e-voting system shall maintain the privacy of individuals. Confidentiality of voters' registers stored in or communicated by the e-voting system shall be maintained.
+
+// Reference: Rec(2004)11 Appendix III, D. I. 79.
+System Self-Checks
+The e-voting system shall perform regular checks to ensure that its components operate in accordance with its technical specifications and that its services are available.
+
+// Reference: Rec(2004)11 Appendix III, D. I. 80.
+System Access Control
+The e-voting system shall restrict access to its services, depending on the user identity or the user role, to those services explicitly assigned to this user or role. User authentication shall be effective before any action can be carried out.
+
+// Reference: Rec(2004)11 Appendix III, D. I. 81.
+Data Protection
+The e-voting system shall protect authentication data so that unauthorized entities cannot misuse, intercept, modify, or otherwise gain knowledge of any of this data. In uncontrolled environments, authentication based on cryptographic mechanisms is advisable.
+
+// Reference: Rec(2004)11 Appendix III, D. I. 82.
+Unique Identification
+Identification of voters and candidates in a way that they can unmistakably be distinguished from other persons (unique identification) shall be ensured.
+
+// Reference: Rec(2004)11 Appendix III, D. I. 83.
+Observation Data
+E-voting systems shall generate reliable and sufficiently detailed observation data so that election observation can be carried out. The time at which an event generated observation data shall be reliably determinable. The authenticity, availability, and integrity of the data shall be maintained.
+
+// Reference: Rec(2004)11 Appendix III, D. I. 84.
+Time Synchronization
+The e-voting system shall maintain reliable synchronized time sources. The accuracy of the time sources shall be sufficient to maintain time marks for audit trails and observation data, as well as for maintaining the time limits for registration, nomination, voting, or counting.
+
+// Reference: Rec(2004)11 Appendix III, D. I. 85.
+Security Compliance Responsibility
+The electoral authority has overall responsibility for compliance with these security requirements, and such compliance shall be assessed by independent bodies.
+
+// Reference: Rec(2004)11 Security, II. Requirements in pre-voting stages
+// Reference: Rec(2004)11 Appendix III, D. II. 86.
+Lists Invariants
+The authenticity, availability, and integrity of the voters' registers and lists of candidates shall be maintained. The source of the data shall be authenticated. Provisions on data protection shall be respected.
+
+// Reference: Rec(2004)11 Appendix III, D. II. 87.
+Candidate Process Time Provenance
+The fact that candidate nomination and, if required, the decision of the candidate and/or the electoral authority to accept a nomination has happened within the prescribed time limits shall be ascertainable.
+
+// Reference: Rec(2004)11 Appendix III, D. II. 88.
+Voter Process Time Provenance
+The fact that voter registration has happened within the prescribed time limits shall be ascertainable.
+
+// Reference: Rec(2004)11 Security, III. Requirements in the voting stage
+// Reference: Rec(2004)11 Appendix III, D. III. 89.
+Election Data Integrity Invariants
+The integrity of data communicated from the pre-voting stage (e.g., voters' registers and lists of candidates) shall be maintained. Data-origin authentication shall be carried out.
+
+// Reference: Rec(2004)11 Appendix III, D. III. 90.
+Ballot Authenticity Invariants
+It shall be ensured that the e-voting system presents an authentic ballot to the voter. In the case of remote e-voting, the voter shall be informed about the means to verify that a connection to the official server has been established and that the authentic ballot has been presented.
+
+// Reference: Rec(2004)11 Appendix III, D. III. 91.
+Cast Vote Time Provenance
+The fact that a vote has been cast within the prescribed time limits shall be ascertainable.
+
+// Reference: Design derived from Rec(2004)11 Appendix III, D. III. 92.
+Controlled Systems and Vote Integrity
+Election equipment under the control of the electoral authority shall be protected against influence that could modify the vote.
+
+// Reference: Kiniry/Zimmerman
+Uncontrolled Systems and Vote Integrity
+The integrity of the vote must not depend on the security of election equipment not under the control of the electoral authority.
+
+// Reference: Rec(2004)11 Appendix III, D. III. 93.
+No Breadcrumbs
+Residual information holding the voter's decision or the display of the voter's choice shall be destroyed after the vote has been cast. In the case of remote e-voting, the voter shall be provided with information on how to delete, where that is possible, traces of the vote from the device used to cast the vote.
+
+// Reference: Rec(2004)11 Appendix III, D. III. 94.
+Eligibility Implies Vote Voter Invariants
+The e-voting system shall at first ensure that a user who tries to vote is eligible to vote. The e-voting system shall authenticate the voter and shall ensure that only the appropriate number of votes per voter is cast and stored in the electronic ballot box.
+
+// Reference: Rec(2004)11 Appendix III, D. III. 95.
+Vote Choice Invariants
+The e-voting system shall ensure that the voter's choice is accurately represented in the vote and that the sealed vote enters the electronic ballot box.
+
+// Reference: Rec(2004)11 Appendix III, D. III. 96.
+End of Vote Period Invariants
+After the end of the e-voting period, no voter shall be allowed to gain access to the e-voting system. However, the acceptance of electronic votes into the electronic ballot box shall remain open for a sufficient period of time to allow for any delays in the passing of messages over the e-voting channel.
+
+// Reference: Rec(2004)11 Security, IV. Requirements in post-voting stages
+// Reference: Rec(2004)11 Appendix III, D. IV. 97.
+Data Communication Integrity Invariants
+The integrity of data communicated during the voting stage (e.g., votes, voters' registers, lists of candidates) shall be maintained. Data-origin authentication shall be carried out.
+
+// Reference: Rec(2004)11 Appendix III, D. IV. 98.
+Tally Invariants
+The counting process shall accurately count the votes. The counting of votes shall be reproducible.
+
+// Reference: Rec(2004)11 Appendix III, D. IV. 99.
+Ballot Box and Tally Invariants
+The e-voting system shall maintain the availability and integrity of the electronic ballot box and the output of the counting process as long as required.
+
+// Reference: Kiniry/Zimmerman
+Adversary Resources
+The e-voting system shall be designed and tested with the assumption that an adversary has a budget of $10 per voter per election, which they can apply toward any critical subset of votes/voters of their choosing.
+
+// partof: Security Requirements
+// author: David Jefferson <d_jefferson@yahoo.com>
+// created: 22 June 2014
+// reviewer: Joe Kiniry <kiniry@galois.com>
+// reviewed: 16 July 2014
+// General security requirements for end-to-end verifiable internet election systems.
+// These are requirements for embedding an E2EV system in an Internet voting environment. They are over and above the requirements for the core E2EV itself. We do not consider usability or accessibility requirements here. Some of these requirements will make accessibility and usability more difficult to achieve. Still, these are requirements, and if they cannot be met, or cannot be met simultaneously with usability and accessibility requirements, then we have to recommend not implementing an E2EV Internet voting system.
+requirements E2EVIV Security Requirements
+
+// Reference: David Jefferson
+National Security
+If used in federal elections, an Internet voting system is also a national security system, and thus must be subject to the highest security requirements.
+
+// Reference: David Jefferson
+Federal Requirements
+Any Internet voting system used in a public primary or general election in the U.S. for federal or state legislative, executive, or judicial office, or recall election, or statewide initiative or referendum, must meet all of the requirements in this document.
+
+// Reference: David Jefferson
+Local Requirements
+Reduced security requirements might be appropriate for county, municipal, or other kinds of elections.
+
+// Reference: David Jefferson
+Automated Registration Fraud
+Automated registration fraud must not be possible.
+
+// Reference: David Jefferson
+Client Side Authenticity
+There must be a means by which any third party can determine if the client-side software is genuine.
+
+// Reference: David Jefferson
+Authentication Independence
+The security of authentication must not be affected by any potential breach of any public or commercial databases.
+
+// Reference: David Jefferson
+Zero Knowledge Authentication
+It should not be possible for an attacker to impersonate voters even if the entire server database used for authentication is compromised.
+
+// Reference: David Jefferson
+Authentication Credential Reestablishment
+In some cases of security breach it must be possible to require all voters in a jurisdiction to re-establish credentials.
+
+// partof: Security Requirements
+// General privacy requirements for end-to-end verifiable internet election systems.
+
+// Violations of vote privacy are not generally detectable.
+// Violations of vote privacy are irreversible.
+// Violations of vote privacy enable vote coercion and vote selling.
+// Vote privacy cannot be verified by testing; it can only be ascertained by expert analysis of architecture and code.
+requirements Privacy Requirements
+
+// Reference: David Jefferson
+E2E Vote Privacy
+Vote privacy must be preserved end-to-end insofar as mathematically possible.
+
+// Reference: David Jefferson
+Vote Privacy Inviolate
+Vote privacy cannot be waived by voters.
+
+// Reference: David Jefferson
+Malware Presence
+Vote privacy must not be violated even in the presence of arbitrary malicious code on the client platform, including phony client software, malicious client wrappers, MITM code between the user and the E2EV interface, malicious browser plugins or scripts, keyloggers, etc.
+
+// Reference: David Jefferson
+Remote Monitoring
+Voting should not be permitted from client platforms known to have remote monitoring software installed that could be used to monitor or log voting activity and that cannot be turned off by the voter. (All mobile platforms had, and probably still do have, such remote monitoring software).
+
+// Reference: David Jefferson
+Client Side Channels
+The client software of the voting system must not send data to any IP address except those associated with the vote server and the basic infrastructure servers of the Internet.
+
+// Reference: David Jefferson
+Social Media Side Channels
+The client should not provide any information to third parties, e.g., Facebook, Twitter, etc., regarding the act of voting.
+
+// Reference: David Jefferson
+No Tracking
+There must be no tracking devices or tracking logic in the vote client.
+
+// Reference: David Jefferson
+No Breadcrumbs Details
+The client software must leave no files or other persistent data on the platform regarding the vote transaction but for an optional file containing information needed for subsequent verification that the voter's ballot is included in the election canvass: no cookies or other session files, no temporary files.
+
+// Reference: David Jefferson
+Transient Data Cleanup
+The client software should explicitly erase (i.e., overwrite) all transient copies of vote-transaction data, e.g., data in registers, caches, RAM, and virtual memory.
+
+// Reference: David Jefferson
+Forensically Secure
+It should not be possible even for client-side forensic tools to retrieve any information regarding the voting transaction after the voting session is ended.
+
+// Reference: David Jefferson
+Remote Administration Forbidden
+The voting system should not support platforms that have remote administration or remote control tools installed that cannot be turned off by the voter.
+
+// Reference: David Jefferson
+Invulnerable to Election Malware
+The voting system must not be vulnerable to malware designed to modify votes before they are input to the E2EV system.
+
+// Reference: David Jefferson
+Client System Authentication
+The voting system server must authenticate that it is communicating with a genuine vote client during a voting session.
+
+// Reference: David Jefferson
+Penetration Attacks
+The voting system must be resistant to penetration attacks.
+
+// Reference: David Jefferson
+APT Attacks
+The voting system must be resistant to advanced persistent threat attacks.
+
+// Reference: David Jefferson
+Insider Attacks
+It should not be possible for an insider to attack the voting system without being detected.
+
+// Reference: David Jefferson
+Coercion Prevention
+There must be no way for voters to prove to another party any information regarding how they voted in any race beyond what is mathematically deducible from the final distribution of votes.
+
+// Reference: Ron Rivest
+Strong Software Independence
+The system must witness strong software independence: an undetected change or error in its software cannot cause an undetectable change or error in an election outcome, and moreover, a detected change or error in an election outcome (due to change or error in the software) can be corrected without re-running the election.
+
+// Digital evidence (e.g., photographing a ballot or video recording the casting process) of the voting process must not violate receipt freedom.
+Digital Evidence Not a Receipt
+Digital evidence of the voting process must not violate receipt freedom.
+
+// partof: Security Requirements
+// General security requirements relating to certification of digital elections systems.
+requirements Certification and Recertification Requirements
+

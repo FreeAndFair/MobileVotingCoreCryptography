@@ -1,0 +1,46 @@
+// partof: Technical Requirements
+// Requirements relating to the functional certification of digital election systems and elections.
+requirements Certification Functional Requirements
+
+// Reference: Kiniry/Zimmerman
+Automated Testing
+Each functional requirement must have an associated set of automated tests that provide evidence that the requirement is fulfilled.
+
+// Reference: Kiniry/Zimmerman
+Election Protocol Proofs
+The election protocol shall have associated formal proofs of correctness and security.
+
+
+// partof: Non Functional Requirements
+// Requirements relating to the non-functional certification of election systems and elections.
+requirements Certification Non Functional Requirements
+
+// Reference: Rec(2004)11 Certification
+// Reference: Rec(2004)11 Appendix III, F. 111.
+Certification Processes
+The electoral authority shall introduce certification processes that allow for any ICT (Information and Communication Technology) component to be tested and certified as being in conformity with technical requirements.
+
+// Reference: David Jefferson
+Certification Parties Competence
+Any E2EV Internet voting system should be certified by competent professionals.
+
+// Reference: David Jefferson
+Certification Report Transparency
+Any and all certification reports issued by certification professionals must be public, whether they recommend certification or not.
+
+// Reference: David Jefferson
+Recertification Conditions
+Any time there is a change in the voting system client or server side or the E2EV system, all of the requirements must be re-established and recertified. Changes that mandate re-certification include, but are not limited to: new supported hardware platforms, OS's, browsers, etc.; bug fixes and security patches to voting client and/or server; changes or upgrades to voting client or server in response to detected bugs or security vulnerabilities, changes in law, or changes in threat environment.
+
+// Reference: David Jefferson
+Recertification Periodicity
+The requirements must be re-established and recertified every election cycle even if there are no changes.
+
+// Reference: David Jefferson
+Validation Platform Coverage
+The system must be extensively tested on a wide range of platform and software combinations.
+
+// Reference: David Jefferson
+Public Validation Platform Coverage Results
+All test procedures and results for platform coverage must be public.
+

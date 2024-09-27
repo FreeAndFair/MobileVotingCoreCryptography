@@ -1,0 +1,28 @@
+// partof: Technical Requirements
+// General requirements for accessibility of digital election systems.
+requirements Accessibility Requirements
+
+// Reference: Kiniry/Zimmerman
+Mandatory Accessibility Testing
+Accessibility testing for disabled and abled voters shall be performed, and the reports of the testing made public. The system must achieve satisfactory accessibility testing results before being used in a binding election.
+
+// Reference: Rec(2004)11 Accessibility
+// Reference: Rec(2004)11 Appendix III, A. 61.
+Universal Accessibility
+Measures shall be taken to ensure that the relevant software and services can be used by all voters and, if necessary, provide access to alternative ways of voting.
+
+// Reference: Rec(2004)11 Appendix III, A. 62.
+Accessibility Stakeholders
+Users shall be involved in the design of e-voting systems, particularly to identify constraints and test ease of use at each main stage of the development process.
+
+// Reference: Rec(2004)11 Appendix III, A. 63.
+User Facilities for Accessibility
+Users shall be supplied, whenever required and possible, with additional facilities, such as special interfaces or other equivalent resources, such as personal assistance.
+
+// Reference: Rec(2004)11 Appendix III, A. 64.
+Complement Accessibility Technologies
+Consideration shall be given, when developing new products, to their compatibility with existing ones, including those using technologies designed to help people with disabilities.
+
+// Reference: Rec(2004)11 Appendix III, A. 65.
+Accessible Voting Options
+The presentation of the voting options shall be optimized for the voter.

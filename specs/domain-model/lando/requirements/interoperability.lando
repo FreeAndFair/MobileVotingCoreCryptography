@@ -1,0 +1,20 @@
+// partof: Technical Requirements
+// General requirements on the interoperability of digital election systems.
+requirements Interoperability Requirements
+
+// Reference: Rec(2004)11 Interoperability
+// Reference: Rec(2004)11 Appendix III, B. 66.
+Open Standards
+Open standards shall be used to ensure that the various technical components or services of an e-voting system, possibly derived from a variety of sources, interoperate.
+
+// Reference: Rec(2004)11 Appendix III, B. 67.
+EML
+The Election Markup Language (EML) shall be used whenever possible for e-election and e-referendum applications.
+
+// Reference: Rec(2004)11 Appendix III, B. 68.
+Data Localization
+In cases that imply specific election or referendum data requirements, a localization procedure shall be used to accommodate these needs.
+
+// Reference: David Jefferson
+Open Log Formats
+The log data and documentation of its meaning and format shall be available for public download so that anyone can download, inspect, and publish concerns based on the logs.
