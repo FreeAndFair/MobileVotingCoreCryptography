@@ -34,6 +34,7 @@ jobs:
   test:
     needs: build-matrix
     runs-on: ubuntu-latest
+    if: fromJson(needs.build-matrix.outputs.lando-files)[0] != null
     strategy:
       fail-fast: false
       matrix:
