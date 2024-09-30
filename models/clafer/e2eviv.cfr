@@ -8,7 +8,20 @@
 // ------------------
 
 // Each requirement feature has a label, name, and description.
-// Shall we include a reference for traceability to specs?
+// @design zeyda Shall we include a reference for traceability to specs?
+// @design kiniry Consider also including `rationale`.
+// @design kiniry Remember that the core attributes of requirements in
+// the SysML meta-model are `derivation`, `satisfaction`, and `verification`. 
+// Consider how/if to add these attributes to our feature model.
+// @design kiniry If we do include ref in the end, its values should not
+// be arbitrary strings, but instead a parseable tuple of the form
+// `(<git-url>, <fully-resolved-name>)`.  Alternatively, we can just use
+// a URL and append the name using the `?` operator. This is the convention
+// we are adopting across the RDE RA.
+// @example kiniry Here is an example URL binder for this file, referring
+// to this abstract clafer itself.
+// @trace (https://github.com/FreeAndFair/TuskMobileVoting.git#2a4929d52d71b01283e91c76cfcf0739621f652c, Requirement)
+// @trace https://github.com/FreeAndFair/TuskMobileVoting.git#2a4929d52d71b01283e91c76cfcf0739621f652c?Requirement
 abstract Requirement
     label -> string
     name -> string
@@ -732,80 +745,80 @@ Requirements
             [name = "Authentication Credential Reestablishment"]
             [description = "In some cases of security breach it must be possible to require all voters in a jurisdiction to re-establish credentials."]
     PrivacyRequirements
-        P1
-            [label = "P.1"]
+        PRI1
+            [label = "PRI.1"]
             [name = "E2E Vote Privacy"]
             [description = "Vote privacy must be preserved end-to-end insofar as mathematically possible."]
-        P2
-            [label = "P.2"]
+        PRI2
+            [label = "PRI.2"]
             [name = "Vote Privacy Inviolate"]
             [description = "Vote privacy cannot be waived by voters."]
-        P3
-            [label = "P.3"]
+        PRI3
+            [label = "PRI.3"]
             [name = "Malware Presence"]
             [description = "Vote privacy must not be violated even in the presence of arbitrary malicious code on the client platform, including phony client software, malicious client wrappers, MITM code between the user and the E2EV interface, malicious browser plugins or scripts, keyloggers, etc."]
-        P4
-            [label = "P.4"]
+        PRI4
+            [label = "PRI.4"]
             [name = "Remote Monitoring"]
             [description = "Voting should not be permitted from client platforms known to have remote monitoring software installed that could be used to monitor or log voting activity and that cannot be turned off by the voter. (All mobile platforms had, and probably still do have, such remote monitoring software)."]
-        P5
-            [label = "P.5"]
+        PRI5
+            [label = "PRI.5"]
             [name = "Client Side Channels"]
             [description = "The client software of the voting system must not send data to any IP address except those associated with the vote server and the basic infrastructure servers of the Internet."]
-        P6
-            [label = "P.6"]
+        PRI6
+            [label = "PRI.6"]
             [name = "Social Media Side Channels"]
             [description = "The client should not provide any information to third parties, e.g., Facebook, Twitter, etc., regarding the act of voting."]
-        P7
-            [label = "P.7"]
+        PRI7
+            [label = "PRI.7"]
             [name = "No Tracking"]
             [description = "There must be no tracking devices or tracking logic in the vote client."]
-        P8
-            [label = "P.8"]
+        PRI8
+            [label = "PRI.8"]
             [name = "No Breadcrumbs Details"]
             [description = "The client software must leave no files or other persistent data on the platform regarding the vote transaction but for an optional file containing information needed for subsequent verification that the voter's ballot is included in the election canvass: no cookies or other session files, no temporary files."]
-        P9
-            [label = "P.9"]
+        PRI9
+            [label = "PRI.9"]
             [name = "Transient Data Cleanup"]
             [description = "The client software should explicitly erase (i.e., overwrite) all transient copies of vote-transaction data, e.g., data in registers, caches, RAM, and virtual memory."]
-        P10
-            [label = "P.10"]
+        PRI10
+            [label = "PRI.10"]
             [name = "Forensically Secure"]
             [description = "It should not be possible even for client-side forensic tools to retrieve any information regarding the voting transaction after the voting session is ended."]
-        P11
-            [label = "P.11"]
+        PRI11
+            [label = "PRI.11"]
             [name = "Remote Administration Forbidden"]
             [description = "The voting system should not support platforms that have remote administration or remote control tools installed that cannot be turned off by the voter."]
-        P12
-            [label = "P.12"]
+        PRI12
+            [label = "PRI.12"]
             [name = "Invulnerable to Election Malware"]
             [description = "The voting system must not be vulnerable to malware designed to modify votes before they are input to the E2EV system."]
-        P13
-            [label = "P.13"]
+        PRI13
+            [label = "PRI.13"]
             [name = "Client System Authentication"]
             [description = "The voting system server must authenticate that it is communicating with a genuine vote client during a voting session."]
-        P14
-            [label = "P.14"]
+        PRI14
+            [label = "PRI.14"]
             [name = "Penetration Attacks"]
             [description = "The voting system must be resistant to penetration attacks."]
-        P15
-            [label = "P.15"]
+        PRI15
+            [label = "PRI.15"]
             [name = "APT Attacks"]
             [description = "The voting system must be resistant to advanced persistent threat attacks."]
-        P16
-            [label = "P.16"]
+        PRI16
+            [label = "PRI.16"]
             [name = "Insider Attacks"]
             [description = "It should not be possible for an insider to attack the voting system without being detected."]
-        P17
-            [label = "P.17"]
+        PRI17
+            [label = "PRI.17"]
             [name = "Coercion Prevention"]
             [description = "There must be no way for voters to prove to another party any information regarding how they voted in any race beyond what is mathematically deducible from the final distribution of votes."]
-        P18
-            [label = "P.18"]
+        PRI18
+            [label = "PRI.18"]
             [name = "Strong Software Independence"]
             [description = "The system must witness strong software independence: an undetected change or error in its software cannot cause an undetectable change or error in an election outcome, and moreover, a detected change or error in an election outcome (due to change or error in the software) can be corrected without re-running the election."]
-        P19
-            [label = "P.19"]
+        PRI19
+            [label = "PRI.19"]
             [name = "Digital Evidence Not a Receipt"]
             [description = "Digital evidence of the voting process must not violate receipt freedom."]
     CertificationandRecertificationRequirements
