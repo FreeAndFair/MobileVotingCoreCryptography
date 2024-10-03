@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Objective Tree Viewer</title>
+  <script src="/marked.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 10px;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: left;
+      z-index: 1000;
+    }
+    nav a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      margin-top: 50px;
+    }
+    #tree {
+      flex: 1; /* Limit space for the tree to 50% of the browser */
+      max-width: 50%; /* Explicit limit for better control */
+      overflow-y: auto;
+      padding: 20px;
+      border-right: 1px solid #ddd;
+    }
+    #details {
+      flex: 1; /* Remaining space for details */
+      display: flex;
+      flex-direction: column;
+    }
+    .section {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    h2 {
+      margin: 0;
+      margin-bottom: 10px;
+    }
+    .tree, .tree ul, .tree li {
+      position: relative;
+    }
+    .tree ul {
+      list-style-type: none;
+      padding-left: 32px; /* Horizontal spacing between parent and children */
+    }
+    .tree li::before, .tree li::after {
+      content: "";
+      position: absolute;
+      left: -12px; /* Positioning lines to the left */
+    }
+    .tree li::before {
+      border-top: 1px solid #000; /* Horizontal line */
+      top: 9px; /* Aligns with text */
+      width: 8px; /* Length of horizontal line */
+      height: 0;
+    }
+    .tree li::after {
+      border-left: 1px solid #000; /* Vertical line */
+      height: 100%;
+      width: 0;
+      top: 2px; /* Starts below the horizontal line */
+    }
+    li.li-mouse-pointer {
+      cursor: pointer;
+    }
+    div.div-mouse-pointer {
+      cursor: pointer;
+    }
+    .tree ul > li:last-child::after {
+      height: 8px; /* Shortens vertical line for last child */
+    }
+    .description {
+      margin-top: 5px;
+      color: #555;
+      font-size: 0.9em;
+      line-height: 1.4em;
+      padding-left: 10px;
+    }
+    .attack, .mitigation {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    h3 {
+      margin: 0;
+      margin-bottom: 10px;
+    }
+    p {
+      margin: 5px 0;
+    }
+    .active-property {
+      background-color: #f0f8ff;
+      font-weight: bold;
+    }
+    .active-attack {
+      background-color: #f0f8ff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/view_properties.html" style="margin-right: 15px;">View Security Objectives</a>
+    <a href="/view_attacks.html" style="margin-right: 15px;">View Attacks</a>
+    <a href="/view_mitigations.html">View Mitigations</a>
+  </nav>
+  <div id="main">
+    <div id="tree">
+      <h2>Security Objectives</h2>
+      <div class="tree">
+        <ul id="propertyTree"></ul>
+      </div>
+    </div>
+    <div id="details">
+      <div class="section" id="attacks">
+        <h2>Attacks</h2>
+        <div id="attacksContent"></div>
+      </div>
+      <div class="section" id="mitigations">
+        <h2>Mitigations</h2>
+        <div id="mitigationsContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeProperty = null;
+    let activeAttack = null;
+
+    async function loadProperties() {
+      try {
+        const response = await fetch(`/properties`);
+        const properties = await response.json();
+
+        const tree = document.getElementById('propertyTree');
+        tree.innerHTML = ''; // Clear the existing tree structure
+        renderTree(properties, tree);
+      } catch (error) {
+        console.error("Error loading properties:", error);
+      }
+    }
+
+    function renderTree(properties, parentElement) {
+      properties.forEach(property => {
+        const li = document.createElement('li');
+        li.dataset.id = property.id;
+        li.classList.add('li-mouse-pointer');
+        li.onclick = (event) => {
+          event.stopPropagation(); // Prevent the event from bubbling to parent elements
+          loadAttacks(property.id);
+          const mitigationsDiv = document.getElementById('mitigationsContent');
+          mitigationsDiv.innerHTML = 'Select an attack to search for mitigations'; // Clear the existing mitigations
+          highlightProperty(li);
+        };
+
+        // Property auto-identifier
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = property.auto_identifier;
+        li.appendChild(nameSpan);
+
+        // Property description (render Markdown)
+        if (property.description) {
+          const descriptionDiv = document.createElement('div');
+          descriptionDiv.classList.add('description');
+          descriptionDiv.innerHTML = marked.parse(property.description);
+          li.appendChild(descriptionDiv);
+        }
+
+        if (property.children.length > 0) {
+          const ul = document.createElement('ul');
+          renderTree(property.children, ul);
+          li.appendChild(ul);
+        }
+
+        parentElement.appendChild(li);
+      });
+    }
+
+    function highlightProperty(propertyElement) {
+      if (activeProperty) {
+        activeProperty.classList.remove('active-property');
+      }
+      propertyElement.classList.add('active-property');
+      activeProperty = propertyElement;
+    }
+
+    async function loadAttacks(propertyId) {
+      try {
+        const response = await fetch(`/property/${propertyId}/attacks`);
+        const attacks = await response.json();
+
+        const attacksDiv = document.getElementById('attacksContent');
+        attacksDiv.innerHTML = ''; // Clear the existing content
+
+        if (attacks.length === 0) {
+          attacksDiv.innerHTML += '<p>No attacks found for this security objective.</p>';
+          return;
+        }
+
+        attacks.forEach(attack => {
+          const div = document.createElement('div');
+          div.classList.add('attack');
+          div.classList.add('div-mouse-pointer');
+          div.dataset.id = attack.id;
+          div.innerHTML = `
+            <p><strong>${attack.auto_identifier} ${attack.identifier}</strong></p>
+            <p>${attack.description}</p>
+          `;
+          div.onclick = () => highlightAttack(div);
+          attacksDiv.appendChild(div);
+        });
+      } catch (error) {
+        console.error("Error loading attacks:", error);
+      }
+    }
+
+    function highlightAttack(attackElement) {
+      if (activeAttack) {
+        activeAttack.classList.remove('active-attack');
+      }
+      attackElement.classList.add('active-attack');
+      activeAttack = attackElement;
+      loadMitigations(attackElement.dataset.id);
+    }
+
+    async function loadMitigations(attackId) {
+      try {
+        const response = await fetch(`/attack/${attackId}/mitigations`);
+        const mitigations = await response.json();
+
+        const mitigationsDiv = document.getElementById('mitigationsContent');
+        mitigationsDiv.innerHTML = ''; // Clear the existing content
+
+        if (mitigations.length === 0) {
+          mitigationsDiv.innerHTML += '<p>No mitigations found for this attack.</p>';
+          return;
+        }
+
+        mitigations.forEach(mitigation => {
+          const div = document.createElement('div');
+          div.classList.add('mitigation');
+          let rationale = '';
+          if (mitigation.rationale && mitigation.rationale != 'None') {
+            rationale = `<p><strong>Mitigation Rationale</strong>: ${mitigation.rationale}</p>`
+          }
+          div.innerHTML = `
+            <p><strong>${mitigation.auto_identifier} ${mitigation.name}</strong></p>
+            <p>${mitigation.description}</p>
+            ${rationale}
+          `;
+          mitigationsDiv.appendChild(div);
+        });
+      } catch (error) {
+        console.error("Error loading mitigations:", error);
+      }
+    }
+
+    // Load properties on page load
+    window.onload = function() {
+      loadProperties();
+    };
+  </script>
+</body>
+</html>

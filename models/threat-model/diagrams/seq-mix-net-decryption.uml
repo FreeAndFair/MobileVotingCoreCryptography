@@ -1,0 +1,33 @@
+@startuml
+
+skinparam sequenceMessageAlign direction
+skinparam responseMessageBelowArrow true
+autonumber
+
+actor ElectionAdministrator as "Election Administrator"
+actor Trustee
+entity ElectionAdministrationServer as "Election Administration Server"
+entity DigitalBallotBox as "Digital Ballot Box"
+entity TrusteeApplication as "Trustee Application"
+entity TrusteeAdministrationServer as "Trustee Administration Server"
+entity BallotPrinter as "Ballot Printer"
+database ElectionAdministratorStorage as "EA Storage"
+database TrusteeStorage as "Trustee Storage"
+
+ElectionAdministrator -> ElectionAdministrationServer: Write all election data to storage device
+ElectionAdministrationServer -> DigitalBallotBox: Get all election data
+ElectionAdministrationServer <-- DigitalBallotBox: Election data
+ElectionAdministrationServer -> ElectionAdministratorStorage: Write election data
+ElectionAdministrator -> TrusteeAdministrationServer: Attach storage and start ballot\ndecryption and printing process
+TrusteeAdministrationServer <-- ElectionAdministratorStorage: Read election data
+Trustee -> TrusteeApplication: Attach storage and sign in\n(one storage and trustee application per trustee)
+TrusteeApplication <-- TrusteeStorage: Read private key share
+TrusteeApplication -> TrusteeAdministrationServer: Sign in trustee\n(one per trustee)
+TrusteeApplication <-- TrusteeAdministrationServer: Enough trustees signed in,\nstart decryption process
+TrusteeApplication <- TrusteeAdministrationServer: Shuffle and partially decrypt\nthis sequence of ballots\n(one per trustee, sequentially)
+TrusteeApplication --> TrusteeAdministrationServer: Shuffled and partially decrypted\nsequence of ballots\n(one per trustee, sequentially)
+TrusteeAdministrationServer -> BallotPrinter: Shuffled and fully decrypted\nsequence of ballots
+ElectionAdministrator <-- BallotPrinter: Stack of printed ballots
+ElectionAdministrator <-- TrusteeAdministrationServer: Ballot decryption and printing complete
+
+@enduml

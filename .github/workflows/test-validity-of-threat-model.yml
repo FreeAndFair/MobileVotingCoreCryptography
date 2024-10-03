@@ -1,0 +1,55 @@
+# .github/workflows/build-release.yml
+# Author: Daniel M. Zimmerman
+# Created: 2025-01-22
+# Modified: 2025-01-22
+
+# This workflow tests the validity of the threat model by building
+# the database and the PDF.
+
+name: Test Validity of Threat Model
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - 'models/threat-model/**'
+
+  workflow_dispatch:
+
+jobs:
+  threat-model:
+    name: Run "Make" on Threat Model
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Packages
+        run: sudo apt-get install build-essential
+
+      - name: Install/Restore TeXLive Environment
+        uses: FreeAndFair/setup-texlive-action@v3
+        with:
+          packages: |
+            scheme-full
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Python Dependencies for Threat Model
+        run: |
+          cd models/threat-model/db
+          pip install -r requirements.txt
+
+      - name: Run `view` Smoke Test in Threat Model Directory
+        run: |
+          cd models/threat-model
+          make view
+
+      - name: Render Threat Model PDF
+        run: |
+          cd models/threat-model
+          make pdf
+
+      - name: Save the Generated Threat Model PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated_threat_model_pdf
+          path: models/threat-model/threat-model.pdf

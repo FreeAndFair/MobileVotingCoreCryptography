@@ -1,0 +1,29 @@
+@startuml
+
+skinparam sequenceMessageAlign direction
+skinparam responseMessageBelowArrow true
+autonumber
+
+actor ElectionAdministrator as "Election Administrator"
+actor Trustee
+entity ElectionAdministrationServer as "Election Administration Server"
+entity TrusteeApplication as "Trustee Application"
+entity TrusteeAdministrationServer as "Trustee Administration Server"
+database ElectionAdministratorStorage as "EA Storage"
+database TrusteeStorage as "Trustee Storage"
+
+ElectionAdministrator -> ElectionAdministrationServer: Write election manifest to storage device
+ElectionAdministrationServer -> ElectionAdministratorStorage: Write election manifest
+ElectionAdministrator -> TrusteeAdministrationServer: Attach storage and start\nkey generation ceremony
+TrusteeAdministrationServer <-- ElectionAdministratorStorage: Read election manifest
+Trustee -> TrusteeApplication: Attach storage and sign in\n(one storage and trustee application per trustee)
+TrusteeApplication -> TrusteeAdministrationServer: Register trustee\n(one per trustee)
+TrusteeApplication <-- TrusteeAdministrationServer: All trustees registered,\nquorum size is k\n(one per trustee)
+TrusteeApplication -> TrusteeAdministrationServer: Commitment to private key\ngeneration data\n(one per trustee)
+TrusteeApplication <-- TrusteeAdministrationServer: Data from other trustees\nto generate private key share\n(one per trustee)
+TrusteeAdministrationServer -> ElectionAdministratorStorage: Write election public key\nand updated manifest
+TrusteeApplication -> TrusteeStorage: Write private key share\nfor later use\n(one per trustee)
+TrusteeApplication -> TrusteeAdministrationServer: Confirm private key share\nhas been written to\npersistent storage\n(one per trustee)
+ElectionAdministrator <--TrusteeAdministrationServer: Key generation ceremony complete
+
+@enduml

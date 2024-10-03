@@ -34,6 +34,7 @@ jobs:
     name: Check Clafer Syntax
     needs: build-matrix
     runs-on: ubuntu-latest
+    if: fromJson(needs.build-matrix.outputs.matrix)[0] != null
     strategy:
       fail-fast: false
       matrix:

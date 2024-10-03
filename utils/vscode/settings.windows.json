@@ -1,0 +1,16 @@
+{
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "db\\\\.+\\.yaml",
+                "cmd": "python .vscode/highlight_yaml.py ${file}"
+            }
+        ],
+        "autoShowOutputPanel": "error"
+    },
+    "todohighlight.isEnable": true,
+    "todohighlight.isCaseSensitive": true,
+    "todohighlight.include": [
+        "**/*.yaml"
+    ]
+}

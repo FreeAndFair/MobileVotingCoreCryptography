@@ -37,7 +37,7 @@ We have configured pre-commit hooks in the repository for commit message formatt
 
 You can also install the pre-commit hooks locally, which will perform the checks locally before a commit is finalized. A nice thing about installing the hooks locally is that, if they find a problem (for instance, an extra space at the end of a line) when you try to commit, they will _fix_ that problem so that you can re-add the file in question and commit a fixed version, rather than forcing you to go fix it yourself (the exception to this is commit messages, which `pre-commit` cannot fix; you need to write them in the correct format).
 
-To install the pre-commit hooks locally, run the following (you must have a working Python installation):
+To install the pre-commit hooks locally, run the following (you must have a working Python installation, likely through the use of a Python virtual environment):
 
 ```shell
 pip install pre-commit

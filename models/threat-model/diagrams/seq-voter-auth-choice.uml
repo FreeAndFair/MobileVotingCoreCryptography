@@ -1,0 +1,22 @@
+@startuml
+
+skinparam sequenceMessageAlign direction
+skinparam responseMessageBelowArrow true
+autonumber
+
+actor Voter
+entity VotingApplication as "Voting Application"
+entity ElectionAdministrationServer as "Election Administration Server"
+entity AuthenticationService as "Authentication Service"
+
+Voter -> VotingApplication: Sign in
+VotingApplication -> ElectionAdministrationServer: Request voter authentication
+ElectionAdministrationServer -> AuthenticationService: Request voter authentication
+AuthenticationService -> Voter: Initiate voter authentication\n(service-dependent)
+AuthenticationService <-- Voter: Complete voter\nauthentication\n(service-dependent)
+ElectionAdministrationServer <-- AuthenticationService: Voter authentication result
+VotingApplication <-- ElectionAdministrationServer: Information for election\navailable to voter (if any)
+Voter <-- VotingApplication: Present ballot or report\nno available election
+Voter -> VotingApplication: If ballot available,\nsubmit and confirm\nballot choices
+
+@enduml
