@@ -1,0 +1,456 @@
+%! program = pdflatexmk
+
+% Free Democracy Foundation Mobile Voting
+% Refinements Among High-Level Models White Paper
+% Copyright (C) 2024-25 Free & Fair
+% Last Revision: 2025-02-20 Daniel M. Zimmerman
+
+\documentclass[10pt,letterpaper]{article}
+
+%%% PACKAGES
+\usepackage[letterpaper, total={7.5in, 9in}]{geometry}
+\usepackage[in]{fullpage}
+\usepackage{tabularray}
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\setlength {\marginparwidth}{2cm} 
+\usepackage{todonotes}
+\usepackage{enumitem}
+\usepackage[backend=biber, style=numeric, sorting=nyt]{biblatex}
+\addbibresource{references.bib}
+\parindent 0pt
+\setlength{\parskip}{10pt plus 1pt minus 1pt}
+
+\usepackage{tocloft} 
+\setlength\cftparskip{2pt} 
+
+\renewcommand{\subsectionautorefname}{section}
+\renewcommand{\subsubsectionautorefname}{section}
+
+% Don't use URL dates for non-online items
+%\AtEveryBibitem{\ifentrytype{online}{}{\clearfield{url}\clearfield{urlyear}}}
+
+% by default, don't put headings on tables
+\DefTblrTemplate{firsthead, middlehead,lasthead}{default}{}
+
+% detect Overleaf using the job name
+\ifnum\pdfstrcmp{\jobname}{output}=0 
+% "Dark Mode" for Overleaf ------
+\usepackage{xcolor}
+\pagecolor[rgb]{0,0,0} %black
+\color[rgb]{0.7,0.7,0.7} %grey
+\hypersetup{linkcolor=yellow,citecolor=yellow,filecolor=white,urlcolor=yellow} 
+% ----------------------
+\else
+\hypersetup{linkcolor=blue,citecolor=blue,filecolor=black,urlcolor=blue} 
+% nothing else to do in non-Overleaf case for now; perhaps
+% this will automatically trigger export of tables later
+\fi
+
+% Add a basic code listings style
+\lstdefinestyle{basic}{
+    basicstyle=\ttfamily\small
+}
+\lstset{style=basic}
+
+\pagestyle{empty}
+
+%%% BEGIN DOCUMENT
+\begin{document}
+
+\title{Refinements Among High-Level Models}
+\author{Joseph R.~Kiniry}
+\date{September 2024 \\ Revised February 2025}
+
+\maketitle
+
+\section{Executive Summary}
+\label{executive-summary}
+
+This white paper explains the relationship among three of the most abstract models that we write or generate in Rigorous Digital Engineering (RDE) in order to describe systems (product lines, platforms, and products and their subsystems and components) to ensure that they are reasonable, fit-for-purpose, and fulfill their requirements. This white paper does not contain examples of models or their refinements; those examples are found in the Rigorous Digital Engineering course.
+
+\section{Refinement}
+\label{refinement}
+\emph{Refinement} is the transformation of high-level or abstract artifacts into more concrete ones.  Refinement preserves behavior, meaning, or intuition of the refined artifacts in a well-defined manner.  Refinement can be applied at multiple stages of the RDE life-cycle and is in fact an integral part of it, typically adding detail and design to descriptions, models, or artifacts by transforming them in a stepwise and piecewise manner.
+
+In general, the left-hand side of a refinement is the more ``abstract'' side, and the right-hand side of a refinement is the more ``concrete'' side.  This left-to-right notion means that refinements move through stages from vague to precise, from loose to tight, and generally from English to software or hardware source code.
+
+Refinements can relate very informal things, like documents written in English, to formal things, like a semi-formal specification written in a Domain-Specific Language (DSL) such as Lando (discussed below).  They can also relate a semi-formal specification, such as a Lando model, to a formal specification, such as  an Alloy model (again, discussed below). They can relate two formal specifications to each other, such as an Alloy model to a PVS model.  Finally, they can relate models to code, such as a Cryptol model to Rust source code.
+
+The key characteristics of RDE refinements are that (1)~the refining (more concrete / detailed) artifact can be used in place of the refined (more abstract) one (this is known as \emph{compositionality}), and (2)~refinement is not necessarily formal.
+
+Refinement exists in many flavors:
+\begin{itemize}
+  \item type-logical refinement (structural refinement)
+  \item operational refinement (reduction of nondeterminism)
+  \item data refinement (concretization of data models)
+  \item action refinement (decomposition of dynamic behaviors)
+\end{itemize}
+
+\section{Models}
+\label{models}
+
+The core high-level models used in RDE are \emph{natural language documents} (RFPs, academic papers, books, standards, requirements, etc. that are either completely informal or semi-formal), \emph{domain engineering models} (conceptual models or ontologies of a domain), \emph{requirements engineering models} (behavioral and non-behavioral requirements, including security requirements), \emph{product line models} (feature models), \emph{architectural models} (system architecture descriptions), and \emph{domain-specific models}.
+
+All of these models \emph{describe} a system---they are a \emph{specification}---from different levels of abstraction and from complementary points of view. But in order for the system's specification to be coherent and useful, all of its models must be (colloquially) \emph{aligned} with each other. \emph{Alignment,} formally, means that models relate to each other with simple, well-defined \emph{mathematical relations} that \emph{non-mathematicians intuitively understand} and that are \emph{reasonable, natural relationships} without special expertise in model-based engineering or formal methods.
+
+This document explains these \emph{relationships}, and thus their underlying \emph{relations}, so that performers writing models can ensure alignment, either by hand or with tool support---tools that support relation checking are tools that ``implement the mathematics'' (semantics) underlying these relationships.
+
+The core underlying relations that matter, that sit at the center of RDE, are \emph{equivalence} (``sameness''), \emph{containment} (``has-a''), and \emph{subtyping} (``is-a''). Each of these relations is described in the abstract below, and made concrete with examples by referring to existing RDE case studies.
+
+\subsection{Informal and Semi-formal Models: Natural Language Specifications}
+\label{informal-and-semi-formal-models-natural-language-specifications}
+
+Informal and semi-formal models are essentially documents written in natural language.
+
+Some of those documents, such as ASCII and PDF documents, PowerPoint presentations, etc., are completely \emph{unstructured}. We call these \emph{informal models}, as they are meant to explain something, but they have no inherent semantics.
+
+Other documents have top-level structure (chapters, sections, figures, tables, appendices, etc.) or some kind of built-in schema (e.g., spreadsheets, CSV files, source-code annotations or structured documentation such as Javadoc). We call these \emph{semi-formal models}, since the structure imposes relations among parts of the documents or described components.
+
+Both of these kinds of documents are often the most abstract specification of any system, thus must be the root of all traceability, especially with regard to the concepts in a system and its goals and requirements.
+
+\subsection{Domain Engineering Models}
+\label{domain-engineering-models}
+
+Domain engineering models are a modern, usable take on what often used to be called ontologies. These models describe concepts and their basic relationships. While their theoretical origins come from knowledge representation, their practical origins come from software engineering. Several researchers in the 90s noticed that it was, in part, hard to pin down the meaning of requirements because the foundational semantics of natural language requirements was informal. English is by its very nature informal, contradictory, vague, etc.
+
+The goal of domain engineering was to narrow down this imprecision and introduce some structure to what looked like English in such a way that a semantics could be imposed on requirements.\footnote{The Triptych dogma, put forward around that time, asserts that prior to designing and implementing a system we must understand its expectations and requirements; and \emph{before} we can prescribe those requirements, we must have a reasonable grasp of the domain, i.e., being able to describe it in a semi-formal manner.} Early models included Cunningham and Beck's CRC cards~\cite{JanotaEtAlCLOPSDSL2009}, Jezequel and Nerson's BON informal charts~\cite{NersonApplyingObjectoriented1992}, Jacobson's use cases, and more.
+
+The researcher that tremendously leaned into formalizing this approach was Prof.~Dines Björner, resulting in the book \emph{Domain Science and Engineering: A Foundation for Software Development}~\cite{BjornerDomainScience2021}. In the early days, Dines used the RAISE formal specification language~\cite{BjornerMostlyDines} in order to formalize concepts and their relationships, and others used sister formal methods like B, VDM, and Z, and other logics (e.g., Lamport's TLA+) or structured specification techniques (e.g., Parnas's tables).
+
+We have refined this idea using these and many other formal languages, such as Alloy, Coq/Rocq, Isabelle, Lean, and PVS, in order to specify mechanized domain engineering models. However, we already knew that formal models were a bridge too far for the vast majority of engineers. What we needed instead, or in addition, was a means by which to write a formal model that looks like English, but has a formal semantics. This is how the Lando specification language was born.
+
+Concurrent with our work, Prof.~Daniel Jackson developed a process and methodology that focuses on what he calls concepts, resulting in the book \emph{The Essence of Software: Why Concepts Matter for Great Design}~\cite{JacksonEssenceSoftware2021}. Concepts are at the root of our earlier work using BON: the word ``class'' in BON means ``classifier''---aka, a \emph{concept,} and thus has a broader scope than classes in a software design. Lando's \emph{components} \textbf{are} \emph{concepts}. Moreover, Lando provides means by which concepts can be structured and organized, by grouping them into hierarchies of subsystems. The kinds of relationships that Lando supports are containment, specialization, and client/use.
+
+\subsection{Requirements Engineering Models}
+\label{requirements-engineering-models}
+
+The vast majority of requirements are written in natural language and are mildly structured. They are just written as normal English sentences that use words like ``shall,'' ``must,'' ``can,'' and ``cannot.'' They are often captured in spreadsheets, SysML (version 1) models, or proprietary databases in tools like DOORS. Requirements are used as the key, crucial element at the root of traceability, particularly for assurance cases. Unfortunately, because the vast majority of requirements are just written in English, the only means by which to relate a requirement to a design, architecture, or assurance case is by using its \emph{name}, rather than its \emph{interpretation}---its semantics.
+
+Lando provides a way to write requirements. Requirements are clustered together into sets of related requirements---exactly as in the frameworks summarized above---and annotated using semantic properties in order to state standard metadata (e.g., purpose and rationale) and interrelationships (e.g., SysML requirements relations such as derivation, satisfaction, and verification).
+
+A subset of semi-formal requirements, those that can be formally expressed in various logics, are translated into formal requirements. Formal requirements are usually expressed in first order temporal logic, as doing so facilitates automatic analysis of critical meta-logical properties for requirements: namely consistency, completeness, and realizability. Raw logical specifications can be analyzed by various model checkers, such as SPIN, or using SMT solvers, such as Z3 or CVC. A more approachable alternative is to write requirements using tools like NASA's FRET and MIT's Alloy, and use those tools to reason about requirements as they automatically translate them into temporal logic and interface with automatic solvers. Yet another possibility is to build an abstract (data) model of the system and possibly cyber-physical domain, and use languages and frameworks for state-based or protocol-based behavioral modeling such as Z, VDM, (Event) B, CSP, F*, or Cryptol, depending on the application domain.
+
+Because of the interdependencies between requirements and domain engineering models (on the abstraction side of a refinement relationship) and DSL models (including architectures, on the concrete side), it is important to note that the consistency of domain engineering models and requirements models is critical. This alignment is what permits elegant rely-guarantee specifications of requirements with respect to their environments, inspired by the work of Michael Jackson and David Parnas. Without the ability to formalize that environment specification, it is impossible to specify the behavior of ``outermost'' components of a system (as they have no ``rely''), and therefore impossible to specify environmentally-derived preconditions and invariants, or any security properties (which are often ``negative'' properties, and thus are critically dependent on the specification of the environment).
+
+\subsection{Product Line Models}
+\label{product-line-models}
+
+Product line models are classically used to describe the features of a system and their interrelationships. In RDE, these are used not only in this ``classical'' fashion, but also to specify other kinds of structured sets of features such as formal adversary/threat models, infrastructure models, toolchain models, tradeoff models, and assurance cases.
+
+A \emph{feature} in a system comes in two forms, one static and one dynamic.
+
+A \emph{static} feature is a design or behavioral choice that is configurable when building a product. This is the ``classical'' use of feature models in product line engineering---what can the product line and its products do, what dependencies exist among its features, etc. Feature models are used to capture every variant in a product line that represents an opportunity to specify a decision in a tradeoff space (design decisions, resource utilization, tradeoffs between security and PPA, SWaP tradeoffs, etc.).
+
+The best practical example of this is the command-line switches for gcc. Think about how complex those switches are, what their inter-dependencies are, and how different builds of gcc (e.g., targeting different programming languages, ISAs, target platforms, ABIs, cross-compilation) provide different interfaces. Also bear in mind that the gcc compiler may need to detect any inconsistencies between options to produce a functional binary for the target system, and either resolve them or flag them to the user.
+
+Another primary example is the Linux kernel. Every build-time decision you make when using the Linux Kernel Configurator is literally enabling or disabling a feature in a feature model that is automatically lifted from the kernel source code. In 2019, the number of features of the Linux kernel exceeded 15,000, with an estimated number of 106000 configuration instances before applying constraints.
+
+A \emph{dynamic} feature is a uniquely identifiable behavior that is made available to a user via UI, UX, API, command line, REPL, etc. In a UI it is often concretized as a menu or button click that actuates a command or permits the user to make a choice. In a UX it is realized as a panel, view, workflow, etc. In an API it is a module or a subtype. In a command line it is a switch, and in a REPL, a command. Features often have interrelationships: dependencies, mutual exclusion, some form of similarity, etc. The CLOPS DSL and tool~\cite{JanotaEtAlCLOPSDSL2009} was designed exactly to represent command line arguments and argument processing as a dynamic feature model.
+
+Feature models do not differentiate between static and dynamic features, so combining them into a unified model is trivial. This is important because dynamic features exposed to a user are clearly dependent upon the static features built into a product.
+
+\subsection{Architecture Models}
+\label{architecture-models}
+
+Architecture models describe the coarse-grained or fine-grained shape of a system independent of its implementation details, such as choice of programming language, verification approach, etc.
+
+Basic architecture specifications describe the static shape of a system---its subsystems, components, their inter-relationships and dependencies, how data flows, where data is stored, how it looks like, etc.
+
+More advanced models also explain the basic dynamic behaviors of a system---use cases, sequences of events, state machine models, model-based contracts on component interfaces, etc., the variants that exist in the architecture when viewed as a product line, and the evidence and assurance case associated with the system.
+
+The most advanced models explain subtleties of mapping behavior and state to hardware (CPUs, busses, I/Os, etc.), define constraints on scheduling (e.g., for real time systems), specify security properties and details about secure information flows, and more.
+
+\subsection{Domain-Specific Models}
+\label{domain-specific-models}
+
+Domain-Specific Models (DSMs) are any models written in a Domain-Specific Language (DSL) that explain some concepts and their properties in a subdomain. Some of the languages already mentioned are DSLs, and thus are used to write DSMs: Cryptol for cryptographic algorithms, SysML for systems engineering models, etc. Those DSLs are a part of the core RDE toolbox.
+
+The miscellaneous DSLs that we occasionally use to complement these core choices focus on domains such as:
+
+\begin{itemize}
+
+    \item state machines (e.g., Asmeta~\cite{Asmeta}, State Charts~\cite{WelcomeWorld}, TLA+~\cite{LamportTLAHome}, and SAL~\cite{SymbolicAnalysis})
+    
+    \item cryptographic protocols (e.g., Tamarin~\cite{TamarinProver}, ProVerif~\cite{ProVerifCryptographic}, and F*~\cite{ProofOrientedProgramming})
+    
+    \item role-based access control (e.g., Cedar~\cite{AmazonWebServicesCedarPolicy})
+    
+    \item general logical theories (e.g., Coq/Roq~\cite{CoqProof}, Lean~\cite{LeanProgramming}, PVS~\cite{PrototypeVerification}, and Isabelle~\cite{Isabelle})
+    
+    \item languages used to describe reactive or control systems (e.g., SCADE~\cite{AnsysSCADE}, MATLAB~\cite{TheMathWorksInc.MATLAB}, Simulink~\cite{TheMathWorksInc.SimulinkSimulation}, and RoboStar~\cite{RoboStar})
+    
+    \item expressive Behavioral Interface Specification Languages (BISLs) (e.g., JML~\cite{OpenJML} and ACSL~\cite{ANSIISO})
+    
+    \item architecture or feature models (e.g., UML~\cite{UnifiedModeling} and Clafer~\cite{ClaferLightweight})
+
+\end{itemize}
+
+When a DSL is used to specify a domain-specific model of a system, this model must be in structural and behavioral conformance to all adjacent models.
+
+\section{Refinements}
+\label{refinements}
+
+All of the above high-level models relate to each other. In order to best ensure that artifacts are aligned with each other, a system's specification needs to be coherent and consistent, and each abstraction level must be aligned---either via a refinement or equivalence relation---with its adjacent or more concrete models.
+
+Preferably, these relationships between models should be automatically generated, checked, and/or abstracted. We have built many different tools that facilitate such automation. Unfortunately, sometimes those tools are not capable enough, or one wishes to have a manual process and methodology by which alignment is guaranteed. In order to do that, one needs a mental model of the relationships among these models. The following is an informal-but-careful characterization of these relationships.
+
+There are four main kinds of refinement used in RDE: \emph{type-logical}, \emph{operational}, \emph{data}, and \emph{action}. See lecture \#10, RDE Refinement, for much more information on refinement and its uses in RDE.
+
+This is the first place we have mentioned \emph{type refinement}. Type refinement, sometimes called \emph{datatype refinement}, or just \emph{data refinement} in the literature from the 1990s\footnote{There is a whole separate area of computer science focused on ``data refinement'' as a means by which to characterize structured and unstructured data, evolve databases, and reason about programs that involve non-traditional data values, such as probabilistic programs.  This is the more recent notion of data refinement, not to be confused with the original meaning of the term, coined by researchers like Morris~\cite{MorrisLawsData1989} and de Roever~\cite{RoeverEngelhardtDataRefinement2008}.}, is a means by which we can strategically relate types in two type systems to each other such that all properties that hold on the ``more abstract'' type system can be ``refined to'', and hold for, the ``more concrete'' type system, and every property in the ``more concrete'' type system that can be expressed in the ``more abstract'' type system can be ``lifted''. Data refinement ensures that for an outside observer/user, the concrete system behaves in a similar way to the abstract system, potentially only reducing deliberate nondeterminism in the abstraction (this is sometimes called ``implementor's choice'').
+
+\subsection{Natural Language and Domain Engineering Models}
+\label{natural-language-and-domain-engineering-models}
+
+Natural language descriptions use four key parts of speech that are encoded in domain engineering (conceptual) models: nouns, verbs, adjectives and adverbs. We do not encode ``background knowledge'' into a domain model, as the model is about a specific domain. Consider any concepts that are part of a nice standard library for a programming or specification language a part of this background knowledge, which is encoded as a background theory for a domain model: mathematical concepts like lists, sets, relations; foundations of physical reality such as mass, distance, energy, unit measures, etc.; foundations of practical reality (anything a middle school student would understand) such as color, materials, shapes, etc.
+
+In order to map these parts of speech to a domain model, we map nouns to concepts (components in Lando), collections of related nouns to collections of concepts (subsystems), and verbs, adjectives, and adverbs to functions, attributes, and constraints on components (component features---queries and commands---in Lando). Clausal forms (e.g., ``this citizen is 54 years old'') indicate relationships between a part of speech and a constraint, and thus should be expressible by a combination of multiple applications of a feature. Finally, propositions (e.g., ``all citizens are zero years old when they are born and their age increases by one every year on their birthday until they die'') map to constraints on concepts (constraints in Lando).
+
+The structural relationships embodied in a domain, or in a particular description of a domain such as what one might see in a concept of operations document (CONOPS) or an interface control document (ICD), are mapped to the corresponding relations in a domain model. The fundamental relations in any domain model are equivalence, containment (has-a), and subtyping (is-a).
+
+Using this mapping pattern, one can map any natural language or high-level description of a set of concepts (such as an ontology, an entity-relation diagram, a data model, etc.) to a domain engineering model.
+
+Domain engineering models are either semi-formal, as demonstrated in Lando, or formal, as they can be encoded in logic. When encoding a domain model in typed logic, nouns/concepts map to types and verbs, adjectives, and adverbs map to functions and predicates (constraints). Adverbs are more tricky.  They either map to second or higher order functions/relations (as they are function types applied to function types), or they force the addition of features that are then used in dependent type declarations/preconditions on adjacent features.  Verbs and adjectives map to normal first-order functions.
+
+% Find and use our code formatter style for Lando, Alloy, and PVS.t
+
+For example, consider the formal model of the aforementioned concept of a \emph{Citizen}.  Semi-formally in Lando, we might write the following specification.
+
+\begin{lstlisting}
+component Citizen
+  Person born or living in a country.
+  Name? Sex? Age? Single? Spouse? Children? Parents? Impediment to marriage?
+  Marry! Divorce! To get married you must be at least this age!
+  Each citizen has two parents.
+  At most one spouse allowed.
+  May not marry children or parents.
+  Spouse's spouse must be this person.
+  All children, if any, must have this person among their parents.
+\end{lstlisting}
+
+The feature ``To get married you must be at least this age!'' is an adverbial phrase; as it modifies the ``Marry!'' feature, it is only used in the precondition of its definition.
+
+A formal specification written in Alloy of this same concept, refined from this semi-formal specification, might look like the following.
+
+\begin{lstlisting}
+sig Citizen {
+    name: one String,
+    sex: one Sex,
+    age: one Int,
+    minMarriageAge: One Int,
+    spouse: lone Citizen,
+    children: set Citizen,
+    parents: set Citizen
+}
+
+enum Sex { Male, Female, Nonbinary }
+\end{lstlisting}
+
+This \texttt{Citizen} signature is accompanied by a set of facts that stipulate the invariants of the formal domain model, such as:
+
+\begin{lstlisting}
+fact ParentsMustBeTwo {
+    all c: Citizen | #c.parents = 2
+}
+
+fact AtMostOneSpouse {
+    all c: Citizen | lone c.spouse
+}
+
+fact NoMarryingParentsOrChildren {
+    all c: Citizen | c.spouse not in c.parents
+    all c: Citizen | c.spouse not in c.children
+}
+
+fact SpouseReciprocity {
+    all c: Citizen | c.spouse != none implies c.spouse.spouse = c
+}
+
+fact ChildrenHaveParents {
+    all c: Citizen | all ch: c.children | c in ch.parents
+}
+
+fact MarriageAgeConstraint {
+    all c: Citizen | c.spouse != none implies c.age >= c.minMarriageAge
+    all c: Citizen | c.spouse != none implies c.spouse.age >= c.spouse.minMarriageAge
+}
+
+pred Marry(c1, c2: Citizen) {
+    -- Preconditions:
+    no c1.spouse and no c2.spouse  -- Neither is already married
+    c1.age >= c1.minMarriageAge and c2.age >= c2.minMarriageAge  -- Age restriction
+    c1 !in c2.parents and c2 !in c1.parents  -- No parent-child marriage
+    c1 !in c2.children and c2 !in c1.children  -- No child-parent marriage
+
+    -- Postconditions:
+    c1.spouse' = c2 and c2.spouse' = c1  -- Mutual marriage assignment
+}
+
+pred Divorce(c: Citizen) {
+    -- Preconditions:
+    some c.spouse  -- Must be married to someone
+
+    -- Postconditions:
+    let s = c.spouse | {
+        c.spouse' = none
+        s.spouse' = none
+    }
+}
+
+pred Step {
+    some c1, c2: Citizen | Marry[c1, c2]
+    or
+    some c: Citizen | Divorce[c]
+}
+\end{lstlisting}
+
+Note that we cannot express the feature ``Marry!'' directly in the Alloy encoding, because the impact of \verb+minMarriageAge+ can only be expressed as a component of the fact \verb+MarriageAgeConstraint+ or the predicate \verb+Marry+, rather than directly on the type of the field \verb+spouse+.
+
+Encoding this formal domain model in PVS permits us to directly express the idea of a minimum marriage age as a part of the predicate used to define the ``Marry!'' function.
+
+\begin{lstlisting}
+citizen: THEORY
+BEGIN
+  CitizenID: TYPE = nat
+  NO_ID: CitizenID = 0
+  
+  Sex: TYPE = {male, female}
+
+  Citizen: TYPE = [#
+    name: string,
+    id: CitizenID,
+    sex: Sex,
+    age: nat,
+    spouse: CitizenID,
+    parents: set[CitizenID],
+    children: set[CitizenID]
+  #]
+
+  CitizenMap: TYPE = [# length: nat, map: [CitizenID -> Citizen] #]
+
+  minMarriageAge: [Citizen -> nat]
+
+  Marry?(id1, id2: CitizenID, cmap: CitizenMap): bool =
+    id1 <= cmap`length AND id2 <= cmap`length
+    AND LET c1 = cmap`map(id1), c2 = cmap`map(id2) IN
+      c1`spouse = NO_ID AND c2`spouse = NO_ID
+      AND c1`age >= minMarriageAge(c1)
+      AND c2`age >= minMarriageAge(c2)
+      AND NOT (member(id1, c1`parents) OR member(id2, c2`parents))
+      AND NOT (member(id1, c1`children) OR member(id2, c2`children))
+
+  Marry(c1, c2: Citizen, cmap: CitizenMap): CitizenMap =
+    cmap WITH [
+      (map)(c1`id)`spouse := c2`id,
+      (map)(c2`id)`spouse := c1`id
+    ]
+
+  Divorce?(c: Citizen, cmap: CitizenMap): bool =
+    c`id <= cmap`length AND c`spouse /= NO_ID
+
+  Divorce(c: Citizen, cmap: CitizenMap): CitizenMap =
+    cmap WITH [
+      (map)(c`spouse)`spouse := NO_ID,
+      (map)(c`id)`spouse := NO_ID
+    ]
+END citizen
+\end{lstlisting}
+
+When using an untyped logic, we use the types-as-sets interpretation. Logics that provide more than just type constructors and boolean operators, such as temporal logics and fuzzy logics, permit more expressive encoding of their domain-specific operators (e.g., time/causality or probability).
+
+We commonly use formal methods and tools that permit one to check the well-formedness and validity (including consistency, completeness, and inhabitation of types, and thus realizability) of a formal domain model. The tools that we use most often include Alloy, classical formal methods such as B, RAISE, VDM, and Z, and higher-order logics in logical frameworks, such as Coq/Rocq, Isabelle, Lean, and PVS.
+
+One means by which to translate semi-formal or controlled natural language into a formal representation is type-logical grammars. Type-logical grammars define a mapping from natural language grammars to a formal type system. We have built tools that automatically transform natural language specifications, such as features written in English, into types. These tools use the Grammatical Framework (GF), a type-logical grammar library developed by colleagues in Chalmers, Sweden. Type-logical grammars are an example of type-logical refinement, also known as structural refinement.
+
+\subsection{Domain Engineering and Product Line Models}
+\label{domain-engineering-and-product-line-models}
+
+A product line model typically combines a feature model with a product line architecture model. The feature model of a product line is often made up of several semi-orthogonal feature models all composed together into a single, large feature model.
+
+For example, we might define a \emph{development environment feature model} that includes \emph{all of the tool choices available to a developer to build a product line}. Three configurations of that development environment model might represent those tools necessary for CI, CD, and CV respectively. The \emph{build system of a product line} can also be described in a \emph{configuration feature model}---it describes all possible products that can be built from one particular collection of components. Clearly, the build depends upon which tools are available, and thus there is a set of relations between these two models. Those relations are expressed on the \emph{composition} of the development environment and configuration feature models. A complex product line will have up to a dozen or more different inter-related feature models.
+
+A feature model is a \emph{parametrization of all possible static and dynamic configurations of the product line}, and thus its architecture and its environment. Therefore, some of the \emph{features} in the feature model are \emph{parameters} of the architectural model. These are commonly referred to as \emph{variants} in both models. We will return to this relationship below.
+
+Clearly, every concept used in these example feature models is a part of the domain of the product line, and thus must be a part of the domain engineering model for the system. Some, like development tools, are ``background'' to the everyday developer and do not need rich domain model descriptions. Simply a name and a description is enough for all developers to be on the same page.
+
+Other features are quite rich, and they have interrelationships. In order to ensure refinement consistency between these richer features and a domain model, the following mappings must exist:
+
+\begin{itemize}
+
+    \item subsystems map to feature models
+    
+    \item components that are variants map to features
+    
+    \item queries of components map to features that have associated values
+    
+    \item domain model containment maps to feature model containment
+    
+    \item component subtyping maps to feature model subtyping
+    
+    \item component features that are variants or are statically or dynamically configurable map to feature attributes of their refined type
+    
+    \item component constraints expressed on variants are mapped to refined constraints on their feature models
+    
+    \item requirements that are statically expressible within a feature model are mapped to refined constraints on their feature models
+    
+    \item since events are state transitions, and map within the domain model to commands on components, and scenarios are sequences of events, they are both only mapped to features in a dynamic feature model, if one is used, such as a feature model for a command line interface
+
+\end{itemize}
+
+Note that the above mappings are expressed independent of the existence of a formal domain engineering model---they all apply to semi-formal and formal models. Moreover, they span all four kinds of refinement used in RDE. The first several refinements are type-logical refinements, as they have to do with structure; the next couple are data refinements, as they concretize data models; and the last few are either operational or action refinements, depending upon if they are about nondeterminism or dynamism.
+
+\subsection{Requirements Models and Domain Engineering Models}
+\label{requirements-models-and-domain-engineering-models}
+
+The original point of conceptual engineering models, the predecessor of domain engineering models, was to abstractly model the data and computation of a domain. After decades of attempts at translating informal requirements into test-centric artifacts, it was realized that the terms used in requirements needed a formal grounding. That is one of the purposes of evolving conceptual engineering models into semi-formal domain models.
+
+Requirements models are made up of requirements organized into a hierarchy, and gathered together into clusters of interrelated requirements. The terms used within requirements are what trace back to domain models.
+
+In short, every domain-specific noun, verb, adjective, and adverb used in a requirement must map to a domain engineering component or feature, or a scenario or an event. Requirements as they are refined to other models described below are always interpreted as propositions on terms, and the term language of these propositions is exactly the formal interpretation of the domain engineering model.
+
+\subsection{Requirements Models and Product Line Models}
+\label{requirements-models-and-product-line-models}
+
+Some requirements refer to features, or attributes of features, in product line models. Since both requirements and feature models (and their elements) map back to domain engineering model elements, they should already be in an equivalence relation. If they are not, they are not in a refinement.
+
+\subsection{Requirements Models and Architectural Models}
+\label{requirements-models-and-architectural-models}
+
+Still other requirements state predicates that the system or product line's architecture must fulfill. These have the same shape and nature as domain-specific models, but are concretized to architecture DSLs with which we have more familiarity (e.g., SysML and AADL models).
+
+Since low-level architecture models (in AADL) can express structure, high-level modes and state changes, data flows, behavioral properties, and security properties, many subtle requirements can only be expressed in such models, or in sister domain-specific models.
+
+High-level architecture models (in SysML version 1, for example) can express some of these properties: structure, very abstract state machines, behavioral traces, variants, and some basic ``built-in'' properties.
+
+Fundamentally, as discussed above, the mapping between requirements and other models always boils down to a mapping to properties/propositions. And again, these properties can be at the meta-model level, or at the model/object level.
+
+\subsection{Domain Engineering and Architectural Models}
+\label{domain-engineering-and-architectural-models}
+
+Given the other relations described above for domain engineering models, nothing should be surprising about the mapping between those models and architectural models.
+
+Every element of any architectural model must be a part of the domain engineering model, and their structures and relations must map as well so as to form a refinement.
+
+\subsection{Product Line and Architectural Models}
+\label{product-line-and-architectural-models}
+
+Finally, product lines and architectural models are related to each other by virtue of the fact that many static features and their attributes map to either (i) inclusion/removal of components and subsystems from an architecture, or (ii) instantiations of parametrized models. These instantiations include parametric diagram instantiations in SysML version 1 and component implementation instantiations in AADL. Also, the shape of various kinds of architectural models, such as state machines, may itself be affected by feature inclusion/selection. In this way, a product line model can serve as a blueprint for static and behavioral architectural models that include suitable variation points, giving rise to a \emph{family of architectures} emerging from a single product line model.
+
+\subsection{Domain-Specific Models and all Other Model Kinds}
+\label{domain-specific-models-and-all-other-model-kinds}
+
+Other requirements refer to domain-specific concepts and properties that a system must fulfill. Here, too, we must ensure that all concepts mentioned in a domain-specific model map back to the appropriate underlying abstract concepts in the domain model.
+
+Requirements map into domain-specific models either as (1) structural elements, (2) relations between structural elements, or (3) predicates on the model state and/or behavior. The fullness of the latter is entirely predicated on the expressiveness of the propositional logic in the domain-specific model.
+
+Many DSLs only permit the statement of propositional terms, and thus the only mappable requirements-interpreted-as-predicates are largely boolean or generalized quantifiers over value expressions. Some DSLs also permit the statement of first-order predicates, in which case one is able to state proper theorems about the model, quantified over values. A very few DSLs, mainly those found in HOL logical frameworks, permit the statement of second or higher-order predicates. In these systems, one can often even state metatheoretical theorems about the structure and relations of the model itself, but at the cost of little automation of model validity checking.
+
+\printbibliography[heading=bibintoc]
+
+\end{document}
+
