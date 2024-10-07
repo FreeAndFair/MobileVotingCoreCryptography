@@ -1,0 +1,254 @@
+system Tusk Philanthropies E2E-VIV Threat Model Sketch
+This document contains a high-level threat model for the Tusk Philanthropies E2E-VIV system. It identifies actors, threats, and impacts at a high level. More detailed formal methods-supported threat modeling, attack tree generation, and mitigation analysis will occur as necessary/appropriate in a later stage of the project.
+
+indexing
+author: Daniel M. Zimmerman <dmz@freeandfair.us>
+creation_date: 26 August 2024
+last_updated: 26 August 2024
+
+subsystem Security Analysis
+TODO: Write a subsystem description.
+
+contains
+
+subsystem Adversaries
+TODO: Write a subsystem description.
+
+contains
+
+component Adversary
+TODO: Write a component description.
+
+Are you threatening a single voter, the mobile/web applications generally, a server component, or the trustee system?
+Are you an individual, group, or nation-state adversary?
+What level of financial resources do you have?
+Do you have physical access to the target device?
+What duration of adversarial access and interactivity do you have?
+What, if any, subsystem(s) have you already compromised?
+
+// adversarial archetypes
+
+// key dimensions: single voter/mobile apps/server/trustee system,
+// individual/nation-state, physical access/no physical access
+// = 16 possibilities
+// note: targeting a single voter may mean targeting multiple mobile/
+// web apps with respect to that voter, e.g., causing a vote
+// modification and then making the verifier not report that vote
+// modification. if you can do it for a single voter, you can do it
+// for multiple voters via the same mechanism...
+
+component Adversarial Key Dimensions
+TODO: Write a component description.
+
+Is the adversary an individual?
+Is the adversary a nation-state?
+Is the adversary targeting a single voter?
+Is the adversary targeting the mobile/web applications generally?
+Is the adversary targeting a server component?
+Is the adversary targeting the trustee system?
+Does the adversary have physical access to their target?
+Each adversary archetype is exclusively either an individual or a nation-state.
+Each adversary archetype exclusively targets either a single voter, the mobile application generally, a server component, or the trustee system.
+
+// The adversarial archetypes identified below are meant to provide a
+// maximal cover of the adversarial space with the minimum number of
+// archetypes. Each is labeled to enumerate them.
+// There are ??? adversarial archetypes in the current model.
+
+// individual
+component Individual Adversary inherit Adversary
+TODO: Write a component description.
+
+component Adversarial Cloud Service Employee inherit Individual Adversary
+TODO: Write a component description.
+
+component Adversarial Election Official inherit Individual Adversary
+TODO: Write a component description.
+
+component Adversarial Trustee inherit Individual Adversary
+TODO: Write a component description.
+
+// nation-state
+component Nation-State Adversary inherit Adversary
+TODO: Write a component description.
+
+end
+
+subsystem Threats
+TODO: Write a subsystem description.
+
+contains
+
+component Threat
+TODO: Write a component description.
+
+component Decrypted/Printed Ballot Corruption inherit Threat
+TODO: Write a component description.
+
+component Denial of Service inherit Threat
+TODO: Write a component description.
+
+component Election Definition Compromise inherit Threat
+TODO: Write a component description.
+
+component End-to-End Verification Compromise inherit Threat
+TODO: Write a component description.
+
+component Trustee Key Compromise inherit Threat
+TODO: Write a component description.
+
+component Vote Confidentiality Compromise inherit Threat
+TODO: Write a component description.
+
+component Voter Authentication Compromise inherit Threat
+TODO: Write a component description.
+
+component Voter Coercion inherit Threat
+TODO: Write a component description.
+
+component Voter Intent Compromise inherit Threat
+TODO: Write a component description.
+
+end
+
+subsystem Attack Surfaces
+TODO: Write a subsystem description.
+
+contains
+
+component Attack Surface
+TODO: Write a component description.
+
+subsystem Mobile Application
+TODO: Write a subsystem description.
+
+contains
+
+component Mobile Device inherit Attack Surface
+TODO: Write a component description.
+
+component Distribution inherit Attack Surface
+TODO: Write a component description.
+
+end
+
+subsystem Application Server
+TODO: Write a subsystem description.
+
+subsystem Authentication Server
+TODO: Write a subsystem description.
+
+subsystem Affidavit Server
+TODO: Write a subsystem description.
+
+subsystem Digital Ballot Box
+TODO: Write a subsystem description.
+
+component Bulletin Board inherit Attack Surface
+TODO: Write a component description.
+
+subsystem Trustee System
+TODO: Write a subsystem description.
+
+component Trustee Keys inherit Attack Surface
+TODO: Write a component description.
+
+component Hardware inherit Attack Surface
+TODO: Write a component description.
+
+component Software inherit Attack Surface
+TODO: Write a component description.
+
+subsystem Cryptographic Protocol
+TODO: Write a subsystem description.
+
+component Cryptographic Algorithms inherit Attack Surface
+TODO: Write a component description.
+
+component Protocol Execution inherit Attack Surface
+TODO: Write a component description.
+
+end
+
+subsystem Effects
+TODO: Write a subsystem description.
+
+component Effect
+TODO: Write a component description.
+
+component Invalid Election inherit Effect
+TODO: Write a component description.
+
+component Corrupted Ballot inherit Effect
+TODO: Write a component description.
+
+component Adversarial Control inherit Effect
+TODO: Write a component description.
+
+subsystem Weaknesses
+TODO: Write a subsystem description.
+
+component Weakness
+TODO: Write a component description.
+
+component Cryptographic Weakness inherit Weakness
+TODO: Write a component description.
+
+component Protocol Implementation Weakness inherit Weakness
+TODO: Write a component description.
+
+component Cloud Service Weakness inherit Weakness
+TODO: Write a component description.
+
+component App Store Weakness inherit Weakness
+TODO: Write a component description.
+
+component App Implementation Weakness inherit Weakness
+TODO: Write a component description.
+
+component Mobile Platform Weakness inherit Weakness
+TODO: Write a component description.
+
+component Browser Weakness inherit Weakness
+TODO: Write a component description.
+
+component Hardware Weakness inherit Weakness
+TODO: Write a component description.
+
+subsystem Vulnerabilities
+TODO: Write a subsystem description.
+
+component Vulnerability
+TODO: Write a component description.
+
+component Off-the-Shelf Hardware Vulnerability inherit Vulnerability
+TODO: Write a component description.
+
+component Off-the-Shelf Software Vulnerability inherit Vulnerability
+TODO: Write a component description.
+
+subsystem Attacks
+TODO: Write a subsystem description.
+
+component Attack
+TODO: Write a component description.
+
+component Cryptographic Attack inherit Attack
+TODO: Write a component description.
+
+component Rubber Hose Attack inherit Attack
+TODO: Write a component description.
+
+component Side-Channel Attack inherit Attack
+TODO: Write a component description.
+
+component Supply Chain Attack inherit Attack
+TODO: Write a component description.
+
+component Distributed Denial of Service Attack inherit Attack
+TODO: Write a component description.
+
+component Malware-based Attack inherit Attack
+TODO: Write a component description.
+
+end

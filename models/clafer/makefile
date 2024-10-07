@@ -42,7 +42,8 @@ PLANTUML_CONFIG = $(PLANTUML_DIR)/plantuml_config.toml
 # Since we measure gate count in units of 100 GE, we expect the GE values to
 # exceed 1000. Using 4095 (11 bits) gives a little room upwards, assuming that
 # no admissible instance will have more than 400k GE.
-CLAFER_IG_OPTS = --maxint=4095
+# CLAFER_IG_OPTS = --maxint=4095 --scope 20 -n 10
+CLAFER_IG_OPTS = --maxint=4095 --scope 20
 
 # Utility variables for ANSI escape sequences (colors and fonts)
 BOLD    := \033[1m
@@ -140,6 +141,7 @@ remove_duplicates:
 	@echo
 
 # By default, we use the Chocosolver for instance generation.
+# instances: chocosolver_instances chocosolver_optimal extract_instances convert_to_json remove_duplicates
 instances: chocosolver_instances chocosolver_optimal extract_instances convert_to_json remove_duplicates
 
 # Creates a SysML diagram of the complete Clafer feature model.

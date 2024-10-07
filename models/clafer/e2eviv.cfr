@@ -1,7 +1,40 @@
-// ------------------------------------------------------
-// Clafer PLE Model for E2EVIV Crypto Project (Free&Fair)
-// ------------------------------------------------------
-// Author: Frank Zeyda (frank.zeyda@freeandfair.us)
+// ------------------------------------------------------------------
+// PLE Clafer Model for the E2E-VIV Crypto Project (2024 Free&Fair)
+// ------------------------------------------------------------------
+// File: e2eviv.clf (Clafer Model File)
+// Model Version: 0.1
+// Author(s): Frank Zeyda (frank.zeyda@freeandfair.us)
+// Reviewer(s): Daniel Zimmerman (dmz@freeandfair.us),
+//              Joe Kiniry (kiniry@freeandfair.us)
+// Last Modified: Nov 05, 2024 (Frank Zeyda)
+
+// ------------
+// Traceability
+// ------------
+
+// The content of this model is based on various informal documents:
+// ... [TODO]
+
+// -------------------
+// REVIEWED UNTIL HERE
+// -------------------
+
+// Based on Future of Voting report, E2E-VIV CONOPS, and E2E-VIV threat model.
+// - https://docs.google.com/document/d/1qQB5oXAc-CE0RGfoSCTVcHdLmTEMsdK7EYh4O97OzeM/
+//
+// Scope: The initial version of the Clafer PLE model:
+// - Firstly includes all requirements of the E2E-VIV
+// Crypto Lando requirements model, which can be found
+// here in the repository: https://github.com/FreeAndFair/TuskMobileVoting/tree/9e6741f1ff7bebeefc472204ecc3d0bffc91e621/specs/domain-model/lando/requirements
+// (Requirements were automatically lifted from Lando.
+// into Clafer, using a Python tool.)
+// - Secondly includes an encoding of (a preliminary
+// version of) the E2E-VIV threat model, per the shared
+// Google Document found at: https://docs.google.com/document/d/1qQB5oXAc-CE0RGfoSCTVcHdLmTEMsdK7EYh4O97OzeM/
+
+// -------------------
+// REVIEWED AFTER HERE
+// -------------------
 
 // ------------------
 // Requirements Model
@@ -11,17 +44,18 @@
 // @design zeyda Shall we include a reference for traceability to specs?
 // @design kiniry Consider also including `rationale`.
 // @design kiniry Remember that the core attributes of requirements in
-// the SysML meta-model are `derivation`, `satisfaction`, and `verification`. 
+// the SysML meta-model are `derivation`, `satisfaction`, and `verification`.
 // Consider how/if to add these attributes to our feature model.
 // @design kiniry If we do include ref in the end, its values should not
 // be arbitrary strings, but instead a parseable tuple of the form
-// `(<git-url>, <fully-resolved-name>)`.  Alternatively, we can just use
+// `(<git-url>, <fully-resolved-name>)`. Alternatively, we can just use
 // a URL and append the name using the `?` operator. This is the convention
 // we are adopting across the RDE RA.
 // @example kiniry Here is an example URL binder for this file, referring
 // to this abstract clafer itself.
-// @trace (https://github.com/FreeAndFair/TuskMobileVoting.git#2a4929d52d71b01283e91c76cfcf0739621f652c, Requirement)
-// @trace https://github.com/FreeAndFair/TuskMobileVoting.git#2a4929d52d71b01283e91c76cfcf0739621f652c?Requirement
+// @trace ("https://github.com/FreeAndFair/TuskMobileVoting.git#2a4929d52d71b01283e91c76cfcf0739621f652c", "Requirement")
+// @trace "https://github.com/FreeAndFair/TuskMobileVoting.git#2a4929d52d71b01283e91c76cfcf0739621f652c?Requirement"
+
 abstract Requirement
     label -> string
     name -> string
@@ -32,881 +66,1308 @@ abstract Requirement
 // the precise structure of the Lando Domain Engineering (DE) model.
 Requirements
     AccessibilityRequirements
-        AC1
+        AC1 : Requirement
             [label = "AC.1"]
             [name = "Mandatory Accessibility Testing"]
             [description = "Accessibility testing for disabled and abled voters shall be performed, and the reports of the testing made public. The system must achieve satisfactory accessibility testing results before being used in a binding election."]
-        AC2
+        AC2 : Requirement
             [label = "AC.2"]
             [name = "Universal Accessibility"]
             [description = "Measures shall be taken to ensure that the relevant software and services can be used by all voters and, if necessary, provide access to alternative ways of voting."]
-        AC3
+        AC3 : Requirement
             [label = "AC.3"]
             [name = "Accessibility Stakeholders"]
             [description = "Users shall be involved in the design of e-voting systems, particularly to identify constraints and test ease of use at each main stage of the development process."]
-        AC4
+        AC4 : Requirement
             [label = "AC.4"]
             [name = "User Facilities for Accessibility"]
             [description = "Users shall be supplied, whenever required and possible, with additional facilities, such as special interfaces or other equivalent resources, such as personal assistance."]
-        AC5
+        AC5 : Requirement
             [label = "AC.5"]
             [name = "Complement Accessibility Technologies"]
             [description = "Consideration shall be given, when developing new products, to their compatibility with existing ones, including those using technologies designed to help people with disabilities."]
-        AC6
+        AC6 : Requirement
             [label = "AC.6"]
             [name = "Accessible Voting Options"]
             [description = "The presentation of the voting options shall be optimized for the voter."]
     AssuranceRequirements
-        AS1
+        AS1 : Requirement
             [label = "AS.1"]
             [name = "Client Environments"]
             [description = "Client side software (applications, apps, scripts, etc.) should be free of known bugs on a wide range of platform and software stack combinations intended to be usable as voting terminals."]
-        AS2
+        AS2 : Requirement
             [label = "AS.2"]
             [name = "Authentication Resilience"]
             [description = "There must be no way to automate forging or invalidation of voter authentications without compromising the cryptographic protocols or secrets used in the system."]
-        AS3
+        AS3 : Requirement
             [label = "AS.3"]
             [name = "Open Documentation"]
             [description = "All aspects of the design, architecture, algorithms, and documentation for the entire Internet voting system (not just the E2EV core) should be published and available for free download by anyone."]
-        AS4
+        AS4 : Requirement
             [label = "AS.4"]
             [name = "Documentation Consistency"]
             [description = "As the system changes, all documentation must be kept up to date. No new version of an E2EV Internet voting system may be certified until all documentation is up to date."]
-        AS5
+        AS5 : Requirement
             [label = "AS.5"]
             [name = "Open Source"]
             [description = "The source code, build scripts, issue tracking system, security features, and related development information for the entire Internet voting system (all versions for all platforms) shall be made publicly available for free download and inspection by anyone."]
-        AS6
+        AS6 : Requirement
             [label = "AS.6"]
             [name = "Source License"]
             [description = "The source code for all parts of the E2EV Internet voting system shall be made publicly available under a license that permits anyone to download the code and build, instrument, and test it."]
     AuditingRequirements
-        AUD1
+        AUD1 : Requirement
             [label = "AUD.1"]
             [name = "Audit Systems"]
             [description = "The audit system shall be designed and implemented as part of the e-voting system. Audit facilities shall be present on different levels of the system: logical, technical, and application."]
-        AUD2
+        AUD2 : Requirement
             [label = "AUD.2"]
             [name = "Auditing Completeness"]
             [description = "End-to-end auditing of an e-voting system shall include recording, providing monitoring facilities, and providing verification facilities."]
-        AUD3
+        AUD3 : Requirement
             [label = "AUD.3"]
             [name = "Audit System Baseline"]
             [description = "The audit system shall be open and comprehensive, and actively report on potential issues and threats."]
-        AUD4
+        AUD4 : Requirement
             [label = "AUD.4"]
             [name = "Audit System Data"]
             [description = "The audit system shall record times, events, and actions, including: a. all voting-related information, including the number of eligible voters, the number of votes cast, the number of invalid votes, the counts and recounts, etc.; b. any attacks on the operation of the e-voting system and its communications infrastructure; c. system failures, malfunctions, and other threats to the system."]
-        AUD5
+        AUD5 : Requirement
             [label = "AUD.5"]
             [name = "Audit System Evidence"]
             [description = "The audit system shall provide the ability to oversee the election or referendum and to verify that the results and procedures are in accordance with the applicable legal provisions."]
-        AUD6
+        AUD6 : Requirement
             [label = "AUD.6"]
             [name = "Audit Data Security"]
             [description = "Disclosure of the audit information to unauthorized persons shall be prevented."]
-        AUD7
+        AUD7 : Requirement
             [label = "AUD.7"]
             [name = "Audit Data Secrecy"]
             [description = "The audit system shall maintain voter anonymity at all times."]
-        AUD8
+        AUD8 : Requirement
             [label = "AUD.8"]
             [name = "Audit System Capability"]
             [description = "The audit system shall provide the ability to cross-check and verify the correct operation of the e-voting system and the accuracy of the result, to detect voter fraud, and to prove that all counted votes are authentic and that all votes have been counted."]
-        AUD9
+        AUD9 : Requirement
             [label = "AUD.9"]
             [name = "Audit System for Legal Compliance"]
             [description = "The audit system shall provide the ability to verify that an e-election or e-referendum has complied with the applicable legal provisions."]
-        AUD10
+        AUD10 : Requirement
             [label = "AUD.10"]
             [name = "Audit Data Validity"]
             [description = "The audit system shall be protected against attacks that may corrupt, alter, or lose records in the audit system."]
-        AUD11
+        AUD11 : Requirement
             [label = "AUD.11"]
             [name = "Audit Data Confidentiality"]
             [description = "The electoral authority shall take adequate steps to ensure that the confidentiality of any information obtained by any person while carrying out auditing functions is guaranteed."]
-        AUD12
+        AUD12 : Requirement
             [label = "AUD.12"]
             [name = "Log Basics"]
             [description = "The Internet voting system should keep detailed logs of all relevant activity."]
-        AUD13
+        AUD13 : Requirement
             [label = "AUD.13"]
             [name = "Log Immutability"]
             [description = "Log entries must be unmodifiable once written."]
-        AUD14
+        AUD14 : Requirement
             [label = "AUD.14"]
             [name = "Log Commitment"]
             [description = "Log entries must accurately reflect the commitment character of elections and the relationships among election events (e.g., ballot, vote, voter, and election state transitions)."]
-        AUD15
+        AUD15 : Requirement
             [label = "AUD.15"]
             [name = "Log Data Completeness"]
             [description = "The log data should be as complete as possible, consistent with maximum possible vote privacy."]
-        AUD16
+        AUD16 : Requirement
             [label = "AUD.16"]
             [name = "Privacy vs Fraud Tradeoff"]
             [description = "If there is a tradeoff between vote privacy and the identification of the perpetrators of fraud, the decision should be made in favor of vote privacy."]
-        AUD17
+        AUD17 : Requirement
             [label = "AUD.17"]
             [name = "Voter List"]
             [description = "The list of voters who voted online should be published."]
     AuditingRequirementsVerification
-        AUDV1
+        AUDV1 : Requirement
             [label = "AUDV.1"]
             [name = "Verification Partial Failure"]
             [description = "The system, in the event that it does not verify the online votes cast, must be capable of giving an upper bound on the number of ballots that may have been affected."]
-        AUDV2
+        AUDV2 : Requirement
             [label = "AUDV.2"]
             [name = "Verification Source"]
             [description = "Official verification applications, like the voting software itself, must be published in source form along with documentation, build directions, and a standard cryptographic hash of the source code."]
     AuthenticationRequirements
-        AUTH1
+        AUTH1 : Requirement
             [label = "AUTH.1"]
             [name = "Voter Authentication"]
             [description = "The voting service must by itself securely authenticate the voter (verify the identity of the voter and verify his/her registration and/or eligibility according to law to vote in the election) before allowing him/her to cast a ballot (or modify or replace a previously cast ballot)."]
-        AUTH2
+        AUTH2 : Requirement
             [label = "AUTH.2"]
             [name = "No Third Party Authentication"]
             [description = "Authentication must not be done through third party intermediaries such as Facebook, iCloud, Google, Yahoo, Amazon, etc., that offer authentication services."]
-        AUTH3
+        AUTH3 : Requirement
             [label = "AUTH.3"]
             [name = "Secret Authentication Shared Secrets"]
             [description = "Authentication for remote voting systems must not use personal information, government or commercial account identifiers, etc."]
-        AUTH4
+        AUTH4 : Requirement
             [label = "AUTH.4"]
             [name = "Authentication Data Updates"]
             [description = "Authentication secrets must be changeable or revocable at any time at the behest of either the voter or election officials."]
-        AUTH5
+        AUTH5 : Requirement
             [label = "AUTH.5"]
             [name = "Authentication Data Refresh Periodicity"]
             [description = "All voter authentication secrets must be changed at least once in every election cycle."]
     CertificationFunctionalRequirements
-        CF1
+        CF1 : Requirement
             [label = "CF.1"]
             [name = "Automated Testing"]
             [description = "Each functional requirement must have an associated set of automated tests that provide evidence that the requirement is fulfilled."]
-        CF2
+        CF2 : Requirement
             [label = "CF.2"]
             [name = "Election Protocol Proofs"]
             [description = "The election protocol shall have associated formal proofs of correctness and security."]
     CertificationNonFunctionalRequirements
-        CNF1
+        CNF1 : Requirement
             [label = "CNF.1"]
             [name = "Certification Processes"]
             [description = "The electoral authority shall introduce certification processes that allow for any ICT (Information and Communication Technology) component to be tested and certified as being in conformity with technical requirements."]
-        CNF2
+        CNF2 : Requirement
             [label = "CNF.2"]
             [name = "Certification Parties Competence"]
             [description = "Any E2EV Internet voting system should be certified by competent professionals."]
-        CNF3
+        CNF3 : Requirement
             [label = "CNF.3"]
             [name = "Certification Report Transparency"]
             [description = "Any and all certification reports issued by certification professionals must be public, whether they recommend certification or not."]
-        CNF4
+        CNF4 : Requirement
             [label = "CNF.4"]
             [name = "Recertification Conditions"]
             [description = "Any time there is a change in the voting system client or server side or the E2EV system, all of the requirements must be re-established and recertified. Changes that mandate re-certification include, but are not limited to: new supported hardware platforms, OS's, browsers, etc.; bug fixes and security patches to voting client and/or server; changes or upgrades to voting client or server in response to detected bugs or security vulnerabilities, changes in law, or changes in threat environment."]
-        CNF5
+        CNF5 : Requirement
             [label = "CNF.5"]
             [name = "Recertification Periodicity"]
             [description = "The requirements must be re-established and recertified every election cycle even if there are no changes."]
-        CNF6
+        CNF6 : Requirement
             [label = "CNF.6"]
             [name = "Validation Platform Coverage"]
             [description = "The system must be extensively tested on a wide range of platform and software combinations."]
-        CNF7
+        CNF7 : Requirement
             [label = "CNF.7"]
             [name = "Public Validation Platform Coverage Results"]
             [description = "All test procedures and results for platform coverage must be public."]
     EvolvabilityRequirements
-        E1
+        E1 : Requirement
             [label = "E.1"]
             [name = "Electoral Authority Update"]
             [description = "The electoral authority has the right and ability to update election systems to conform to changes in applicable law, available technology, or the system threat model."]
     FunctionalRequirements
-        F1
+        F1 : Requirement
             [label = "F.1"]
             [name = "Casting Atomic"]
             [description = "Ballot casting shall be atomic with respect to server failures."]
-        F2
+        F2 : Requirement
             [label = "F.2"]
             [name = "Deterministic Voting Process"]
             [description = "If a server side failure occurs, no voter's balloting can be left in an unknown state."]
-        F3
+        F3 : Requirement
             [label = "F.3"]
             [name = "Ballot Final States"]
             [description = "Either a ballot is securely and completely cast and the voter is marked as having voted, or no ballot is recorded and the voter is not marked as having voted."]
-        F4
+        F4 : Requirement
             [label = "F.4"]
             [name = "Vote Record Monotonicity"]
             [description = "If the system and the law allows a voter to cast multiple votes with only the last one counting, or to cast a partial ballot with the option of modifying it later, then each voting session must be atomic with respect to server failures. If a failure occurs during the voter's last session, then the votes cast as of his or her previous session will count."]
-        F5
+        F5 : Requirement
             [label = "F.5"]
             [name = "Receipt Freedom"]
             [description = "There must be no way for voters to prove to another party any information regarding how they voted in any race (beyond what is mathematically deducible from the final distribution of votes)."]
-        F6
+        F6 : Requirement
             [label = "F.6"]
             [name = "Valid Ballot Provenance"]
             [description = "Once it is determined that a ballot will be counted, the ballot shall be irrevocably separated from the identification of the voter who cast it."]
-        F7
+        F7 : Requirement
             [label = "F.7"]
             [name = "Multi Ballot Record"]
             [description = "If the voting system permits voters to modify or replace their previously cast ballots, only the latest vote by each voter in each race shall be counted in the final tally."]
-        F8
+        F8 : Requirement
             [label = "F.8"]
             [name = "No Double Vote"]
             [description = "But for systems supporting Multi Ballot Record, the voting system shall not record more than one vote for any voter in any race."]
-        F9
+        F9 : Requirement
             [label = "F.9"]
             [name = "No Advertising"]
             [description = "The voting system client must not display or permit the display of any advertising or commercial logos in the window that contains the voting session, other than those of the election jurisdiction itself."]
-        F10
+        F10 : Requirement
             [label = "F.10"]
             [name = "No External Links"]
             [description = "The voting system client must not display any links to other sites except for help in the mechanics of voting."]
     InteroperabilityRequirements
-        I1
+        I1 : Requirement
             [label = "I.1"]
             [name = "Open Standards"]
             [description = "Open standards shall be used to ensure that the various technical components or services of an e-voting system, possibly derived from a variety of sources, interoperate."]
-        I2
+        I2 : Requirement
             [label = "I.2"]
             [name = "EML"]
             [description = "The Election Markup Language (EML) shall be used whenever possible for e-election and e-referendum applications."]
-        I3
+        I3 : Requirement
             [label = "I.3"]
             [name = "Data Localization"]
             [description = "In cases that imply specific election or referendum data requirements, a localization procedure shall be used to accommodate these needs."]
-        I4
+        I4 : Requirement
             [label = "I.4"]
             [name = "Open Log Formats"]
             [description = "The log data and documentation of its meaning and format shall be available for public download so that anyone can download, inspect, and publish concerns based on the logs."]
     LegalRequirements
-        L1
+        L1 : Requirement
             [label = "L.1"]
             [name = "Usable UI"]
             [description = "The voter interface of an e-voting system shall be understandable and easily usable."]
-        L2
+        L2 : Requirement
             [label = "L.2"]
             [name = "Unimpeded Registration"]
             [description = "Possible registration requirements for e-voting shall not pose an impediment to the voter participating in e-voting."]
-        L3
+        L3 : Requirement
             [label = "L.3"]
             [name = "Maximize Disabled Accessibility"]
             [description = "E-voting systems shall be designed, as far as it is practicable, to maximize the opportunities that such systems can provide for persons with disabilities."]
-        L4
+        L4 : Requirement
             [label = "L.4"]
             [name = "Remote Only Supplementary"]
             [description = "Unless channels of remote e-voting are universally accessible, they shall be only an additional and optional means of voting."]
-        L5
+        L5 : Requirement
             [label = "L.5"]
             [name = "At Most One Vote Per Voter"]
             [description = "The e-voting system shall ensure that at most one electronic vote from each voter is included in the final tally."]
-        L6
+        L6 : Requirement
             [label = "L.6"]
             [name = "Valid Tally"]
             [description = "Every vote deposited in an electronic ballot box shall be counted, and each vote cast in the election or referendum shall be counted only once."]
-        L7
+        L7 : Requirement
             [label = "L.7"]
             [name = "Vote Aggregation"]
             [description = "Where electronic and non-electronic voting channels are used in the same election or referendum, there shall be a secure and reliable method to aggregate all votes and to calculate the correct result."]
-        L8
+        L8 : Requirement
             [label = "L.8"]
             [name = "Free Suffrage"]
             [description = "The organization of e-voting shall secure the free formation and expression of the voter's opinion and, where required, the personal exercise of the right to vote."]
-        L9
+        L9 : Requirement
             [label = "L.9"]
             [name = "Reflective Voting Process"]
             [description = "The way in which voters are guided through the e-voting process shall be such as to prevent their voting precipitately or without reflection."]
-        L10
+        L10 : Requirement
             [label = "L.10"]
             [name = "Flexible Voting Process"]
             [description = "Voters shall be able to alter their choice at any point in the e-voting process before casting their vote, or to break off the procedure, without their previous choices being recorded or made available to any other person."]
-        L11
+        L11 : Requirement
             [label = "L.11"]
             [name = "No Voter Manipulation"]
             [description = "The e-voting system shall not permit any manipulative influence to be exercised over the voter during the voting."]
-        L12
+        L12 : Requirement
             [label = "L.12"]
             [name = "Blank Vote"]
             [description = "The e-voting system shall provide the voter with a means of participating in an election or referendum without the voter exercising a preference for any of the voting options, for example, by casting a blank vote."]
-        L13
+        L13 : Requirement
             [label = "L.13"]
             [name = "Conclusion of Voting Process"]
             [description = "The e-voting system shall indicate clearly to the voter when the vote has been cast successfully and when the whole voting procedure has been completed."]
-        L14
+        L14 : Requirement
             [label = "L.14"]
             [name = "Immutable Votes"]
             [description = "Except in systems supporting Multi Ballot Record, the e-voting system shall prevent the changing of a vote once that vote has been cast."]
-        L15
+        L15 : Requirement
             [label = "L.15"]
             [name = "Secret Suffrage"]
             [description = "E-voting shall be organized in such a way as to exclude at any stage of the voting procedure and, in particular, at voter authentication, anything that would endanger the secrecy of the vote."]
-        L16
+        L16 : Requirement
             [label = "L.16"]
             [name = "Anonymous Votes"]
             [description = "The e-voting system shall guarantee that votes in the electronic ballot box and votes being counted are, and will remain, anonymous, and that it is not possible to reconstruct a link between the vote and the voter."]
-        L17
+        L17 : Requirement
             [label = "L.17"]
             [name = "No Indirect Secrecy Violation"]
             [description = "The e-voting system shall be so designed that the expected number of votes in any electronic ballot box will not allow the result to be linked to individual voters."]
-        L18
+        L18 : Requirement
             [label = "L.18"]
             [name = "No Secret Suffrage Side Channel"]
             [description = "Measures shall be taken to ensure that the information needed during electronic processing cannot be used to breach the secrecy of the vote."]
-        L19
+        L19 : Requirement
             [label = "L.19"]
             [name = "No NDAs for Study"]
             [description = "No nondisclosure agreement or any other contract shall be required to download and study the Internet voting system."]
-        L20
+        L20 : Requirement
             [label = "L.20"]
             [name = "No NDAs for Audit"]
             [description = "No nondisclosure agreement or any other contract shall be required to download, instrument, build, test, and publish test results for an E2EV Internet voting system."]
     MaintenanceRequirements
-        M1
+        M1 : Requirement
             [label = "M.1"]
             [name = "Electoral Authority Patch"]
             [description = "The electoral authority has the right and ability to patch election systems to correct flaws discovered in the algorithms, implementation, or deployment."]
     OperationalRequirements
-        O1
+        O1 : Requirement
             [label = "O.1"]
             [name = "Election Timetables"]
             [description = "Domestic legal provisions governing an e-election or e-referendum shall provide for clear timetables concerning all stages of the election or referendum, both before and after the election or referendum."]
-        O2
+        O2 : Requirement
             [label = "O.2"]
             [name = "Election Period"]
             [description = "The period in which an electronic vote can be cast shall not begin before the notification of an election or a referendum. Particularly with regard to remote e-voting, the period shall be defined and made known to the public well in advance of the start of voting."]
-        O3
+        O3 : Requirement
             [label = "O.3"]
             [name = "Evoting Outreach"]
             [description = "The voters shall be informed, well in advance of the start of voting, in clear and simple language, of the way in which the e-voting will be organised, and any steps a voter may have to take in order to participate and vote."]
-        O4
+        O4 : Requirement
             [label = "O.4"]
             [name = "Voter Verifiable Voter Register"]
             [description = "There shall be a voters' register that is regularly updated. The voter shall be able to check, as a minimum, the information that is held about him/her on the register, and request corrections."]
-        O5
+        O5 : Requirement
             [label = "O.5"]
             [name = "Online Voter Register"]
             [description = "The possibility of creating an electronic register and introducing a mechanism allowing online application for voter registration and, if applicable, for application to use e-voting, shall be considered. If participation in e-voting requires a separate application by the voter and/or additional steps, an electronic, and, where possible, interactive procedure shall be considered."]
-        O6
+        O6 : Requirement
             [label = "O.6"]
             [name = "Voter Registration Election Overlap"]
             [description = "In cases where there is an overlap between the period for voter registration and the voting period, provision for appropriate voter authentication shall be made."]
-        O7
+        O7 : Requirement
             [label = "O.7"]
             [name = "Online Candidate Nomination"]
             [description = "The possibility of introducing online candidate nomination may be considered."]
-        O8
+        O8 : Requirement
             [label = "O.8"]
             [name = "Public Candidate List"]
             [description = "A list of candidates that is generated and made available electronically shall also be publicly available by other means."]
-        O9
+        O9 : Requirement
             [label = "O.9"]
             [name = "Multiple Channels One Vote"]
             [description = "Where remote e-voting takes place while polling stations are open, the system shall be so designed that it prevents any voter from voting more than once."]
-        O10
+        O10 : Requirement
             [label = "O.10"]
             [name = "Voting Period Invariant"]
             [description = "Remote e-voting may start and/or end at an earlier time than the opening of any polling station. Remote e-voting shall not continue after the end of the voting period at polling stations."]
-        O11
+        O11 : Requirement
             [label = "O.11"]
             [name = "Universal Voter Help"]
             [description = "For every e-voting channel, support and guidance arrangements on voting procedures shall be set up for, and be available to, the voter. In the case of remote e-voting, such arrangements shall also be available through a different, widely available communication channel."]
-        O12
+        O12 : Requirement
             [label = "O.12"]
             [name = "Fair Voting Options"]
             [description = "There shall be equality in the manner of presentation of all voting options on the device used for casting an electronic vote."]
-        O13
+        O13 : Requirement
             [label = "O.13"]
             [name = "Voting Options Only"]
             [description = "The electronic ballot by which an electronic vote is cast shall be free from any information about voting options other than that strictly required for casting the vote. The e-voting system shall avoid the display of other messages that may influence the voters' choice."]
-        O14
+        O14 : Requirement
             [label = "O.14"]
             [name = "Fair Voting Option Information"]
             [description = "If it is decided that information about voting options will be accessible from the e-voting site, this information shall be presented with equality."]
-        O15
+        O15 : Requirement
             [label = "O.15"]
             [name = "Binding Election Clarity"]
             [description = "Before casting a vote using a remote e-voting system, voters' attention shall be explicitly drawn to the fact that the e-election or e-referendum in which they are submitting their decision by electronic means is a real election or referendum. In case of tests, participants shall have their attention drawn explicitly to the fact that they are not participating in a real election or referendum and shall, when tests are continued at election times, at the same time be invited to cast their ballot by the voting channel(s) available for that purpose."]
-        O16
+        O16 : Requirement
             [label = "O.16"]
             [name = "Remote Receipt Freedom"]
             [description = "A remote e-voting system shall not enable the voter to be in possession of a proof of the content of the vote cast."]
-        O17
+        O17 : Requirement
             [label = "O.17"]
             [name = "Supervised Vote Receipt Freedom"]
             [description = "In a supervised environment, the information on the vote shall disappear from the visual, audio, or tactile display used by the voter to cast the vote as soon as it has been cast. Where a paper proof of the electronic vote is provided to the voter at a polling station, the voter shall not be able to show it to any other person, or take this proof outside of the polling station."]
-        O18
+        O18 : Requirement
             [label = "O.18"]
             [name = "Secret Intermediate Tally"]
             [description = "The e-voting system shall not allow the disclosure of the number of votes cast for any voting option until after the closure of the electronic ballot box. This information shall not be disclosed to the public until after the end of the voting period."]
-        O19
+        O19 : Requirement
             [label = "O.19"]
             [name = "No Italian Attack"]
             [description = "The e-voting system shall prevent processing information on votes cast within deliberately chosen sub-units that could reveal individual voters' choices."]
-        O20
+        O20 : Requirement
             [label = "O.20"]
             [name = "Decoding Latency"]
             [description = "Any decoding required for the counting of the votes shall be carried out as soon as practicable after the closure of the voting period."]
-        O21
+        O21 : Requirement
             [label = "O.21"]
             [name = "Tally Observation"]
             [description = "When counting the votes, representatives of the competent electoral authority shall be able to participate in, and any observers able to observe, the count."]
-        O22
+        O22 : Requirement
             [label = "O.22"]
             [name = "Tally Record"]
             [description = "A record of the counting process of the electronic votes shall be kept, including information about the start and end of, and the persons involved in, the count."]
-        O23
+        O23 : Requirement
             [label = "O.23"]
             [name = "Integrity Violation Record"]
             [description = "In the event of any irregularity affecting the integrity of votes, the affected votes shall be recorded as having their integrity violated."]
-        O24
+        O24 : Requirement
             [label = "O.24"]
             [name = "System Auditability"]
             [description = "The e-voting system shall be auditable."]
-        O25
+        O25 : Requirement
             [label = "O.25"]
             [name = "System Audits Impact"]
             [description = "The conclusions drawn from the audit process shall be applied in future elections and referenda."]
-        O26
+        O26 : Requirement
             [label = "O.26"]
             [name = "Open System"]
             [description = "The e-voting system must function correctly as an open system, where large parts (the mix of client hardware and software in fact) are unknown, unsecured, uncertified, and completely out of control of election officials."]
-        O27
+        O27 : Requirement
             [label = "O.27"]
             [name = "Supported Clients"]
             [description = "Operators of voting systems must document exactly what client configurations are required or supported, including: - versions of hardware platforms (PCs, mobile devices, etc.) - versions of specific operating systems for those platforms - versions of specific browsers, plugins, protocols, or other software applications, apps, components, and plugins."]
-        O28
+        O28 : Requirement
             [label = "O.28"]
             [name = "Client Interference"]
             [description = "Operators of voting systems must document exactly which common components, plugins, or other software interfere with voting (e.g., flash blockers, popup blockers, script blockers, etc.)."]
-        O29
+        O29 : Requirement
             [label = "O.29"]
             [name = "Mandatory Client Technology"]
             [description = "Operators of voting systems must document exactly what configuration choices the voter must make to successfully vote (e.g., mandate JavaScript)."]
-        O30
+        O30 : Requirement
             [label = "O.30"]
             [name = "Privacy Enhancing Voter Options"]
             [description = "Operators of voting systems must document exactly what configuration choices the voter might wish to make to more strongly protect his/her vote privacy; e.g., disable cookies, run privacy-protecting browser plugins, vote from a virtual machine that is later destroyed, log out of social networks, disable remote control and remote administration tools, disable incoming connections, etc."]
-        O31
+        O31 : Requirement
             [label = "O.31"]
             [name = "Breadcrumbs User Advice"]
             [description = "Users may be advised to turn off browser history data, cookies, logging data, and other tools that might retain a record of the vote transaction, whether the vote data itself or metadata."]
     ProceduralRequirements
-        P1
+        P1 : Requirement
             [label = "P.1"]
             [name = "Voter Comprehension and Confidence"]
             [description = "The electoral authority shall take steps to ensure that voters understand and have confidence in the e-voting system in use."]
-        P2
+        P2 : Requirement
             [label = "P.2"]
             [name = "Public System Function"]
             [description = "Information on the functioning of an e-voting system shall be made publicly available."]
-        P3
+        P3 : Requirement
             [label = "P.3"]
             [name = "Voter Practice"]
             [description = "Voters shall be provided with an opportunity to practice any new method of e-voting before, and separately from, the moment of casting an electronic vote."]
-        P4
+        P4 : Requirement
             [label = "P.4"]
             [name = "Observer Invariants"]
             [description = "Any observers, to the extent permitted by law, shall be able to be present to observe and comment on the e-elections, including the establishing of the results."]
-        P5
+        P5 : Requirement
             [label = "P.5"]
             [name = "Disclosure Obligations"]
             [description = "The components of the e-voting system shall be disclosed, at least to the competent electoral authorities, as required for verification and certification purposes."]
-        P6
+        P6 : Requirement
             [label = "P.6"]
             [name = "Certification Obligations"]
             [description = "Before any e-voting system is introduced, and at appropriate intervals thereafter, and in particular after any changes are made to the system, an independent body, appointed by the electoral authorities, shall verify that the e-voting system is working correctly and that all the necessary security measures have been taken."]
-        P7
+        P7 : Requirement
             [label = "P.7"]
             [name = "Recount Supported"]
             [description = "There shall be the possibility for a recount. Other features of the e-voting system that may influence the correctness of the results shall be verifiable."]
-        P8
+        P8 : Requirement
             [label = "P.8"]
             [name = "Rerun Supported"]
             [description = "The e-voting system shall not prevent the partial or complete re-run of an election or a referendum."]
-        P9
+        P9 : Requirement
             [label = "P.9"]
             [name = "Reliability and Security"]
             [description = "The electoral authority shall ensure the reliability and security of the e-voting system."]
-        P10
+        P10 : Requirement
             [label = "P.10"]
             [name = "No Fraud or Intervention"]
             [description = "All possible steps shall be taken to avoid the possibility of fraud or unauthorized intervention affecting the system during the whole voting process."]
-        P11
+        P11 : Requirement
             [label = "P.11"]
             [name = "System Availability"]
             [description = "The e-voting system shall contain measures to preserve the availability of its services during the e-voting process. It shall resist, in particular, malfunction, breakdowns, or denial of service attacks."]
-        P12
+        P12 : Requirement
             [label = "P.12"]
             [name = "System Genuine and Correct"]
             [description = "Before any e-election or e-referendum takes place, the competent electoral authority shall satisfy itself that the e-voting system is genuine and operates correctly."]
-        P13
+        P13 : Requirement
             [label = "P.13"]
             [name = "System and Data Access Control"]
             [description = "Only persons appointed by the electoral authority shall have access to the central infrastructure, the servers, and the election data. There shall be clear rules established for such appointments. Critical technical activities shall be carried out by teams of at least two people. The composition of the teams shall be regularly changed. As far as possible, such activities shall be carried out outside election periods."]
-        P14
+        P14 : Requirement
             [label = "P.14"]
             [name = "Open Ballot Box Invariants"]
             [description = "While an electronic ballot box is open, any authorized intervention affecting the system shall be carried out by teams of at least two people, be the subject of a report, and be monitored by representatives of the competent electoral authority and any election observers."]
-        P15
+        P15 : Requirement
             [label = "P.15"]
             [name = "Votes Invariants"]
             [description = "The e-voting system shall maintain the availability and integrity of the votes. It shall also maintain the confidentiality of the votes and keep them sealed until the counting process. If stored or communicated outside controlled environments, the votes shall be encrypted."]
-        P16
+        P16 : Requirement
             [label = "P.16"]
             [name = "Sealed Votes Voter Relation"]
             [description = "Votes and voter information shall remain sealed as long as the data is held in a manner where they can be associated. Authentication information shall be separated from the voter's decision at a predefined stage in the e-election or e-referendum."]
-        P17
+        P17 : Requirement
             [label = "P.17"]
             [name = "Verification Failure Procedures"]
             [description = "There must be clear technical and legal procedures for how to proceed in the event that voters can prove that their votes were not received accurately or counted, or if the official election verification application does not verify that the Internet part of the election was correct."]
     ReliabilityRequirements
-        R1
+        R1 : Requirement
             [label = "R.1"]
             [name = "General MTBF"]
             [description = "The entire voting service (server side) must have a proven MTBF of >168 hours (1 week) under peak expected voting loads the entire time."]
-        R2
+        R2 : Requirement
             [label = "R.2"]
             [name = "Live Election MTBF"]
             [description = "MTBF validation must be demonstrated in multiple tests of actual mock elections."]
-        R3
+        R3 : Requirement
             [label = "R.3"]
             [name = "MTBF Contra DDoS"]
             [description = "MTBF requirements apply only during normal peak operation, not during attacks (e.g., DDoS)."]
-        R4
+        R4 : Requirement
             [label = "R.4"]
             [name = "System Recovery Time"]
             [description = "If service goes down for any reason other than regional natural disaster or malicious attack, service must be restored in no more than 10 minutes."]
-        R5
+        R5 : Requirement
             [label = "R.5"]
             [name = "Uptime"]
             [description = "The system must have three nines (99.9%) uptime."]
-        R6
+        R6 : Requirement
             [label = "R.6"]
             [name = "Failure Validation"]
             [description = "Uptime must be demonstrated by failures in actual mock election situations, e.g., tested by sudden loss of power to any server."]
-        R7
+        R7 : Requirement
             [label = "R.7"]
             [name = "Mirrored Failover Service"]
             [description = "The system must have a warm spare in a second data center that can take over in case of major failure."]
-        R8
+        R8 : Requirement
             [label = "R.8"]
             [name = "Failover Staffing"]
             [description = "The system must be staffed at all times to guarantee the 10-minute recovery time."]
-        R9
+        R9 : Requirement
             [label = "R.9"]
             [name = "Operation Under DDoS"]
             [description = "In a federal election, the voting system must remain available even during a large distributed denial of service attack. It must be able to continue correct operation during a sustained DDoS attack on any combination of server-side IP addresses (whether at the primary server data center or its ISP) at a total level of 100 Gb/s with no more than 15 seconds degradation of response time to voters during the attack."]
-        R10
+        R10 : Requirement
             [label = "R.10"]
             [name = "DDoS Refresh Periodicity"]
             [description = "The DDoS threshold (initially 100 Gb/s) should be evaluated every election cycle to see if it has to be raised due to newer DDoS attack technologies."]
-        R11
+        R11 : Requirement
             [label = "R.11"]
             [name = "DDoS Attack Validation"]
             [description = "The ability to survive a DDoS attack must be actually demonstrated in the actual network configuration to be used prior to each federal election."]
-        R12
+        R12 : Requirement
             [label = "R.12"]
             [name = "DDoS Local Election"]
             [description = "Reduced DDoS defense requirements might be acceptable for non-federal elections."]
     SecurityRequirements
-        S1
+        S1 : Requirement
             [label = "S.1"]
             [name = "No Data Loss"]
             [description = "Technical and organizational measures shall be taken to ensure that no data will be permanently lost in the event of a breakdown or a fault affecting the e-voting system."]
-        S2
+        S2 : Requirement
             [label = "S.2"]
             [name = "Voter Privacy Invariants"]
             [description = "The e-voting system shall maintain the privacy of individuals. Confidentiality of voters' registers stored in or communicated by the e-voting system shall be maintained."]
-        S3
+        S3 : Requirement
             [label = "S.3"]
             [name = "System Self-Checks"]
             [description = "The e-voting system shall perform regular checks to ensure that its components operate in accordance with its technical specifications and that its services are available."]
-        S4
+        S4 : Requirement
             [label = "S.4"]
             [name = "System Access Control"]
             [description = "The e-voting system shall restrict access to its services, depending on the user identity or the user role, to those services explicitly assigned to this user or role. User authentication shall be effective before any action can be carried out."]
-        S5
+        S5 : Requirement
             [label = "S.5"]
             [name = "Data Protection"]
             [description = "The e-voting system shall protect authentication data so that unauthorized entities cannot misuse, intercept, modify, or otherwise gain knowledge of any of this data. In uncontrolled environments, authentication based on cryptographic mechanisms is advisable."]
-        S6
+        S6 : Requirement
             [label = "S.6"]
             [name = "Unique Identification"]
             [description = "Identification of voters and candidates in a way that they can unmistakably be distinguished from other persons (unique identification) shall be ensured."]
-        S7
+        S7 : Requirement
             [label = "S.7"]
             [name = "Observation Data"]
             [description = "E-voting systems shall generate reliable and sufficiently detailed observation data so that election observation can be carried out. The time at which an event generated observation data shall be reliably determinable. The authenticity, availability, and integrity of the data shall be maintained."]
-        S8
+        S8 : Requirement
             [label = "S.8"]
             [name = "Time Synchronization"]
             [description = "The e-voting system shall maintain reliable synchronized time sources. The accuracy of the time sources shall be sufficient to maintain time marks for audit trails and observation data, as well as for maintaining the time limits for registration, nomination, voting, or counting."]
-        S9
+        S9 : Requirement
             [label = "S.9"]
             [name = "Security Compliance Responsibility"]
             [description = "The electoral authority has overall responsibility for compliance with these security requirements, and such compliance shall be assessed by independent bodies."]
-        S10
+        S10 : Requirement
             [label = "S.10"]
             [name = "Lists Invariants"]
             [description = "The authenticity, availability, and integrity of the voters' registers and lists of candidates shall be maintained. The source of the data shall be authenticated. Provisions on data protection shall be respected."]
-        S11
+        S11 : Requirement
             [label = "S.11"]
             [name = "Candidate Process Time Provenance"]
             [description = "The fact that candidate nomination and, if required, the decision of the candidate and/or the electoral authority to accept a nomination has happened within the prescribed time limits shall be ascertainable."]
-        S12
+        S12 : Requirement
             [label = "S.12"]
             [name = "Voter Process Time Provenance"]
             [description = "The fact that voter registration has happened within the prescribed time limits shall be ascertainable."]
-        S13
+        S13 : Requirement
             [label = "S.13"]
             [name = "Election Data Integrity Invariants"]
             [description = "The integrity of data communicated from the pre-voting stage (e.g., voters' registers and lists of candidates) shall be maintained. Data-origin authentication shall be carried out."]
-        S14
+        S14 : Requirement
             [label = "S.14"]
             [name = "Ballot Authenticity Invariants"]
             [description = "It shall be ensured that the e-voting system presents an authentic ballot to the voter. In the case of remote e-voting, the voter shall be informed about the means to verify that a connection to the official server has been established and that the authentic ballot has been presented."]
-        S15
+        S15 : Requirement
             [label = "S.15"]
             [name = "Cast Vote Time Provenance"]
             [description = "The fact that a vote has been cast within the prescribed time limits shall be ascertainable."]
-        S16
+        S16 : Requirement
             [label = "S.16"]
             [name = "Controlled Systems and Vote Integrity"]
             [description = "Election equipment under the control of the electoral authority shall be protected against influence that could modify the vote."]
-        S17
+        S17 : Requirement
             [label = "S.17"]
             [name = "Uncontrolled Systems and Vote Integrity"]
             [description = "The integrity of the vote must not depend on the security of election equipment not under the control of the electoral authority."]
-        S18
+        S18 : Requirement
             [label = "S.18"]
             [name = "No Breadcrumbs"]
             [description = "Residual information holding the voter's decision or the display of the voter's choice shall be destroyed after the vote has been cast. In the case of remote e-voting, the voter shall be provided with information on how to delete, where that is possible, traces of the vote from the device used to cast the vote."]
-        S19
+        S19 : Requirement
             [label = "S.19"]
             [name = "Eligibility Implies Vote Voter Invariants"]
             [description = "The e-voting system shall at first ensure that a user who tries to vote is eligible to vote. The e-voting system shall authenticate the voter and shall ensure that only the appropriate number of votes per voter is cast and stored in the electronic ballot box."]
-        S20
+        S20 : Requirement
             [label = "S.20"]
             [name = "Vote Choice Invariants"]
             [description = "The e-voting system shall ensure that the voter's choice is accurately represented in the vote and that the sealed vote enters the electronic ballot box."]
-        S21
+        S21 : Requirement
             [label = "S.21"]
             [name = "End of Vote Period Invariants"]
             [description = "After the end of the e-voting period, no voter shall be allowed to gain access to the e-voting system. However, the acceptance of electronic votes into the electronic ballot box shall remain open for a sufficient period of time to allow for any delays in the passing of messages over the e-voting channel."]
-        S22
+        S22 : Requirement
             [label = "S.22"]
             [name = "Data Communication Integrity Invariants"]
             [description = "The integrity of data communicated during the voting stage (e.g., votes, voters' registers, lists of candidates) shall be maintained. Data-origin authentication shall be carried out."]
-        S23
+        S23 : Requirement
             [label = "S.23"]
             [name = "Tally Invariants"]
             [description = "The counting process shall accurately count the votes. The counting of votes shall be reproducible."]
-        S24
+        S24 : Requirement
             [label = "S.24"]
             [name = "Ballot Box and Tally Invariants"]
             [description = "The e-voting system shall maintain the availability and integrity of the electronic ballot box and the output of the counting process as long as required."]
-        S25
+        S25 : Requirement
             [label = "S.25"]
             [name = "Adversary Resources"]
             [description = "The e-voting system shall be designed and tested with the assumption that an adversary has a budget of $10 per voter per election, which they can apply toward any critical subset of votes/voters of their choosing."]
     E2EVIVSecurityRequirements
-        ES1
+        ES1 : Requirement
             [label = "ES.1"]
             [name = "National Security"]
             [description = "If used in federal elections, an Internet voting system is also a national security system, and thus must be subject to the highest security requirements."]
-        ES2
+        ES2 : Requirement
             [label = "ES.2"]
             [name = "Federal Requirements"]
             [description = "Any Internet voting system used in a public primary or general election in the U.S. for federal or state legislative, executive, or judicial office, or recall election, or statewide initiative or referendum, must meet all of the requirements in this document."]
-        ES3
+        ES3 : Requirement
             [label = "ES.3"]
             [name = "Local Requirements"]
             [description = "Reduced security requirements might be appropriate for county, municipal, or other kinds of elections."]
-        ES4
+        ES4 : Requirement
             [label = "ES.4"]
             [name = "Automated Registration Fraud"]
             [description = "Automated registration fraud must not be possible."]
-        ES5
+        ES5 : Requirement
             [label = "ES.5"]
             [name = "Client Side Authenticity"]
             [description = "There must be a means by which any third party can determine if the client-side software is genuine."]
-        ES6
+        ES6 : Requirement
             [label = "ES.6"]
             [name = "Authentication Independence"]
             [description = "The security of authentication must not be affected by any potential breach of any public or commercial databases."]
-        ES7
+        ES7 : Requirement
             [label = "ES.7"]
             [name = "Zero Knowledge Authentication"]
             [description = "It should not be possible for an attacker to impersonate voters even if the entire server database used for authentication is compromised."]
-        ES8
+        ES8 : Requirement
             [label = "ES.8"]
             [name = "Authentication Credential Reestablishment"]
             [description = "In some cases of security breach it must be possible to require all voters in a jurisdiction to re-establish credentials."]
     PrivacyRequirements
-        PRI1
+        PRI1 : Requirement
             [label = "PRI.1"]
             [name = "E2E Vote Privacy"]
             [description = "Vote privacy must be preserved end-to-end insofar as mathematically possible."]
-        PRI2
+        PRI2 : Requirement
             [label = "PRI.2"]
             [name = "Vote Privacy Inviolate"]
             [description = "Vote privacy cannot be waived by voters."]
-        PRI3
+        PRI3 : Requirement
             [label = "PRI.3"]
             [name = "Malware Presence"]
             [description = "Vote privacy must not be violated even in the presence of arbitrary malicious code on the client platform, including phony client software, malicious client wrappers, MITM code between the user and the E2EV interface, malicious browser plugins or scripts, keyloggers, etc."]
-        PRI4
+        PRI4 : Requirement
             [label = "PRI.4"]
             [name = "Remote Monitoring"]
             [description = "Voting should not be permitted from client platforms known to have remote monitoring software installed that could be used to monitor or log voting activity and that cannot be turned off by the voter. (All mobile platforms had, and probably still do have, such remote monitoring software)."]
-        PRI5
+        PRI5 : Requirement
             [label = "PRI.5"]
             [name = "Client Side Channels"]
             [description = "The client software of the voting system must not send data to any IP address except those associated with the vote server and the basic infrastructure servers of the Internet."]
-        PRI6
+        PRI6 : Requirement
             [label = "PRI.6"]
             [name = "Social Media Side Channels"]
             [description = "The client should not provide any information to third parties, e.g., Facebook, Twitter, etc., regarding the act of voting."]
-        PRI7
+        PRI7 : Requirement
             [label = "PRI.7"]
             [name = "No Tracking"]
             [description = "There must be no tracking devices or tracking logic in the vote client."]
-        PRI8
+        PRI8 : Requirement
             [label = "PRI.8"]
             [name = "No Breadcrumbs Details"]
             [description = "The client software must leave no files or other persistent data on the platform regarding the vote transaction but for an optional file containing information needed for subsequent verification that the voter's ballot is included in the election canvass: no cookies or other session files, no temporary files."]
-        PRI9
+        PRI9 : Requirement
             [label = "PRI.9"]
             [name = "Transient Data Cleanup"]
             [description = "The client software should explicitly erase (i.e., overwrite) all transient copies of vote-transaction data, e.g., data in registers, caches, RAM, and virtual memory."]
-        PRI10
+        PRI10 : Requirement
             [label = "PRI.10"]
             [name = "Forensically Secure"]
             [description = "It should not be possible even for client-side forensic tools to retrieve any information regarding the voting transaction after the voting session is ended."]
-        PRI11
+        PRI11 : Requirement
             [label = "PRI.11"]
             [name = "Remote Administration Forbidden"]
             [description = "The voting system should not support platforms that have remote administration or remote control tools installed that cannot be turned off by the voter."]
-        PRI12
+        PRI12 : Requirement
             [label = "PRI.12"]
             [name = "Invulnerable to Election Malware"]
             [description = "The voting system must not be vulnerable to malware designed to modify votes before they are input to the E2EV system."]
-        PRI13
+        PRI13 : Requirement
             [label = "PRI.13"]
             [name = "Client System Authentication"]
             [description = "The voting system server must authenticate that it is communicating with a genuine vote client during a voting session."]
-        PRI14
+        PRI14 : Requirement
             [label = "PRI.14"]
             [name = "Penetration Attacks"]
             [description = "The voting system must be resistant to penetration attacks."]
-        PRI15
+        PRI15 : Requirement
             [label = "PRI.15"]
             [name = "APT Attacks"]
             [description = "The voting system must be resistant to advanced persistent threat attacks."]
-        PRI16
+        PRI16 : Requirement
             [label = "PRI.16"]
             [name = "Insider Attacks"]
             [description = "It should not be possible for an insider to attack the voting system without being detected."]
-        PRI17
+        PRI17 : Requirement
             [label = "PRI.17"]
             [name = "Coercion Prevention"]
             [description = "There must be no way for voters to prove to another party any information regarding how they voted in any race beyond what is mathematically deducible from the final distribution of votes."]
-        PRI18
+        PRI18 : Requirement
             [label = "PRI.18"]
             [name = "Strong Software Independence"]
             [description = "The system must witness strong software independence: an undetected change or error in its software cannot cause an undetectable change or error in an election outcome, and moreover, a detected change or error in an election outcome (due to change or error in the software) can be corrected without re-running the election."]
-        PRI19
+        PRI19 : Requirement
             [label = "PRI.19"]
             [name = "Digital Evidence Not a Receipt"]
             [description = "Digital evidence of the voting process must not violate receipt freedom."]
     CertificationandRecertificationRequirements
     SystemOperationalRequirements
-        SOP1
+        SOP1 : Requirement
             [label = "SOP.1"]
             [name = "Public System Manifest"]
             [description = "The electoral authority shall publish an official manifest of the software used in an e-election or e-referendum. At the very least, the manifest shall indicate the software used, the versions, its date of installation, and a brief description. A procedure shall be established for updating the manifest to reflect changes to the installed software."]
-        SOP2
+        SOP2 : Requirement
             [label = "SOP.2"]
             [name = "Manifest Accuracy"]
             [description = "It shall be possible for the electoral authority to check the installed software against the system manifest at any time."]
-        SOP3
+        SOP3 : Requirement
             [label = "SOP.3"]
             [name = "System Failover Invariants"]
             [description = "Those responsible for operating the equipment shall draw up a contingency procedure for system failures. Any backup system shall conform to the same standards and requirements as the original system."]
-        SOP4
+        SOP4 : Requirement
             [label = "SOP.4"]
             [name = "Data Backup Invariants"]
             [description = "Sufficient backup arrangements shall be in place and be permanently available to ensure that voting proceeds smoothly. The staff concerned shall be ready to intervene rapidly according to a procedure drawn up by the electoral authority."]
-        SOP5
+        SOP5 : Requirement
             [label = "SOP.5"]
             [name = "System Invariants During Election"]
             [description = "Those responsible for the equipment shall use special procedures to ensure that during the polling period the voting equipment and its use satisfy requirements. The backup services shall be regularly monitored."]
-        SOP6
+        SOP6 : Requirement
             [label = "SOP.6"]
             [name = "Pre-Election Certification Invariants"]
             [description = "Before each election or referendum, the equipment shall be checked and approved in accordance with a protocol drawn up by the electoral authority. The equipment shall be checked to ensure that it complies with technical specifications. The findings shall be submitted to the electoral authority."]
-        SOP7
+        SOP7 : Requirement
             [label = "SOP.7"]
             [name = "Formal Control Procedure"]
             [description = "All technical operations shall be subject to a formal control procedure. Any substantial changes to key equipment shall be performed with advance notice."]
-        SOP8
+        SOP8 : Requirement
             [label = "SOP.8"]
             [name = "Physical Security of Systems Invariants"]
             [description = "Key e-election or e-referendum equipment shall be located in a secure area, and that area shall, throughout the election or referendum period, be guarded against interference of any sort and from any person. During the election or referendum period, a physical disaster recovery plan shall be in place. Furthermore, any data retained after the election or referendum period shall be stored securely."]
-        SOP9
+        SOP9 : Requirement
             [label = "SOP.9"]
             [name = "Incident Response Invariants"]
             [description = "Where incidents that could threaten the integrity of the system occur, those responsible for operating the equipment shall immediately inform the electoral authority, which will take the necessary steps to mitigate the effects of the incident. The level of incident that shall be reported shall be specified in advance by the electoral authority."]
-        SOP10
+        SOP10 : Requirement
             [label = "SOP.10"]
             [name = "Operational Transparency"]
             [description = "A report containing every manifest change, every data or system invariant violation, every control procedure violation, and every physical security violation shall be prepared and made public by the electoral authority after every election."]
     UsabilityRequirements
-        U1
+        U1 : Requirement
             [label = "U.1"]
             [name = "Mandatory Usability Testing"]
             [description = "Usability testing for disabled and abled voters shall be performed, and the reports of the testing made public. The system must achieve satisfactory usability testing results before being used in a binding election."]
-        U2
+        U2 : Requirement
             [label = "U.2"]
             [name = "Vote Confirmation"]
             [description = "If a voter receives the final 'Thank you for voting' confirmation, then she/he can be certain the ballot was recorded."]
-        U3
+        U3 : Requirement
             [label = "U.3"]
             [name = "Uncertain Voter Revote"]
             [description = "If the voter is uncertain about the state of their ballot, he/she is free to attempt to vote again."]
 
+// --------------
+// Assurance Case
+// --------------
+
 // -------------------
-// Threat/Attack Model
+// CLARISSA Node Types
 // -------------------
 
-enum ThreatTargetEnum= SINGLE_VOTER
-| MOBILE_WEB_APP
-| SERVER_COMPONENT
-| TRUSTEE_SYSTEM
+// We define generic Clafer types in this section that capture
+// the possible nodes of a CLARISSA structure assurance case.
+// To what extent we adopt CLARISSA is still up for discussion.
+// But it might be a reasonable starting point to create our
+// own bespoke notion of a formalized assurance case in Clafer.
 
-enum AdversaryTypeEnum = INDIVIDUAL | GROUP | NATION_STATE
+abstract Node
+  id -> string
+  title -> string
+  comments -> string *
 
-// enum Subsystem = SUBSYSTEM1 | SUBSYSTEM2 | SUBSYSTEM3
+abstract Claim : Node
+  arguments -> Argument *
+  subclaims -> Node * // Claim, SideClaim, Evidence, or Subcase
+  defeaters -> Defeater *
 
-// component Adversary
-// Are you threatening a single voter, the mobile/web applications
-// generally, a server component, or the trustee system?
-// Are you an individual, group, or nation-state adversary?
-// What level of financial resources do you have?
-// Do you have physical access to the target device?
-// What duration of adversarial access and interactivity do you have?
-// What, if any, subsystem(s) have you already compromised?
+abstract Argument : Node
+  subclaims -> Node * // Claim, SideClaim, Evidence, or Subcase
 
-abstract Adversary
-    ThreatTarget -> ThreatTargetEnum
-    AdversaryType -> AdversaryTypeEnum
-    FinancialResources -> int
-    PhysicalAccess ?
-       Duration -> int
-    // AlreadyCompromised -> Subsystem *
+// Concrete Arguments
+abstract Concretion : Argument
+abstract Substitution : Argument
+abstract Decomposition : Argument
+abstract Calculation : Argument
+abstract EvidenceIncorporation : Argument
 
-enum Effects = InvalidElection
-| CorruptedBallot
-| AdversarialControl
+abstract Evidence : Node
+  defeaters -> Defeater *
+
+abstract SideClaim : Node
+  arguments -> Argument *
+  subclaims -> Node * // Claim, SideClaim, Evidence, or Subcase
+  defeaters -> Defeater *
+
+abstract Subcase : Node
+
+abstract Defeater : Node
+
+abstract Comment : Node
+
+// ------------
+// System Model
+// ------------
+
+// @trace zeyda: The system model is based on https://github.com/FreeAndFair/TuskMobileVoting/blob/threat-model/specs/threat-model/threat-model.md
+
+// -----------------------------
+// System Model: Toplevel System
+// -----------------------------
+
+// @todo zeyda Currently, all components are mandatory. Review whether
+// it is sensible, in some configurations, to omit certain components.
+System
+    components -> Subsystem +
+    hasVotingApplication
+      [VotingApplication in components]
+    //
+    hasAuthenticationService
+      [AuthenticationService in components]
+    //
+    hasPublicBulletinBoard
+      [PublicBulletinBoard in components]
+    //
+    hasDigitalBallotBox
+      [DigitalBallotBox in components]
+    //
+    hasTrusteeApplication
+      [TrusteeApplication in components]
+    //
+    hasTrusteeAdministrationServer
+      [TrusteeAdministrationServer in components]
+    //
+    hasElectionAdministrationServer
+      [ElectionAdministrationServer in components]
+    //
+    hasElectionAdministratorApplication
+      [ElectionAdministratorApplication in components]
+    //
+    hasBallotCheckApplication
+      [BallotCheckApplication in components]
+    //
+    hasBallotPrinter
+      [BallotPrinter in components]
+
+// ------------------------
+// System Model: Subsystems
+// ------------------------
+
+// @note zeyda The subsystem definition is based on the Data
+// Flow diagram given in the Tusk Mobile Voting Threat Model.
+// Indeed, the Clafer model fully encodes the diagram, apart
+// from the fact that we do not model multiple instances of
+// Trustee Applications. (@review zeyda Perhaps we should?)
+// See: https://github.com/FreeAndFair/TuskMobileVoting/blob/threat-model/specs/threat-model/threat-model.md
+
+// @review zeyda Any other relevant features of Subsystem we have missed?
+// @workaround zeyda I move the talksTo features into the concrete
+// Subsystem clafers, since there is a bug in chocosolver that causes
+// many duplicate instances to be created for the permutations of set
+// elements. This seems to have to do with direct & indirect recursion
+// in Clafer types. @todo zeyda Write a PR and pick the brains of the
+// Clafer development team (i.e., Michal Antkiewicz) on this issue.
+// @postpone zeyda Formalize that talksTo is a *symmetric* relation:
+//  - if A talksTo B then also B talksTo A.
+// This currently cannot be done due to the work-around noted above.
+abstract Subsystem
+    description -> string
+    trustZone -> TrustZone
+    // talksTo -> Subsystem + // @workaround zeyda
+    actors -> Actor *
+    assets -> Asset *
+
+// @review zeyda Ought any of the subsystems be optional? Are they complete?
+// @review zeyda We may want to add additional constraints here that capture
+// architectural assumption and requirements (if variation emerges at all).
+// @note zeyda "EA Storage" in the diagram is ElectionAdministratorCredentials.
+Subsystems
+    VotingApplication : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "the client-side mobile application used by a voter to authenticate to the system, make choices on a ballot, and cast or check a voted ballot"]
+        [trustZone = Internet]
+        [talksTo = ElectionAdministrationServer, DigitalBallotBox]
+        [actors = Voters]
+        [no assets]
+    //
+    AuthenticationService : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "a service used by the voting application server to authenticate voters' identities, so that their eligibility to vote in a specific election can be determined; in any given instantiation of the system, this service may be provided by multiple external identity service provider"]
+        [trustZone = Internet]
+        [talksTo = ElectionAdministrationServer]
+        [actors = Voters]
+        [no assets]
+    //
+    PublicBulletinBoard : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "the canonical, publicly-readable, append-only view of election information; can only be appended to by the Digital Ballot Box"]
+        [trustZone = ElectionAdministrationNetwork]
+        [talksTo = DigitalBallotBox]
+        [actors = Verifiers]
+        [no assets]
+    //
+    DigitalBallotBox : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "the system that stores submitted digital ballots, which can be used for ballot checks and, post-election, for tallies; this system determines when information can be appended to the Public Bulletin Board"]
+        [trustZone = ElectionAdministrationNetwork]
+        [talksTo = ElectionAdministrationServer, VotingApplication, BallotCheckApplication, PublicBulletinBoard]
+        [no actors]
+        [no assets]
+    //
+    // @note zeyda implemented once but shall have multiple instances
+    // within the overall system; each one having a private key share
+    TrusteeApplication : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "the client-side application with which trustees interact in order to generate their private key shares and open/close the election, and perform partial ballot decryption in a mix-net configuration; this application runs on a dedicated device, one of which exists for each trustee, and must not be directly connected to the Internet at any point during the system's lifetime"]
+        [trustZone = AirGappedNetwork]
+        [talksTo = TrusteeAdministrationServer]
+        [actors = Trustees]
+        [assets = TrusteeStorage]
+    //
+    TrusteeAdministrationServer : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "the system that orchestrates the generation of cryptographic keys (and associated threshold secret sharing) related to the election before the election begins, and ballot decryption or homomorphic tallying once the election is complete; must not be connected to the Internet at any point during the system's lifetime"]
+        [trustZone = AirGappedNetwork]
+        [talksTo = TrusteeApplication, BallotPrinter]
+        [actors = ElectionAdministrator]
+        [assets = ElectionAdministratorStorage]
+    //
+    ElectionAdministrationServer : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "the system(s) used by election officials to handle election definition and administration functions, including voter authorization (based on registration records), ballot definitions, election start/end times, etc.; note that we treat this as a single abstract subsystem in sequence diagrams for simplicity, though in a concrete implementation the election administrator interacts with it using the Election Administrator Application"]
+        [trustZone = ElectionAdministrationNetwork]
+        [talksTo = ElectionAdministratorApplication, VotingApplication, AuthenticationService, DigitalBallotBox]
+        [no actors]
+        [no assets]
+    //
+    ElectionAdministratorApplication : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "the system in an election office used by election officials to communicate with the Election Administration Server and import/export data using Election Administrator Storage"]
+        [trustZone = ElectionOfficeNetwork]
+        [talksTo = ElectionAdministrationServer]
+        [actors = ElectionAdministrator]
+        [assets = ElectionAdministratorStorage]
+    //
+    BallotCheckApplication : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "a client-side (web-based or mobile) application used by a voter to perform ballot checks; there may be multiple independent ballot check applications in any instantiation of the system"]
+        [trustZone = Internet]
+        [talksTo = DigitalBallotBox]
+        [actors = Voters]
+        [no assets]
+    //
+    BallotPrinter : Subsystem
+        talksTo -> Subsystem + // @workaround zeyda
+        [description = "A printer that produces Paper Ballots from Cast Digital Ballot Plaintexts, only part of the system in variants that perform mix-net decryption and print ballots for physical tally; most likely implemented by a standard printer combined with a software component on the Trustee Administration Server that converts Cast Digital Ballot Plaintexts to an appropriate digital format"]
+        [trustZone = AirGappedNetwork]
+        [talksTo = TrusteeAdministrationServer]
+        [no actors]
+        [no assets]
+
+// --------------------
+// System Model: Actors
+// --------------------
+
+// @review zeyda Any other relevant features of Actor we have missed?
+// @workaround zeyda I move the uses features into the concrete
+// Actor clafers, since there is a bug in chocosolver that causes
+// many duplicate instances to be created for the permutations of set
+// elements. This seems to have to do with direct & indirect recursion
+// in Clafer types. @todo zeyda Write a PR and pick the brains of the
+// Clafer development team (i.e., Michal Antkiewicz) on this issue.
+abstract Actor
+    description -> string
+    // uses -> Subsystem + // @workaround zeyda
+
+// @note zeyda The list of actors is based on the threat model
+// (threat-model.md) rather than the Lando DE model. This means
+// that certain details are omitted while focusing on key actors
+// for our security analysis, whereas the DE model looks at the
+// participants from a legal standpoint. Here is a mapping:
+//  - Voter (Clafer) -> Voter (Lando)
+//  - ElectionAdministrator (Clafer) -> Electoral Authority (Lando)
+//  - Trustees (Clafer) -> ??? (Lando) (@todo zeyda)
+//  - Verifiers (Clafer) -> ??? (Lando) (@todo zeyda)
+
+Actors
+    Voters : Actor
+        uses -> Subsystem + // @workaround zeyda
+        [description = "people who use the system to cast ballots and optionally check that they have been properly recorded"]
+        [uses = VotingApplication, AuthenticationService, BallotCheckApplication]
+    //
+    ElectionAdministrator : Actor
+        uses -> Subsystem + // @workaround zeyda
+        [description = "a person who facilitates protocols and procedures, provides the election definition, and publishes the election results; this is a single actor in the system even though its responsibilities may be shared among multiple people in a given system instantiation"]
+        [uses = TrusteeAdministrationServer, ElectionAdministratorApplication]
+    //
+    Trustees : Actor
+        uses -> Subsystem + // @workaround zeyda
+        [description = "people who are jointly responsible for maintaining the privacy of the votes, and for performing/facilitating the vote tally, by keeping custody of election key shares"]
+        [uses = TrusteeApplication]
+    //
+    Verifiers : Actor
+        uses -> Subsystem + // @workaround zeyda
+        [description = "people that evaluate the election records to confirm an election's integrity; verifiers may use any means at their disposal (verification programs, pencil and paper, etc.) to verify the results based on public information available from the Digital Ballot Box, and they have no direct role in the election"]
+        [uses = PublicBulletinBoard]
+
+// --------------------
+// System Model: Assets
+// --------------------
+
+// @review zeyda Any other relevant features of Asset we have missed?
+abstract Asset
+    description -> string
+    xor assetType
+        xor PhysicalAssert
+            MobileStorageDevice
+        xor CryptoAsset
+            AccessCredentials
+            PublicKey
+            // @note zeyda PrivateKey is currently not used
+            PrivateKey
+            PrivateKeyShares
+        xor DataAsset
+            xor ElectionInformation
+                ElectionManifest
+                VoterRoster
+            EncryptedBallot
+            DecryptedBallot
+                xor Status
+                    Unchecked
+                    Checked
+            PrintableBallot
+    heldByActor -> Actor *
+    heldBySystem -> Subsystem *            
+
+// @todo zeyda Populate the heldByActor properties of all concrete assets.
+// @todo zeyda Populate the heldBySystem properties of all concrete assets.
+Assets
+    ElectionAdministratorCredentials : Asset
+        [description = "used to perform election administration functions"]
+        [AccessCredentials]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    TrusteePrivateKeyShares : Asset
+        [description = "shares of the election's private key held by individual Trustees; used to partially decrypt or homomorphically tally Digital Ballots Cryptograms exported from the Digital Ballot Box"]
+        [PrivateKeyShares]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    ElectionPublicKey : Asset
+        [description = "the public key corresponding to the complete set of Trustee Private Key Shares; used in the creation of Digital Ballot Cryptograms"]
+        [PublicKey]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    DigitalBallotBoxAPICredentials : Asset
+        [description = "used to write ballot/election information to the Digital Ballot Box"]
+        [AccessCredentials]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    VoterRoster : Asset
+        [description = "a list of Voters who are eligible to participate in a particular election"]
+        [ElectionInformation.VoterRoster]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    ElectionManifest : Asset
+        [description = "the definition of an election, including all contests and selectable options, contest selection limits, ballot styles, and appropriate/necessary metadata about the election's timing, software versions, etc.; serves as a common view of the election shared by all actors, publicly visible in the Digital Ballot Box"]
+        [ElectionInformation.ElectionManifest]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    DigitalBallotCryptograms : Asset
+        [description = "encrypted digital representations of ballots that have been submitted to the Digital Ballot Box by Voters using the Voting Application; these may end up being either cast or checked"]
+        [EncryptedBallot]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    CastDigitalBallotPlaintexts : Asset
+        [description = "decrypted digital representations of ballots that have been cast by Voters using the Voting Application; these should only ever exist within the Trustee Administration Server's trust zone"]
+        [DecryptedBallot.Status.Unchecked]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    CheckedDigitalBallotPlaintexts : Asset
+        [description = "decrypted digital representations of ballots that have been checked by Voters using the Ballot Check Appplication; these are publicly available in the Digital Ballot Box"]
+        [DecryptedBallot.Status.Checked]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    PrintableCastBallots : Asset
+        [description = "printable files that represent ballots cast in the election, which enable traditional optical-scan or hand tallying of paper ballots in some mix-net based system configurations"]
+        [PrintableBallot]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    TrusteeStorage : Asset
+        [description = "a piece of hardware for each trustee that stores their Trustee Private Key Share; this will most likely be a fresh USB storage device, and must never be attached to an Internet-connected device during the system's lifetime"]
+        [MobileStorageDevice]
+        [not heldByActor]
+        [not heldBySystem]
+    //
+    ElectionAdministratorStorage : Asset
+        [description = "a piece of hardware for the election administrator that is used to convey information between the Election Administration Server/Digital Ballot Box and the Trustee Administration Server (across an air gap); this will most likely be a fresh USB storage device"]
+        [MobileStorageDevice]
+        [not heldByActor]
+        [not heldBySystem]
+
+// -------------------------------
+// System Model: Entry/Exit Points
+// -------------------------------
+
+// @todo zeyda The Clafer model for entry/exit points may still need
+// refinement, i.e., to associate them with subsystems and actors.
+abstract EntryExitPoint
+    description -> string
+
+EntryExitPoints
+    DigitalBallotBoxEXP : EntryExitPoint
+        [description = "an exit point for Digital Ballot Cryptograms and Checked Digital Ballot Plaintexts"]
+    //
+    TrusteeApplicationEXP : EntryExitPoint
+        [description = "an entry and exit point for Trustee Private Key Shares (the trustees need to enter them back into the system in order to perform tallying/decryption)"]
+    //
+    ElectionAdministratorApplicationEXP : EntryExitPoint
+        [description = "the entry point for election configuration, voter eligibility determinations, and other election administration parameters; an entry and exit point for the Election Manifest; and an exit point for Cast Digital Ballot Cryptograms"]
+    //
+    TrusteeAdministrationServerEXP : EntryExitPoint
+        [description = "an entry and exit point for the Election Manifest, the exit point for the Election Public Key, an entry point for Cast Digital Ballot Cryptograms, and, in configurations where ballots are decrypted and printed, the exit point for Printable Cast Ballots"]
+
+// -------------------
+// REVIEWED UNTIL HERE
+// -------------------
+
+// -------------------------
+// System Model: Trust Zones
+// -------------------------
+
+abstract TrustZone
+    description -> string
+
+TrustZones
+    AirGappedNetwork : TrustZone
+        [description = "a network sequestered from the global Internet and all other trust zones of the system that houses the Trustee Application and Trustee Administration Server; entry to/exit from this zone is exclusively by physical devices (USB storage, paper, direct keyboard input of physical randomness such as dice roll results, etc.)"]
+    ElectionOfficeNetwork : TrustZone
+        [description = "the network that houses the system exit point used to export data for transfer to the Air-Gapped Network; this network is physically located in an election office"]
+    ElectionAdministrationNetwork : TrustZone
+        [description = "the network that houses the Election Administration Server, Digital Ballot Box, and Public Bulletin Board; this network may be connected to the Internet, and may be located either in the cloud or in an election office"]
+    Internet : TrustZone
+        [description = "the Internet, to which many subsystems (e.g., Voting Application) are directly connected and which connects all trust zones except the Air-Gapped Network"]
+
+// --------------------------
+// System Model: Trust Levels
+// --------------------------
+
+abstract TrustLevel
+
+TrustLevels
+    ElectionAdministratorTL : TrustLevel
+    TrusteeTL : TrustLevel
+    VoterTL : TrustLevel
+    PublicTL : TrustLevel
+
+// -------------------
+// REVIEWED AFTER HERE
+// -------------------
+
+// ----------------------
+// MITRE: Vulnerabilities
+// ----------------------
+
+MITRE
+    // Common Weakness Enumeration
+    CWE
+    // Common Vulnerabilities and Exposures
+    CVE
+    // Common Attack Pattern Enumeration and Classification
+    CAPEC
+
+// --------------------
+// Threat Model: STRIDE
+// --------------------
+
+// Abstract formalized notion of a STRIDE claim/assertion
+abstract STRIDE
+    // Asset that is targeted by the threat
+    asset -> Assets
+    // Type of threat within the STRIDE catalog
+    xor ThreatType
+        Spoofing              // S
+        Tampering             // T
+        Repudiation           // R
+        InformationDisclosure // I
+        DenialOfService       // D
+        ElevationOfPrivilege  // E
+    // Cyber-security property that is violated
+    SecurityProperty
+        Authenticity ?
+        Integrity ?
+        Accountability ?
+        NonRepudiation ?
+        Confidentiality ?
+        Availability ?
+        Authorisation ?
+    // Constraints relating threats to security properties
+    [Spoofing <=> Authenticity]
+    [Tampering <=> Integrity]
+    [Repudiation <=> (Accountability || NonRepudiation)]
+    [InformationDisclosure <=> Confidentiality]
+    [DenialOfService <=> Availability]
+    [ElevationOfPrivilege <=> Authorisation]
