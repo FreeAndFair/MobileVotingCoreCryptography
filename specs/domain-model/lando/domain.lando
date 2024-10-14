@@ -23,11 +23,19 @@ subsystem Core Concepts
     Authenticate
       Transitioning a person or system to an authenticated state.
 
+    // Source: NIST
+    Cast
+      The final action a voter takes in selecting contest options and irrevocably confirming their intent to vote as selected.
+
     Register Voter
       The addition of a voter to the voters register.
 
     Register Candidate
       The addition of a candidate to the candidates register.
+
+    // Source: NIST
+    Spoil A Ballot
+      To mark or otherwise alter a ballot so it indicates in a human-readable manner that the ballot is not to be cast.
 
     Unregister Voter
       The removal of a voter from the voters register.
@@ -40,8 +48,13 @@ subsystem Core Concepts
   
     contains
 
+    // Source: NIST
+    component Accessibility
+        Measurable characteristics that indicate the degree to which a system is available to, and usable by, individuals with disabilities. The most common disabilities include those associated with vision, hearing, mobility, and cognition.
+
     component Contest
-      A contest is a decision to be made, either the selection of one or more candidates for an office or the choice of a course of action. There may be multiple contests in a single election.
+     A single decision or set of associated decisions being put before the voters (for example, the option of candidates to fill a particular public office or the approval or disapproval of a constitutional amendment). This term encompasses other terms such as "race," "question," and "issue" that are sometimes used to refer to specific kinds of contests. It does not refer to the legal challenge of an election outcome.
+
 
       What are your contest choices?
       Do you allow a write-in choice?
@@ -61,21 +74,44 @@ subsystem Core Concepts
       The result for a contest may only be set once.
       The maximum number of contest choices that can be chosen on the same ballot may only be set once.
 
+    // Source: NIST
+    component Cryptographic End-To-End Verifiable Voting System
+        A voting system that uses cryptographic techniques to store an encrypted copy of the voter's ballot selections while maintaining ballot secrecy and allows election outcomes to be independently and universally verified by members of the public. These voting systems provide voters with a special receipt of their cast ballot - one that allows them to verify their vote was included in the outcome but does not reveal to anyone how they voted.
+
     component Democracy
       Democracy is a system of government (of a nation, state, locality, or other organization) by an entire population or eligible members thereof, typically carried out through elections of leaders and representatives, through referenda, or both.
 
-
     component Election
-      An election is a formal indication of choices in one or more contests.
+      A formal process in which qualified voters select choices in one or more contests.
+
+    // Source: NIST
+    component Election System inherit System
+        1. A technology-based system that is used to collect, process, and store data related to elections and election administration. In addition to voter registration systems and public election websites, election systems include voting systems, vote tabulation systems, electronic poll books, election results reporting systems, and auditing devices. 2. Entire array of procedures, people, resources, equipment, and locations associated with conducting elections.
 
     component Electorate
       The electorate for a given election comprises all the individuals that are eligible to vote in that election, according to applicable laws and regulations.
 
-    component Evoting
+    // Source: NIST
+    component Electronic Ballot Delivery
+        The delivery of ballot and voter information packets electronically. The MOVE Act requires each state to provide for the electronic delivery (via fax, email, or an Internet-supported application) of ballots and related information from the local election office to the registered UOCAVA voter.
+
+    // Source: NIST
+    component Electronic Ballot Return
+        The return of a voted ballot or voter information packet using electronic means. This can be by fax, email, or through the use of an Internet-supported application. Sometimes referred to as "Internet Voting".
+
+    component E-Voting
       E-Voting, or electronic voting, is the process of voting either entirely using, or with substantial assistance from, electronic devices.
+
+    // Source: NIST
+    component Independently
+        Without assistance from an election worker or other person.
 
     component Internet
       The Internet is a global system of interconnected computer networks that use the standard Internet Protocol suite to link billions of connected devices.
+
+    // Source: NIST
+    component Open Source
+        Computer software with its source code (human readable code) made available with a license in which the copyright holder provides the rights to study, change, and distribute the software to anyone and for any purpose. Open source software may: be developed in a collaborative public manner; be reviewed by multiple professional and amateur programmers; require a fee and be licensed like other software; or be fully open source or may have only a portion of the software open source.
 
     component Party
       A party is an organized group of people having at least roughly similar political aims and opinions, that seeks to influence public policy by getting its candidates elected to public office.
@@ -89,8 +125,20 @@ subsystem Core Concepts
     component System
       A system is a set of connected digital and physical parts, including computers, people, organizations, and more, forming a complex whole.
 
+    // Source: NIST
+    component Security Analysis
+        An inquiry into the potential existence of security flaws in a voting system. Includes an analysis of the system's software, firmware, and hardware, as well as the procedures associated with system development, deployment, operation, and management.
+
+    // Source: NIST
+    component Usability
+        Effectiveness, efficiency, and satisfaction with which a specified set of users can achieve a specified set of tasks in a particular environment. Usability in the context of voting refers to voters being able to cast valid votes as they intended quickly, without errors, and with confidence that their contest selections were recorded correctly. It also refers to the usability of the setup and operation of voting equipment in the polling place.
+
     component Voting Channel
       A voting channel is a method by which voters are enabled to vote in elections.
+
+    // Source: NIST
+    component Voting System
+        Equipment (including hardware, firmware, and software), materials, and documentation used to: 1. define elections and ballot styles, 2. configure voting equipment, 3. identify and validate voting equipment configurations, 4. perform logic and accuracy tests, 5. activate ballots for voters, 6. record votes cast by voters, 7. count votes, 8. label ballots needing special treatment, 9. generate reports, 10. export election data including election results, 11. archive election data, and 12. produce records in support of audits.
 
     subsystem Elections
       Types and attributes of elections.
@@ -119,11 +167,16 @@ subsystem Core Concepts
     subsystem Processes
       A series of actions or steps taken in order to achieve a particular end.
 
+      // Source: NIST
+      component Access Control
+          The process of granting or denying specific requests to:
+          - obtain and use information and related information processing services; and
+          - enter specific physical facilities.
+
       component Audit
         An audit is a review of the election artifacts to detect abnormalities and errors.
         
         Were any errors detected?
-
 
       component Candidate Registration
         The process by which a candidate is added to the candidates register.
@@ -131,11 +184,31 @@ subsystem Core Concepts
       component Candidate Validation
         The process by which a candidate's identity and eligibility to stand for election are verified.
 
+      // Source: SP 800-128
+      component Configuration Control
+          Process for controlling modifications to hardware, firmware, software, and documentation to protect the system against improper modifications before, during, and after system implementation.
+
+      // Source: NIST
+      component Configuration Management
+          A continuous process of recording and maintaining consistent and reliable records pertaining to an organization's hardware and software composition, including software version control and hardware updates.
+
+      // Source: NIST
+      component Key Management
+          Activities involving handling of cryptographic keys and other related security parameters (such as passwords) during the entire life cycle of the keys, including their generation, storage, establishment, entry and output, zeroization, and revocation.
+
       component Voter Registration
         Voter registration is the process by which a member of the electorate is added to the voters' register.
 
       component Voter Validation
         The process by which a voter's identity and eligibility to vote are verified.
+
+      // Source: NIST
+      component Voting Process
+          Entire array of procedures, people, resources, equipment, and locations associated with conducting elections.
+
+      // Source: NIST
+      component Voting Session
+          A collection of activities including ballot issuance, voter interaction with the vote-capture device, voting, verification, and casting.
 
       component Verification
         Verification is a process by which the the election protocols, processes, and device implementations are proven to be correct with respect to their specifications.
@@ -149,7 +222,7 @@ subsystem Core Concepts
     contains
 
     component Ballot
-      A ballot is the legally recognized means by which a voter can express his or her choices for one or more contests in an election. A ballot contains a set of votes corresponding to the contests being decided in the election.
+      Presentation of the contest options for a particular voter.
 
       What is your ballot style?
       Have you been cast?
@@ -171,6 +244,10 @@ subsystem Core Concepts
       A ballot cannot be both cast and spoiled.
       A ballot may contain at most one vote per contest.
       A ballot may only contain votes for contests that are part of its ballot style.
+
+    // Source: NIST
+    component Blank Ballot
+        An issued ballot without any selections made.
 
     component Ballot Box
       A ballot box is the means by which ballots are stored pending being counted. It may take various forms, including physical containers (from which the name derives) and electronic storage media.
@@ -212,14 +289,19 @@ subsystem Core Concepts
       A contest may not be added to or removed from a locked ballot configuration.
       Once locked, a ballot configuration remains locked forever.
 
+    // Source: NIST
+    component Ballot Data
+        A list of contests and associated options that may appear on a ballot for a particular election.
+
     component Ballot Question inherit Contest
-      A ballot question is a decision among two or more courses of action. In most cases, ballot questions take the form of yes/no questions.
+      A question that appears on a ballot with options, usually in the form of an approval or rejection.
+
 
       The maximum number of choices that may be chosen on the same ballot is 1.
       Each choice represents a course of action.
 
     component Ballot Style
-      A ballot style is the concrete presentation of a ballot configuration. A single ballot configuration may be realized by several ballot styles, e.g. for different languages or different orderings of contests or contest choices.
+      Ballot data that has been put into contest order for a particular precinct or precinct split and considers a particular set of voter situations. Voter situations include party affiliation (for closed primaries), and age of the voter (in states that permit 17-year-olds to vote in primary elections), among others.
 
       What is your ballot configuration?
       What are the details of your presentation? // highly implementation dependent
@@ -247,13 +329,45 @@ subsystem Core Concepts
       A locked register may not be unlocked.
       A candidate added to the register must be alive at the time of addition.
 
+    // Source: NIST
+    component Cast Ballot
+        Ballot in which the voter has taken final action in selecting contest options and irrevocably confirmed their intent to vote as selected.
+
+    // Source: NIST
+    component Cast Vote Record (CVR)
+        Archival tabulatable record of a set of contest selections produced by a single voter as interpreted by the voting system.
+
     component Contest Choice
-      A selection from among the possible outcomes of a contest.
+      A votable choice that appears under a contest.
 
     component Contest For Office inherit Contest
       A contest for office is a selection of some subset of candidates standing for election to a particular office.
 
       The contest choices represent individual candidates for an office.
+
+    // Source: NIST
+    component Contest Selection
+        A selection made on the ballot by a voter with respect to a specific single contest (for example, a candidate, the value "Yes" or "Approve").
+
+    // Source: NIST
+    component Direct Voter Associations (PII)
+        A voter's personally identifiable information (PII) created or stored by the voting system that can be used to associate a voter with their ballot selections. Examples include first name, last name, address, driver's license, voter registration number, and other PII.
+
+    // Source: NIST
+    component Election Definition
+        Data used in defining an election, including election districts, contests, candidates, and ballot style information.
+
+    // Source: NIST
+    component Electronic Voter Interface
+        Component of an electronic vote-capture device that communicates ballot information to the voter and accepts contest selection input from the voter.
+
+    // Source: NIST
+    component Marked Ballot
+        Ballot that contains all of a voter's selections.
+
+    // Source: NIST
+    component Overvote (Over-Vote)
+        Occurs when the number of selections made by a voter in a contest is more than the maximum number allowed.
 
     component Result
       A result is the outcome of a contest.
@@ -281,11 +395,15 @@ subsystem Core Concepts
       Once applied, a seal remains applied forever.
       Once broken, a seal remains broken forever.
 
+    // Source: NIST
+    component Spoiled Ballot
+        A ballot that has been issued to a voter but will not be cast, usually because it has been incorrectly marked or impaired in some way.
+
     component Tally
       The tally is the count of all the votes in an election.
 
     component Vote
-      A vote is an expression of a contest choice made by a voter during an election.
+      Indication of support for a particular contest option.
 
       What contest choice do you represent?
 
@@ -310,14 +428,23 @@ subsystem Core Concepts
       Once a voter is marked as having voted, he remains so marked forever.
       Once a voter is marked as having voted, his ballot configuration may not change.
 
+    // Source: NIST
+    component Voting Device
+        Device that is part of the voting system.
+
     component Voting Interface
       A voting interface is the medium through which a voter makes his or her contest choices known to the voting system.
+
+    // Source: NIST
+    component Write-In Option
+        A type of contest option that allows a voter to specify a candidate, usually not already listed as a contest option. Depending on election jurisdiction rules, in some cases only previously approved names will be considered as valid write-in contest selections.
 
     subsystem Physical Artifacts
       Physical artifacts relevant to election day.
 
+      // Source: NIST
       component Device
-        A physical artifact that is fit for a particular purpose.
+        Physical apparatus and any supporting supplies, materials, and logic that together form a functional unit that performs assigned tasks as an integrated whole.
 
       component Physical Ballot Box inherit Ballot Box
         A physical ballot box is a box used to store paper ballots pending being counted.
@@ -333,7 +460,7 @@ subsystem Core Concepts
         Each entry added to the chain of custody must represent one or more individuals.
 
       component Paper Ballot inherit Ballot
-        A paper ballot is a ballot implemented using paper, which a voter marks in some fashion to indicate his or her choice.
+        A piece of paper, or multiple sheets of paper, on which all contest options of a given ballot style are printed.
 
       component Polling Station
         A polling station is a location at which physical ballot boxes and devices are available for members of the electorate to use during an election. Polling stations are typically staffed by poll workers and have well-publicized hours of operation.
@@ -372,13 +499,17 @@ subsystem Core Concepts
   subsystem People
     The people that are part of an electoral system. These are the most general concepts explaining roles in an election from a legal standpoint. Personas, as specified in the Personas subsystem, further concretize these general classes into specific UX-centric roles.
 
+    // Source: NIST
+    component Administrator (admin)
+        A voting system user with the highest level of access.
+
     // various constraints apply to candidates for various offices,
     // depending on the office (e.g., >= 35 yrs old, permanent
     // resident in the U.S. for >= 14 yrs, and born a U.S.
     // citizen are constraints on candidates for President of the
     // United States).
     component Candidate inherit Citizen
-      A candidate is a citizen who is listed on the ballot as a possible choice to fill some position.
+      Person contending in a contest for office. A candidate may be explicitly presented as one of the contest options or may be a write-in candidate.
 
     component Citizen inherit Person
       A citizen is a person who legally belongs to a place and has the rights and protections of that place. The place can be at any election scope; for example, a particular person may be a citizen of the United States, of Oregon, and of Portland simultaneously.
@@ -399,8 +530,16 @@ subsystem Core Concepts
 
       An electoral authority must have at least one member.
 
+    // Source: NIST
+    component Election Official
+        Any person who is involved with administering or conducting an election, including government personnel and temporary election workers. This may include any county clerk and recorder, election judge, member of a canvassing board, central election official, election day worker, member of a board of county commissioners, member or secretary of a board of directors authorized to conduct public elections, representative of a governing body, or other person engaged in the performance of election duties as required by the election code.
+
     component Identity
       The fact of being who or what a person or system is.
+
+    // Source: CNSSI 4009, Adapted
+    component Insider
+        Any person with authorized access to any organizational resource, to include personnel, facilities, information, equipment, networks, or systems.
 
     component Person
       A person is an individual with a unique identity.
@@ -419,7 +558,7 @@ subsystem Core Concepts
       Once a person is not alive, he stays not alive forever.
 
     component Voter inherit Citizen
-      A voter is a person who is eligible to vote in an election. A voter has affiliations with various groups (districts, political parties, etc.) that determine the voter's eligibility to vote in specific contests.
+      A person who is eligible to cast a ballot in an election.
 
       What groups are you in?
 
@@ -432,12 +571,16 @@ subsystem Core Concepts
     contains
 
     //indexing
-    //applicable law: "http://www.section508.gov"
+    //applicable_law: "http://www.section508.gov"
     component Accessible
       An artifact is accessible if it is usable by and useful to the disabled. The details of such a notion are often codified in federal law (e.g., U.S. Section 508) and are the results of researchers focused on user experiences for the disabled.
       
     component Authenticated
       A person or system that has properly identified itself.
+
+    // Source: SP800-53
+    component Authenticity
+        The property of being genuine and being able to be verified and trusted; confidence in the validity of a transmission, message, or message originator. See authentication.
 
     component Confident
       A person or system that is certain about a proposition.
@@ -450,6 +593,14 @@ subsystem Core Concepts
 
     component Efficient
       A system that operates in a productive fashion with little wasted effort or expense.
+
+    // Source: NIST
+    component Failure
+        Looking at voting system reliability, a failure is an event that results in: loss of one or more functions, degradation of performance resulting in a device that is unable to perform its intended function, automatic reset, restart, or reboot of the voting device, operating system or application software, requiring an unanticipated intervention by a person in the role of election worker or technician before normal operation can continue, or error messages or audit log entries indicating that a failure has occurred.
+
+    // Source: NIST
+    component Fault
+        Flaw in design or implementation that may result in the qualities or behavior of the voting system deviating from the qualities or behavior that are anticipated, including those specified in the VVSG or in manufacturer-provided documentation.
 
     component Remote
       Something is remote if it is located somewhere other than a polling station.
@@ -500,12 +651,24 @@ subsystem Core Concepts
     subsystem System Properties
       Properties held by election systems, digital or physical.
 
-    component Accessible
-      An artifact is accessible if it is usable by and useful to the disabled. The details of such a notion are often codified in federal law (e.g., U.S. Section 508) and are the results of researchers focused on user experiences for the disabled.
+      component Accessible
+        An artifact is accessible if it is usable by and useful to the disabled. The details of such a notion are often codified in federal law (e.g., U.S. Section 508) and are the results of researchers focused on user experiences for the disabled.
+        
+        //indexing
+        //applicable_law: "http://www.section508.gov"
+        //this comment parses incorrectly it is attached to reliable but it should be attached to acessible.
+
+      // Source: NIST
+      component Ballot Secrecy
+          A goal of voting systems to ensure that no contest selections can be associated with a voter.
       
-      //indexing
-      //applicable law: "http://www.section508.gov"
-      //this comment parses incorrectly it is attached to reliable but it should be attached to acessible.
+      // Source: NIST
+      component Fault-Tolerant
+          A system that continues to operate after the failure of a computer or network component.
+
+      // Source: NIST
+      component Privacy
+          A property of a voting system that is designed and deployed to enable voters to obtain a ballot, and mark, verify, and cast it without revealing their ballot selections or selections of language, display and interaction modes to anyone else. This does not preclude the ability of a voter to request assistance under state law.
 
       component Reliable
         An artifact is reliable if it is guaranteed to be available for use, and to work properly, for a specified percentage of time.
@@ -514,10 +677,232 @@ subsystem Core Concepts
 
         The reliability percentage must be between 0 and 100, inclusive.
 
+      // Source: NIST
+      // See "On the notion of 'software independence' in voting systems" by Ronald L. Rivest and John P. Wack
+      component Software Independence (SI)
+          Quality of a voting system or voting device where a previously undetected change or fault in software cannot cause an undetectable change or error in election outcome. In practice, voting systems are generally viewed as possessing the quality of software independence when they allow for a voter-verifiable paper record of voters' contest selections to be created and compared against vote totals or against an electronic cast vote record used in determining vote totals.
+
       component Usable
         An artifact is usable if it can successfully be used for its stated purpose.
 
     end
+
+  subsystem Systems
+    The concepts related to digital systems in general.
+
+    // Source: NIST
+    component Air Gap
+        A physical separation between systems that requires data to be moved by some external, manual procedure.
+
+    // Source: SP 800-37
+    component Application
+        A software program hosted by an information system.
+
+    // Source: ISO/IEC 15026, Adapted
+    component Assurance
+        Grounds for justified confidence that a [security or privacy] claim has been or will be achieved. Note 1: Assurance is typically obtained relative to a set of specific claims. The scope and focus of such claims may vary (e.g., security claims, safety claims) and the claims themselves may be interrelated. Note 2: Assurance is obtained through techniques and methods that generate credible evidence to substantiate claims.
+
+    // Source: CNSSI 4009
+    component Audit Log
+        A chronological record of system activities, including records of system accesses and operations performed in a given period.
+
+    // Source: SP800-53
+    component Audit Record
+        An individual entry in an audit log related to an audited event.
+
+    // Source: NIST
+    component Authentication
+        Verifying the identity of a user, process, or device, often as a prerequisite to allowing access to resources in an information system.
+
+    // Source: NIST
+    component Authentication Token (Token)
+        Something a user possesses and controls, typically a key or password, that is used to authenticate an identity.
+
+    // Source: SP800-53
+    component Authenticator
+        Something that the claimant possesses and controls (typically a cryptographic module or password) that is used to authenticate the claimant’s identity. This was previously referred to as a token.
+
+    // Source: CNSSI 4009
+    component Authorization
+        Access privileges granted to a user, program, or process or the act of granting those privileges.
+
+    // Source: SP800-123
+    component Availability
+        Ensuring that information is accessible by authorized users.
+
+    // Source: NIST
+    component Confidentiality
+        Prevention of unauthorized disclosure of information.
+
+    // Source: SP800-123
+    component Compromise Recording
+        Records and logs should be maintained so that if a compromise does occur, evidence of the attack is available to the organization. This information can assist in securing the network and host after the compromise and aid in identifying the methods and exploits used by the attacker. This information can be used to better secure the host or network in the future. In addition, these records and logs can assist organizations in identifying and prosecuting attackers.
+
+    // Source: SP 800-63-3
+    component Credential
+        An object or data structure that authoritatively binds an identity, via an identifier or identifiers, and (optionally) additional attributes, to at least one authenticator possessed and controlled by a subscriber.
+
+    // Source: ISO 25237
+    component De-Identification
+        General term for any process of removing the association between a set of identifying data and the data subject.
+
+    // Source: IR 8062
+    component Disassociability
+        Enabling the processing of personally identifiable information or events without association to individuals or devices beyond the operational requirements of the system.
+
+    // Source: NIST
+    component Extensible Markup Language (XML)
+        A text-based language used to organize and present information on the World Wide Web.
+
+    // Source: NIST
+    component Firewall
+        A gateway system designed to prevent unauthorized access to a private network or intranet that is connected to the internet. A firewall can be implemented in either hardware or software, or a combination of both.
+
+    // Source: SP800-123
+    component Hardening
+        Configuring a host’s operating system and applications to reduce the host’s security weaknesses.
+
+    // Source: SP800-145
+    component Hybrid Cloud
+        The cloud infrastructure is a composition of two or more distinct cloud infrastructures (private, community, or public) that remain unique entities, but are bound together by standardized or proprietary technology that enables data and application portability (e.g., cloud bursting for load balancing between clouds).
+
+    // Source: FIPS 201-2
+    component Identifier
+        Unique data used to represent a person’s identity and associated attributes. A name or a card number are examples of identifiers. A unique label used by a system to indicate a specific entity, object, or group.
+
+    // Source: CNSSI 4009
+    component Internal Network
+        A network where the establishment, maintenance, and provisioning of security controls are under the direct control of organizational employees or contractors. Cryptographic encapsulation or similar security technology implemented between organization-controlled endpoints provides the same effect (at least regarding confidentiality and integrity). An internal network is typically organization-owned yet may be organization-controlled while not being organization-owned.
+
+    // Source: SP800-123
+    component Integrity
+        Ensuring the authenticity of information—that information is not altered, and that the source of the information is genuine.
+
+    // Source: CNSSI 4009
+    component Network
+        A system implemented with a collection of connected components. Such components may include routers, hubs, cabling, telecommunications controllers, key distribution centers, and technical control devices.
+
+    // Source: SP800-145
+    component Private Cloud
+        The cloud infrastructure is provisioned for exclusive use by a single organization comprising multiple consumers (e.g., business units). It may be owned, managed, and operated by the organization, a third party, or some combination of them, and it may exist on or off premises.
+
+    // Source: NIST
+    component Product Standard
+        Standard that specifies requirements to be fulfilled by a product or a group of products, to confirm it can perform its intended task.
+
+    // Source: SP800-145
+    component Public Cloud
+        The cloud infrastructure is provisioned for open use by the general public. It may be owned, managed, and operated by a business, academic, or government organization, or some combination of them. It exists on the premises of the cloud provider.
+
+    // Source: NIST
+    component Security Controls
+        Management, operational, and technical controls (that is, safeguards or countermeasures) prescribed for an information system to protect the confidentiality, integrity, and availability of the system and its information.
+
+    // Source: SP800-123
+    component Separation of Privilege
+        Functions, to the degree possible, should be separate and provide as much granularity as possible. This can apply to systems and system operators/users. In the case of systems, functions such as read, edit, write, and execute should be separate. In the case of system operators/users, roles should be as separate as possible.
+
+  subsystem Cryptography 
+    Discipline that embodies the principles, means, and methods for transforming data to hide their semantic content, prevent their unauthorized use, prevent their undetected modification, or establish their authenticity.
+    
+    // Source: NIST
+    component Asymmetric Cryptography
+      Encryption system that uses a public and private key pair for cryptographic operation. The private key is generally stored in a user's digital certificate and used typically to decrypt or digitally sign data. The public key is used typically to encrypt the data or verify its digital signatures. The keys could be used interchangeably as needed, that is, a public key can be used to decrypt data and the private key can be used to encrypt the data.
+
+    // Source: NIST
+    component Ciphertext
+        Data or information in its encrypted form.
+
+    // Source: NIST
+    component Cryptographic Hash
+        A cryptographic algorithm that computes a numerical hash value based on a data file or electronic message. It should be infeasible in practice to find two distinct data files or messages that will result in the same numerical hash value. The numerical value can be considered to be a fingerprint of the file or message. Colloquially known as a hash, hash function, or digital fingerprint. Hashes provide integrity protection.
+
+    // Source: NIST
+    component Cryptographic Key
+        A numeric value used as input to cryptographic operations, such as decryption, encryption, signature generation, or verification of a digital signature.
+
+    // Source: NIST
+    component Encryption
+        Cryptographic process of transforming data (called "plaintext") into a form (called "ciphertext") that conceals the data's original meaning to prevent it from being known or used. Encryption provides confidentiality protection.
+
+    // Source: NIST
+    component Message Authentication
+        A data authenticator generated from the message, usually through cryptographic techniques, that is designed to reveal both accidental errors and intentional modifications of the data. In general, a cryptographic key is also required as an input.
+
+    // Source: NIST
+    component Private Key inherit Cryptographic Key
+        The secret part of an asymmetric key pair that is typically used to digitally sign or decrypt data.
+
+    // Source: NIST
+    component Public Key inherit Cryptographic Key
+        Public part of an asymmetric key pair that is typically used to verify digital signatures or encrypt data.
+
+    // Source: NIST
+    component Security Strength
+        A metric associated with the amount of work (that is, the number of operations) that is required to break a cryptographic algorithm or system.
+
+  subsystem Threats
+    The concepts releated to threats to security and threat modeling.
+
+    // Source: SP800-53
+    component Attack Surface
+        The set of points on the boundary of a system, a system component, or an environment where an attacker can try to enter, cause an effect on, or extract data from, that system, component, or environment.
+
+    // Source: OMB M-17-12
+    component Breach
+        The loss of control, compromise, unauthorized disclosure, unauthorized acquisition, or any similar occurrence where: a person other than an authorized user accesses or potentially accesses personally identifiable information; or an authorized user accesses personally identifiable information for an other than authorized purpose.
+
+    // Source: VWYP
+    component Denial of Service
+        An interruption in an authorized user’s access to a computer network, typically one caused with malicious intent.
+
+    // Source: VWYP
+    component Email Breach
+        An incident where the security of an email or associated accounts was compromised.
+
+    // Source: NIST
+    component Escalation Of Privilege
+        An attack on a system where the attacker is using some means to bypass security controls in order to attain a higher privilege level on the target system.
+
+    // Source: CNSSI 4009, Adapted
+    component Insider Threat
+        The threat that an insider will use her/his authorized access, wittingly or unwittingly, to do harm to the security of organizational operations and assets, individuals, other organizations, and the Nation. This threat can include damage through espionage, terrorism, unauthorized disclosure of national security information, or through the loss or degradation of organizational resources or capabilities.
+
+    // Source: NIST
+    component Malware 
+        Software or firmware intended to perform an unauthorized process that will have adverse impact on the confidentiality, integrity, or availability of a system. For example, a virus, worm, Trojan horse, or other code-based entity that infects a host. Spyware and some forms of adware are also examples of malware.
+
+    // Source: VWYP
+    component Multiple Ballot Submission
+        Illegally submitting multiple ballots.
+
+    // Source: SP 800-63-3
+    component Replay Attack
+        An attack in which the Attacker is able to replay previously captured messages (between a legitimate Claimant and a Verifier) to masquerade as that Claimant to the Verifier or vice versa.
+
+    // Source: SP800-53
+    component Spyware
+        Software that is secretly or surreptitiously installed into an information system to gather information on individuals or organizations without their knowledge; a type of malicious code.
+
+    // Source: CNSSI 4009
+    component Tampering
+        An intentional but unauthorized act resulting in the modification of a system, components of systems, its intended behavior, or data.
+
+    // Source: SP800-30
+    component Threat
+        Any circumstance or event with the potential to adversely impact organizational operations, organizational assets, individuals, other organizations, or the Nation through a system via unauthorized access, destruction, disclosure, modification of information, and/or denial of service.
+
+    // Source: SP800-154
+    component Threat Modeling
+        A form of risk assessment that models aspects of the attack and defense sides of a logical entity, such as a piece of data, an application, a host, a system, or an environment.
+
+    // Source: SP800-30
+    component Vulnerability
+        Weakness in an information system, system security procedures, internal controls, or implementation that could be exploited or triggered by a threat source.
+
+    // Source: CNSSI 4009
+    component Vulnerability Assessment
+        Systematic examination of an information system or product to determine the adequacy of security measures, identify security deficiencies, provide data from which to predict the effectiveness of proposed security measures, and confirm the adequacy of such measures after implementation.
 
   subsystem Others
     Placeholder for concepts waiting to be clustered.
