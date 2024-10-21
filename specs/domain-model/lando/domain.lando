@@ -684,7 +684,7 @@ subsystem Core Concepts
         
         //indexing
         //applicable_law: "http://www.section508.gov"
-        //this comment parses incorrectly it is attached to reliable but it should be attached to acessible.
+        //this comment parses incorrectly it is attached to reliable but it should be attached to accessible.
 
       // Source: NIST
       component Ballot Secrecy
@@ -822,51 +822,878 @@ subsystem Core Concepts
     component Separation of Privilege
         Functions, to the degree possible, should be separate and provide as much granularity as possible. This can apply to systems and system operators/users. In the case of systems, functions such as read, edit, write, and execute should be separate. In the case of system operators/users, roles should be as separate as possible.
 
-  subsystem Cryptography 
+  subsystem Cryptography
     Discipline that embodies the principles, means, and methods for transforming data to hide their semantic content, prevent their unauthorized use, prevent their undetected modification, or establish their authenticity.
+
+    contains 
+
+    subsystem Core Concepts
+      The core concepts of cryptography.
+
+      contains
+
+      // Source: Wikipedia, NSA
+      component Code
+        A substitution cryptosystem in which the plaintext elements are primarily words, phrases, or sentences, and the code equivalents (called "code groups") typically consist of letters or digits (or both) in otherwise meaningless combinations of identical length.
+
+      // Source: Wikipedia
+      component Cipher
+        An algorithm used in cryptography to convert plain text into encrypted text (ciphertext) by transforming individual characters or bits of information. Unlike codes, which substitute entire words or phrases, ciphers operate at a more granular level, manipulating letters, numbers, or binary data to obscure the original message.
+
+      // Source: NIST
+      component Decryption
+        The process of transforming ciphertext into plaintext using a cryptographic algorithm and key.
+
+      // Source: NIST
+      component Encryption
+        Cryptographic process of transforming data (plaintext) into a form (ciphertext) that conceals the data's original meaning to prevent it from being known or used. Encryption provides confidentiality protection.
+
+      // Source: Wikipedia
+      component Forward Secrecy
+        A feature of specific key-agreement protocols that gives assurances that session keys will not be compromised even if long-term secrets used in the session key exchange are compromised. A stolen long-term secret alone cannot be used to generate previous session keys and a stolen session key cannot be used to generate previous or subsequent session keys. However, a stolen long-term secret can be used in a man-in-the-middle attack to compromise subsequent session keys.
+
+      component Hash
+        A mathematical algorithm that takes an input (or "message") and produces a fixed-size string of characters, known as the hash value or digest. It is designed to meet specific security properties of pre-image resistance, second pre-image resistance, and collision resistance.
+
+      // Source: Wikipedia
+      component Mode
+        A block cipher by itself is only suitable for the secure cryptographic transformation (encryption or decryption) of one fixed-length group of bits called a block. A mode of operation describes how to repeatedly apply a cipher's single-block operation to securely transform amounts of data larger than a block.
+
+      // Source: NIST SP 800-133 Rev. 2 
+      component Nonce
+        A time-varying value that has (at most) an acceptably small chance of repeating. For example, the nonce may be a random value that is generated anew for each use, a timestamp, a sequence number, or some combination of these.
     
-    // Source: NIST
-    component Asymmetric Cryptography
-      Encryption system that uses a public and private key pair for cryptographic operation. The private key is generally stored in a user's digital certificate and used typically to decrypt or digitally sign data. The public key is used typically to encrypt the data or verify its digital signatures. The keys could be used interchangeably as needed, that is, a public key can be used to decrypt data and the private key can be used to encrypt the data.
+      // Source: ElectionGuard
+      component Protocol
+        A cryptographic algorithm among multiple communicating parties.
 
-    // Source: NIST
-    component Ciphertext
-        Data or information in its encrypted form.
+      // Source: Wikipedia
+      component Salt
+        Random data added to the input of a hash function to make each hash unique, even for identical inputs. It is a countermeasure against precomputed attacks like rainbow tables and makes it harder to crack multiple password hashes simultaneously​.
 
-    // Source: NIST
-    component Cryptographic Hash
-        A cryptographic algorithm that computes a numerical hash value based on a data file or electronic message. It should be infeasible in practice to find two distinct data files or messages that will result in the same numerical hash value. The numerical value can be considered to be a fingerprint of the file or message. Colloquially known as a hash, hash function, or digital fingerprint. Hashes provide integrity protection.
-
-    // Source: NIST
-    component Cryptographic Key
-        A numeric value used as input to cryptographic operations, such as decryption, encryption, signature generation, or verification of a digital signature.
-
-    // Source: NIST
-    component Encryption
-        Cryptographic process of transforming data (called "plaintext") into a form (called "ciphertext") that conceals the data's original meaning to prevent it from being known or used. Encryption provides confidentiality protection.
-
-    // Source: NIST
-    component Message Authentication
-        A data authenticator generated from the message, usually through cryptographic techniques, that is designed to reveal both accidental errors and intentional modifications of the data. In general, a cryptographic key is also required as an input.
-
-    // Source: NIST
-    component Private Key inherit Cryptographic Key
-        The secret part of an asymmetric key pair that is typically used to digitally sign or decrypt data.
-
-    // Source: ElectionGuard
-    component Protocol
-      A cryptographic algorithm among multiple communicating parties.
-
-    // Source: NIST
-    component Public Key inherit Cryptographic Key
-        Public part of an asymmetric key pair that is typically used to verify digital signatures or encrypt data.
-
-    // Source: NIST
-    component Security Strength
+      // Source: NIST
+      component Security Strength
         A metric associated with the amount of work (that is, the number of operations) that is required to break a cryptographic algorithm or system.
 
+      // Source: Wikipedia
+      subsystem Algorithm Designs 
+        A listing of multiple different designs of cryptographic algorithms and their related concepts.
+
+        // Source: Wikipedia
+        component Feistel Network
+          A symmetric structure used in the design of many block ciphers, that ensures both encryption and decryption use very similar operations. In a Feistel Network, the input block is divided into two halves, and in each round, one half is modified based on the output of a function applied to the other half and a subkey. The two halves are then swapped before moving to the next round. Decryption simply reverses the process by applying the same function in the reverse order of subkeys.
+    
+        // Source: Wikipedia
+        component Key Schedule
+          An algorithm that expands a relatively short encryption key into multiple subkeys used in successive rounds of encryption or decryption within a block cipher. It is critical in determining the strength of the encryption because it helps avoid repeated patterns in the ciphertext.
+    
+        // Source: Wikipedia
+        component Lai Massey Scheme
+          A cryptographic structure used in block cipher design, similar to the Feistel Network, but with distinct properties. Like the Feistel Network, it divides the input data into two equal parts for processing. However, instead of applying the round function directly to one half, the Lai-Massey scheme applies the round function to the difference between the two halves. The result of the round function is then combined with both halves of the input block, rather than just one.
+
+        // Source: Wikipedia
+        component Product Cipher
+          A type of cryptographic cipher that combines two or more transformations in a manner intending that the resulting cipher is more secure than the individual components to make it resistant to cryptanalysis. The product cipher combines a sequence of simple transformations such as substitution (S-box), permutation (P-box), and modular arithmetic.
+
+        // Source: Wikipedia
+        component Substitution Box (S-box)
+          A fundamental component in symmetric key cryptography used to perform substitution during encryption. Its primary role is to introduce non-linearity. The S-box takes a fixed number of input bits and transforms them into output bits in a way that obscures the relationship between the ciphertext and the encryption key.
+
+        // Source: Wikipedia
+        component Permutation Box (P-box)
+          A fundamental component in symmetric key cryptography used to achieve diffusion. The P-box takes bits from the input and rearranges them in a deterministic manner, scattering their positions. This spreading of bits ensures that changes in one part of the input will affect many parts of the output.
+    
+        // Source: Wikipedia
+        component Substitution-Permutation Network (SPN)
+           A series of linked mathematical operations used in block cipher algorithms. The SPN takes a block of the plaintext and the key as inputs, and applies several alternating rounds or layers of substitution boxes (S-boxes) and permutation boxes (P-boxes) to produce the ciphertext block.
+
+        // Source: wikipedia
+        component Avalanche Effect
+          The desirable property of cryptographic algorithms, typically block ciphers and cryptographic hash functions, wherein if an input is changed slightly (for example, flipping a single bit), the output changes significantly (e.g., half the output bits flip). In the case of high-quality block ciphers, such a small change in either the key or the plaintext should cause a drastic change in the ciphertext.    
+
+        // Source: Wikipedia
+        component Block Size
+          The fixed-length group of bits that a block cipher processes during encryption and decryption. Block ciphers operate by transforming these blocks of data, and the size of the block directly impacts the security and efficiency of the algorithm. Both the input (plaintext) and output (ciphertext) are the same length.
+
+        // Source: Wikipedia
+        component Key Size
+          The length of a key used by an encryption algorithm, measured in bits. The key size determines the upper limit of security against brute force attacks, where an attacker tries every possible key combination. The larger the key size, the more potential combinations, making it harder to break the encryption by brute force.
+
+        // Source: Wikipedia
+        component Key Whitening 
+          A cryptographic technique used to enhance the security of block ciphers by combining the input data with portions of the key, usually through XOR operations, before the encryption process begins and after it ends. This ensures that even if the core cipher is broken or weakened, the overall encryption remains difficult to crack without the full key.
+
+        // Source: Wikipedia 
+        component Elliptic Curve Cryptography (ECC)
+          A type of public-key cryptography based on the mathematical properties of elliptic curves over finite fields. It provides similar levels of security to traditional systems like RSA but uses significantly smaller key sizes. ECC relies on the difficulty of solving the Elliptic Curve Discrete Logarithm Problem (ECDLP), which involves finding a scalar multiplier given two points on an elliptic curve.
+
+        // Source: Wikipedia
+        component Discrete Logarithm
+           The inverse operation of exponentiation in a finite group, analogous to finding a regular logarithm in real numbers. The problem is considered computationally intractable by classical computers, meaning there is no efficient algorithm to solve it for large values, making it a cornerstone of several cryptographic systems. However, advances in quantum computing pose a threat to cryptographic systems relying on the intractability of the problem.
+
+      subsystem Authenticated Encryption Modes 
+        Modes of operation of the Advanced Encryption Standard symmetric cipher that guarantee both data confidentiality and data authenticity.
+
+        // Source: Wikipedia
+        component Counter with CBC-MAC (CCM)
+           A mode of operation for block ciphers that works by encrypting the data using the counter mode for confidentiality and generating a MAC using CBC for data integrity. CCM is a two-pass mode, meaning it encrypts and then authenticates, making it slightly slower than some single-pass modes like GCM.
+
+        // Source: Wikipedia
+        component Carter-Wegman + CTR (CWC)
+          A mode of operation for block ciphers that works by encrypting the data using the counter mode (CTR) for confidentiality and the Carter-Wegman Message Authentication Code (MAC) for integrity. This mode offers both confidentiality and message integrity in a single pass.
+
+        // Source: Wikipedia
+        component Encrypt then Authenticate then Translate (EAX)
+          A mode of operation for block ciphers that works by encrypting the data using a block cipher without restrictions for confidentiality in the first pass and a MAC for authentication in the second pass. This mode allows for authentication of additional data that is not encrypted, known as Associated Data (AD).
+
+        // Source: Wikipedia
+        component Galois Counter Mode (GCM)
+          A mode of operation for block ciphers that works by encrypting the data using the counter mode (CTR) for confidentiality and Galois field multiplication for integrity in a single pass. This mode allows for authentication of additional data that is not encrypted, known as Associated Data (AD).
+        
+        // Source: Wikipedia
+        component Integrity-Aware Parallelizable Mode (IAPM)
+          A mode of operation for block ciphers that was created to be highly efficient and parallelizable. This mode uses two independent keys for both encryption and integrity verification, and its structure allows for parallel processing of both encryption and authentication in a single pass.
+
+        // Source: Wikipedia
+        component Offset Codebook Mode (OCM)
+          A mode of operation for block ciphers that works by combining each plaintext block with a unique offset value derived from a nonce. The data is then encrypted, and a final authentication tag is generated to verify the integrity of the ciphertext in a single pass. This mode allows for parallel processing.
+
+      subsystem Standardization
+        Official United States Government standards for cryptography.
+
+        // Source: Wikipedia
+        component Commercial National Security Algorithm Suite (CNSA)
+          A set of cryptographic algorithms promulgated by the National Security Agency as a replacement for NSA Suite B Cryptography algorithms. It serves as the cryptographic base to protect US National Security Systems information up to the top secret level, while the NSA plans for a transition to quantum-resistant cryptography.
+
+        // Source: Wikipedia
+        component Federal Information Processing Standards (FIPS)
+          A set of U.S. government standards developed by the National Institute of Standards and Technology (NIST) to ensure computer security and interoperability in federal agencies. These standards cover various areas, such as cryptography, data processing, and secure communications. They are primarily intended for use in non-military federal government applications, but they are often adopted by private organizations seeking strong security protocols. One notable standard in the FIPS series is FIPS 140, which defines security requirements for cryptographic modules.
+
+        // Source: Wikipedia
+        component Suite B Cryptography
+           A set of cryptographic algorithms developed by the NSA as part of its Cryptographic Modernization Program to provide security for both classified and unclassified communications. It included several key components: Advanced Encryption Standard (AES), Elliptic Curve Cryptography (ECC), and Secure Hash Algorithm (SHA). Suite B was phased out in 2018 and replaced by the Commercial National Security Algorithm Suite (CNSA), as part of a transition to quantum-resistant cryptographic methods. 
+
+        end
+
+    subsystem Threats
+      Concepts related to attacks on cryptographic primitives.
+
+      contains
+
+      subsystem General Attacks
+        Attacks that are not algorithm specific but apply in a block box manner.
+
+        component Brute Force
+          Cryptographic algorithm designs acknowledge the possibility of an attacker guessing certain values correctly and defeating the stated security claims. The algorithms are designed to make the probability of a correct guess negligible. This attack consists of an attacker simply guessing and checking a vast number of potential values until a correct value is found. This attack applies to keys for symmetric and asymmetric cryptography algorithms as well as inputs to hash functions.
+
+        // Source: Wikipedia
+        component Man in the Middle (MITM)
+          An attack where the attacker secretly relays and possibly alters the communications between two parties who believe that they are directly communicating with each other. In a successful attack, the reading or altering of the communications allows the attacker to break stated security properties of the protocol. As it aims to circumvent mutual authentication, a MITM attack can succeed only when the attacker impersonates each party sufficiently well to satisfy the expectations of the other party.
+
+        // Source: Wikipedia
+        component Side Channel
+          Any attack based on extra information that can be gathered because of the fundamental properties of a specific implementation of a protocol or algorithm, rather than flaws in the design of the protocol or algorithm itself. Timing information, power consumption, electromagnetic leaks, and sound are examples of extra information that could be exploited to facilitate side-channel attacks. Some side-channel attacks require technical knowledge of the internal operation of the system, while others such as differential power analysis are effective as black-box attacks.
+
+      subsystem Hash Attacks
+        Attacks on cryptographic hash functions.
+
+        contains
+
+        // Source: Wikipedia
+        subsystem Collision Attacks
+          An attack where the attacker attempts to find two different inputs that produce the same output when processed by a cryptographic hash function.
+
+          contains
+
+          // Source: Wikipedia
+          component Birthday Attack
+            A brute force collision attack exploiting the mathematics behind the birthday problem in probability theory. The birthday problem arises from the significantly higher probability of finding a pair of any two people in a group who share the same birthday compared to finding a second person with the same birthday as a given a person. The attacker generates many different input values and checks if any two inputs have the same hash value causing a hash collision.
+
+          // Source: Wikipedia
+          component Classical Collision Attack
+            A type of collision attack where the attacker seeks to find two different messages m1 and m2 such that hash(m1) = hash(m2).
+          
+          // Source: Wikipedia
+          component Chosen-Prefix Collision Attack
+            A type of collision attack where the attacker attempts to find two suffixes s1 and s2 for given prefixes p1 and p2 such that hash(p1 ∥ s1) = hash(p2 ∥ s2), where ∥ denotes the concatenation operation.
+
+          end
+
+        // Source: Wikipedia
+        subsystem Preimage Attacks
+          An attack where the attacker attempts to find an input to a cryptographic hash function which results in a given output.
+
+          contains
+
+          // Source: Wikipedia
+          component First Preimage Attack
+            A type of preimage attack where the attacker seeks to find an input x given an output y, such that hash(x) = y.
+
+          // Source: Wikipedia
+          component Second Preimage Attack
+            A type of preimage attack where the attacker seeks to find an input x' given another input x such that hash(x) = hash(x').
+
+          end
+
+        // Source: Wikipedia
+        component Rainbow Attack
+          An attack where the attacker precomputes and caches the output of a cryptographic hash function in a specific structure called a rainbow table. The rainbow table stores only the starting and ending values of a chain of hash values. Searching a rainbow table requires generating a hash chain for the queried value and checking the table for that hash chain. This is a space and time efficient method to search for and possibly retrieve an input that also results in the queried hash value. The attack is frequently used to find a password that results in a given password hash. Rainbow attacks can be mitigated by adding a salt to the hash function.
+
+        // Source: Wikipedia
+        component Length Extension Attack
+          A type of attack where an attacker can use Hash(message1) and the length of message1 to calculate Hash(message1 ‖ message2) for an attacker-controlled message2, without needing to know the content of message1. Concatenation is denoted here as ‖. Hash functions that work by taking the input message and using it to transform an internal state and then output the entire internal state are vulnerable to this attack. The attacker reconstructs the entire internal state using the message1 hash value and uses it to process additional data creating the new output value.
+
+        end
+
+      subsystem Block Cipher Attacks
+        Concepts related to attacks and cryptanalysis of block ciphers.
+
+        // Source: Wikipedia
+        component Linear Cryptanalysis
+          A general form of cryptanalysis based on finding affine approximations to the action of a cipher. The attack involves identifying linear expressions that approximate the relationships among plaintext, ciphertext, and key bits with a certain probability, then analyzing biases in the output to deduce information about the secret key. Its effectiveness relies on the quality of these approximations and the volume of known plaintext/ciphertext pairs available for analysis. 
+
+        // Source: Wikipedia
+        component Differential Cryptanalysis
+          A general form of cryptanalysis based on the study of how differences in information input can affect the resultant difference at the output. The basic method uses pairs of plaintexts related by a constant difference. The attacker then computes the differences of the corresponding ciphertexts, hoping to detect statistical patterns in their distribution. The resulting pair of differences is called a differential. For any particular cipher, the input difference must be carefully selected for the attack to be successful. An analysis of the algorithm's internals is undertaken; the standard method is to trace a path of highly probable differences through the various stages of encryption, termed a differential characteristic.
+
+        // Source: Wikipedia
+        component Integral Cryptanalysis
+          A general form of cryptanalysis using sets or  multisets of chosen plaintexts of which part is held constant, and another part varies through all possibilities. For example, an attack might use 256 chosen plaintexts that have all but 8 of their bits the same, but all differ in those 8 bits. Such a set necessarily has an XOR sum of 0, and the XOR sums of the corresponding sets of ciphertexts provide information about the cipher's operation. The usage of the sums of larger sets of texts contrasts the usage of the differences of pairs of texts in differential cryptanalysis.
+
+        // Source: Wikipedia
+        component Boomerang Attack
+          A method for the cryptanalysis of block ciphers based on a chosen plaintext attack using differential cryptanalysis. The attack attempts to generate a so-called "quartet" structure at a point halfway through the cipher. The attack algorithm creates chosen plaintext pairs with known differentials that cover only part of the cipher and through the decryption oracle is capable of propagating the differential through the entire cipher. The attack is applicable to hash functions built using block ciphers such as those using the Merkle-Damgård construction.
+
+        // Source: Wikipedia
+        component Slide Attack
+          A form of cryptanalysis analyzing a cipher's key schedule making the number of rounds irrelevant. The attack works by breaking the cipher up into identical permutation functions, F. Function F may consist of more than one round of the cipher; it is defined by the key schedule. Many plaintext/ciphertext pairs are collected denoted as (P,C) are then used to find a slid pair which is denoted (P0,C0)(P1,C1). A slid pair has the property that P0 = F(P1) and C0 = F(C1). P1/P0 and C1/C0 are then known plaintext/ciphertext pairs for F and can be combined with a known-plaintext attack on F to extract the key used by F.
+
+        // Source: Wikipedia
+        component Rotational Cryptanalysis
+          A generic cryptanalytic attack against algorithms that rely on the modular addition, bit rotation, and XOR operations (ARX for short). The basic idea of rotational cryptanalysis is that both the bit rotation and XOR operations preserve correlations between bit-rotated pairs of inputs, and that addition of bit-rotated inputs also partially preserves bit rotation correlations. Rotational pairs of inputs can thus be used to break the cipher in a way that is similar to differential cryptanalysis.
+
+        // Source: Wikipedia
+        component Timing Attack
+          A side-channel attack where the attacker attempts to compromise a cryptosystem by analyzing the time taken to execute cryptographic algorithms. Every logical operation in a computer takes time to execute, and the time can differ based on the input; with precise measurements of the time for each operation, an attacker can work backwards to the input. Finding secrets through timing information may be significantly easier than using cryptanalysis of known plaintext/ciphertext pairs. Sometimes timing information is combined with cryptanalysis to increase the rate of information leakage.
+
+        // Source: Wikipedia
+        component Extended Sparse Linearization Attack (XSL) 
+          A method of cryptanalysis for block ciphers. The attack involves expressing the cipher's operations as a system of overdefined quadratic equations. By applying the XSL algorithm, which leverages the sparsity and specific structure of these equations, an attacker attempts to solve for the secret key. Notably, the XSL attack requires only a limited number of known plaintexts, distinguishing it from cryptanalytic techniques that necessitate large datasets.
+
+        // Source: Wikipedia
+        component Interpolation Attack
+          A type of cryptanalytic attack against block ciphers. The attack expresses the ciphertext as a polynomial of the plaintext. If the polynomial has a relatively low number of unknown coefficients, then with a collection of plaintext/ciphertext pairs, the polynomial can be reconstructed. With the polynomial reconstructed the attacker then has a representation of the encryption, without exact knowledge of the secret key. The polynomial can also be used to recover the secret key.
+
+        // Source: Wikipedia
+        component Partitioning Cryptanalysis
+          A form of cryptanalysis for block ciphers that is a generalization of linear cryptanalysis. The bit sums (affine transformations) of linear cryptanalysis are replaced with more general balanced Boolean functions. Partitioning cryptanalysis works by dividing the sets of possible plaintexts and ciphertexts into efficiently computable partitions such that the distribution of ciphertexts is significantly non-uniform when the plaintexts are chosen uniformly from a given block of the partition. By analyzing how different inputs map to these partitions, an attacker can identify patterns or weaknesses that facilitate key recovery.
+
+        // Source: Wikipedia
+        component Davies Attack
+          A dedicated statistical cryptanalysis method for attacking the Data Encryption Standard (DES). Davies is a known-plaintext attack based on the non-uniform distribution of the outputs of pairs of adjacent S-boxes. The attack works by collecting many known plaintext/ciphertext pairs and calculating the empirical distribution of certain characteristics. Bits of the key can be deduced given sufficiently many known plaintexts, leaving the remaining bits to be found through brute force.
+
+        // Source: Wikipedia
+        component Rebound Attack
+          A type of statistical attack on hash functions, using techniques such as rotational and differential cryptanalysis to find collisions and other interesting properties. The attack occurs in two phases: the inbound phase and the outbound phase. The inbound phase employs a meet-in-the-middle strategy to efficiently navigate through the most complex parts of a differential path. By leveraging available degrees of freedom, the attacker can deterministically satisfy certain conditions within the cipher's internal state. The outbound phase  probabilistically extends the differential path to the cipher's input and output, aiming to link the internal state conditions to actual plaintext and ciphertext pairs.
+
+        // Source: Wikipedia
+        component Weak Key Attack
+          A cryptanalysis method exploiting specific keys that cause a cipher to exhibit predictable or undesirable behavior, compromising its security. These weak keys often constitute a small fraction of the total key space, but their use can lead to vulnerabilities. To mitigate the risks associated with weak keys, cryptographic systems often include mechanisms to detect and avoid them during key generation. 
+
+        // Source: Wikipedia
+        component Distinguishing Attack
+          Any form of cryptanalysis on data encrypted by a cipher that allows an attacker to distinguish the encrypted data from random data. To prove that a cryptographic function is safe, it is often compared to a random oracle. If a function is a random oracle, then an attacker is unable to predict any of the output of the function. If a function is distinguishable from a random oracle, it has non-random properties. That is, there exists a relation between different outputs, or between input and output, which can be used by an attacker for example to find (a part of) the input.
+
+      end
+
+    subsystem Cryptographic Key Concepts
+      Concepts related to the creation and usage of cryptographic keys.
+
+      contains 
+
+      // Source: Wikipedia
+      component Key
+        A string of data used with cryptographic algorithms to encrypt or decrypt data, authenticate messages, or verify digital signatures. Keys are categorized into symmetric keys, where the same key is used for both encryption and decryption, and asymmetric keys, which come in pairs (public and private) for digital signatures and secure key exchanges. Key security depends on effective management practices, including secure generation, storage, and distribution.
+
+      // Source: Wikipedia
+      component Key Stretching
+        A technique used to strengthen weak passwords or keys, making them more resistant to brute force attacks. It involves using a key derivation function (KDF) that repeatedly applies a cryptographic hash or encryption function to the original password or key, increasing the computational cost required for each attempt to guess it.
+
+      // Source: Wikipedia
+      component Key Derivation
+        The process of applying mathematical operations to produce one or more secure keys, ensuring that even if the original input is predictable, the derived keys are strong and unique. Key derivation ensures that derived keys are not only more secure but also suitable for different cryptographic uses, enabling the creation of keys with specific lengths or structural requirements for different protocols and systems​.
+
+      // Source: Wikipedia
+      subsystem Key Derivation Function (KDF)
+        A cryptographic algorithm that derives secure keys from an initial secret value (such as a password or master key) and a salt by repeatedly performing operations that strengthen security. The KDF iteration parameter determines the increase in computational difficulty. The main purpose of KDFs is to prevent brute force attacks by making each attempt more resource-intensive.
+
+        // Source: Wikipedia
+        component Password-Based Key Derivation Function 2 (PBKDF2)
+          An algorithm that applies a pseudorandom function, such as hash-based message authentication code (HMAC), to the input password or passphrase along with a salt value and repeats the process many times to produce a derived key that can be used as a cryptographic key in subsequent operations. When the standard was written in the year 2000 the recommended minimum number of iterations was 1,000, but the parameter is intended to be increased over time as CPU speeds increase.
+
+        // Source: Wikipedia
+        component bcrypt
+          An algorithm that applies the Blowfish cipher to the input password or passphrase along with a salt value and repeats the process a variable number of times, depending on the desired computational cost, to produce a derived key that can then be used as a cryptographic key in subsequent operations.
+
+        // Source: Wikipedia
+        component scrypt
+          An algorithm that applies PBKDF2 to the input password or passphrase along with a salt value. Additionally, there is a mixing step with a large vector of pseudorandom bit strings that are generated as part of the algorithm. Once the vector is generated, the elements of it are accessed in a pseudo-random order and combined to produce the derived key. This mixing step was specifically designed to make it costly to perform large-scale custom hardware attacks by requiring large amounts of memory.
+
+      // Source: Wikipedia
+      subsystem Key Management
+        The comprehensive process of generating, distributing, storing, using, and eventually destroying cryptographic keys to ensure secure operations within an organization.
+
+        // Source: Wikipedia
+        component X.509
+          An International Telecommunication Union (ITU) standard defining the format of public key certificates. An X.509 certificate binds an identity to a public key using a digital signature. A certificate contains an identity and a public key, and is either signed by a certificate authority or is self-signed. X.509 also defines certificate revocation lists, which are a means to distribute information about certificates that have been deemed invalid by a signing authority.
+
+        // Source: Wikipedia
+        component Public Key Infrastructure (PKI)
+          A set of roles, policies, hardware, software and procedures needed to create, manage, distribute, use, store and revoke digital certificates and manage public-key encryption. PKI is an arrangement that binds public keys with respective identities of entities. The binding is established through a process of registration and issuance of certificates at and by a certificate authority.
+
+      // Source: Wikipedia 
+      subsystem Key Exchange
+        A method in cryptography by which cryptographic keys are exchanged between two parties, allowing use of a cryptographic algorithm. Historically, before the invention of public-key cryptography it required a secret key to be communicated through trusted couriers, diplomatic bags, or any other secure communication channel.
+
+        // Source: Wikipedia
+        component Needham-Schroeder Protocol
+          A key exchange protocol designed to establish secure communication between two parties over an insecure network. There are two variants: the symmetric key protocol and the public key protocol. The symmetric key protocol uses a trusted third party who both parties share a unique symmetric key with to facilitate the exchange of a session key between the parties. The public key protocol uses a pair of public and private keys for each party to establish a shared secret key, but the original version was found to be insecure to man-in-the-middle attacks.
+
+        // Source: RFC 5990
+        component RSA Key Encapsulation Mechanism (RSA-KEM)
+          A cryptographic method that securely transports keying material using the recipient's RSA public key. Unlike traditional RSA encryption, which directly encrypts the keying data, RSA-KEM encrypts a randomly generated integer and derives the keying material from it. This approach enhances security by ensuring that the input to the RSA operation is a random integer without exploitable structure, and the keying data remains independent of the RSA decryption output.
+
+        // Source: NTT PSEC-KEM Specification
+        component Provably Secure Elliptic Curve Key Encapsulation Mechanism (PSEC-KEM)
+          A cryptographic protocol designed to securely transmit symmetric keys over insecure channels using elliptic curve cryptography. PSEC-KEM operates by generating a random session key and encapsulating it into a ciphertext using the recipient's public key. The recipient can then decapsulate the ciphertext with their private key to retrieve the session key that is subsequently used for symmetric encryption of the actual message.
+
+      end
+
+    subsystem Ciphers
+      Concepts related to encryption, decryption, and ciphers.
+
+      contains 
+
+        // Source Wikipedia
+        component Block Cipher
+          A symmetric key encryption algorithm that processes data in fixed-size blocks with an unvarying transformation of plaintext into ciphertext using a secret key. Even a secure block cipher is suitable for the encryption of only a single block of data at a time, using a fixed key. A multitude of modes of operation have been designed to allow their repeated use in a secure way. Block ciphers also feature as building blocks in other cryptographic protocols, such as universal hash functions and pseudorandom number generators.
+
+        // Source: Wikipedia
+        component Stream Cipher
+           A symmetric key encryption algorithm that encrypts plaintext data one bit or byte at a time, producing a continuous stream of ciphertext. Stream ciphers generate a pseudorandom keystream that is combined with the plaintext, typically using the XOR operation, to produce the ciphertext. The transformation of the plaintext into ciphertext is dependent on the state of the cipher in particular the keystream.
+
+        // Source: Wikipedia
+        subsystem Public Key Cryptography
+          The field of cryptographic systems that use pairs of related keys. Each key pair consists of a public key and a corresponding private key. The public key is openly distributed and used for encrypting messages or verifying digital signatures, while the private key is kept confidential and used for decrypting messages or creating digital signatures. This dual-key mechanism enables secure communication over insecure channels without the need to share secret keys beforehand. 
+
+          contains
+
+            // Source: Wikipedia
+            component Public Key
+              A cryptographic key that is generated as part of a public key cryptography key pair. The public key can be used to encrypt messages or verify a digital signature. Importantly, it cannot be used to decrypt messages or create digital signatures. The security of the cryptosystem does not rely on the secrecy of the public key, and it is shared openly.
+
+            // Source: Wikipedia
+            component Private Key 
+              A cryptographic key that is generated as part of a public key cryptography key pair. The private key can be used to decrypt messages or create digital signatures. This security of the cryptosystem relies on the secrecy of the private key, and it is not shared.
+
+            // Source: Wikipedia
+            component Fingerprint
+              A bit string generated through a cryptographic hash function that is a concise, fixed-size representation of a larger data set. Fingerprints serve as identifiers that are highly likely to uniquely identify the larger data set when the set of possible hash values is significantly greater than the number of items compared. The smaller fixed-size representation facilitates efficient verification and comparison processes.
+
+            // Source: Wikipedia
+            subsystem Public Key Algorithms
+              A listing of cryptographic algorithms satisfying the properties required for public key cryptography.
+
+              // Source: Wikipedia
+              component Digital Signature Standard (DSS)
+                 A Federal Information Processing Standard specifying a suite of algorithms that can be used to generate digital signatures established by the U.S. National Institute of Standards and Technology (NIST) in 1994. It defines the Digital Signature Algorithm, contains a definition of RSA signatures, and contains a definition of the Elliptic Curve Digital Signature Algorithm.
+
+              // Source: Wikipedia
+              component Digital Signature Algorithm
+                A public-key cryptography algorithm based on the intractability of modular exponentiation and the discrete logarithm problem. DSA is a variant of the Schnorr and ElGamal signature schemes. DSA was created by the National Security Agency (NSA) and adopted as part of the DSS.
+
+              // Source: Wikipedia
+              component Paillier Cryptosystem
+                A probabilistic public-key cryptography algorithm based on the intractability of the decisional composite residuosity assumption. Paillier is additively homomorphic, meaning the multiplication of two ciphertexts will decrypt to the addition of the two plaintexts. Paillier is secure against chosen plaintext attacks but not adaptive chosen plaintext attacks.
+
+              // Source: Wikipedia
+              component Rivest–Shamir–Adleman (RSA)
+                A public-key cryptography algorithm based on the intractability of efficiently factoring large composite numbers. RSA has a 2048 or 4096 bit key size. RSA requires use of the Optimal Asymmetric Encryption Padding scheme to preserve its security properties. There are several known attacks against RSA when not implemented and operated optimally. RSA was adopted as part of the DSS.
+
+              // Source: Wikipedia
+              component Cramer-Shoup
+                A public-key cryptography algorithm based on the intractability of the Decisional Diffie–Hellman assumption. Cramer-Shoup extends the ElGamal algorithm with a universal one-way function to achieve non-malleability. It was the first practical public-key cryptosystem proven to be secure against adaptive chosen ciphertext attacks without relying on the random oracle model.
+
+              // Source: Wikipedia
+              component Diffie–Hellman Key Exchange
+                A mathematical method of securely generating a symmetric cryptographic key over a public channel that was one of the first public-key protocols. Diffie–Hellman is based on the intractability of the Decisional Diffie–Hellman assumption. However, Diffie–Hellman key exchange itself is a non-authenticated protocol susceptible to man-in-the-middle attacks.
+
+              // Source: Wikipedia
+              component ElGamal
+                A probabilistic public-key cryptography algorithm based on the intractability of the Decisional Diffie–Hellman assumption. ElGamal is an extension of the Diffie–Hellman Key Exchange. The algorithm can be described as performing a Diffie–Hellman key exchange to establish a shared secret then using the secret as a one-time pad for encrypting a message. ElGamal encryption is malleable, and is therefore not secure against chosen ciphertext attacks. 
+
+            // Source: Wikipedia
+            subsystem Public Key Implementations
+              A listing of software implementing public key cryptography using public key algorithms.
+
+              // Source: Wikipedia
+              component Mix Network (mixnet)
+                Routing protocol that creates hard-to-trace communications by using a chain of mix node servers. Each message is encrypted by the sender first with the public key of the final mix node then with the public key of the next to last mix node and so on until the message is encrypted with the public key of the first mix node. Mix nodes take in messages from multiple senders, shuffle them, decrypt the outermost layer of encryption, and send them back out in random order to the next destination (possibly another mix node). This breaks the link between the source of the message and the destination. Each mix node only knows the node that it immediately received the message from, and the immediate destination to send the shuffled messages to, making the network resistant to malicious mix nodes.
+
+              // Source: Wikipedia
+              component Pretty Good Privacy (PGP)
+                An encryption program that provides cryptographic privacy and authentication for data communication. PGP uses a combination of symmetric-key and public-key cryptography to secure emails, files, and other forms of data. PGP also supports digital signatures, allowing users to verify the authenticity and integrity of messages and files.
+
+              // Source: Wikipedia
+              component GNU Privacy Guard (GPG)
+                A free-software replacement for Symantec's cryptographic software suite PGP. GPG is interoperable with modern versions of PGP and other OpenPGP v4-compliant systems. GPG is part of the GNU Project.
+
+              // Source: Wikipedia
+              component Off-the-Record Messaging
+                A cryptographic protocol that provides secure, private, and authenticated communication for instant messaging. OTR ensures that conversations are confidential and offer deniable authentication. The protocol employs a combination of AES for encryption, the Diffie–Hellman key exchange for secure key negotiation, and SHA-1 for hashing. OTR also provides forward secrecy, ensuring that if long-term keys are compromised, past conversations remain secure. 
+
+          end 
+
+        // Source: Wikipedia
+        subsystem Symmetric Key Algorithms
+           Cryptographic algorithms that use the same cryptographic keys for both the encryption of plaintext and the decryption of ciphertext. The keys may be identical, or there may be a simple transformation to go between the two keys. The keys, in practice, represent a shared secret between two or more parties that can be used to maintain a private information link. The requirement that both parties have access to the secret key is one of the main drawbacks of symmetric-key encryption.
+
+          // Source: Wikipedia
+          component Advanced Encryption Standard (AES)
+            A specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology (NIST) in 2001. AES is a variant of the Rijndael block cipher with a 128 bit block size, and a 128, 192, or 256 bit key size. AES employs a series of transformations, including substitution, permutation, and mixing, across multiple rounds to encrypt data.
+
+          // Source: Wikipedia
+          component Blowfish
+            A symmetric-key block cipher designed as an unpatented and royalty-free public domain alternative to existing encryption algorithms. Blowfish employs a 16-round Feistel network structure, utilizing key-dependent S-boxes and a complex key schedule to enhance security.
+
+          // Source: Wikipedia
+          component Camellia
+            A symmetric key block cipher with a 128 bit block size and 128, 192 and 256 bit key sizes. Camellia employs a Feistel network structure with either 18 or 24 rounds, depending on the key length, and incorporates key-dependent transformations to enhance security. The cipher has been approved for use by the ISO/IEC, the European Union's NESSIE project and the Japanese CRYPTREC project. 
+
+          // Source: Wikipedia
+          component CAST-128
+            A symmetric-key block cipher with a 64 bit block size and a variable 40 to 128 bit key size. CAST-128 is a 12- or 16-round Feistel network with large 8×32 bit S-boxes based on bent functions, key-dependent rotations, modular addition and subtraction, and XOR operations. The Cipher has also been approved for Government of Canada use by the Communications Security Establishment.
+
+          // Source: Wikipedia
+          component Data Encryption Standard (DES)
+            A symmetric-key block cipher that was established as a federal standard for encrypting sensitive information in 1977. DES has a balanced Feistel network structure and operates on 64 bit blocks of data utilizing a 56 bit key to perform 16 rounds of permutations and substitutions. DES is insecure due to the relatively short 56 bit key size.
+
+          // Source: Wikipedia
+          component International Data Encryption Algorithm (IDEA)
+            A symmetric-key block cipher with a 64 bit block size and a 128 bit key size. IDEA has a Lai-Massey scheme structure and performs 8.5 rounds of transformations. The algorithm has two parallel Lai-Massey schemes that are interwoven followed by a key dependent final half round.
+
+          // Source: Wikipedia
+          component Rivest Cipher 2 (RC2)
+            A symmetric-key block cipher with a 64 bit block size and a variable key size. The cipher consists of 18 rounds arranged as a source-heavy unbalanced Feistel network, with 16 rounds of one type (MIXING) punctuated by two rounds of another type (MASHING). A version of the cipher with a 40 bit key size was approved for export in 1989, by US regulators. RC2 is vulnerable to a related-key attack using 234 chosen plaintexts.
+
+          // Source: Wikipedia
+          component Rivest Cipher 5 (RC5)
+            A symmetric-key block cipher with a 32, 64 or 128 bit block size and 0 to 2040 bit key size which performs 0 to 255 rounds of operations. The cipher has a simple Feistel-like-network structure with modular additions, XORs, and data-dependent rotations. The key schedule expands the key using binary expansions of both e and the golden ratio. The original suggested parameters were a 64 bit block size, a 128 bit key size, and 12 rounds.
+
+          // Source: Wikipedia
+          component Rivest Cipher 6 (RC6)
+            A symmetric key block cipher derived from RC5 with a 128 bit block size, 128, 192, 256, or up to 2040 bit key size with 20 rounds of transformations. The cipher has a Feistel structure with an interweaving of two parallel RC5 encryption processes with an extra multiplication operation to make the rotation dependent on every bit in a word, and not just the least significant few bits. RC6 was a finalist in the AES competition and was submitted to the NESSIE and CRYPTREC projects.
+
+          // Source: Wikipedia
+          component SEED
+             A symmetric key block cipher with a 128 bit block size and a 128 bit key size. SEED employs a 16 round Feistel structure with two 8 × 8 S-boxes that are combined in a moderately complex set of boolean functions such that each output bit depends on 3 of the 4 input bytes. SEED has a fairly complex key schedule with 32 bit subkeys. SEED was developed by the Korea Information Security Agency (KISA) because 40 bit encryption imported from the U.S. was not considered strong enough.
+            
+          // Source: Wikipedia
+          component Serpent
+            A symmetric key block cipher with a 128 bit block size and 128, 192, or 256 bit key size. The cipher is a 32-round substitution–permutation network. Each round applies one of eight 4 bit to 4 bit S-boxes 32 times in parallel. Serpent was designed so that all operations can be executed in parallel, using 32 bit slices. Serpent was a finalist in the AES competition.
+
+          // Source: Wikipedia
+          component Skipjack
+            A symmetric-key block cipher with a 64 bit block size of and an 80 bit key size. Skipjack is structured as an unbalanced Feistel network with 32 rounds. Skipjack was developed by the U.S. National Security Agency (NSA) and intended for use in the Clipper chip, a device proposed to secure voice communications while allowing government access under certain conditions.
+
+          // Source: Wikipedia
+          component Tiny Encryption Algorithm (TEA)
+            A symmetric-key block cipher known for its simplicity and efficiency. TEA operates on 64 bit data blocks and utilizes a 128 bit key. It employs a Feistel network structure with a recommended 64 rounds. TEA has an extremely simple key schedule, mixing all of the key material in exactly the same way for each cycle. TEA is also susceptible to a related-key attack that requires 2^23 chosen plaintexts under a related-key pair, with 2^32 time complexity.
+
+          // Source: Wikipedia
+          component Triple Data Encryption Algorithm (3DES)
+            A symmetric-key block cipher that applies the DES cipher algorithm three times to each data block. 3DES operates on 64 bit blocks with a 168 bit equivalent key (three separate 56 bit DES keys). 3DES is a Feistel network with 48 DES-equivalent rounds. A CVE released in 2016 combined with the inadequate key size of 3DES, led to NIST deprecating 3DES in 2019 and disallowing all uses by 2023.
+
+          // Source: Wikipedia
+          component Twofish
+            A symmetric key block cipher with a 128 bit block size and 128, 192, or 256 bit key size. Twofish is related to the earlier block cipher Blowfish. Twofish uses pre-computed key-dependent S-boxes, and a relatively complex key schedule. The cipher has a Feistel network structure with 16 rounds of transformations. Twofish was one of the five finalists in the AES competition. Twofish remains unpatented and is available for public use without restrictions.
+
+          // Source: Wikipedia
+          component Extended Tiny Encryption Algorithm (XTEA)
+            A symmetric-key block cipher designed to address vulnerabilities in its predecessor, TEA. XTEA operates on 64 bit data blocks and utilizes a 128 bit key. It employs a Feistel network structure with a recommended 64 rounds (32 cycles) of encryption, incorporating operations such as addition, XOR, and bitwise shifts. The key schedule complexity was increased to address weaknesses in TEA.
+
+          // Source: Wikipedia
+          component ZUC
+            A stream cipher with a 128 bit secret key and a 128 bit initialization vector (IV), producing a keystream of 32 bit words for encryption and decryption processes. ZUC uses a 16-stage linear feedback shift register over the field GF(2^31−1), a bit reorganization layer, and a nonlinear function for keystream generation. ZUC serves as the core component of the 3GPP confidentiality and integrity algorithms, which are widely utilized in Long Term Evolution (LTE) networks.
+
+        // Source: Wikipedia
+        subsystem Block Cipher Modes
+          A listing of block cipher modes of operation.
+
+          // Source: HA Crypto
+          component Electronic Codebook (ECB)
+            An encryption mode where a plaintext is divided into blocks and each block is encrypted separately.
+
+          // Source: HA Crypto
+          component Cipher Block Chaining (CBC)
+            An encryption mode where each block of plaintext is XORed with the previous ciphertext block before being encrypted.
+
+          // Source: HA Crypto
+          component Propagating Cipher Block Chaining (PCBC)
+            A mode that is designed to cause small changes in the ciphertext to propagate indefinitely when decrypting, as well as when encrypting.
+
+          // Source: HA Crypto
+          component Cipher Feedback (CFB)
+            A mode that makes a block cipher into a self-synchronizing stream cipher.
+
+          // Source: HA Crypto
+          component Output Feedback (OFB)
+            A mode that makes a block cipher into a stream cipher by generating keystream blocks that are XORed with the plaintext blocks to get the ciphertext.
+
+          // Source: HA Crypto
+          component Counter (CTR)
+            A mode that makes a block cipher into a stream cipher by generating the next keystream block by encrypting successive values of a counter.
+
+        // Source: Wikipedia
+        subsystem Homomorphic Encryption
+          A form of encryption that enables computation on ciphertext where the data, intermediate values, and result of the computation remain encrypted. The decryption of the ciphertext result is identical to the result of an analogous computation on the original plaintext. Homomorphic encryption systems differ with respect to the number and type of computational operations supported.
+
+          contains
+
+          // Source: Wikipedia
+          component Partially Homomorphic Encryption (PHE)
+            A class of homomorphic encryption schemes supporting only a single type of computational operation such as either multiplication or addition that is fixed by the design of the scheme. PHE schemes support an unbounded number of computational operations on arbitrary circuits.
+
+          // Source: Wikipedia
+          component Somewhat Homomorphic Encryption (SHE)
+            A class of homomorphic encryption schemes supporting only two types of computational operations such as multiplication and addition that are fixed by the design of the scheme. SHE schemes support an unbounded number of computational operations, but only for a subset of circuits.
+          
+          // Source: Wikipedia
+          component Leveled Fully Homomorphic Encryption (Leveled-FHE)
+            A class of homomorphic encryption schemes supporting multiple types of computational operations. Leveled FHE schemes support only a bounded number of computational operations, but do support computation on arbitrary circuits.
+
+          // Source: Wikipedia
+          component Fully Homomorphic Encryption (FHE)
+            A class of homomorphic encryption schemes supporting multiple types of computational operations. FHE schemes support an unbounded number of computational operations on arbitrary circuits. A FHE scheme is the strongest notion of homomorphic encryption.
+
+          end
+
+      end
+
+    subsystem Text 
+      Concepts related to different types of sequences of characters and their usage in cryptography.
+
+      contains
+
+      // Source: Wikipedia
+      component Plaintext
+        Data in its original, unencrypted form that is readable and understandable without any decryption.
+
+      // Source: Wikipedia
+      component Ciphertext
+        The result of encryption performed on plaintext using an algorithm, called a cipher. Ciphertext is also known as encrypted or encoded information because it contains a form of the original plaintext that is unreadable by a human or computer without the proper cipher and the appropriate decryption key. 
+
+      // Source: HA Crypto
+      component Stream
+        An unbounded length sequence of bits.
+
+      // Source: Wikipedia
+      component Keystream
+        A stream of key material generated by a stream cipher's algorithm that is combined with plaintext to produce ciphertext. The keystream is typically generated from a cryptographic key and an initialization vector (IV), ensuring that the same plaintext encrypted with different keys or IVs results in different ciphertexts.
+
+      // Source: HA Crypto
+      component Block
+        A fixed length sequence of bits.
+
+      // Source: Wikipedia
+      subsystem Padding
+        Any of a number of distinct practices that all include adding data to the beginning, middle, or end of a message prior to encryption. In classical cryptography, padding may include adding nonsense phrases to a message to obscure the fact that many messages end in predictable ways.
+
+        // Source: Wikipedia
+        component Optimal Asymmetric Encryption Padding (OAEP)
+          A padding scheme used in conjunction with asymmetric encryption algorithms. OAEP addresses vulnerabilities associated with deterministic encryption by incorporating randomness into the encryption process. This is achieved by embedding the plaintext message into a larger, padded message before encryption, using hash functions and a mask generation function to ensure that identical plaintexts encrypt to different ciphertexts each time. 
+
+        // Source: Wikipedia
+        component Rivest–Shamir–Adleman Optimal Asymmetric Encryption Padding (RSA-OAEP)
+          A specific instance of OAEP using the RSA asymmetric encryption algorithm. RSA-OAEP provides stronger security guarantees against chosen ciphertext attacks than OAEP in general provides.
+
+      end
+
+    subsystem Signatures
+      Concepts related to signing and signatures in cryptography.
+
+      // Source: Wikipedia
+      component Digital Signature
+        A mathematical scheme that verifies the authenticity and integrity of a digital message or document. Digital signatures utilize asymmetric cryptography, involving a pair of keys: a private key for signing and a public key for verification. The sender uses their private key to generate a unique signature for the message that the recipient can verify using the sender's public key. This process provides non-repudiation, meaning the sender cannot deny having sent the message, and ensures that any tampering with the message after signing will invalidate the signature.
+
+      // Source: Wikipedia
+      component Signature
+         A depiction of someone's name, nickname, or even a simple "X" or other mark that a person writes on documents as a proof of identity and intent. The traditional function of a signature is to permanently affix to a document a person's uniquely personal, undeniable self-identification as physical evidence of that person's personal witness and certification of the content of all, or a specified part, of the document.
+
+      // Source: Wikipedia
+      component Schnorr Signature
+         A digital signature scheme that operates over groups where the discrete logarithm problem is hard. The scheme involves generating a random value, computing a commitment, deriving a challenge by hashing the message and commitment, and producing a response that combines the random value and the signer's private key. Verification is performed by reconstructing the commitment from the response and challenge, ensuring the signature's validity.
+
+    subsystem Hashes
+      Concepts related to hashes and cryptographic hash functions.
+
+      contains
+
+        // Source: Wikipedia
+        component Cryptographic Hash Function
+          A map from arbitrary binary strings to binary strings with a fixed bit length, with special properties desirable for cryptographic applications. These properties are: (1) the probability of a particular output hash value is uniform; (2) finding an input string that matches a given hash value is infeasible; (3) given an input and a hash value, finding a second input that results in the same hash value is infeasible; and (4) finding any pair of inputs that result in the same hash value is infeasible.
+
+        // Source: Wikipedia
+        component Hash Value
+          The fixed size bit string output of a cryptographic hash function.
+
+        // Source: Wikipedia, http://www.larc.usp.br/~pbarreto/WhirlpoolPage.html
+        component Whirlpool
+          A cryptographic hash function with a 512 bit output size. Whirlpool uses Merkle-Damgård strengthening and the Miyaguchi-Preneel hashing scheme with a dedicated 512 bit block cipher based on the AES block cipher. Whirlpool has been recommended by the NESSIE project and jointly adopted by the International Organization for Standardization (ISO) and the International Electrotechnical Commission (IEC).
+
+        // Source: Wikipedia
+        component RIPE Message Digest 160 (RIPEMD-160)
+          A cryptographic hash function with a 512 bit output size. RIPEMD-160 uses the Merkle-Damgård construction and extends MD4 by running two MD4 instances in parallel.
+
+        // Source: Wikipedia
+        component crypt
+          A POSIX C library function. crypt provides cryptographic key derivation functions for password validation and storage on Unix systems. crypt supports many different underlying hash functions, depending on the operating system it is running on.
+
+        subsystem Hash Designs
+          Concepts related to the algorithms and constructions used in cryptographic hash functions.
+
+          // Source: Wikipedia
+          component Avalanche Effect
+            The desirable property of cryptographic algorithms, typically block ciphers and cryptographic hash functions, wherein if an input is changed slightly, the output changes significantly. The strict avalanche criterion (SAC) is a formalization of the avalanche effect. It is satisfied if, whenever a single input bit is complemented, each of the output bits changes with a 50% probability. 
+          
+          // Source: Wikipedia
+          component Hash Collision
+            When two different inputs to a hash function produce the same output.
+
+          // Source: Wikipedia
+          component Merkle-Damgård Construction
+            A method for building cryptographic hash functions that process messages of arbitrary length into fixed-size outputs. The construction divides the message into fixed size blocks and iteratively feeds each message block into a compression function along with the output of the compression function run on the previous message block, except for the initial message block that is combined with a fixed initialization vector. A padding scheme is used that both extends the message to be a multiple of the block size and encodes the length of the original message. The construction provably creates a collision-resistant cryptographic hash function if the one-way compression function is collision-resistant.
+
+          // Source: Wikipedia
+          component Hash Chain
+             The successive application of a cryptographic hash function to a piece of data.
+
+        subsystem Hash Standardization
+          Concepts related to the standardization of hash functions by government entities.
+
+          // Source: Wikipedia
+          component Cryptography Research and Evaluation Committees (CRYPTREC)
+            A Japanese government initiative established to evaluate and recommend cryptographic techniques for government and industrial use. CRYPTREC includes members from Japanese academia, industry, and government. It was started in May 2000 by combining efforts from several agencies that were investigating methods and techniques for implementing 'e-Government' in Japan.
+
+          // Source: Wikipedia, NESSIE Project 
+          component New European Schemes for Signatures Integrity and Encryption (NESSIE)
+             A European research project funded from 2000 to 2003 to identify secure cryptographic primitives. The goal of the NESSIE project was to put forward a portfolio of strong cryptographic algorithms that had been obtained after an open call and had been evaluated using a transparent and open evaluation process. 
+
+          // Source: Wikipedia
+          component NIST Hash Function Competition
+            An open competition held by the US National Institute of Standards and Technology (NIST) to develop a new hash function called SHA-3 to complement the older SHA-1 and SHA-2. The competition was formally announced in the Federal Register on November 2, 2007. The competition ended on October 2, 2012, when NIST announced that Keccak would be the new SHA-3 hash algorithm.
+
+        subsystem MD Family
+          Concepts related to the collection of message digest algorithms designed by Ronald Rivest.
+
+          // Source: Wikipedia, RSA Laboratories, RFC 1319
+          component MD2 Message-Digest Algorithm (MD2)
+            A cryptographic hash function with a 128 bit output size and a 128 bit block size. The message is padded so its length in bytes is divisible by 16. A 16-byte checksum is then appended to the message. The message is then processed in 128 bit blocks through the Merkle-Damgård structure.
+
+          // Source: Wikipedia, RSA Laboratories
+          component MD4 Message-Digest Algorithm (MD4)
+            A cryptographic hash function with a 128 bit output size and a 512 bit block size. The message is padded to ensure that its length in bits plus 64 is divisible by 512. A 64 bit binary representation of the original length of the message is then concatenated to the message. The message is then processed in 512 bit blocks through the Merkle-Damgård structure. The security of MD4 has been severely compromised, as an attack can generate collisions in less than two MD4 hash operations.
+
+          // Source: Wikipedia, RSA Laboratories
+          component MD5 Message-Digest Algorithm (MD5)
+            A cryptographic hash function with a 128 bit output size and a 512 bit block size. The message padding scheme is identical to MD4. The message is then processed in 512 bit blocks through the Merkle-Damgård structure, but with a different compression function than the one used in MD4. A collision attack exists that can find collisions within seconds on a modern computer. Additionally, there is also a chosen-prefix collision attack that can produce a collision for two inputs with specified prefixes within seconds.
+
+          // Source: Wikipedia, The MD6 hash function: A proposal to NIST for SHA-3
+          component MD6 Message-Digest Algorithm (MD6)
+            A cryptographic hash function with a variable 1 to 512 bit output size. MD6 uses a Merkle tree construction with a 4096 bit compression function input block size and a 1024 bit intermediate value size. The algorithm then truncates the natively 1024 bit output size to the desired output size for the final output.
+
+        // Source: Wikipedia
+        subsystem SHA Family
+          A family of cryptographic hash functions published by the National Institute of Standards and Technology (NIST) as a U.S. Federal Information Processing Standard (FIPS).
+
+          contains
+
+            // Source: Wikipedia
+            // fips: FIPS PUB 180
+            // certifications: FIPS, CRYPTREC
+            component Secure Hash Algorithm 1 (SHA-1)
+              A cryptographic hash function designed by the NSA with a 160 bit output size and a 512 bit block size. The message is padded to a multiple of 512 bit blocks with the message length appended. SHA-1 utilizes a Merkle-Damgård structure where the compression function has a fixed 80 rounds per block. Successful collision and chosen prefix attacks have been performed leading to SHA-1 widely being considered insecure.
+
+              What is the SHA-1 digest of this message?
+
+              The digest is guaranteed to be 160 bits long.
+              The maximum message size is 2e64-1.
+              The algorithm runs 80 rounds.
+              The algorithm provides less than 80 bits of security.
+
+            // Source: Wikipedia
+            subsystem Secure Hash Algorithm 2 (SHA-2)
+              A family of cryptographic hash function designed by the NSA with several output sizes and varying block sizes. The SHA-2 functions share a nearly identical structure, differing with respect to bit sizes and number of rounds. In each case, the message is padded to a multiple of the block size with the message length appended. The blocks are then processed through a Merkle–Damgård construction using a Davies–Meyer one-way compression function. The SHA-2 family of functions are prone to length extension attacks.
+
+              contains
+
+              // Source: Wikipedia
+              component SHA-224
+                An instance of a SHA-2  cryptographic hash function with a 224 bit output size and 512 bit block size. The compression function performs 64 rounds of computation.
+
+                What is the SHA-224 digest of this message?
+                
+                The digest is guaranteed to be 224 bits long.
+                The maximum message size is 2e64-1.
+                The algorithm runs 64 rounds.
+                The algorithm provides 112 bits of security.
+
+              // Source: Wikipedia
+              component SHA-256
+                An instance of a SHA-2 cryptographic hash function with a 256 bit output size and 512 bit block size. The compression function performs 64 rounds of computation.
+
+                What is the SHA-256 digest of this message?
+                
+                The digest is guaranteed to be 256 bits long.
+                The maximum message size is 2e64-1.
+                The algorithm runs 64 rounds.
+                The algorithm provides 128 bits of security.
+
+              // Source: Wikipedia
+              component SHA-384
+                An instance of a SHA-2 cryptographic hash function with a 384 bit output size and 1024 bit block size. The compression function performs 80 rounds of computation.
+
+                What is the SHA-384 digest of this message?
+                
+                The digest is guaranteed to be 384 bits long.
+                The maximum message size is 2e128-1.
+                The algorithm runs 80 rounds.
+                The algorithm provides 192 bits of security.
+
+              // Source: Wikipedia
+              component SHA-512
+                An instance of a SHA-2 cryptographic hash function with a 512 bit output size and 1024 bit block size. The compression function performs 80 rounds of computation.
+
+                What is the SHA-512 digest of this message?
+                
+                The digest is guaranteed to be 512 bits long.
+                The maximum message size is 2e128-1.
+                The algorithm runs 80 rounds.
+                The algorithm provides 256 bits of security.
+
+                end
+
+            // Source: Wikipedia
+            component SHACAL-2
+               A 256 bit block cipher based upon the SHA-256 hash function. SHACAL-2 turns the SHA-2 compression function into a block cipher by using the state input as the data block and using the data input as the key input. The compression function can then be viewed as a 80 round block cipher. This compression function is easily invertible if the data block (which is the key) is known, allowing for a decryption operation. SHACAL-2 was selected as one of the 17 NESSIE finalists.
+
+            // Source: Wikipedia
+            subsystem Secure Hash Algorithm 3 (SHA-3)
+              A family of cryptographic hash functions based on the Keccak algorithm. The SHA-3 functions share an identical structure, differing with respect to the parameters of output size, block size, and the unique to sponge construction parameter of capacity. In each case, the message is padded to a multiple of the block size. SHA-3 functions use a sponge construction where data blocks are absorbed into the state and the output is created by squeezing data out of the state. The permutation function used in absorption and squeezing performs 24 rounds of computation. The amount of internal state unchanged by input/output is the capacity. This structure, unlike Merkle-Damgård, has strong security against length extension attacks. Keccak was chosen as the algorithm for SHA-3 in the NIST Hash Function Competition.
+
+              // Source: Wikipedia
+              component SHA3-224
+                An instance of a SHA-3 cryptographic hash function with a 224 bit output size, a 1152 bit block size, and a 448 bit capacity.
+
+                What is the SHA3-224 digest of this message?
+                
+                The digest is guaranteed to be 224 bits long.
+                The rate is 1152 bits.
+                The capacity is 448 bits.
+                The algorithm runs 24 rounds.
+
+              // Source: Wikipedia
+              component SHA3-256
+                An instance of a SHA-3 cryptographic hash function with a 224 bit output size, a 1088 bit block size, and a 512 bit capacity.
+
+                What is the SHA3-256 digest of this message?
+                
+                The digest is guaranteed to be 256 bits long.
+                The rate is 1088 bits.
+                The capacity is 512 bits.
+                The algorithm runs 24 rounds.
+
+              // Source: Wikipedia
+              component SHA3-384
+                An instance of a SHA-3 cryptographic hash function with a 384 bit output size, a 832 bit block size, and a 768 bit capacity.
+
+                What is the SHA3-384 digest of this message?
+                
+                The digest is guaranteed to be 384 bits long.
+                The rate is 832 bits.
+                The capacity is 768 bits.
+                The algorithm runs 24 rounds.
+
+              // Source: Wikipedia
+              component SHA3-512
+                An instance of a SHA-3 cryptographic hash function with a 512 bit output size, a 576 bit block size, and a 1024 bit capacity.
+
+                What is the SHA3-512 digest of this message?
+                
+                The digest is guaranteed to be 512 bits long.
+                The rate is 576 bits.
+                The capacity is 1024 bits.
+                The algorithm runs 24 rounds.
+
+            subsystem SHA-3 Finalists
+              Cryptographic hash function algorithms that were selected as finalists for designation as SHA-3 in the NIST Hash Function Competition.
+
+              // Source: Wikipedia, A Framework for Iterative Hash Functions — HAIFA
+              component Blake
+                A family of cryptographic hash functions with a 224, 256, 384 or 512 bit output size and a 512 or 1024 bit block size. Blake uses the Hash Iterative Framework construction with a modified version of a ChaCha20 stream cipher round as the compression function with 14 rounds of processing. The hash function operates by compressing a block of input data, the previous compression function output, and a salt value. This process is iterated until the entire input has been processed. Blake uses a wide pipe construction with at least twice the number of internal state bits as output bits to prevent length extension attacks.
+
+              // Source: Wikipedia, Grøstl – a SHA-3 candidate
+              component Grøstl
+                A family of cryptographic hash functions with an up to 512 bit variable output size and a 512 or 1024 bit block size. Grøstl uses a wide pipe construction with at least twice the number of internal state bits as output bits to prevent length extension attacks. The compression function is constructed as an SP-network with two permutations, one similar to the S-box from AES and another that draws inspiration from AES diffusion. 
+
+              // Source: Wikipedia, The Hash Function JH 
+              component JH
+                A cryptographic hash function with a 24, 256, 384 or 512 bit output size, a 512 bit block size, and a 1024 bit internal state. JH uses a structure with similarities to both the sponge and Merkle–Damgård constructions. The compression function operates by XORing a message block with one half of the state, the state is permuted by an inner function, and the message is XORd to the other half of this new state. The inner function is a variation of the AES block cipher design. The iterative processing of previous state with new message blocks by the compression function continues until all message blocks are processed. As only a portion of the state is used as output, the hash function is resistant to length extension attacks.
+
+              // Source: Wikipedia
+              component Keccak
+                A cryptographic hash function with a sponge construction with a variable output size and variable block size. The algorithm is structured with a 1600 bit internal state initialized to 0 and a permutation function. The internal state is partitioned into a block size called the rate and the remaining portion of the state is called the capacity. As the algorithm processes the input message in a phase called absorption, the input block is XORd into the state, only effecting a block size number of bits, after which the entire state is processed by the permutation function. The output is created in a process called squeezing where a block size number of bits is read out. If this is less than the output size, the permutation function processes the state and another block size number of bits is read out. Having hidden internal state, the capacity, provides protection against length extension attacks. Keccak was chosen to be SHA-3.
+
+              // Source: Wikipedia, The Skein Hash Function Family
+              component Skein
+                A family of cryptographic hash functions with a 224, 256, 384 or 512 bit output size, a 256, 512, or 1024 bit block size, and an internal state size twice that of the block size. Skein utilizes a wide pipe construction. The compression function is based off of the Threefish block cipher in Unique Block Iteration (UBI) mode. The use of UBI mode allows for the compression function to be given an additional input of which block it is processing tweaking the cipher slightly for that block. This makes traditional attacks more difficult the same message block processed more than once will yield different outputs. The wide pipe construction provides the protection against length extension attacks.
+              
+          end
+
+
+      end
+
+    subsystem Message Authentication
+      Concepts related to the cryptographic process that ensures the integrity and authenticity of a message, confirming that it has not been altered and originates from a legitimate source.
+
+      // Source: Wikipedia
+      component Deniable Authentication
+         Message authentication between a set of participants where the participants themselves can be confident in the authenticity of the messages, but it cannot be proved to a third party after the event. In practice, a message is sent with a message authentication code (MAC) and the next message sent reveals the original message's MAC key. This allows anyone to forge an alternate MAC after the receiving party is certain of the original message's authenticity.
+
+      // Source: Wikipedia
+      component Message Authentication Code (MAC)
+        A cryptographic construct that verifies the integrity and authenticity of a message. It is generated by applying a secret key to the message data through a MAC algorithm, producing a fixed-size output known as the MAC tag. This tag is transmitted alongside the message. Upon receipt, the recipient, who possesses the same secret key, recalculates the MAC tag from the received message and compares it to the transmitted tag. A match confirms that the message has not been altered and originates from a legitimate source.
+
+      // Source: Wikipedia
+      component Hash-based Message Authentication Code (HMAC)
+        A specific type of message authentication code involving a cryptographic hash function and a secret cryptographic key. HMAC uses a shared secret instead of digital signatures with asymmetric cryptography. HMAC can use any cryptographic hash function; the size of the output and strength of the security guarantees is that of the underlying hash function. 
+
+      // Source: CBC MACs for Arbitrary-Length Messages: The Three-Key Constructions
+      component Encrypted Message Authentication Code (EMAC)
+        A specific type of message authentication code that enhances the security of the Cipher Block Chaining Message Authentication Code (CBC-MAC) by addressing its limitations with variable-length messages. In EMAC, after computing the CBC-MAC of a message using a block cipher and a secret key, the resulting MAC is further encrypted with a second, independent key. This additional encryption step ensures that the MAC is secure even when messages of different lengths are processed, providing robustness against certain types of cryptographic attacks.
+
+      // Source: NESSIE Submission Two-Track-MAC
+      component Two-Track Message Authentication Code (TTMAC)
+        A specific type of message authentication code that operates by processing the input message through two parallel tracks of unkeyed hash functions. The two tracks double the size of the internal state of the MAC and the combination of the tracks makes the function uninvertable. A successful attack would have to break both tracks.
+
+      // Source: Wikipedia
+      component Universal Hashing Message Authentication Code (UMAC)
+        A specific type of message authentication code using universal hashing, that involves choosing a hash function from the class of universal hash functions according to some secret (random) process and applying it to the message. The resulting digest or fingerprint is then encrypted to hide the identity of the hash function that was used.
+
+    end
+
   subsystem Threats
-    The concepts releated to threats to security and threat modeling.
+    The concepts related to threats to security and threat modeling.
 
     // Source: SP800-53
     component Attack Surface
@@ -902,7 +1729,7 @@ subsystem Core Concepts
 
     // Source: SP 800-63-3
     component Replay Attack
-        An attack in which the Attacker is able to replay previously captured messages (between a legitimate Claimant and a Verifier) to masquerade as that Claimant to the Verifier or vice versa.
+        An attack where the Attacker is able to replay previously captured messages (between a legitimate Claimant and a Verifier) to masquerade as that Claimant to the Verifier or vice versa.
 
     // Source: SP800-53
     component Spyware
