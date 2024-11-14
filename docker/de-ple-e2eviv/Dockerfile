@@ -14,7 +14,7 @@ ARG CLAFER_TOOLS_URL="https://gsd.uwaterloo.ca/clafer-tools-bin/$CLAFER_TOOLS_ZI
 RUN apt-get clean && \
     apt-get update && \
     apt-get upgrade -y && \
-    apt-get upgrade -y wget unzip git pip npm openjdk-17-jre libncurses5 && \
+    apt-get upgrade -y wget unzip git pip npm openjdk-17-jre libncurses5 locales && \
     apt-get clean
 
 # Install jsons library from PyPi.
@@ -61,6 +61,11 @@ RUN cd /opt/clafer && \
 # Clafer IDEs expect the clafer tools to be in /home/clafertools040/
 RUN mkdir -p /home/clafertools040 && \
     ln -s /opt/clafer/$CLAFER_TOOLS_VER /home/clafertools040/bin
+
+# Set up environment for Unicode
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+RUN locale-gen en_US.UTF-8
+ENV LC_ALL="en_US.UTF-8"
 
 # Copy start-up script for starting all three Clafer IDEs.
 COPY resources/startup.sh /root/
