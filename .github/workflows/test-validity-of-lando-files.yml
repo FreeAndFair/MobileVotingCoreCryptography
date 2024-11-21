@@ -32,6 +32,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
   test:
+    name: Check Lando Syntax
     needs: build-matrix
     runs-on: ubuntu-latest
     if: fromJson(needs.build-matrix.outputs.lando-files)[0] != null

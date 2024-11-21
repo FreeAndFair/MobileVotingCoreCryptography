@@ -31,6 +31,7 @@ jobs:
              **.cfr
 
   test:
+    name: Check Clafer Syntax
     needs: build-matrix
     runs-on: ubuntu-latest
     strategy:

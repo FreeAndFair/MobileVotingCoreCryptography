@@ -32,6 +32,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
   test:
+    name: Check Clafer Syntax
     needs: build-matrix
     runs-on: ubuntu-latest
     if: fromJson(needs.build-matrix.outputs.clafer-files)[0] != null

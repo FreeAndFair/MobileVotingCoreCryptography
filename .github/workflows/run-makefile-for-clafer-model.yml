@@ -1,0 +1,42 @@
+# .github/workflows/run-makefile-for-clafer-model.yml
+# Author: Daniel M. Zimmerman
+# Created: 2024-11-21
+# Modified: 2024-11-21
+
+name: Run Makefile for Clafer Model
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - 'models/clafer/**'
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Build Clafer Model Instances
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_READ_ONLY_TOKEN_USERNAME }}
+          password: ${{ secrets.DOCKER_READ_ONLY_TOKEN }}
+
+      - name: Pull Docker Image
+        run: docker pull freeandfair/de-ple-e2eviv:latest
+
+      - name: Run `make all` in `models/clafer`
+        run: |
+          echo "Processing models/clafer"
+          docker run --rm \
+            -v "${{ github.workspace }}/models/clafer":/workspace \
+            -w /workspace \
+            freeandfair/de-ple-e2eviv:latest \
+            make all
