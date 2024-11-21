@@ -1,8 +1,29 @@
 ############################################################################
 # Dockerfile for the Free&Fair E2E-VIV DE/PLE Docker image (de-ple-e2eviv) #
 ############################################################################
+
+# First, build the current Chocosolver - no need for amd64 here because
+# we're just doing a Java build with Maven.
+
+FROM ubuntu:22.04 AS chocosolver
+
+RUN apt-get clean && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get upgrade -y build-essential git openjdk-17-jre maven && \
+    apt-get clean
+
+RUN cd /tmp && \
+    git clone https://github.com/GaloisInc/chocosolver.git && \
+    cd chocosolver && \
+    mvn install && \
+    make install to=/opt/chocosolver
+
+# /opt/chocosolver/chocosolver.jar should now exist in the "chocosolver" image.
+
+# Then, build the actual DE/PLE image.
 # Use Ubuntu 22.04 (not newer) for libncurses5, required by claferIG.
-FROM --platform=linux/amd64 ubuntu:22.04
+FROM --platform=linux/amd64 ubuntu:22.04 AS de-ple-e2eviv
 
 # Clafer tools version and download URL
 # Obtained from: https://gsd.uwaterloo.ca/clafer-tools-binary-distributions
@@ -14,10 +35,10 @@ ARG CLAFER_TOOLS_URL="https://gsd.uwaterloo.ca/clafer-tools-bin/$CLAFER_TOOLS_ZI
 RUN apt-get clean && \
     apt-get update && \
     apt-get upgrade -y && \
-    apt-get upgrade -y wget unzip git pip npm openjdk-17-jre libncurses5 locales && \
+    apt-get upgrade -y build-essential wget unzip git pip npm openjdk-17-jre plantuml libncurses5 locales && \
     apt-get clean
 
-# Install jsons library from PyPi.
+# Install "jsons" library from PyPI.
 RUN pip install jsons
 
 # Copy Lando installation files.
@@ -29,6 +50,10 @@ RUN mkdir /opt/clafer && \
     wget $CLAFER_TOOLS_URL && \
     unzip $CLAFER_TOOLS_ZIP && \
     rm $CLAFER_TOOLS_ZIP
+
+# Copy freshly built chocosolver.jar from the chocosolver image.
+COPY --from=chocosolver /opt/chocosolver/chocosolver.jar /opt/clafer/$CLAFER_TOOLS_VER/chocosolver.jar
+ADD resources/chocosolver /opt/clafer/$CLAFER_TOOLS_VER/chocosolver
 
 # Install ClaferIDE, master branch (port 8094).
 RUN cd /opt/clafer && \
@@ -62,7 +87,10 @@ RUN cd /opt/clafer && \
 RUN mkdir -p /home/clafertools040 && \
     ln -s /opt/clafer/$CLAFER_TOOLS_VER /home/clafertools040/bin
 
-# Set up environment for Unicode
+# Install "lark" library from PyPI, necessary for choco_to_json.py.
+RUN pip install lark
+
+# Set up environment for Unicode.
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 RUN locale-gen en_US.UTF-8
 ENV LC_ALL="en_US.UTF-8"

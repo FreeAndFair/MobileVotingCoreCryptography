@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e # exit immediately upon error(s)
+
+# Directory in which this script is located.
+SCRIPT_DIR="$(dirname -- "$(readlink -f -- "$0")")"
+
+# Name of the jar containing the chocosolver application.
+CHOCOSOLVER_JAR="chocosolver.jar"
+
+# execute chocosolver from the same directory
+java -jar "$SCRIPT_DIR/$CHOCOSOLVER_JAR" $@

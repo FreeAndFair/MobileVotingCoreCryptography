@@ -37,7 +37,7 @@ function rebuild_lando {
 
 # Function to deploy the lando JAR into the resources/lando/lib folder.
 function deploy_lando {
-  section "Deploying lando JAR to docker resouces folder ..."
+  section "Deploying lando JAR to docker resources folder ..."
   pushd lando/source/lando > /dev/null
   LANDO_JAR=`find . -name 'lando-*-jar-with-dependencies.jar' -type f`
   echo "Copying $LANDO_JAR to $ROOT_DIR/resources/"
