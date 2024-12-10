@@ -194,6 +194,10 @@ subsystem Core Concepts
         
         Were any errors detected?
 
+      component Benaloh Challenge
+        A process used in e-voting systems for cast-as-intended verification. 
+        In a voting system that supports the Benaloh challenge, the voting application commits to an encryption of the ballot without knowing whether it is to be cast or checked. If the ballot is challenged, the ballot is then decrypted and displayed to the voter, allowing the voter to verify the candidates and choices they selected using the voting application are shown as chosen.
+
       component Candidate Registration
         The process by which a candidate is added to the candidates register.
 
@@ -326,6 +330,9 @@ subsystem Core Concepts
 
       A ballot style's ballot configuration may only be set once.
       A ballot style's ballot configuration may only be set to a locked ballot configuration.
+
+    component Bulletin Board
+      A public platform where voting-related data is published and can be accessed by participants for verification purposes.
 
     component Candidates Register
       A candidates' register contains all the candidates standing for election and the offices for which they are standing.
@@ -1689,6 +1696,17 @@ subsystem Core Concepts
       // Source: Wikipedia
       component Universal Hashing Message Authentication Code (UMAC)
         A specific type of message authentication code using universal hashing, that involves choosing a hash function from the class of universal hash functions according to some secret (random) process and applying it to the message. The resulting digest or fingerprint is then encrypted to hide the identity of the hash function that was used.
+
+    subsystem Zero-Knowledge Proofs
+      Concepts related to zero-knowledge proofs and proof systems.
+
+      // Source: ElectionGuard
+      component Zero-Knowledge Proof
+        A method by which one party (the prover) can prove to another party (the verifier) that they know a value x, without conveying any information apart from the fact that they know the value x. The essence of zero-knowledge proofs is that it is trivial to prove that one possesses knowledge of certain information by simply revealing it; the challenge is to prove such possession without revealing the information itself or any additional information.
+
+      // Source: ElectionGuard
+      component Non-Interactive Zero-Knowledge Proof
+        A zero-knowledge proof that can be performed without interaction or intervention by the prover.
 
     end
 
