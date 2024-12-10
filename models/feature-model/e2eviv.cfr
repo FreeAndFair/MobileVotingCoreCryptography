@@ -1,40 +1,49 @@
 // ------------------------------------------------------------------
-// PLE Clafer Model for the E2E-VIV Crypto Project (2024 Free&Fair)
+// PLE Clafer Model for the E2E-VIV Crypto Project (2024 © Free&Fair)
 // ------------------------------------------------------------------
 // File: e2eviv.clf (Clafer Model File)
 // Model Version: 0.1
 // Author(s): Frank Zeyda (frank.zeyda@freeandfair.us)
-// Reviewer(s): Daniel Zimmerman (dmz@freeandfair.us),
+// Reviewer(s): Daniel Zimmerman (dmz@freeandfair.us)
 //              Joe Kiniry (kiniry@freeandfair.us)
-// Last Modified: Nov 05, 2024 (Frank Zeyda)
+// Last Modified: January 7, 2025 (Daniel Zimmerman) 
+
+// -----------------------
+// Scope (Initial Version)
+// -----------------------
+
+// The scope of the current (initial) version of the PLE
+// feature model for E2E-VIV encompasses the following:
+// (1) include all requirements of the E2E-VIV Crypto Lando
+//   requirements model, which can be found here:
+//   https://github.com/FreeAndFair/TuskMobileVoting/tree/main/specs/domain-model/lando/requirements
+//   We note that Requirements were automatically extracted
+//   from Lando into Clafer, using the Python tool under
+//   https://github.com/FreeAndFair/TuskMobileVoting/blob/threat-model/utils/lando/mk_clafer_reqs.py
+// (2) Include a high-level Systems model, based on the Data
+//   Flow Diagram in https://github.com/FreeAndFair/TuskMobileVoting/blob/threat-model/specs/threat-model/threat-model.md
+// (3) Include a preliminary version of the E2E-VIV threat
+//   model, again based on Tusk Mobile Voting Threat Model at
+//   https://github.com/FreeAndFair/TuskMobileVoting/blob/threat-model/specs/threat-model/threat-model.md
+//   as well as the initial Lando Threat Model Google Doc:
+//   https://docs.google.com/document/d/1qQB5oXAc-CE0RGfoSCTVcHdLmTEMsdK7EYh4O97OzeM/
 
 // ------------
 // Traceability
 // ------------
 
-// The content of this model is based on various informal documents:
-// ... [TODO]
-
-// -------------------
-// REVIEWED UNTIL HERE
-// -------------------
-
-// Based on Future of Voting report, E2E-VIV CONOPS, and E2E-VIV threat model.
-// - https://docs.google.com/document/d/1qQB5oXAc-CE0RGfoSCTVcHdLmTEMsdK7EYh4O97OzeM/
-//
-// Scope: The initial version of the Clafer PLE model:
-// - Firstly includes all requirements of the E2E-VIV
-// Crypto Lando requirements model, which can be found
-// here in the repository: https://github.com/FreeAndFair/TuskMobileVoting/tree/9e6741f1ff7bebeefc472204ecc3d0bffc91e621/specs/domain-model/lando/requirements
-// (Requirements were automatically lifted from Lando.
-// into Clafer, using a Python tool.)
-// - Secondly includes an encoding of (a preliminary
-// version of) the E2E-VIV threat model, per the shared
-// Google Document found at: https://docs.google.com/document/d/1qQB5oXAc-CE0RGfoSCTVcHdLmTEMsdK7EYh4O97OzeM/
-
-// -------------------
-// REVIEWED AFTER HERE
-// -------------------
+// The content of this model is based upon various informal and semi-formal
+// documents:
+// - The Future of Voting report (E2E-VIV Project):
+// https://www.usvotefoundation.org/E2E-VIV
+// - Lando DE Concept Model:
+// https://github.com/FreeAndFair/TuskMobileVoting/blob/main/specs/domain-model/lando/domain.lando
+// - Lando Requirements:
+// https://github.com/FreeAndFair/TuskMobileVoting/tree/main/specs/domain-model/lando/requirements
+// - Informal Threat Model (David Ruescas):
+// https://github.com/FreeAndFair/TuskMobileVoting/blob/threat-model/specs/threat-model/threat-model.md
+// - Ideas towards Threat Modeling in Lando (Daniel Zimmerman):
+// https://docs.google.com/document/d/1qQB5oXAc-CE0RGfoSCTVcHdLmTEMsdK7EYh4O97OzeM/
 
 // ------------------
 // Requirements Model
@@ -1014,16 +1023,29 @@ System
 // Trustee Applications. (@review zeyda Perhaps we should?)
 // See: https://github.com/FreeAndFair/TuskMobileVoting/blob/threat-model/specs/threat-model/threat-model.md
 
-// @review zeyda Any other relevant features of Subsystem we have missed?
-// @workaround zeyda I move the talksTo features into the concrete
-// Subsystem clafers, since there is a bug in chocosolver that causes
-// many duplicate instances to be created for the permutations of set
-// elements. This seems to have to do with direct & indirect recursion
-// in Clafer types. @todo zeyda Write a PR and pick the brains of the
-// Clafer development team (i.e., Michal Antkiewicz) on this issue.
-// @postpone zeyda Formalize that talksTo is a *symmetric* relation:
-//  - if A talksTo B then also B talksTo A.
-// This currently cannot be done due to the work-around noted above.
+// @review zeyda Questions were raised with regards to the
+// nature and semantics of the talksTo relation. My initial
+// assumption was that talksTo ought be symmetric; but Joe
+// Kiniry mentioned it ought be directed and non-recursive.
+// Currently, it is not entirely clear to my which links are
+// unidirectional, given that all arrows in the underlying
+// Data Flow diagram are symmetric (<->), apart from dotted
+// ones coming from actors. Before changing the Clafer model,
+// I suspect we want to review the Data Flow diagram first.
+
+// @postpone zeyda If there are generic properties on the
+// talksTo relationship that could be meaningfully defined,
+// such as absence of recursion per Joe's comment, we might
+// have to postpone that until we fix the defect described
+// below and we can therefore undo the related work-around.
+// @workaround zeyda I move the talksTo relation into the
+// concrete subsystem clafers, since there is a defect in
+// chocosolver that causes duplicate instances to be created
+// for permutations of set elements. This seems to have to do
+// with direct or indirect recursion in abstract clafers.
+// I emailed Michal Antkiewicz about this and submitted a PR.
+// See: https://github.com/GaloisInc/chocosolver/issues/6
+// @review zeyda Any other relevant features we have missed?
 abstract Subsystem
     description -> string
     trustZone -> TrustZone
@@ -1033,7 +1055,7 @@ abstract Subsystem
 
 // @review zeyda Ought any of the subsystems be optional? Are they complete?
 // @review zeyda We may want to add additional constraints here that capture
-// architectural assumption and requirements (if variation emerges at all).
+// architectural assumption and requirements (if variation emerge at all).
 // @note zeyda "EA Storage" in the diagram is ElectionAdministratorCredentials.
 Subsystems
     VotingApplication : Subsystem
@@ -1041,7 +1063,7 @@ Subsystems
         [description = "the client-side mobile application used by a voter to authenticate to the system, make choices on a ballot, and cast or check a voted ballot"]
         [trustZone = Internet]
         [talksTo = ElectionAdministrationServer, DigitalBallotBox]
-        [actors = Voters]
+        [actors = Voter]
         [no assets]
     //
     AuthenticationService : Subsystem
@@ -1049,7 +1071,7 @@ Subsystems
         [description = "a service used by the voting application server to authenticate voters' identities, so that their eligibility to vote in a specific election can be determined; in any given instantiation of the system, this service may be provided by multiple external identity service provider"]
         [trustZone = Internet]
         [talksTo = ElectionAdministrationServer]
-        [actors = Voters]
+        [actors = Voter]
         [no assets]
     //
     PublicBulletinBoard : Subsystem
@@ -1057,7 +1079,7 @@ Subsystems
         [description = "the canonical, publicly-readable, append-only view of election information; can only be appended to by the Digital Ballot Box"]
         [trustZone = ElectionAdministrationNetwork]
         [talksTo = DigitalBallotBox]
-        [actors = Verifiers]
+        [actors = Verifier]
         [no assets]
     //
     DigitalBallotBox : Subsystem
@@ -1075,7 +1097,7 @@ Subsystems
         [description = "the client-side application with which trustees interact in order to generate their private key shares and open/close the election, and perform partial ballot decryption in a mix-net configuration; this application runs on a dedicated device, one of which exists for each trustee, and must not be directly connected to the Internet at any point during the system's lifetime"]
         [trustZone = AirGappedNetwork]
         [talksTo = TrusteeAdministrationServer]
-        [actors = Trustees]
+        [actors = Trustee]
         [assets = TrusteeStorage]
     //
     TrusteeAdministrationServer : Subsystem
@@ -1107,7 +1129,7 @@ Subsystems
         [description = "a client-side (web-based or mobile) application used by a voter to perform ballot checks; there may be multiple independent ballot check applications in any instantiation of the system"]
         [trustZone = Internet]
         [talksTo = DigitalBallotBox]
-        [actors = Voters]
+        [actors = Voter]
         [no assets]
     //
     BallotPrinter : Subsystem
@@ -1122,13 +1144,14 @@ Subsystems
 // System Model: Actors
 // --------------------
 
-// @review zeyda Any other relevant features of Actor we have missed?
-// @workaround zeyda I move the uses features into the concrete
-// Actor clafers, since there is a bug in chocosolver that causes
-// many duplicate instances to be created for the permutations of set
-// elements. This seems to have to do with direct & indirect recursion
-// in Clafer types. @todo zeyda Write a PR and pick the brains of the
-// Clafer development team (i.e., Michal Antkiewicz) on this issue.
+// @workaround zeyda I move the talksTo relation into the
+// concrete subsystem clafers, since there is a defect in
+// chocosolver that causes duplicate instances to be created
+// for permutations of set elements. This seems to have to do
+// with direct or indirect recursion in abstract clafers.
+// I emailed Michal Antkiewicz about this and submitted a PR.
+// See: https://github.com/GaloisInc/chocosolver/issues/6
+// @review zeyda Any other relevant features we have missed?
 abstract Actor
     description -> string
     // uses -> Subsystem + // @workaround zeyda
@@ -1140,11 +1163,11 @@ abstract Actor
 // participants from a legal standpoint. Here is a mapping:
 //  - Voter (Clafer) -> Voter (Lando)
 //  - ElectionAdministrator (Clafer) -> Electoral Authority (Lando)
-//  - Trustees (Clafer) -> ??? (Lando) (@todo zeyda)
-//  - Verifiers (Clafer) -> ??? (Lando) (@todo zeyda)
+//  - Trustee (Clafer) -> ??? (Lando) (@todo https://github.com/FreeAndFair/TuskMobileVoting/issues/127)
+//  - Verifier (Clafer) -> ??? (Lando) (@todo https://github.com/FreeAndFair/TuskMobileVoting/issues/127)
 
 Actors
-    Voters : Actor
+    Voter : Actor
         uses -> Subsystem + // @workaround zeyda
         [description = "people who use the system to cast ballots and optionally check that they have been properly recorded"]
         [uses = VotingApplication, AuthenticationService, BallotCheckApplication]
@@ -1154,12 +1177,12 @@ Actors
         [description = "a person who facilitates protocols and procedures, provides the election definition, and publishes the election results; this is a single actor in the system even though its responsibilities may be shared among multiple people in a given system instantiation"]
         [uses = TrusteeAdministrationServer, ElectionAdministratorApplication]
     //
-    Trustees : Actor
+    Trustee : Actor
         uses -> Subsystem + // @workaround zeyda
         [description = "people who are jointly responsible for maintaining the privacy of the votes, and for performing/facilitating the vote tally, by keeping custody of election key shares"]
         [uses = TrusteeApplication]
     //
-    Verifiers : Actor
+    Verifier : Actor
         uses -> Subsystem + // @workaround zeyda
         [description = "people that evaluate the election records to confirm an election's integrity; verifiers may use any means at their disposal (verification programs, pencil and paper, etc.) to verify the results based on public information available from the Digital Ballot Box, and they have no direct role in the election"]
         [uses = PublicBulletinBoard]
@@ -1172,12 +1195,12 @@ Actors
 abstract Asset
     description -> string
     xor assetType
-        xor PhysicalAssert
+        xor PhysicalAsset
             MobileStorageDevice
         xor CryptoAsset
             AccessCredentials
             PublicKey
-            // @note zeyda PrivateKey is currently not used
+            // @review zeyda PrivateKey is currently not used; remove it?
             PrivateKey
             PrivateKeyShares
         xor DataAsset
@@ -1191,21 +1214,25 @@ abstract Asset
                     Checked
             PrintableBallot
     heldByActor -> Actor *
-    heldBySystem -> Subsystem *            
+    heldBySystem -> Subsystem *
 
-// @todo zeyda Populate the heldByActor properties of all concrete assets.
-// @todo zeyda Populate the heldBySystem properties of all concrete assets.
+// -------------------
+// REVIEWED UNTIL HERE
+// -------------------
+
+// @todo zeyda Review the heldByActor&heldBySystem properties of
+// all concrete assets. Some of these result from second guessing.
 Assets
     ElectionAdministratorCredentials : Asset
         [description = "used to perform election administration functions"]
         [AccessCredentials]
-        [not heldByActor]
+        [heldByActor = ElectionAdministrator]
         [not heldBySystem]
     //
     TrusteePrivateKeyShares : Asset
         [description = "shares of the election's private key held by individual Trustees; used to partially decrypt or homomorphically tally Digital Ballots Cryptograms exported from the Digital Ballot Box"]
         [PrivateKeyShares]
-        [not heldByActor]
+        [heldByActor = Trustee]
         [not heldBySystem]
     //
     ElectionPublicKey : Asset
@@ -1235,37 +1262,38 @@ Assets
     DigitalBallotCryptograms : Asset
         [description = "encrypted digital representations of ballots that have been submitted to the Digital Ballot Box by Voters using the Voting Application; these may end up being either cast or checked"]
         [EncryptedBallot]
-        [not heldByActor]
-        [not heldBySystem]
+        [heldByActor = Voter]
+        [heldBySystem = VotingApplication, DigitalBallotBox] // produces redundant instances
     //
     CastDigitalBallotPlaintexts : Asset
         [description = "decrypted digital representations of ballots that have been cast by Voters using the Voting Application; these should only ever exist within the Trustee Administration Server's trust zone"]
         [DecryptedBallot.Status.Unchecked]
         [not heldByActor]
-        [not heldBySystem]
+        // @review zeyda also add TrusteeApplication below?
+        [heldBySystem = TrusteeAdministrationServer]
     //
     CheckedDigitalBallotPlaintexts : Asset
-        [description = "decrypted digital representations of ballots that have been checked by Voters using the Ballot Check Appplication; these are publicly available in the Digital Ballot Box"]
+        [description = "decrypted digital representations of ballots that have been checked by Voters using the Ballot Check Application; these are publicly available in the Digital Ballot Box"]
         [DecryptedBallot.Status.Checked]
         [not heldByActor]
-        [not heldBySystem]
+        [heldBySystem = DigitalBallotBox]
     //
     PrintableCastBallots : Asset
         [description = "printable files that represent ballots cast in the election, which enable traditional optical-scan or hand tallying of paper ballots in some mix-net based system configurations"]
         [PrintableBallot]
         [not heldByActor]
-        [not heldBySystem]
+        [heldBySystem = TrusteeAdministrationServer]
     //
     TrusteeStorage : Asset
         [description = "a piece of hardware for each trustee that stores their Trustee Private Key Share; this will most likely be a fresh USB storage device, and must never be attached to an Internet-connected device during the system's lifetime"]
         [MobileStorageDevice]
-        [not heldByActor]
+        [heldByActor = Trustee]
         [not heldBySystem]
     //
     ElectionAdministratorStorage : Asset
         [description = "a piece of hardware for the election administrator that is used to convey information between the Election Administration Server/Digital Ballot Box and the Trustee Administration Server (across an air gap); this will most likely be a fresh USB storage device"]
         [MobileStorageDevice]
-        [not heldByActor]
+        [heldByActor = ElectionAdministrator]
         [not heldBySystem]
 
 // -------------------------------
@@ -1327,9 +1355,9 @@ TrustLevels
 // REVIEWED AFTER HERE
 // -------------------
 
-// ----------------------
-// MITRE: Vulnerabilities
-// ----------------------
+// -----------------------------
+// MITRE: Vulnerabilities (TODO)
+// -----------------------------
 
 MITRE
     // Common Weakness Enumeration
@@ -1339,14 +1367,23 @@ MITRE
     // Common Attack Pattern Enumeration and Classification
     CAPEC
 
-// --------------------
-// Threat Model: STRIDE
-// --------------------
+// ---------------------------------------
+// Threat Model: STRIDE for E-Voting (WIP)
+// ---------------------------------------
+
+// Based on the Threats and Mitigations section of https://docs.google.com/document/d/1qQB5oXAc-CE0RGfoSCTVcHdLmTEMsdK7EYh4O97OzeM/
+
+abstract SecurityProperty
+    name -> string
+    description -> string
+    // traceability -> string
+
+enum CIA_Triad = Confidentiality | Integrity | Availability
 
 // Abstract formalized notion of a STRIDE claim/assertion
 abstract STRIDE
     // Asset that is targeted by the threat
-    asset -> Assets
+    // asset -> Assets
     // Type of threat within the STRIDE catalog
     xor ThreatType
         Spoofing              // S
@@ -1355,19 +1392,83 @@ abstract STRIDE
         InformationDisclosure // I
         DenialOfService       // D
         ElevationOfPrivilege  // E
-    // Cyber-security property that is violated
-    SecurityProperty
-        Authenticity ?
-        Integrity ?
-        Accountability ?
-        NonRepudiation ?
-        Confidentiality ?
-        Availability ?
-        Authorisation ?
-    // Constraints relating threats to security properties
-    [Spoofing <=> Authenticity]
-    [Tampering <=> Integrity]
-    [Repudiation <=> (Accountability || NonRepudiation)]
-    [InformationDisclosure <=> Confidentiality]
-    [DenialOfService <=> Availability]
-    [ElevationOfPrivilege <=> Authorisation]
+    //
+    // E-Voting security property that is violated
+    xor SecurityProperty
+        Accuracy : SecurityProperty
+            [name = "Accuracy"]
+            [description = "The votes must be correctly recorded and tallied. Votes cast by invalid voters must not be included in the tally. Cast votes cannot be altered, deleted, invalidated or copied."]
+        //
+        Privacy : SecurityProperty
+            [name = "Privacy"]
+            [description = "A voter and their vote cannot be linked."]
+        //
+        Eligibility : SecurityProperty
+            [name = "Eligibility"]
+            [description = "Only valid voters who meet certain predetermined criteria are eligible to vote."]
+        //
+        E2E_Verifiability : SecurityProperty
+            [name = "E2E_Verifiability"]
+            [description = "Voters can get convincing evidence that their encrypted votes accurately reflect their choices. Voters or their designees can check that their encrypted votes have been correctly included in the tally. Any member of the public can check that all the published encrypted votes are correctly included in the tally."]
+        //
+        EligibilityVerifiability : SecurityProperty
+            [name = "EligibilityVerifiability"]
+            [description = "Anyone can check that each vote in the election outcome was cast by a registered voter and at most one vote is counted per voter."]
+        //
+        ReceiptFreeness  : SecurityProperty
+            [name = "ReceiptFreeness"]
+            [description = "A voter does not gain any information (a 'receipt') that can be used to prove to anyone else that they voted in a certain way."]
+        //
+        CoercionResistance  : SecurityProperty
+            [name = "NAME"]
+            [description = "A voter cannot cooperate with a coercer to prove to them that they voted in a certain way."]
+        //
+        EverlastingPrivacy : SecurityProperty
+            [name = "EverlastingPrivacy"]
+            [description = "Even computationally unbounded adversaries cannot violate the Privacy property for any past election."]
+        //
+        Fairness : SecurityProperty
+            [name = "Fairness"]
+            [description = "No one can compute a partial tally before the election concludes."]
+        //
+        D_DisputeFreeness : SecurityProperty
+            [name = "D_DisputeFreeness"]
+            [description = "A mechanism is provided to resolve disputes in some dispute set D."]
+        //
+        Robustness : SecurityProperty
+            [name = "Robustness"]
+            [description = "The system is resilient to attacks and faults that can interrupt or prevent its normal operation."]
+        //
+        Scalability : SecurityProperty
+            [name = "Scalability"]
+            [description = "The system can scale to large numbers of voters without degrading performance or the user experience."]
+    // CIA Properites
+    CIA_Property -> CIA_Triad
+    // Constraints relating security properties to threats
+    [Accuracy => (Spoofing || Tampering)]
+    [Privacy => InformationDisclosure]
+    [Eligibility => Spoofing]
+    [E2E_Verifiability => (Tampering || DenialOfService)]
+    [EligibilityVerifiability => (Spoofing || Tampering)]
+    [ReceiptFreeness => Repudiation]
+    [CoercionResistance => Repudiation]
+    [EverlastingPrivacy => InformationDisclosure]
+    [Fairness => InformationDisclosure]
+    [D_DisputeFreeness => Repudiation]
+    [Robustness => DenialOfService]
+    [Scalability => DenialOfService]
+    // Constraints relating security properties to the CIA triad
+    [Accuracy => CIA_Property = Integrity]
+    [Privacy => CIA_Property = Confidentiality]
+    [Eligibility => CIA_Property = Integrity]
+    [E2E_Verifiability => CIA_Property = Integrity]
+    [EligibilityVerifiability => CIA_Property = Integrity]
+    [ReceiptFreeness => CIA_Property = Confidentiality]
+    [CoercionResistance => CIA_Property = Confidentiality]
+    [EverlastingPrivacy => CIA_Property = Confidentiality]
+    [Fairness => CIA_Property = Integrity]
+    [D_DisputeFreeness => CIA_Property = Integrity]
+    [Robustness => CIA_Property = Availability]
+    [Scalability => CIA_Property = Availability]
+
+STRIDE_Threats : STRIDE
