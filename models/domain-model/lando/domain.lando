@@ -4,8 +4,8 @@ system E2EVIV System
 indexing
   author: Joseph Kiniry <kiniry@freeandfair.us>, Daniel M. Zimmerman <dmz@freeandfair.us>
   organization: Free & Fair
-  keywords: OVF, end-to-end verifiable internet voting, e2e, viv, 
-    verifiable elections, software independence, 
+  keywords: OVF, end-to-end verifiable internet voting, e2e, viv,
+    verifiable elections, software independence,
     high-assurance, cryptography, verification, Free & Fair
   created: Tue Jul 15 16:18:09 PDT 2014
   revised: August 2024
@@ -14,38 +14,12 @@ indexing
 
 subsystem Core Concepts
   Core concepts generic to all elections.
-  
+
   contains
-
-  //State transitions that take place in the course of an election.
-  events Actions
-  
-    Authenticate
-      Transitioning a person or system to an authenticated state.
-
-    // Source: NIST
-    Cast
-      The final action a voter takes in selecting contest options and irrevocably confirming their intent to vote as selected.
-
-    Register Voter
-      The addition of a voter to the voters register.
-
-    Register Candidate
-      The addition of a candidate to the candidates register.
-
-    // Source: NIST
-    Spoil A Ballot
-      To mark or otherwise alter a ballot so it indicates in a human-readable manner that the ballot is not to be cast.
-
-    Unregister Voter
-      The removal of a voter from the voters register.
-
-    Unregister Candidate
-      The removal of a candidate from the candidates register.
 
   subsystem Background
     Background concepts relevant to elections in the general.
-  
+
     contains
 
     // Source: NIST
@@ -191,11 +165,11 @@ subsystem Core Concepts
 
       component Audit
         An audit is a review of the election artifacts to detect abnormalities and errors.
-        
+
         Were any errors detected?
 
       component Benaloh Challenge
-        A process used in e-voting systems for cast-as-intended verification. 
+        A process used in e-voting systems for cast-as-intended verification.
         In a voting system that supports the Benaloh challenge, the voting application commits to an encryption of the ballot without knowing whether it is to be cast or checked. If the ballot is challenged, the ballot is then decrypted and displayed to the voter, allowing the voter to verify the candidates and choices they selected using the voting application are shown as chosen.
 
       component Candidate Registration
@@ -536,7 +510,7 @@ subsystem Core Concepts
 
     // Source: NIST
     component Administrator (admin)
-        A voting system user with the highest level of access.
+      A voting system user with the highest level of access.
 
     // various constraints apply to candidates for various offices,
     // depending on the office (e.g., >= 35 yrs old, permanent
@@ -556,7 +530,7 @@ subsystem Core Concepts
       Your citizenship information is the information!
 
     component Electoral Authority
-      An electoral authority is an individual or group responsible for setting up, running, and disclosing the results of an election.
+      An electoral authority is an individual or group responsible for setting up, running, and disclosing the results of an election. Some members of an electoral authority may not have access to perform all of these functions.
 
       Who are your members?
 
@@ -568,6 +542,9 @@ subsystem Core Concepts
     // Source: NIST
     component Election Official
         Any person who is involved with administering or conducting an election, including government personnel and temporary election workers. This may include any county clerk and recorder, election judge, member of a canvassing board, central election official, election day worker, member of a board of county commissioners, member or secretary of a board of directors authorized to conduct public elections, representative of a governing body, or other person engaged in the performance of election duties as required by the election code.
+
+    component Election Administrator inherit Election Official
+      An election administrator is an individual with access to set up, run, and disclose the results of an election. Election administrators are election officials and members of electoral authorities.
 
     component Identity
       The fact of being who or what a person or system is.
@@ -600,6 +577,12 @@ subsystem Core Concepts
       You are in the group!
       You are not in the group!
 
+    component Trustee inherit Person
+      A trustee is a person who has the responsibility to participate in specific ceremonies (key generation, homomorphic tallying, shuffling and decryption) critical to an E2E-V election.
+
+    component Verifier inherit Person
+      A verifier is a person who chooses to verify the results of the election after it is completed. Verifiers need not be citizens, or otherwise connected to the election process in any way.
+
   subsystem Properties
     Properties of elections and related artifacts.
 
@@ -609,7 +592,7 @@ subsystem Core Concepts
     //applicable_law: "http://www.section508.gov"
     component Accessible
       An artifact is accessible if it is usable by and useful to the disabled. The details of such a notion are often codified in federal law (e.g., U.S. Section 508) and are the results of researchers focused on user experiences for the disabled.
-      
+
     component Authenticated
       A person or system that has properly identified itself.
 
@@ -688,7 +671,7 @@ subsystem Core Concepts
 
       component Accessible
         An artifact is accessible if it is usable by and useful to the disabled. The details of such a notion are often codified in federal law (e.g., U.S. Section 508) and are the results of researchers focused on user experiences for the disabled.
-        
+
         //indexing
         //applicable_law: "http://www.section508.gov"
         //this comment parses incorrectly it is attached to reliable but it should be attached to accessible.
@@ -696,7 +679,7 @@ subsystem Core Concepts
       // Source: NIST
       component Ballot Secrecy
           A goal of voting systems to ensure that no contest selections can be associated with a voter.
-      
+
       // Source: NIST
       component Fault-Tolerant
           A system that continues to operate after the failure of a computer or network component.
@@ -832,7 +815,7 @@ subsystem Core Concepts
   subsystem Cryptography
     Discipline that embodies the principles, means, and methods for transforming data to hide their semantic content, prevent their unauthorized use, prevent their undetected modification, or establish their authenticity.
 
-    contains 
+    contains
 
     subsystem Core Concepts
       The core concepts of cryptography.
@@ -866,10 +849,10 @@ subsystem Core Concepts
       component Mode
         A block cipher by itself is only suitable for the secure cryptographic transformation (encryption or decryption) of one fixed-length group of bits called a block. A mode of operation describes how to repeatedly apply a cipher's single-block operation to securely transform amounts of data larger than a block.
 
-      // Source: NIST SP 800-133 Rev. 2 
+      // Source: NIST SP 800-133 Rev. 2
       component Nonce
         A time-varying value that has (at most) an acceptably small chance of repeating. For example, the nonce may be a random value that is generated anew for each use, a timestamp, a sequence number, or some combination of these.
-    
+
       // Source: ElectionGuard
       component Protocol
         A cryptographic algorithm among multiple communicating parties.
@@ -883,17 +866,17 @@ subsystem Core Concepts
         A metric associated with the amount of work (that is, the number of operations) that is required to break a cryptographic algorithm or system.
 
       // Source: Wikipedia
-      subsystem Algorithm Designs 
+      subsystem Algorithm Designs
         A listing of multiple different designs of cryptographic algorithms and their related concepts.
 
         // Source: Wikipedia
         component Feistel Network
           A symmetric structure used in the design of many block ciphers, that ensures both encryption and decryption use very similar operations. In a Feistel Network, the input block is divided into two halves, and in each round, one half is modified based on the output of a function applied to the other half and a subkey. The two halves are then swapped before moving to the next round. Decryption simply reverses the process by applying the same function in the reverse order of subkeys.
-    
+
         // Source: Wikipedia
         component Key Schedule
           An algorithm that expands a relatively short encryption key into multiple subkeys used in successive rounds of encryption or decryption within a block cipher. It is critical in determining the strength of the encryption because it helps avoid repeated patterns in the ciphertext.
-    
+
         // Source: Wikipedia
         component Lai Massey Scheme
           A cryptographic structure used in block cipher design, similar to the Feistel Network, but with distinct properties. Like the Feistel Network, it divides the input data into two equal parts for processing. However, instead of applying the round function directly to one half, the Lai-Massey scheme applies the round function to the difference between the two halves. The result of the round function is then combined with both halves of the input block, rather than just one.
@@ -909,14 +892,14 @@ subsystem Core Concepts
         // Source: Wikipedia
         component Permutation Box (P-box)
           A fundamental component in symmetric key cryptography used to achieve diffusion. The P-box takes bits from the input and rearranges them in a deterministic manner, scattering their positions. This spreading of bits ensures that changes in one part of the input will affect many parts of the output.
-    
+
         // Source: Wikipedia
         component Substitution-Permutation Network (SPN)
            A series of linked mathematical operations used in block cipher algorithms. The SPN takes a block of the plaintext and the key as inputs, and applies several alternating rounds or layers of substitution boxes (S-boxes) and permutation boxes (P-boxes) to produce the ciphertext block.
 
         // Source: wikipedia
         component Avalanche Effect
-          The desirable property of cryptographic algorithms, typically block ciphers and cryptographic hash functions, wherein if an input is changed slightly (for example, flipping a single bit), the output changes significantly (e.g., half the output bits flip). In the case of high-quality block ciphers, such a small change in either the key or the plaintext should cause a drastic change in the ciphertext.    
+          The desirable property of cryptographic algorithms, typically block ciphers and cryptographic hash functions, wherein if an input is changed slightly (for example, flipping a single bit), the output changes significantly (e.g., half the output bits flip). In the case of high-quality block ciphers, such a small change in either the key or the plaintext should cause a drastic change in the ciphertext.
 
         // Source: Wikipedia
         component Block Size
@@ -927,10 +910,10 @@ subsystem Core Concepts
           The length of a key used by an encryption algorithm, measured in bits. The key size determines the upper limit of security against brute force attacks, where an attacker tries every possible key combination. The larger the key size, the more potential combinations, making it harder to break the encryption by brute force.
 
         // Source: Wikipedia
-        component Key Whitening 
+        component Key Whitening
           A cryptographic technique used to enhance the security of block ciphers by combining the input data with portions of the key, usually through XOR operations, before the encryption process begins and after it ends. This ensures that even if the core cipher is broken or weakened, the overall encryption remains difficult to crack without the full key.
 
-        // Source: Wikipedia 
+        // Source: Wikipedia
         component Elliptic Curve Cryptography (ECC)
           A type of public-key cryptography based on the mathematical properties of elliptic curves over finite fields. It provides similar levels of security to traditional systems like RSA but uses significantly smaller key sizes. ECC relies on the difficulty of solving the Elliptic Curve Discrete Logarithm Problem (ECDLP), which involves finding a scalar multiplier given two points on an elliptic curve.
 
@@ -938,7 +921,7 @@ subsystem Core Concepts
         component Discrete Logarithm
            The inverse operation of exponentiation in a finite group, analogous to finding a regular logarithm in real numbers. The problem is considered computationally intractable by classical computers, meaning there is no efficient algorithm to solve it for large values, making it a cornerstone of several cryptographic systems. However, advances in quantum computing pose a threat to cryptographic systems relying on the intractability of the problem.
 
-      subsystem Authenticated Encryption Modes 
+      subsystem Authenticated Encryption Modes
         Modes of operation of the Advanced Encryption Standard symmetric cipher that guarantee both data confidentiality and data authenticity.
 
         // Source: Wikipedia
@@ -956,7 +939,7 @@ subsystem Core Concepts
         // Source: Wikipedia
         component Galois Counter Mode (GCM)
           A mode of operation for block ciphers that works by encrypting the data using the counter mode (CTR) for confidentiality and Galois field multiplication for integrity in a single pass. This mode allows for authentication of additional data that is not encrypted, known as Associated Data (AD).
-        
+
         // Source: Wikipedia
         component Integrity-Aware Parallelizable Mode (IAPM)
           A mode of operation for block ciphers that was created to be highly efficient and parallelizable. This mode uses two independent keys for both encryption and integrity verification, and its structure allows for parallel processing of both encryption and authentication in a single pass.
@@ -978,7 +961,7 @@ subsystem Core Concepts
 
         // Source: Wikipedia
         component Suite B Cryptography
-           A set of cryptographic algorithms developed by the NSA as part of its Cryptographic Modernization Program to provide security for both classified and unclassified communications. It included several key components: Advanced Encryption Standard (AES), Elliptic Curve Cryptography (ECC), and Secure Hash Algorithm (SHA). Suite B was phased out in 2018 and replaced by the Commercial National Security Algorithm Suite (CNSA), as part of a transition to quantum-resistant cryptographic methods. 
+           A set of cryptographic algorithms developed by the NSA as part of its Cryptographic Modernization Program to provide security for both classified and unclassified communications. It included several key components: Advanced Encryption Standard (AES), Elliptic Curve Cryptography (ECC), and Secure Hash Algorithm (SHA). Suite B was phased out in 2018 and replaced by the Commercial National Security Algorithm Suite (CNSA), as part of a transition to quantum-resistant cryptographic methods.
 
         end
 
@@ -1019,7 +1002,7 @@ subsystem Core Concepts
           // Source: Wikipedia
           component Classical Collision Attack
             A type of collision attack where the attacker seeks to find two different messages m1 and m2 such that hash(m1) = hash(m2).
-          
+
           // Source: Wikipedia
           component Chosen-Prefix Collision Attack
             A type of collision attack where the attacker attempts to find two suffixes s1 and s2 for given prefixes p1 and p2 such that hash(p1 ∥ s1) = hash(p2 ∥ s2), where ∥ denotes the concatenation operation.
@@ -1057,7 +1040,7 @@ subsystem Core Concepts
 
         // Source: Wikipedia
         component Linear Cryptanalysis
-          A general form of cryptanalysis based on finding affine approximations to the action of a cipher. The attack involves identifying linear expressions that approximate the relationships among plaintext, ciphertext, and key bits with a certain probability, then analyzing biases in the output to deduce information about the secret key. Its effectiveness relies on the quality of these approximations and the volume of known plaintext/ciphertext pairs available for analysis. 
+          A general form of cryptanalysis based on finding affine approximations to the action of a cipher. The attack involves identifying linear expressions that approximate the relationships among plaintext, ciphertext, and key bits with a certain probability, then analyzing biases in the output to deduce information about the secret key. Its effectiveness relies on the quality of these approximations and the volume of known plaintext/ciphertext pairs available for analysis.
 
         // Source: Wikipedia
         component Differential Cryptanalysis
@@ -1084,7 +1067,7 @@ subsystem Core Concepts
           A side-channel attack where the attacker attempts to compromise a cryptosystem by analyzing the time taken to execute cryptographic algorithms. Every logical operation in a computer takes time to execute, and the time can differ based on the input; with precise measurements of the time for each operation, an attacker can work backwards to the input. Finding secrets through timing information may be significantly easier than using cryptanalysis of known plaintext/ciphertext pairs. Sometimes timing information is combined with cryptanalysis to increase the rate of information leakage.
 
         // Source: Wikipedia
-        component Extended Sparse Linearization Attack (XSL) 
+        component Extended Sparse Linearization Attack (XSL)
           A method of cryptanalysis for block ciphers. The attack involves expressing the cipher's operations as a system of overdefined quadratic equations. By applying the XSL algorithm, which leverages the sparsity and specific structure of these equations, an attacker attempts to solve for the secret key. Notably, the XSL attack requires only a limited number of known plaintexts, distinguishing it from cryptanalytic techniques that necessitate large datasets.
 
         // Source: Wikipedia
@@ -1105,7 +1088,7 @@ subsystem Core Concepts
 
         // Source: Wikipedia
         component Weak Key Attack
-          A cryptanalysis method exploiting specific keys that cause a cipher to exhibit predictable or undesirable behavior, compromising its security. These weak keys often constitute a small fraction of the total key space, but their use can lead to vulnerabilities. To mitigate the risks associated with weak keys, cryptographic systems often include mechanisms to detect and avoid them during key generation. 
+          A cryptanalysis method exploiting specific keys that cause a cipher to exhibit predictable or undesirable behavior, compromising its security. These weak keys often constitute a small fraction of the total key space, but their use can lead to vulnerabilities. To mitigate the risks associated with weak keys, cryptographic systems often include mechanisms to detect and avoid them during key generation.
 
         // Source: Wikipedia
         component Distinguishing Attack
@@ -1116,7 +1099,7 @@ subsystem Core Concepts
     subsystem Cryptographic Key Concepts
       Concepts related to the creation and usage of cryptographic keys.
 
-      contains 
+      contains
 
       // Source: Wikipedia
       component Key
@@ -1158,7 +1141,7 @@ subsystem Core Concepts
         component Public Key Infrastructure (PKI)
           A set of roles, policies, hardware, software and procedures needed to create, manage, distribute, use, store and revoke digital certificates and manage public-key encryption. PKI is an arrangement that binds public keys with respective identities of entities. The binding is established through a process of registration and issuance of certificates at and by a certificate authority.
 
-      // Source: Wikipedia 
+      // Source: Wikipedia
       subsystem Key Exchange
         A method in cryptography by which cryptographic keys are exchanged between two parties, allowing use of a cryptographic algorithm. Historically, before the invention of public-key cryptography it required a secret key to be communicated through trusted couriers, diplomatic bags, or any other secure communication channel.
 
@@ -1179,7 +1162,7 @@ subsystem Core Concepts
     subsystem Ciphers
       Concepts related to encryption, decryption, and ciphers.
 
-      contains 
+      contains
 
         // Source Wikipedia
         component Block Cipher
@@ -1191,7 +1174,7 @@ subsystem Core Concepts
 
         // Source: Wikipedia
         subsystem Public Key Cryptography
-          The field of cryptographic systems that use pairs of related keys. Each key pair consists of a public key and a corresponding private key. The public key is openly distributed and used for encrypting messages or verifying digital signatures, while the private key is kept confidential and used for decrypting messages or creating digital signatures. This dual-key mechanism enables secure communication over insecure channels without the need to share secret keys beforehand. 
+          The field of cryptographic systems that use pairs of related keys. Each key pair consists of a public key and a corresponding private key. The public key is openly distributed and used for encrypting messages or verifying digital signatures, while the private key is kept confidential and used for decrypting messages or creating digital signatures. This dual-key mechanism enables secure communication over insecure channels without the need to share secret keys beforehand.
 
           contains
 
@@ -1200,7 +1183,7 @@ subsystem Core Concepts
               A cryptographic key that is generated as part of a public key cryptography key pair. The public key can be used to encrypt messages or verify a digital signature. Importantly, it cannot be used to decrypt messages or create digital signatures. The security of the cryptosystem does not rely on the secrecy of the public key, and it is shared openly.
 
             // Source: Wikipedia
-            component Private Key 
+            component Private Key
               A cryptographic key that is generated as part of a public key cryptography key pair. The private key can be used to decrypt messages or create digital signatures. This security of the cryptosystem relies on the secrecy of the private key, and it is not shared.
 
             // Source: Wikipedia
@@ -1237,7 +1220,7 @@ subsystem Core Concepts
 
               // Source: Wikipedia
               component ElGamal
-                A probabilistic public-key cryptography algorithm based on the intractability of the Decisional Diffie–Hellman assumption. ElGamal is an extension of the Diffie–Hellman Key Exchange. The algorithm can be described as performing a Diffie–Hellman key exchange to establish a shared secret then using the secret as a one-time pad for encrypting a message. ElGamal encryption is malleable, and is therefore not secure against chosen ciphertext attacks. 
+                A probabilistic public-key cryptography algorithm based on the intractability of the Decisional Diffie–Hellman assumption. ElGamal is an extension of the Diffie–Hellman Key Exchange. The algorithm can be described as performing a Diffie–Hellman key exchange to establish a shared secret then using the secret as a one-time pad for encrypting a message. ElGamal encryption is malleable, and is therefore not secure against chosen ciphertext attacks.
 
             // Source: Wikipedia
             subsystem Public Key Implementations
@@ -1257,9 +1240,9 @@ subsystem Core Concepts
 
               // Source: Wikipedia
               component Off-the-Record Messaging
-                A cryptographic protocol that provides secure, private, and authenticated communication for instant messaging. OTR ensures that conversations are confidential and offer deniable authentication. The protocol employs a combination of AES for encryption, the Diffie–Hellman key exchange for secure key negotiation, and SHA-1 for hashing. OTR also provides forward secrecy, ensuring that if long-term keys are compromised, past conversations remain secure. 
+                A cryptographic protocol that provides secure, private, and authenticated communication for instant messaging. OTR ensures that conversations are confidential and offer deniable authentication. The protocol employs a combination of AES for encryption, the Diffie–Hellman key exchange for secure key negotiation, and SHA-1 for hashing. OTR also provides forward secrecy, ensuring that if long-term keys are compromised, past conversations remain secure.
 
-          end 
+          end
 
         // Source: Wikipedia
         subsystem Symmetric Key Algorithms
@@ -1275,7 +1258,7 @@ subsystem Core Concepts
 
           // Source: Wikipedia
           component Camellia
-            A symmetric key block cipher with a 128 bit block size and 128, 192 and 256 bit key sizes. Camellia employs a Feistel network structure with either 18 or 24 rounds, depending on the key length, and incorporates key-dependent transformations to enhance security. The cipher has been approved for use by the ISO/IEC, the European Union's NESSIE project and the Japanese CRYPTREC project. 
+            A symmetric key block cipher with a 128 bit block size and 128, 192 and 256 bit key sizes. Camellia employs a Feistel network structure with either 18 or 24 rounds, depending on the key length, and incorporates key-dependent transformations to enhance security. The cipher has been approved for use by the ISO/IEC, the European Union's NESSIE project and the Japanese CRYPTREC project.
 
           // Source: Wikipedia
           component CAST-128
@@ -1304,7 +1287,7 @@ subsystem Core Concepts
           // Source: Wikipedia
           component SEED
              A symmetric key block cipher with a 128 bit block size and a 128 bit key size. SEED employs a 16 round Feistel structure with two 8 × 8 S-boxes that are combined in a moderately complex set of boolean functions such that each output bit depends on 3 of the 4 input bytes. SEED has a fairly complex key schedule with 32 bit subkeys. SEED was developed by the Korea Information Security Agency (KISA) because 40 bit encryption imported from the U.S. was not considered strong enough.
-            
+
           // Source: Wikipedia
           component Serpent
             A symmetric key block cipher with a 128 bit block size and 128, 192, or 256 bit key size. The cipher is a 32-round substitution–permutation network. Each round applies one of eight 4 bit to 4 bit S-boxes 32 times in parallel. Serpent was designed so that all operations can be executed in parallel, using 32 bit slices. Serpent was a finalist in the AES competition.
@@ -1374,7 +1357,7 @@ subsystem Core Concepts
           // Source: Wikipedia
           component Somewhat Homomorphic Encryption (SHE)
             A class of homomorphic encryption schemes supporting only two types of computational operations such as multiplication and addition that are fixed by the design of the scheme. SHE schemes support an unbounded number of computational operations, but only for a subset of circuits.
-          
+
           // Source: Wikipedia
           component Leveled Fully Homomorphic Encryption (Leveled-FHE)
             A class of homomorphic encryption schemes supporting multiple types of computational operations. Leveled FHE schemes support only a bounded number of computational operations, but do support computation on arbitrary circuits.
@@ -1387,7 +1370,7 @@ subsystem Core Concepts
 
       end
 
-    subsystem Text 
+    subsystem Text
       Concepts related to different types of sequences of characters and their usage in cryptography.
 
       contains
@@ -1398,7 +1381,7 @@ subsystem Core Concepts
 
       // Source: Wikipedia
       component Ciphertext
-        The result of encryption performed on plaintext using an algorithm, called a cipher. Ciphertext is also known as encrypted or encoded information because it contains a form of the original plaintext that is unreadable by a human or computer without the proper cipher and the appropriate decryption key. 
+        The result of encryption performed on plaintext using an algorithm, called a cipher. Ciphertext is also known as encrypted or encoded information because it contains a form of the original plaintext that is unreadable by a human or computer without the proper cipher and the appropriate decryption key.
 
       // Source: HA Crypto
       component Stream
@@ -1418,7 +1401,7 @@ subsystem Core Concepts
 
         // Source: Wikipedia
         component Optimal Asymmetric Encryption Padding (OAEP)
-          A padding scheme used in conjunction with asymmetric encryption algorithms. OAEP addresses vulnerabilities associated with deterministic encryption by incorporating randomness into the encryption process. This is achieved by embedding the plaintext message into a larger, padded message before encryption, using hash functions and a mask generation function to ensure that identical plaintexts encrypt to different ciphertexts each time. 
+          A padding scheme used in conjunction with asymmetric encryption algorithms. OAEP addresses vulnerabilities associated with deterministic encryption by incorporating randomness into the encryption process. This is achieved by embedding the plaintext message into a larger, padded message before encryption, using hash functions and a mask generation function to ensure that identical plaintexts encrypt to different ciphertexts each time.
 
         // Source: Wikipedia
         component Rivest–Shamir–Adleman Optimal Asymmetric Encryption Padding (RSA-OAEP)
@@ -1471,8 +1454,8 @@ subsystem Core Concepts
 
           // Source: Wikipedia
           component Avalanche Effect
-            The desirable property of cryptographic algorithms, typically block ciphers and cryptographic hash functions, wherein if an input is changed slightly, the output changes significantly. The strict avalanche criterion (SAC) is a formalization of the avalanche effect. It is satisfied if, whenever a single input bit is complemented, each of the output bits changes with a 50% probability. 
-          
+            The desirable property of cryptographic algorithms, typically block ciphers and cryptographic hash functions, wherein if an input is changed slightly, the output changes significantly. The strict avalanche criterion (SAC) is a formalization of the avalanche effect. It is satisfied if, whenever a single input bit is complemented, each of the output bits changes with a 50% probability.
+
           // Source: Wikipedia
           component Hash Collision
             When two different inputs to a hash function produce the same output.
@@ -1492,9 +1475,9 @@ subsystem Core Concepts
           component Cryptography Research and Evaluation Committees (CRYPTREC)
             A Japanese government initiative established to evaluate and recommend cryptographic techniques for government and industrial use. CRYPTREC includes members from Japanese academia, industry, and government. It was started in May 2000 by combining efforts from several agencies that were investigating methods and techniques for implementing 'e-Government' in Japan.
 
-          // Source: Wikipedia, NESSIE Project 
+          // Source: Wikipedia, NESSIE Project
           component New European Schemes for Signatures Integrity and Encryption (NESSIE)
-             A European research project funded from 2000 to 2003 to identify secure cryptographic primitives. The goal of the NESSIE project was to put forward a portfolio of strong cryptographic algorithms that had been obtained after an open call and had been evaluated using a transparent and open evaluation process. 
+             A European research project funded from 2000 to 2003 to identify secure cryptographic primitives. The goal of the NESSIE project was to put forward a portfolio of strong cryptographic algorithms that had been obtained after an open call and had been evaluated using a transparent and open evaluation process.
 
           // Source: Wikipedia
           component NIST Hash Function Competition
@@ -1549,7 +1532,7 @@ subsystem Core Concepts
                 An instance of a SHA-2  cryptographic hash function with a 224 bit output size and 512 bit block size. The compression function performs 64 rounds of computation.
 
                 What is the SHA-224 digest of this message?
-                
+
                 The digest is guaranteed to be 224 bits long.
                 The maximum message size is 2e64-1.
                 The algorithm runs 64 rounds.
@@ -1560,7 +1543,7 @@ subsystem Core Concepts
                 An instance of a SHA-2 cryptographic hash function with a 256 bit output size and 512 bit block size. The compression function performs 64 rounds of computation.
 
                 What is the SHA-256 digest of this message?
-                
+
                 The digest is guaranteed to be 256 bits long.
                 The maximum message size is 2e64-1.
                 The algorithm runs 64 rounds.
@@ -1571,7 +1554,7 @@ subsystem Core Concepts
                 An instance of a SHA-2 cryptographic hash function with a 384 bit output size and 1024 bit block size. The compression function performs 80 rounds of computation.
 
                 What is the SHA-384 digest of this message?
-                
+
                 The digest is guaranteed to be 384 bits long.
                 The maximum message size is 2e128-1.
                 The algorithm runs 80 rounds.
@@ -1582,7 +1565,7 @@ subsystem Core Concepts
                 An instance of a SHA-2 cryptographic hash function with a 512 bit output size and 1024 bit block size. The compression function performs 80 rounds of computation.
 
                 What is the SHA-512 digest of this message?
-                
+
                 The digest is guaranteed to be 512 bits long.
                 The maximum message size is 2e128-1.
                 The algorithm runs 80 rounds.
@@ -1603,7 +1586,7 @@ subsystem Core Concepts
                 An instance of a SHA-3 cryptographic hash function with a 224 bit output size, a 1152 bit block size, and a 448 bit capacity.
 
                 What is the SHA3-224 digest of this message?
-                
+
                 The digest is guaranteed to be 224 bits long.
                 The rate is 1152 bits.
                 The capacity is 448 bits.
@@ -1614,7 +1597,7 @@ subsystem Core Concepts
                 An instance of a SHA-3 cryptographic hash function with a 224 bit output size, a 1088 bit block size, and a 512 bit capacity.
 
                 What is the SHA3-256 digest of this message?
-                
+
                 The digest is guaranteed to be 256 bits long.
                 The rate is 1088 bits.
                 The capacity is 512 bits.
@@ -1625,7 +1608,7 @@ subsystem Core Concepts
                 An instance of a SHA-3 cryptographic hash function with a 384 bit output size, a 832 bit block size, and a 768 bit capacity.
 
                 What is the SHA3-384 digest of this message?
-                
+
                 The digest is guaranteed to be 384 bits long.
                 The rate is 832 bits.
                 The capacity is 768 bits.
@@ -1636,7 +1619,7 @@ subsystem Core Concepts
                 An instance of a SHA-3 cryptographic hash function with a 512 bit output size, a 576 bit block size, and a 1024 bit capacity.
 
                 What is the SHA3-512 digest of this message?
-                
+
                 The digest is guaranteed to be 512 bits long.
                 The rate is 576 bits.
                 The capacity is 1024 bits.
@@ -1651,9 +1634,9 @@ subsystem Core Concepts
 
               // Source: Wikipedia, Grøstl – a SHA-3 candidate
               component Grøstl
-                A family of cryptographic hash functions with an up to 512 bit variable output size and a 512 or 1024 bit block size. Grøstl uses a wide pipe construction with at least twice the number of internal state bits as output bits to prevent length extension attacks. The compression function is constructed as an SP-network with two permutations, one similar to the S-box from AES and another that draws inspiration from AES diffusion. 
+                A family of cryptographic hash functions with an up to 512 bit variable output size and a 512 or 1024 bit block size. Grøstl uses a wide pipe construction with at least twice the number of internal state bits as output bits to prevent length extension attacks. The compression function is constructed as an SP-network with two permutations, one similar to the S-box from AES and another that draws inspiration from AES diffusion.
 
-              // Source: Wikipedia, The Hash Function JH 
+              // Source: Wikipedia, The Hash Function JH
               component JH
                 A cryptographic hash function with a 24, 256, 384 or 512 bit output size, a 512 bit block size, and a 1024 bit internal state. JH uses a structure with similarities to both the sponge and Merkle–Damgård constructions. The compression function operates by XORing a message block with one half of the state, the state is permuted by an inner function, and the message is XORd to the other half of this new state. The inner function is a variation of the AES block cipher design. The iterative processing of previous state with new message blocks by the compression function continues until all message blocks are processed. As only a portion of the state is used as output, the hash function is resistant to length extension attacks.
 
@@ -1664,7 +1647,7 @@ subsystem Core Concepts
               // Source: Wikipedia, The Skein Hash Function Family
               component Skein
                 A family of cryptographic hash functions with a 224, 256, 384 or 512 bit output size, a 256, 512, or 1024 bit block size, and an internal state size twice that of the block size. Skein utilizes a wide pipe construction. The compression function is based off of the Threefish block cipher in Unique Block Iteration (UBI) mode. The use of UBI mode allows for the compression function to be given an additional input of which block it is processing tweaking the cipher slightly for that block. This makes traditional attacks more difficult the same message block processed more than once will yield different outputs. The wide pipe construction provides the protection against length extension attacks.
-              
+
           end
 
 
@@ -1683,7 +1666,7 @@ subsystem Core Concepts
 
       // Source: Wikipedia
       component Hash-based Message Authentication Code (HMAC)
-        A specific type of message authentication code involving a cryptographic hash function and a secret cryptographic key. HMAC uses a shared secret instead of digital signatures with asymmetric cryptography. HMAC can use any cryptographic hash function; the size of the output and strength of the security guarantees is that of the underlying hash function. 
+        A specific type of message authentication code involving a cryptographic hash function and a secret cryptographic key. HMAC uses a shared secret instead of digital signatures with asymmetric cryptography. HMAC can use any cryptographic hash function; the size of the output and strength of the security guarantees is that of the underlying hash function.
 
       // Source: CBC MACs for Arbitrary-Length Messages: The Three-Key Constructions
       component Encrypted Message Authentication Code (EMAC)
@@ -1738,7 +1721,7 @@ subsystem Core Concepts
         The threat that an insider will use her/his authorized access, wittingly or unwittingly, to do harm to the security of organizational operations and assets, individuals, other organizations, and the Nation. This threat can include damage through espionage, terrorism, unauthorized disclosure of national security information, or through the loss or degradation of organizational resources or capabilities.
 
     // Source: NIST
-    component Malware 
+    component Malware
         Software or firmware intended to perform an unauthorized process that will have adverse impact on the confidentiality, integrity, or availability of a system. For example, a virus, worm, Trojan horse, or other code-based entity that infects a host. Spyware and some forms of adware are also examples of malware.
 
     // Source: VWYP
@@ -1808,7 +1791,7 @@ subsystem Core Concepts
     // Source: ElectionGuard
     component Election Log
       A record of information about an election. Election logs are associated with a specific election via cryptographic means.
-      
+
       May I have a new election log for this particular election?
       Does this election log have integrity?
       Does this election log have provenance with regards to that election?

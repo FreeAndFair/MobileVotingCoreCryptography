@@ -1,0 +1,323 @@
+// E2EVIV Domain Model
+// Copyright (C) 2024-25 Free & Fair
+
+// Events: interactions and state transitions of the system, which are
+// seemingly atomic from some point of view. These are divided into
+// multiple categories based on their granularity/observability.
+
+// Actor-initiated events
+
+// Election Administrator Interactions are those that are triggered by the
+// election administrator. We use EA as an abbreviation for "Election
+// Administrator", for brevity in naming.
+
+events Election Administrator Interactions
+
+  EA Load Election Manifest
+  The election administrator loads the election manifest into the election administrator server.
+
+  EA Start Key Generation Ceremony
+  The election administrator loads the election manifest into the trustee administration server and starts the key generation ceremony.
+
+  EA Gather Election Data
+  The election administrator gets the election data from the election administration server.
+
+  EA Start Ballot Decryption Ceremony
+  The election administrator loads the election data into the trustee administration server and starts the ballot decryption ceremony.
+
+  EA Start Homomorphic Tally Ceremony
+  The election administrator loads the election data into the trustee administration server and starts the homomorphic tally ceremony.
+
+  EA Load Election Results
+  The election administrator loads the election results into the election administration server.
+
+
+// Trustee Interactions are those that are triggered by trustees. Note that these
+// are subject to change based on choices made with respect to the trustee role in
+// the cryptographic protocol.
+
+events Trustee Interactions
+
+  Trustee Generate Key
+  A trustee attaches a storage device to a trustee application and signs in to the key generation process.
+
+  Trustee Load Key
+  A trustee attaches a storage device to a trustee application to load the private key material generated during the key generation process.
+
+  Trustee Approve Shuffle
+  A trustee provides approval to begin the shuffle computation based on consensus among the trustees that the set of ballots is legitimate.
+
+  Trustee Approve Tally
+  A trustee provides approval to begin the homomorphic tally based on consensus among the trustees that the set of ballot is legitimate.
+
+  Trustee Approve Decryption
+  A trustee provides approval to decrypt the shuffled ballots and/or the homomorphic tally.
+
+
+// Verifier Interactions are those that are triggered by external verifiers
+// after the election is complete.
+
+events Verifier Interactions
+
+  Verifier Request Election Information
+  A verifier requests election information from the public bulletin board.
+
+  Verifier Report Results
+  A verifier publicly reports the results of the verification they have carried out on public bulletin board data.
+
+
+// Voter interactions are those that are triggered externally by the voter,
+// using the user interface of the voting and ballot check applications.
+
+events Voter Interactions
+
+  Voter Sign In
+  A voter signs in to the voting application using their email address.
+
+  Voter Authentication
+  A voter provides authentication information to an authentication service.
+
+  Voter Confirm Choices
+  A voter submits and confirms their choices on a ballot they are voting.
+
+  Voter Ballot Check Initiation
+  A voter tells the voting application to check a ballot on which they have confirmed their choices.
+
+  Voter Ballot Check Application Start
+  A voter enters ballot check information into a ballot check application.
+
+  Voter Ballot Check Confirmation
+  A voter confirms that the ballot check information displayed in the voting application and ballot check application match, so that a ballot check can be performed.
+
+  Voter Ballot Check Mismatch
+  A voter reports that the ballot check information displayed in the voting application and ballot check application do not match, indicating a problem with the system.
+
+  Voter Decrypted Ballot Confirmation
+  A voter confirms that the decrypted ballot displayed by a ballot check application matches their confirmed choices.
+
+  Voter Decrypted Ballot Mismatch
+  A voter reports that the decrypted ballot displayed in the ballot check application does not match their confirmed choices, indicating a problem with the system.
+
+  Voter Ballot Cast
+  A voter chooses to cast a ballot on which they have confirmed their choices.
+
+
+// Subsystem-initiated events
+
+// Authentication Service Interactions are those that are triggered by the
+// authentication service, in response to actions taken by other components in
+// the system. We use AS as an abbreviation for "Authentication Service", for
+// brevity in naming.
+
+events Authentication Service Events
+
+  AS Initiate Voter Authentication
+  The authentication service initiates authentication with the voter.
+
+  AS Send Authentication Result
+  The authentication service sends an authentication result to the election administration server.
+
+
+// Ballot Check Application Interactions are those that are triggered by the
+// ballot check application, in response to the voter's actions or the actions
+// of other components of the system. We use BCA as an abbreviation for "Ballot
+// Check Application" for brevity in naming. Note that these are currently at a
+// higher level of granularity than the full cryptographic protocol, as the
+// full cryptographic protocol has not yet been finalized.
+
+events Ballot Check Application Interactions
+
+  BCA Request Ballot Information
+  The ballot check application requests ballot information from the digital ballot box.
+
+  BCA Show Ballot Check Information
+  The ballot check application displays ballot check information to the voter, which can be used to validate that the ballot check and voting applications are referring to the same ballot.
+
+  BCA Show Decrypted Ballot
+  The ballot check application displays a decrypted ballot.
+
+
+// Digital Ballot Box Interactions are those that are triggered by the digital
+// ballot box, in response to actions of other components of the system. We
+// use DBB as an abbreviation for "Digital Ballot Box", and our previous
+// abbreviations, for brevity in naming. Note that these are currently at a
+// higher level of granularity thn the full cryptographic protocol, as the
+// full cryptographic protocol has not yet been finalized.
+
+events Digital Ballot Box Interactions
+
+  DBB Send Initial Ballot Check Information
+  The digital ballot box sends initial ballot check information for a voted ballot to the voting application.
+
+  DBB Send Ballot Check Information to BCA
+  The digital ballot box sends additional ballot check information to a ballot check application as part of the ballot check process.
+
+  DBB Send Ballot Check Information to VA
+  The digital ballot box sends ballot check information to the voting application as part of the ballot check process.
+
+  DBB Publish Ballot Cryptogram
+  The digital ballot box publishes a ballot cryptogram containing voting choices to the public bulletin board.
+
+  DBB Publish Spoil Request
+  The digital ballot box publishes a spoil request for a ballot to the public bulletin board.
+
+  DBB Publish Cast Request
+  The digital ballot box publishes a cast request for a ballot to the public bulletin board.
+
+  DBB Publish Ballot Check Information
+  The digital ballot box publishes ballot check information to the public bulletin board.
+
+  DBB Publish Election Manifest
+  The digital ballot box publishes the election manifest to the public bulletin board to start an election.
+
+  DBB Publish Election Results
+  The digital ballot box publishes the election results to the public bulletin board to end an election.
+
+  DBB Send Election Data
+  The digital ballot box sends election data to the election administration server.
+
+
+// Election Administrator Server Interactions are those that are triggered by
+// the election administration server, in response to actions taken by the
+// election administrator or by other components in the system. We use EAS as
+// an abbreviation for "Election Administrator Server", for brevity in naming.
+
+events Election Administrator Server Interactions
+
+  EAS Request Voter Authentication
+  The election administrator server requests voter authentication for a specific voter from an authentication service.
+
+  EAS Send Election Information
+  The election administration server sends information about the election(s) available to a specific voter to the voting application, or information that authentication failed.
+
+  EAS Write Election Manifest
+  The election administration server writes the election manifest to a persistent storage device.
+
+  EAS Publish Election Manifest
+  The election administration server publishes the election manifest.
+
+  EAS Write Election Data
+  The election administration server writes all election data to a persistent storage device.
+
+  EAS Request Election Data
+  The election administration server requests all election data from the digital ballot box.
+
+  EAS Publish Election Results
+  The election administration server publishes the election results.
+
+
+// Public Bulletin Board interactions are those that are triggered by the
+// public bulletin board, in response to actions taken by other components or
+// actors within or outside of the system (as it is a public bulletin board,
+// it is accessible to anyone). We use PBB as an abbreviation for "Public
+// Bulletin Board", for brevity in naming.
+
+events Public Bulletin Board Interactions
+  PBB Send All Election Information
+  The public bulletin board sends all the election information it has upon request.
+
+  PBB Send Selected Election Information
+  The public bulletin board sends selected election information upon request.
+
+
+// Trustee Application Interactions are those that are triggered by a trustee
+// application, in response to actions taken by a trustee. We use TA as an
+// abbreviation for "Trustee Application", for brevity in naming. Note that
+// these are currently at a higher level of granularity thn the full
+// cryptographic protocol, as the full cryptographic protocol has not yet
+// been finalized.
+
+events Trustee Application Interactions
+
+  TA Sign In
+  The trustee application authenticates to the trustee application server.
+
+  TA Write Trustee Key
+  The trustee application writes the generated trustee key material to persistent storage.
+
+  TA Request Shuffle Approval
+  The trustee application requests approval from the trustee to perform the shuffle.
+
+  TA Request Tally Approval
+  The trustee application requests approval from the trustee to perform a homomorphic tally.
+
+  TA Request Decryption Approval
+  The trustee application requests approval from the trustee to decrypt results.
+
+  TA Send Shuffled Ballots
+  The trustee application sends shuffled ballots to the trustee application server.
+
+  TA Send Decryption Information
+  The trustee application sends information to the trustee application server to decrypt the shuffled ballots.
+
+
+// Trustee Application Server Interactions are those that are triggered by
+// the trustee authentication server, in response to actions taken by the
+// election administrator or trustee applications. We use TAS as an
+// abbreviation for "Trustee Application Server", for brevity in naming.
+// Note that these are currently at a higher level of granularity than the
+// full cryptographic protocol, as the full cryptographic protocol has not
+// yet been finalized.
+
+events Trustee Application Server Interactions
+
+  TAS Send Threshold Reached
+  The trustee application server notifies the trustee applications that enough trustees have signed in to begin the shuffling and decryption process.
+
+  TAS Send Election Information
+  The trustee application server sends election information to the trustee applications.
+
+  TAS Send Decryption Request
+  The trustee application server sends a decryption request to the trustee applications.
+
+  TAS Write Decrypted Tally
+  The trustee application server writes the decrypted tally to persistent storage (only for homomorphic tallying).
+
+  TAS Send Ballots to Printer
+  The trustee application server sends the decrypted and shuffled ballots to the ballot printer.
+
+  TAS Write Election Information
+  The trustee application server writes election information to persistent storage.
+
+
+// Voting Application Interactions are those that are triggered by the voting
+// application, in response to the voter's actions or the actions of other
+// components of the system. We use "VA" as an abbreviation for "Voting
+// Application" for brevity in naming. Note that these events are currently at
+// a higher level of granularity than the full cryptographic protocol, as the
+// full cryptographic protocol has not yet been finalized.
+
+events Voting Application Interactions
+
+  VA Request Authentication
+  The voting application initiates the voter authentication process with the election administration server.
+
+  VA Show Ballot Information
+  The voting application shows ballot information to the voter.
+
+  VA Show Authentication Failure
+  The voting application shows information to the voter about their authentication having failed.
+
+  VA Send Ballot
+  The voting application sends a voted ballot to the digital ballot box.
+
+  VA Show Ballot Check Initiation Information
+  The voting application shows information to the voter that can be used to initiate the ballot check process.
+
+  VA Spoil Ballot
+  The voting application sends a spoil ballot request to the digital ballot box.
+
+  VA Request Ballot Check Information Confirmation
+  The voting application requests confirmation from the voter that the ballot check information displayed in a ballot check application matches the ballot check information displayed in the voting application.
+
+  VA Request Ballot Decryption
+  The voting application sends a request for the decryption of a spoiled ballot to the digital ballot box.
+
+  VA Request Ballot Match Confirmation
+  The voting application requests confirmation from the voter that the decrypted ballot displayed in the ballot check application matches the voter's original selections.
+
+  VA Cast Ballot
+  The voting application sends a cast ballot request to the digital ballot box and records with the election administration server that the voter has voted.
+
+  VA Show Contingency information
+  The voting application shows the voter information about what to do if the voting session could not be completed successfully (e.g., a failed ballot check or other failed cryptographic protocol interaction).

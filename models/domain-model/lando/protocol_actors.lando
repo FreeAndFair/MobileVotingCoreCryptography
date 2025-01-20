@@ -1,0 +1,100 @@
+// E2EVIV Domain Model
+// Copyright (C) 2024-25 Free & Fair
+
+// Protocol actors: these components are the actors in the cryptographic
+// protocol. They are detailed in this separate file rather than in the larger
+// model of the domain so that we can work with them more easily.
+
+// Note that the queries, commands, and constraints shown here are subject to
+// change as we refine the protocol. Note also that these components are all
+// reactive (they receive events and act on them), and thus have substantially
+// more commands than queries.
+
+subsystem Protocol Actors
+  The actors in the cryptographic protocol. Note that this does not include people, such as election administrators, trustees, voters, etc., who are described elsewhere in the domain model.
+
+  contains
+
+  component Authentication Service (AS)
+    The authentication service performs voter authentication. The precise mechanism for this is left unspecified, and depends upon the specific identifying information that is being checked, etc. There may be multiple authentication services in a system. The authentication service is triggered by the election administration server for a particular voter and interacts with that voter directly in some out-of-band way, then responds to the election administration server with the results (see Authentication Service Events).
+
+    Start the authentication process for this voter!
+    This is my authentication information!
+
+  component Digital Ballot Box (DBB)
+    The digital ballot box controls what is written to the public bulletin board (PBB) and acts as the gateway for the rest of the system for reading the PBB. It handles ballot submission, spoiling, casting, and checking. There is (conceptually) a single digital ballot box in a system.
+
+    Record this election information!
+    Record this voted ballot!
+    Spoil this ballot!
+    Cast this ballot!
+    Initiate the checking process for this ballot!
+
+  component Ballot Check Application (BCA)
+    The ballot check application interacts with the voter and the digital ballot box for ballot checking. There may be an arbitrary number of ballot check applications in a system.
+
+    This is my ballot checking information!
+    This is the ballot information from the digital ballot box for your requested ballot check!
+
+  component Ballot Printer (BP)
+    The ballot printer generates printed ballots that are compatible with standard counting equipment. There may be an arbitrary number of ballot printers in a system, but they are all within the air-gapped network.
+
+    Print this ballot!
+    Print this batch of ballots!
+
+  component Election Administration Server (EAS)
+    The election administration server handles election definition and eligibility information, mediates between voters and authentication services, and mediates between the election administrator and the digital ballot box. There is (conceptually) a single election administration server in a system.
+
+    Create an election with this election manifest!
+    Start the election with this election manifest!
+    End the election with this election manifest!
+    Gather the election data and write it to this storage device!
+    Here is election data generated in the air-gapped network!
+
+  component Public Bulletin Board (PBB)
+    The public bulletin board stores the public record of the election. It is tamper-evident and provides a consistent view to every component or individual who looks at its contents.
+
+    Add this record to the bulletin board!
+    What are the contents of the bulletin board?
+    What is the record on the bulletin board with this hash?
+
+  component Trustee Application (TA)
+    The trustee application is used by a trustee as part of the key generation and decryption/printing/tally ceremonies. It only runs within the air-gapped network. There are as many trustee applications as there are trustees in a system.
+
+    Here is my identification information!
+    Generate private key material and write it to this storage device!
+    Read my private key material from this storage device!
+    Approve the shuffle!
+    Approve the tally!
+    Approve the decryption!
+
+  component Trustee Application Server (TAS)
+    The trustee application server is used by the election administrator to orchestrate ceremonies with the trustees. It only runs within the air-gapped network. There is only one trustee application server in a system.
+
+    Read the initial election manifest from this storage device!
+    Start the key generation ceremony!
+    Start the ballot shuffle and decryption ceremony!
+    Start the homomorphic tally ceremony!
+    Here is my trustee identification!
+    I approve the shuffle!
+    I approve the tally!
+    I approve the decryption!
+    Here is my decryption information!
+    Write the updated election manifest to this storage device!
+    Write the updated election data to this storage device!
+
+  component Voting Application (VA)
+    The voting application is used by a voter to log in, make ballot selections and cast or check their ballot(s). It runs on the Internet, and there is at least one for each voter in the system.
+
+    Here are my login credentials!
+    Here are my ballot choices!
+    Check my ballot!
+    Here are the results of my ballot check!
+    Cast my ballot!
+
+  component Verifier Application (VER)
+    A verifier application is used by an external verifier to verify the results of the election after the election has concluded. It can run anywhere, and there can be an arbitrary number of them in a system.
+
+    Are the contents of the bulletin board for this election valid?
+
+end
