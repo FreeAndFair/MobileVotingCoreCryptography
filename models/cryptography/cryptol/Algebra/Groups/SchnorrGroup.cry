@@ -1,0 +1,151 @@
+/**
+ * Schnorr Groups
+ *
+ * A Schnorr group is a subgroup with prime order q of the
+ * multiplicative group (ℤ/pℤ)* where the modulus p is also
+ * a prime number and we have p = q*r + 1.
+ *
+ * A special case of a Schnorr Group arises when r is 2. Then,
+ * p is a safe prime and q the corresponding Sophie Germain
+ * prime, satisfying p = 2*q + 1. In that case, we can use the
+ * tau function defined in Section 10.1 of the EVS Draft to
+ * easily encode and decode integers into the Schnorr group.
+ * Using a large value of r is, however, often preferable for
+ * efficiency reasons.
+ * @todo fzeyda How do we support enc and dec when r != 2?
+ * @todo fzeyda Review the need&use of enc and dec in general.
+ *
+ * Type constraints are complete in terms of ensuring validity
+ * of the Schnorr group instance.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::SchnorrGroup where
+
+import Algebra::Set
+
+parameter
+  /**
+   * Prime order of the Schnorr subgroup of (ℤ/pℤ)*
+   */
+  type q : #
+  type constraint (fin q, prime q, q > 1)
+
+  /**
+   * Factor r used to determine p (p = q*r + 1)
+   */
+  type r : #
+  type constraint (fin r, r > 1)
+
+  /**
+   * Prime modulus of the overgroup (ℤ/pℤ)*
+   */
+  type p : #
+  type constraint (fin p, prime p, p == q*r + 1)
+
+  /**
+   * Element h used to construct the generator
+   */
+  type h : #
+  type constraint (fin h, h > 1, h < p, (h^^r) % p != 1)
+
+/**
+ * Order of the underlying Schnorr subgroup
+ *
+ * Note that Schnorr group order is always prime.
+ */
+type order = q
+
+/**
+ * Bits require to encode a group element
+ */
+type bits = lg2 q
+
+/**
+ * Type universe of (over)group elements
+ */
+type T = Z p
+
+/**
+ * Equality of group elements
+ */
+T'eq = (==)
+
+/**
+ * Carrier set of the Schnorr subgroup
+ *
+ * Determines the elements of the Schnorr subgroup.
+ */
+G : Set T
+G x = x != 0 /\ x^^`q == 1
+
+/**
+ * Generator of the Schnorr subgroup
+ *
+ * This is a subgroup of (ℤ/pℤ)* with order q.
+ */
+g : T
+g = `h^^`r
+
+/**
+ * Identity element of the group (one)
+ */
+identity : T
+identity = 1
+
+/**
+ * Binary group operation (multiplication)
+ */
+gop : T -> T -> T
+gop = (*)
+
+/**
+ * Inverse of a given element (division)
+ */
+inv : T -> T
+inv = recip
+
+/**
+ * Exponentiation operation
+ */
+exp : {a} (Integral a) => T -> a -> T
+exp x k = if n >= 0 then (x^^n)
+                    else (inv x)^^(-n)
+          where n = toInteger k
+
+/**
+ * The τ(v) = min(v, p - v) function used in PRG_DDH.
+ *
+ * Only applicable if the parameter r of the Schnorr group is 2.
+ * In that case, provides a convenient way to encoded integers
+ * in the range [1 .. order] into valid Schnorr group elements.
+ */
+tau : T -> Integer
+tau v | r == 2 => min (fromZ v) (`p - (fromZ v))
+      | r != 2 => error "tau only applicable when parameter r is 2"
+
+/**
+ * Encoding a message as a group element
+ *
+ * @todo How to encode if r != 2? Ask Douglas Wikström.
+ * @pre x must be in the interval [0 ..< order].
+ * @pre only applicable when parameter r is 2
+ */
+enc : [bits] -> T
+enc x | r == 2 => if z ∈ G then z else (-z)
+                  where i = toInteger x // two-step conversion
+                        z = fromInteger (i + 1)
+      | r != 2 => error "enc only applicable when parameter r is 2"
+
+/**
+ * Decoding a group element into a message
+ *
+ * @todo How to decode if r != 2? Ask Douglas Wikström.
+ * @pre y must be a valid Schnorr group element
+ * @pre only applicable when parameter r is 2
+ */
+dec : T -> [bits]
+dec y | r == 2 => fromInteger ((tau y) - 1)
+      | r != 2 => error "dec only applicable when parameter r is 2"

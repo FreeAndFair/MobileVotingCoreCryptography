@@ -1,0 +1,17 @@
+/**
+ * Vocabulary of messages in the Schnorr Group with a prime order of 13
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Vocabularies::Vocabulary_S13 where
+
+/********************************/
+/* Instantiation of VocabularyI */
+/********************************/
+
+type M = Integer
+type msgN = 13
+message_vocabulary : [msgN]M
+message_vocabulary = [0 ..< 13]

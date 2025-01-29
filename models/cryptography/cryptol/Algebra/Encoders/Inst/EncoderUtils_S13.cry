@@ -1,0 +1,12 @@
+/**
+ * Encoding all messages in the Schnorr Group with a prime
+ * order of 13 by exponentiation of the generator. (Utilities)
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::Inst::EncoderUtils_S13 =
+       Algebra::EncoderUtils {
+  Algebra::Encoders::Inst::Encoder_S13
+}

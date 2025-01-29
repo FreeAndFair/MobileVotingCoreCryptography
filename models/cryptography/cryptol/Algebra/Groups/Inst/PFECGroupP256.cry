@@ -1,0 +1,17 @@
+/**
+ * NIST P-256 Elliptic Curve defined in [FIPS-186-5]
+ * @see https://doi.org/10.6028/NIST.FIPS.186-5
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::PFECGroupP256 =
+       Algebra::Groups::PFECGroup where
+
+type P  = 115792089210356248762697446949407573530086143415290314195533631308867097853951
+type n' = 115792089210356248762697446949407573529996955224135760342422259061068512044369
+type k = 8 // resudual failure prob. to encode a curve point is 8.63*10^(-78)
+b  = `0x5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b
+Gx = `0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296
+Gy = `0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5

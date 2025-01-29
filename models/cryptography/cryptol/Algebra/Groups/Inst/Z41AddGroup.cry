@@ -1,0 +1,14 @@
+/**
+ * Additive Group of Integers Modulo 41 (ℤ/41ℤ)
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::Z41AddGroup =
+       Algebra::Groups::ZnAddGroup where
+
+/**
+ * Modulus of the additive group instance (41)
+ */
+type n = 41

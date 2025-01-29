@@ -1,0 +1,21 @@
+/**
+ * Schnorr Group with a prime order of 41
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::SchnorrGroup41 =
+       Algebra::Groups::SchnorrGroup where
+
+// Overgroup prime modulues
+type p = 83
+
+// Schorr subgroup order
+type q = 41
+
+// Cofactor of the subgroup
+type r = 2
+
+// Used to produce the generator
+type h = 16

@@ -1,0 +1,92 @@
+/**
+ * Additive Groups of Integers Modulo n (ℤ/nℤ)
+ *
+ * This is the simplest cyclic group that we can construct,
+ * supporting arbitrary order. It is mostly here for testing.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::ZnAddGroup where
+
+import Algebra::Set
+import Algebra::Utils(bv2Z, Z2bv)
+
+parameter
+  /**
+   * Modulus of the additive group ℤ/nℤ
+   *
+   * This can be any value greater or equal to 2.
+   */
+  type n : #
+  type constraint (fin n, n >= 2)
+
+/**
+ * Order of the generated group
+ */
+type order = n
+
+/**
+ * Bits require to encode a group element
+ */
+type bits = lg2 n
+
+/**
+ * Type universe of group elements
+ */
+type T = Z n
+
+/**
+ * Equality of group elements
+ */
+T'eq = (==)
+
+/**
+ * Carrier set of the group (universe)
+ */
+G : T -> Bit
+G = UNIV`{T}
+
+/**
+ * Generator element of the group (one)
+ */
+g : T
+g = 1
+
+/**
+ * Identity element of the group (zero)
+ */
+identity : T
+identity = 0
+
+/**
+ * Binary group operation (addition)
+ */
+gop : T -> T -> T
+gop = (+)
+
+/**
+ * Exponentiation operation (multiplication)
+ */
+exp : {a} (Integral a) => T -> a -> T
+exp x k = x * (fromInteger i)
+  where i = toInteger k
+
+/**
+ * Inverse of a given element (negation)
+ */
+inv : T -> T
+inv = negate
+
+/**
+ * Encoding a message as a group element
+ */
+enc : [bits] -> T
+enc = bv2Z
+
+/**
+ * Decoding a group element into a message
+ */
+dec : T -> [bits]
+dec = Z2bv

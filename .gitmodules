@@ -1,3 +1,6 @@
 [submodule "specs/domain-model/dependency-processing/NLP"]
 	path = models/domain-model/NLP
 	url = ../NLP.git
+[submodule "models/cryptography/cryptol-specs"]
+	path = models/cryptography/cryptol-specs
+	url = git@github.com:FreeAndFair/cryptol-specs.git

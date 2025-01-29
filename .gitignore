@@ -5,3 +5,4 @@ venv*
 *.bcf-SAVE-ERROR
 *.als
 *.js
+.cryproject/

@@ -1,0 +1,66 @@
+/**
+ * Message Encoding Interface
+ *
+ * We separate the message encoding interface and group
+ * interface since there are generic encoding methods that
+ * can be (re)used with different kinds of groups, such as
+ * exponentiation wrt the generator. Likewise, we might
+ * want to support different encodings for the same group.
+ *
+ * @note (Cyclic)GroupI instances can nonetheless define a
+ * default encoding into bitvectors of a given length, using
+ * the `enc` and `dec` functions. This is useful where there
+ * is an obvious and standard encoding of group elements.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+interface module Algebra::EncoderI where
+
+import Algebra::Set
+
+// import interface Algebra::CyclicGroupI
+
+/**
+ * Type universe of group elements
+ *
+ * @note Cryptol currently does not support importing
+ * one interface from another interface, hence the
+ * commented-out import above. Instead, we duplicate
+ * the type T from CyclicGroupI here.
+ */
+type T : *
+
+/**
+ * Underlying message type
+ *
+ * Note that not all elements of the type may actually be
+ * encodable messages. Encodable messages are determined
+ * the the `encodable` set being part of this interface.
+ */
+type M : *
+
+/**
+ * Determines the set of encodable messages.
+ */
+encodable : Set M // equiv. M -> Bool
+
+/**
+ * Encodes a message into a group element.
+ *
+ * This function shall return None iff the message is not
+ * encodable, i.e., m ∉ encodable. Moreover, every `Some y`
+ * returned must refer to a valid group element (y ∈ G).
+ */
+Encode : M -> Option T
+
+/**
+ * Decodes a group element into a message.
+ *
+ * This function shall return None iff the group element
+ * does not result from applying Encode to an encodable
+ * message. Note that membership to the group (y ∈ G) is
+ * not sufficient to guarantee the function returns `Some x`.
+ */
+Decode : T -> Option M

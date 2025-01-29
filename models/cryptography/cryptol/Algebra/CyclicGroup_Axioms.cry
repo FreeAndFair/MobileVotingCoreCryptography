@@ -1,0 +1,210 @@
+/**
+ * Verifies that applicable group axioms are satisfied by
+ * a given implementation of the CyclicGroupI interface.
+ *
+ * To perform verification, instantiate this module with the
+ * implementation of the CyclicGroupI interface to be verified.
+ * Then, load the resp. instantiation into cryptol and use the
+ * :check-docstring command to try and prove all properties
+ * defined in this module.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::CyclicGroup_Axioms where
+
+import interface Algebra::CyclicGroupI
+
+import Algebra::Set
+import Algebra::Utils(Z2bv)
+
+/**
+ * For convenience, we defined e and infix syntax
+ * for equality, multiplication and exponentation
+ * within the group. This makes the Cryptol model
+ * more closely aligned with a mathematical text.
+ */
+infix 20 ≡
+private (≡) = T'eq
+private (∘) = gop
+private (^) = exp
+private e = identity
+
+/*************************/
+/* Auxiliary Definitions */
+/*************************/
+
+/**
+ * Specification of Exponentiation
+ *
+ * The group's exp operation is verified against the
+ * canonical specification of exponentation below.
+ */
+exp'spec : {a} (Integral a) => T -> a -> T
+exp'spec x n =
+  if k  < 0 then exp'spec (inv x) (negate k)
+   | k == 0 then e
+  else (exp'spec x (k - 1)) ∘ x
+  where k = toInteger n
+
+/***********************/
+/* Cyclic Group Axioms */
+/***********************/
+
+/**
+ * The identity element is a member of the carrier G.
+ */
+property identity_in_G =
+  e ∈ G
+
+/**
+ * The carrier G is closed under the group operation.
+ */
+property G_closed_under_gop x y =
+  x ∈ G /\ y ∈ G ==> x ∘ y ∈ G
+
+/**
+ * The carrier G is closed under inverse construction.
+ */
+property G_closed_under_inv x =
+  x ∈ G ==> (inv x) ∈ G
+
+/**
+ * The carrier G is closed under exponentiation.
+ *
+ * @note This version is not useful for exhaustive testing;
+ * use G_closed_under_exp_exhaust for that purpose instead.
+ */
+property G_closed_under_exp x (k : Integer) =
+  x ∈ G ==> x^k ∈ G
+
+/**
+ * The carrier G is closed under exponentiation.
+ *
+ * Accepts exponents in the range -order to order only.
+ */
+property G_closed_under_exp_exhaust x (z : Z (order + 1)) =
+  x ∈ G ==> x^k ∈ G /\ x^(-k) ∈ G where k = fromZ z
+
+/**
+ * The generator is a member of the carrier G.
+ */
+property generator_in_G =
+  g ∈ G
+
+/**
+ * The group operation is associative.
+ */
+property associative x y z =
+  x ∈ G /\ y ∈ G /\ z ∈ G ==>
+  (x ∘ y) ∘ z ≡ x ∘ (y ∘ z)
+
+/**
+ * The group operation is commutative.
+ *
+ * @note fzeyda: Douglas Wikström mentioned that all groups we use
+ * are expected to be commutative, hence Abelian groups. So this is
+ * a mandatory property to prove, though it is not clear to me yet
+ * where it is actually relied upon.
+ */
+property commutative x y =
+  x ∈ G /\ y ∈ G ==> x ∘ y ≡ y ∘ x
+
+/**
+ * The identity element is a valid left identity.
+ */
+property left_identity x =
+  x ∈ G ==> e ∘ x ≡ x
+
+/**
+ * The identity element is a valid right identity.
+ */
+property right_identity x =
+  x ∈ G ==> x ∘ e ≡ x
+
+/**
+ * The identity element is both a valid left identity
+ * and a valid right identity.
+ */
+property valid_identity x =
+  left_identity x /\ right_identity x
+
+/**
+ * The inverse function yields a valid left inverse.
+ */
+property left_inverse x =
+  x ∈ G ==> (inv x) ∘ x ≡ e
+
+/**
+ * The inverse function yields a valid right inverse.
+ */
+property right_inverse x =
+  x ∈ G ==> x ∘ (inv x) ≡ e
+
+/**
+ * The inverse function yields a valid inverse.
+ */
+property valid_inverse x =
+  left_inverse x /\ right_inverse x
+
+/**
+ * Exponentiation is defined correctly wrt its specification.
+ *
+ * @note This version is not useful for exhaustive testing;
+ * use exp_correct_exhaust for that purpose instead.
+ */
+property exp_correct x (k : Integer) =
+  x ∈ G ==> exp x k ≡ exp'spec x k
+
+/**
+ * Exponentiation is defined correctly wrt its specification.
+ *
+ * In order to verify this property for large groups, we use
+ * testing rather than proof. I.e., by showing equivalence with
+ * exp'spec for a small number of randomly generated test cases
+ * where the exponent is picked from the interval -255 to 255
+ * together with a valid random group element.
+ */
+property exp_correct_check x (k : [8]) =
+  x ∈ G ==> exp x ( k) ≡ exp'spec x ( k) /\
+            exp x (-k) ≡ exp'spec x (-k)
+
+/**
+ * Exponentiation is defined correctly wrt its specification.
+ *
+ * Accepts exponents in the range -order to order only.
+ * Exhaustive testing is theoretically not possible since the
+ * exponent type (Integral) is isomorphic to the Integer type.
+ * But the below at least exhaustively checks all exponents up
+ * to the group order, both as negative and positive variants.
+ * For small groups used for prototyping, this usually works.
+ */
+property exp_correct_exhaust x (z : Z order) =
+  x ∈ G ==> exp x ( k) ≡ exp'spec x ( k) /\
+            exp x (-k) ≡ exp'spec x (-k)
+  where k = fromZ z
+
+/**
+ * Group element g generates the subgroup G.
+ *
+ * This also verifies that G is indeed a subgroup. Again,
+ * for realistically sized groups, we may not be able to
+ * prove this property by exhaustive testing. For small
+ * groups used for prototyping, this usually works.
+ */
+property g_generates_G x =
+  x ∈ G ==> any (\k -> g^k ≡ x) [0 ..< order]
+
+/**
+ * Decoding an encoded bitvector gives back the same value,
+ * provided that the value is inside the range [0 ..< order].
+ */
+property enc_dec_inverse (bv : [bits]) =
+  bv >= 0 /\ (toInteger bv) < `order ==> dec (enc bv) == bv
+
+/**
+ * Encoding a decoded group element gives back the same value.
+ */
+property dec_enc_inverse (x : T) =
+  x ∈ G ==> enc (dec x) ≡ x

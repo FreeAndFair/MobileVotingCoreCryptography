@@ -1,0 +1,60 @@
+/**
+ * Interface encapsulating the parameters of the PFEC module
+ * form crypto-specs
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+interface module Algebra::PFECInterface where
+
+/**
+ * Size of the underlying Galois Field
+ *
+ * P must be an odd prime power that is not divisible by 3.
+ * There is no way in Cryptol to enforce "prime power" in the
+ * type constraint, but for the NIST curves, every `P` itself
+ * is prime, so we use the simpler constraint `prime P`.
+ * @trace [SP-800-186] Section 2.1.1.
+ */
+type P : #
+type constraint (fin P, prime P, P >= 5, P % 2 == 1, P % 3 != 0)
+
+/**
+ * Order of the base point `G = (Gx, Gy)`
+ *
+ * This must be a prime number and corresponds to the order
+ * of the generated cyclic group of curve points.
+ * @trace [SP-800-186] Section 2.1.1.
+ */
+type n' : #
+type constraint (fin n', prime n', n' < P)
+
+/**
+ * Coordinates of the base point `G = (Gx, Gy)`
+ */
+Gx : Z P
+Gy : Z P
+
+/**
+ * Coefficient b that define the curve
+ *
+ * For a curve in (short) Weierstrass form, the equation is
+ * `y^2 = x^3 + ax + b`. Note that a is fixed to -3 by the
+ * EC curve implementation.
+ * @trace [SP-800-186] Section 2.1.1.
+ */
+b : Z P
+
+/**
+ * Number of variable bits used to find a valid curve point
+ *
+ * This value is used to determine the number of bits that
+ * can be encoded into a curve point (bits = lg2 n' - k).
+ * It is also used by the default `enc` and `dec` functions
+ * for ECs which implement approach (2) suggested by Koblitz.
+ * Note that k can be freely chosen within [1 ..< lg2 n'].
+ * @see https://doi.org/10.1090/S0025-5718-1987-0866109-5
+ */
+type k : #
+type constraint (fin k, k > 0, k < lg2 n')

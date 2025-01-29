@@ -1,0 +1,144 @@
+/**
+ * Utility Functions for E2EVIV Cryptography
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Utils where
+
+/*****************/
+/* Type Synonyms */
+/*****************/
+
+/**
+ * Type synonym for homogeneous binary relations.
+ */
+type Rel a = a -> a -> Bool
+
+/*************************/
+/* Auxiliary Conversions */
+/*************************/
+
+/**
+ * Conversion of an integral value to an element of Z n.
+ */
+integral2Z : {a, n} (Integral a, fin n, n >= 1) => a -> Z n
+integral2Z i = fromInteger (toInteger i)
+
+/**
+ * Conversion of an integral value to a bit vector.
+ */
+integral2bv : {a, n} (Integral a, fin n) => a -> [n]
+integral2bv i = fromInteger (toInteger i)
+
+/**
+ * Conversion of an integer value to an element of Z n.
+ */
+int2Z : {n} (fin n, n >= 1) => Integer -> Z n
+int2Z n = fromInteger n
+
+/**
+ * Conversion of an element of Z n to an integer value.
+ */
+Z2int : {n} (fin n, n >= 1) => Z n -> Integer
+Z2int z = fromZ z
+
+/**
+ * Conversion of an integer value to a bit vector.
+ */
+int2bv : {n} (fin n, n >= 1) => Integer -> [n]
+int2bv n = fromInteger n
+
+/**
+ * Conversion of a bit vector to an integer value.
+ */
+bv2int : {n} (fin n, n >= 1) => [n] -> Integer
+bv2int bv = toInteger bv
+
+/**
+ * Conversion of a bit vector to an element of Z n.
+ */
+bv2Z : {k, n} (fin k, fin n, n >= 1) => [k] -> Z n
+bv2Z bv = fromInteger (toInteger bv)
+
+/**
+ * Conversion of an element of Z n to a bit vector.
+ */
+Z2bv : {k, n} (fin k, fin n, n >= 1) => Z n -> [k]
+Z2bv z = fromInteger (fromZ z)
+
+/********************/
+/* Option Utilities */
+/********************/
+
+/**
+ * Tests whether a given Option value has the form `Some x`.
+ */
+isSome : {a} Option a -> Bool
+isSome opt =
+  case opt of
+    Some _ -> True
+    None   -> False
+
+/**
+ * Tests whether a given Option value has the form `None`.
+ */
+isNone : {a} Option a -> Bool
+isNone opt =
+  case opt of
+    Some _ -> False
+    None   -> True
+
+/**
+ * Extracts the content of an Option value, raising an
+ * error of if the Option is `None`.
+ */
+valOf : {a} Option a -> a
+valOf opt =
+  case opt of
+    Some x -> x
+    None   -> error "valOf does not expect a None argument"
+
+/**
+ * Extracts the content of an Option value, returning a
+ * given default value (second parameter) if the Option
+ * is `None`.
+ */
+valOfDefault : {a} Option a -> a -> a
+valOfDefault opt default =
+  case opt of
+    Some x -> x
+    None   -> default
+
+/********************/
+/* Lookup Functions */
+/********************/
+
+/**
+ * Generic lookup function using an associative list.
+ *
+ * This function requires that type parameter `a` for
+ * key values to satisfies type constraints `Eq a`.
+ */
+lookup : {a, b, n} (Eq a, fin n) => [n](a, b) -> a -> Option b
+lookup l x | n == 0 => None
+           | n >= 1 =>
+  if a == x then Some b
+            else lookup (tail l) x
+  where (a, b) = head l
+
+/**
+ * Generic lookup function using an associative list.
+ *
+ * This function imposes no type constraints on the
+ * type parameter `a` but relies on a function being
+ * passed to test two elements of type `a` for equality.
+ */
+lookupWithEq : {a, b, n} (fin n) => Rel a -> [n](a, b) -> a -> Option b
+lookupWithEq eq l x | n == 0 => None
+                  | n >= 1 =>
+  if a ~ x then Some b
+           else lookupWithEq (~) (tail l) x
+  where (a, b) = head l
+        (~)    = eq

@@ -1,0 +1,118 @@
+/**
+ * Elliptic Curves over Prime Field Group
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::PFECGroup where
+
+import Algebra::Set
+
+/**
+ * The parameters of the PFEC module from cryptol-specs
+ * are extracted into a Cryptol interface PFECInterface
+ * so that we can forward those parameters when importing
+ * and instantiating the PFEC module below.
+ */
+import interface Algebra::PFECInterface
+
+/******************/
+/* Import of PFEC */
+/******************/
+
+/**
+ * We are using the PFEC module from cryptol-specs as is.
+ */
+import Algebra::PFEC { interface PFECInterface } as EC
+
+/**********************************/
+/* Implementation of CyclicGroupI */
+/**********************************/
+
+/**
+ * Order of the generated group (number of curve points)
+ */
+type order = n'
+
+/**
+ * Bits require to encode a group element
+ */
+type bits = lg2 n' - k
+
+/**
+ * Type universe of group elements (affine coordinate space)
+ */
+type T = EC::Point
+
+/**
+ * Equality of group elements
+ */
+T'eq : T -> T -> Bool
+T'eq = EC::affineEq
+
+/**
+ * Carrier set of the group (curve points + Infinity)
+ */
+G : Set T
+G = EC::isValid
+
+/**
+ * Generator element of the group (base point `G = (Gx, Gy)`)
+ */
+g : T
+g = EC::G
+
+/**
+ * Identity element of the group (Infinity)
+ */
+identity : T
+identity = EC::Infinity
+
+/**
+ * Binary group operation (point addition)
+ */
+gop : T -> T -> T
+gop = EC::add
+
+/**
+ * Exponentiation operation (point multiplication)
+ */
+exp : {a} (Integral a) => T -> a -> T
+exp x k = EC::scmul i x
+  where i = toInteger k
+
+/**
+ * Inverse of a given element (point subtraction from Infinity)
+ */
+inv : T -> T
+inv = EC::sub EC::Infinity
+
+/**
+ * Encoding a message as a group element
+ *
+ * Uses Koblitz's approach to encode a bit vector of a
+ * a given length `bits - k` into a valid curve point.
+ * Note that k can be freely chosen within [1 ..< bits]
+ * and determines the probability that the encoding of a
+ * given bitstring fails, being approximately 2^(-(2^k)).
+ * @see https://doi.org/10.1090/S0025-5718-1987-0866109-5
+ *
+ * @todo implement this function (!)
+ */
+enc : [bits] -> T
+enc x = error "enc for PFEC groups not yet implemented"
+
+/**
+ * Decoding a group element into a message
+ *
+ * Uses Koblitz's approach to decode a valid elliptic
+ * curve point into a bit vector of length `bits - k`.
+ * Note that k can be freely chosen within [1 ..< bits]
+ * and must be the same value used when encoding with enc.
+ * @see https://doi.org/10.1090/S0025-5718-1987-0866109-5
+ *
+ * @todo implement this function (!)
+ */
+dec :T -> [bits]
+dec y = error "dec for PFEC groups not yet implemented"

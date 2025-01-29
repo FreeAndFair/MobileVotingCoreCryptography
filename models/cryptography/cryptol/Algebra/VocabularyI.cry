@@ -1,0 +1,58 @@
+/**
+ * Interface for defining message vocabularies
+ *
+ * A message vocabulary is usually needed when using
+ * exponentiation of the generator g to encode a
+ * given message m into the underlying cyclic group.
+ * Since we cannot efficiently invert this encoding
+ * function due to the difficulty of computing the
+ * discrete logarithm, we have to use a precomputed
+ * lookup table in order to decode messages, @see
+ * Algebra::Encoders::ExpEncoder module. This
+ * interface defines what messages are permissible.
+ *
+ * @note The underlying Cryptol type of messages can
+ * be freely chosen but must currently instantiate the
+ * `Integral` and `Eq` type classes. This makes sense
+ * since ExpEncoder treats messages as elements of the
+ * exponent ring/field of the underlying group.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+interface module Algebra::VocabularyI where
+
+/**
+ * Underlying message type
+ *
+ * @review fzeyda: I can see application cases where we
+ * may want to use some user record or enum type for M.
+ * In that case, we may need to change the design in the
+ * future by removing the type constraints on M in favor
+ * of providing corresponding functions M'toInt and M'Eq
+ * as part of the instantiation.
+ */
+type M : *
+type constraint (Integral M, Eq M)
+
+/**
+ * Size of message vocabulary
+ *
+ * @note It would be nice to derive msgN automatically
+ * from message_vocabulary; but I suspect this is not
+ * possible in Cryptol.
+ */
+type msgN : #
+type constraint (fin msgN)
+
+/**
+ * Definition of message vocabulary
+ *
+ * A message vocabulary defines the list of all
+ * plaintext messages m : M that are encodable.
+ * The vocabulary is used by ExpEncoder to create
+ * a corresponding lookup table (associative list)
+ * to facilitate decoding of message `g ^ m`.
+ */
+message_vocabulary : [msgN]M

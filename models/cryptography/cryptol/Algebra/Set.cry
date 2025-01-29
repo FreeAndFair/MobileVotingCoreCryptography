@@ -1,0 +1,64 @@
+/**
+ * Mathematical Sets
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Set where
+
+/**
+ * Sets are represented by their characteristic function.
+ */
+type Set a = a -> Bit
+
+/* Fixity of operators */
+infix 55 ∈
+infix 55 ∉
+infix 55 ⊆
+infix 97 ∩
+infix 98 ∪
+
+/**
+ * Type Universe
+ */
+UNIV : {a} Set a
+UNIV = \x -> True
+
+/**
+ * Set Membership
+ */
+(∈) : {a} a -> Set a -> Bit
+x ∈ S = S x
+
+/**
+ * Set Non-Membership~12
+ */
+(∉) : {a} a -> Set a -> Bit
+x ∉ S = ~(S x)
+
+/**
+ * Subset Relation (EXPERIMENTAL)
+ */
+(⊆) : {n} (fin n) => Set [n] -> Set [n] -> Bit
+A ⊆ B = all (\x -> x ∈ A ==> x ∈ B) [0 ..< 2^^n]
+// (⊆) : {n} (fin n, n >= 1) => Set (Z n) -> Set (Z n) -> Bit
+// A ⊆ B = all (\x -> x ∈ A ==> x ∈ B) [0 ..< n]
+
+/**
+ * Set Complement
+ */
+(~) : {a} Set a -> Set a
+(~) A = \x -> x ∉ A
+
+/**
+ * Set Intersection
+ */
+(∩) : {a} Set a -> Set a -> Set a
+A ∩ B = \x -> x ∈ A /\ x ∈ B
+
+/**
+ * Set Union
+ */
+(∪) : {a} Set a -> Set a -> Set a
+A ∪ B = \x -> x ∈ A \/ x ∈ B

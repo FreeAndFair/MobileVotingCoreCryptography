@@ -1,0 +1,4 @@
+modules = [
+  "Algebra/**/*.cry",
+  "Common/**/*.cry"
+]

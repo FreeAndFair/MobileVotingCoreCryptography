@@ -1,0 +1,37 @@
+/**
+ * NIST P-224 Elliptic Curve defined in [FIPS-186-5] (Verification)
+ * @see https://doi.org/10.6028/NIST.FIPS.186-5
+ *
+ * @note The default `enc` and `dec` functions are not
+ * implemented in PFEC Groups yet (@todo). Hence,
+ * we do not try to verify properties about them here.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::PFECGroupP224_Verify where
+
+import Algebra::Groups::Inst::PFECGroupP224_POs
+
+/**
+ * Proof that cyclic group axioms hold for PFECGroupP224.
+ *
+ * ```repl
+ * :set tests = 10000
+ * :prove identity_in_G
+ * :check G_closed_under_gop
+ * :prove G_closed_under_inv
+ * :check G_closed_under_exp
+ * :prove generator_in_G
+ * :check associative
+ * :check commutative
+ * :prove valid_identity
+ * :check valid_inverse
+ * :check exp_correct_check
+ * ```
+ *
+ * @note Due to the group size, g_generates_G cannot be
+ * verified with any of the available proof methods.
+ */
+Discharge_POs = True // we need something to annotate

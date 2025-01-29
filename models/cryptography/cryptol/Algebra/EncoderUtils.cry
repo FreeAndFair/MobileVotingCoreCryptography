@@ -1,0 +1,48 @@
+/**
+ * Message Encoding Utility Functions
+ *
+ * @design For verification purposes, we decided to return
+ * Option types as the result of the `Encode` and `Decode`
+ * functions defined in the Algebra::EncoderI interface.
+ * For usability, this is not optimal since it forces us
+ * to unpack those option values in several places and deal
+ * with the None case when we assume such ought be avoided
+ * by design. Hence, this module defines so-called "strict"
+ * versions of those functions with stronger preconditions,
+ * which raise errors if passed arguments for which the
+ * original functions would return None.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::EncoderUtils where
+
+import interface Algebra::EncoderI
+
+/**
+ * Encodes a message into a group element. (strict version)
+ *
+ * This function raises an error iff the message is not
+ * encodable, i.e., m ∉ encodable. An advantage compared
+ * to `Encode` is that the result is not wrapped into an
+ * `Option T` type.
+ */
+Strict'Encode : M -> T
+Strict'Encode x =
+  case (Encode x) of
+    Some y -> y
+    None   -> error "Strict'Encode requires message to be encodable"
+
+/**
+ * Decodes a group element into a message. (strict version)
+ *
+ * This function shall return None iff the group element
+ * does not result from applying Encode to an encodable
+ * message.
+ */
+Strict'Decode : T -> M
+Strict'Decode y =
+  case (Decode y) of
+    Some x -> x
+    None   -> error "Strict'Decode requires message to be decodable"

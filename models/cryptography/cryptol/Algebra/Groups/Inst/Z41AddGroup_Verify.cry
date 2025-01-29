@@ -1,0 +1,33 @@
+/**
+ * Additive Group of Integers Modulo 41 (ℤ/41ℤ) (Verification)
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::Z41AddGroup_Verify where
+
+import Algebra::Groups::Inst::Z41AddGroup_POs
+
+/**
+ * Proof that cyclic group axioms hold for Z41AddGroup.
+ *
+ * ```repl
+ * :set tests = 10000
+ * :prove identity_in_G
+ * :prove G_closed_under_gop
+ * :prove G_closed_under_inv
+ * :prove G_closed_under_exp
+ * :prove generator_in_G
+ * :prove associative
+ * :prove commutative
+ * :prove valid_identity
+ * :prove valid_inverse
+ * :check exp_correct_check
+ * :exhaust exp_correct_exhaust
+ * :prove g_generates_G
+ * :prove enc_dec_inverse
+ * :prove dec_enc_inverse
+ * ```
+ */
+Discharge_POs = True // we need something to annotate

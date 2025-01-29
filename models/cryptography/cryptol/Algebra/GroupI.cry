@@ -1,0 +1,167 @@
+/**
+ * Algebraic Group with a Carrier Set (Interface)
+ *
+ * Note that since not all elements of the underlying
+ * type universe T may be valid group elements, group
+ * operators are conceptually partial. There are
+ * different ways to deal with partiality and we adopt
+ * the approach of HOL which is logically the simplest:
+ * functions applied outside their domain yield a value
+ * of the correct type but we do not have any knowledge
+ * of that value and therefore cannot prove anything
+ * about it at the specification level.
+ *
+ * This, however, puts a constraint on implementations
+ * to ensure that group operations are well behaved even
+ * if applied to a nonmember of the group (x ∉ G). This
+ * means they must always terminate and yield a value of
+ * the correct type, and not crash or panic, regardless
+ * of the elements to which they are applied.
+ *
+ * @comment Douglas Wikström: Consider 'Z order' as the
+ * exponent type instead of {a} (Integral a) or Integer.
+ * @note Currently not used by the rest of the models as
+ * we cannot import one Cryptol interface in another.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+interface module Algebra::GroupI where
+
+import Algebra::Set
+
+/**
+ * Order of the group
+ *
+ * This corresponds to the number of valid group
+ * elements, being the cardinality of the set G.
+ */
+type order : #
+type constraint (fin order, order >= 1)
+
+/**
+ * Bits allotted to encode a group element
+ *
+ * This type is used by the `enc` and `dec` functions.
+ * Note that bits may be strictly less than `lg2 order`,
+ * e.g., to facilitate generic encoding of bitstring
+ * into Elliptic Curve points using Koblitz's method.
+ * Where the group order is not a power of 2, we assume
+ * that only bit strings in [0 ..< order] are encodable.
+ */
+type bits : #
+type constraint (bits > 0, bits <= lg2 order)
+
+/**
+ * Type universe of group elements
+ *
+ * @note Previously I had a type constraint Eq T here
+ * but this turned out to be too strong since not all
+ * user-defined types by default implement Eq a and
+ * there currently is no way to implement it manually.
+ * @todo Rename T into G (for Group) or U (for Universe)?
+ */
+type T : *
+// type constraint (Eq T)
+
+/**
+ * Equality of group elements
+ *
+ * Since not all Cryptol types implement the Eq type
+ * class by default, for generality, the group instance
+ * has to define an equality test function on type T.
+ */
+T'eq : T -> T -> Bool
+
+/**
+ * Carrier set of the group
+ *
+ * Defines the values of type T that are valid group
+ * elements.
+ */
+G : Set T
+
+/**
+ * Identity element of the group
+ *
+ * Must be a valid group element (identity ∈ G).
+ */
+identity : T
+
+/**
+ * Binary group operation
+ *
+ * The group operation must be closed under the set G.
+ * That is, if x ∈ G and y ∈ G then (gop x y) ∈ G.
+ *
+ * TODO: Do we usually expect gop to be commutative?
+ */
+gop : T -> T -> T
+
+/**
+ * Inverse of a given group element
+ *
+ * The standard group axioms merely require the
+ * existence of an inverse but we need to be able
+ * to compute it, so implementations must define
+ * the below function.
+ *
+ * Inverse must be closed under the set G.
+ * That is, if x ∈ G then (inv x) ∈ G.
+ */
+inv : T -> T
+
+/**
+ * Repeated application of group operation
+ *
+ * While exponentiation may be defined generically,
+ * permitting instances to define it concretely
+ * can result in more efficient implementations.
+ * Exponentation must be closed for all integral
+ * exponents of a valid group element. That is, for
+ * x ∈ G and k an Integer we must have (exp x k) ∈ G.
+ * Also, since g is a generator, (exp g k) shall
+ * cycle through all elements of G for 0 <= k < `order.
+ *
+ * To handle negative exponents, exp shall obey the
+ * identity (exp x k) == (exp (inv x) -k) for x ∈ G.
+ * Naturally, we also assume (exp x 0) == identity and
+ * (exp x 1) == x for all x ∈ G.
+ */
+exp : {a} (Integral a) => T -> a -> T
+
+/**
+ * Encoding a message as a group element
+ *
+ * This function defines a default encoding of a
+ * bitstring of predefined length `bits` into the
+ * group if there is an obvious candidate for it.
+ *
+ * Note that if [bits] contains more elements than
+ * the group order (order type), then application
+ * of enc to bistrings equal or greater than order
+ * is undefined. Otherwise a unique corresponding
+ * group element shall be returned.
+ */
+enc : [bits] -> T
+
+/**
+ * Decoding a group element into a message
+ *
+ * If the given group element e is in the
+ * group's carrier set (e ∈ G), its unique
+ * bitvector representation shall be returned.
+ * Otherwise, the result may be any value and
+ * is considered to be undefined.
+ * @todo What about valid group elements that
+ * cannot be decoded? Do we consider such?
+ */
+dec : T -> [bits]
+
+/* @note fzeyda: Initially, I used `Integer` to
+ * uniformly represent messages to be encoded but
+ * later decided to change this to bit strings.
+ * This has some advantages over integers in terms
+ * of Rust code generation and also enables one to
+ * restrict permissible messages at the type level. */

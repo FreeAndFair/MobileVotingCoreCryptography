@@ -1,0 +1,101 @@
+/**
+ * Random Number Generation Monad
+ *
+ * Simple monadic encapsulation of Cryptol's random()
+ * function and underlying generator into a StateMonad
+ * that automatically advances the state of the PRNG.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::RandomMonad where
+
+import Algebra::StateMonad
+
+/************************/
+/* RNG State Monad Type */
+/************************/
+
+/**
+ * State Monad type for the RNG state.
+ *
+ * @note [256] is the type of the argument of
+ * the built-in random() function of Cryptol.
+ */
+type rngState a = State [256] a
+
+/***********************/
+/* RNG Monad Functions */
+/***********************/
+
+/**
+ * Creates a given RNG for a given seed.
+ */
+setSeed : [256] -> rngState ()
+setSeed seed = put seed
+
+/**
+ * Generic function to pick the next random number.
+ *
+ * This function leaves the state of the RNG unchanged.
+ */
+pick : {a} rngState a
+pick = gets (\s -> random s)
+
+/**
+ * Advances the RNG state.
+ */
+advance : rngState ()
+advance = modify (\s -> s + 1)
+
+/**
+ * Generic function to pick the next random number.
+ *
+ * This function automatically advances the RNG state.
+ */
+next : {a} rngState a
+next = pick`{a} >>= (\r -> advance >>* return r)
+
+/**
+ * Picks the next random Integer and advances the RNG.
+ */
+nextInt : rngState Integer
+nextInt = next`{Integer}
+
+/**
+ * Picks the next random Integer from [0 ..< n].
+ *
+ * This function automatically advances the RNG state.
+ */
+nextIntBelow : Integer -> rngState Integer
+nextIntBelow n = next >>= (\r -> return (r % n))
+
+/**
+ * Picks the next random Integer from from [n ..< m].
+ *
+ * This function automatically advances the RNG state.
+ */
+nextIntInside : Integer -> Integer -> rngState Integer
+nextIntInside n m = next >>= (\r -> return (n + (r % (m - n))))
+
+/***********************/
+/* Testing & Debugging */
+/***********************/
+
+/**
+ * This test generates 5 random Integers within the range 1 to 10.
+ *
+ * The computation is monadic and uses a seed of 1.
+ */
+test = (setSeed 1) >>* (nextIntInside 1 10)
+  >>= (\r1 -> trace "Next random number:" r1 (nextIntInside 1 10
+  >>= (\r2 -> trace "Next random number:" r2 (nextIntInside 1 10
+  >>= (\r3 -> trace "Next random number:" r3 (nextIntInside 1 10
+  >>= (\r4 -> trace "Next random number:" r4 (nextIntInside 1 10
+  >>= (\r5 -> trace "Next random number:" r5 (get))))))))))
+
+/**
+ * Executes the test computation.
+ */
+runTest = evalState0 test

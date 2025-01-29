@@ -1,0 +1,170 @@
+/**
+ * State Monad
+ *
+ * Standard encoding of a state monad in Cryptol.
+ * Note that, unfortunately, Cryptol is not flexible
+ * enough to support the do notation for monads.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::StateMonad where
+
+/*********************/
+/* Return Monad Type */
+/*********************/
+
+/**
+ * State Monad type
+ */
+newtype State s a = { runState : s -> (a, s) }
+
+/**
+ * State Monad type constructor
+ */
+mkState : {s, a} (s -> (a, s)) -> State s a
+mkState f = State {runState = f}
+
+/**
+ * State Monad type destructor
+ */
+destState : {s, a} State s a -> s -> (a, s)
+destState m = m.runState
+
+/**
+ * State Monad computation equality
+ */
+eqState : {s, a} (Eq s, Eq a) => State s a -> State s a -> s -> Bit
+eqState m1 m2 = (m1.runState) === (m2.runState)
+
+/*******************/
+/* Return and Bind */
+/*******************/
+
+/**
+ * State Monad return function
+ */
+return : {s, a} a -> State s a
+return a = mkState (\s -> (a, s))
+
+/**
+ * State Monad bind function
+ */
+bind : {s, a, b} State s a -> (a -> State s b) -> State s b
+bind m k = mkState (\s -> ((k a).runState s' where (a, s') = m.runState s))
+
+/**
+ * State Monad bind function (infix version)
+ */
+infixl 55 >>=
+(>>=) : {s, a, b} State s a -> (a -> State s b) -> State s b
+(>>=) = bind
+
+/**
+ * State Monad bind function ignoring bound value
+ * @review Is there are standard syntax for this operator?
+ */
+infixl 55 >>*
+(>>*) : {s, a, b} State s a -> State s b -> State s b
+(>>*) = (\m1 -> \m2 -> m1 >>= (\_ -> m2))
+
+/**************************/
+/* State Monad Operations */
+/**************************/
+
+/**
+ * State Monad get function
+ */
+get : {s} State s s
+get = mkState (\s -> (s, s))
+
+/**
+ * State Monad put function
+ */
+put : {s} s -> State s ()
+put s = mkState (\_ -> ((), s))
+
+/**
+ * State Monad modify function
+ */
+modify : {s} (s -> s) -> State s ()
+modify f = get >>= (\s -> put (f s))
+
+/**
+ * State Monad gets function
+ *
+ * Returns a view of the state in terms of a function f.
+ */
+gets : {s, a} (s -> a) -> State s a
+gets f = get >>= (\s -> return (f s))
+
+/****************************/
+/* Evaluation and Execution */
+/****************************/
+
+/**
+ * State Monad eval function for a given initial state
+ *
+ * Runs computation m from inital state s and returns the result.
+ */
+evalState : {s, a} State s a -> s -> a
+evalState m s = (m.runState s).0
+
+/**
+ * State Monad eval function for the default initial state
+ *
+ * Runs computation m from the default state (zero) and returns
+ * the result.
+ */
+evalState0 : {s, a} (Zero s) => State s a -> a
+evalState0 m = evalState m zero
+
+/**
+ * State Monad exec function for given initial state
+ *
+ * Runs computation m from inital state s and returns the final
+ * state.
+ */
+execState : {s, a} State s a -> s -> s
+execState m s = (m.runState s).1
+
+/**
+ * State Monad exec function with default initial state
+ *
+ * Runs computation m from the default state (zero) and returns
+ * the final state.
+ */
+execState0 : {s, a} (Zero s) => State s a -> s
+execState0 m = execState m zero
+
+/**************/
+/* Monad Laws */
+/**************/
+
+/* Generic monad properties such as return is a left
+ * identity of bind are difficult to specify since we
+ * need to quantify over elements of type State s a,
+ * and thus over runState functions. We may be able to
+ * do that with some workarounds but I am not going to
+ * explore that further here, given that state monads
+ * have been extensively implemented and used, in the
+ * precise form that we adopted in this Cryptol module. */
+
+/***********************/
+/* Testing & Debugging */
+/***********************/
+
+/* Unfortunately, we cannot support the do notation. */
+
+// Simple state monad test #1
+test1 : State Integer Integer
+test1 = (put 42)
+   >>* modify (\x -> x + 1)
+   >>* get
+
+// Simple state monad test #2
+test2 : State {x: Integer} Integer
+test2 = (put {x = 42})
+   >>* modify (\s -> {s | x = s.x + 1})
+   >>* gets (\s -> s.x)

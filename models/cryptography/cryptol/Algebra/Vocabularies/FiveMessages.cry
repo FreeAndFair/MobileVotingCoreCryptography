@@ -1,0 +1,17 @@
+/**
+ * Vocabulary of five messages in the range [0 ..< 10]
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Vocabularies::FiveMessages where
+
+/********************************/
+/* Instantiation of VocabularyI */
+/********************************/
+
+type M = Integer
+type msgN = 5
+message_vocabulary : [msgN]M
+message_vocabulary = [0, 1, 2, 5, 9]

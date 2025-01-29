@@ -1,0 +1,170 @@
+/**
+ * Generic Encoder that use Generator Exponentation
+ *
+ * Encodes messages `m` as `g ^^ m` within the exponent
+ * ring/field of the underlying cyclic group. This works
+ * with any instance of CyclicGroupI, provided that messages
+ * in the vocabulary are within the range [0 ..< order].
+ * This encoding is essential for homomorphic tallying.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::ExpEncoder where
+
+import Algebra::Set
+import Algebra::Utils(lookupWithEq, isSome, isNone)
+
+// parameter
+/* @note Unfortunately, we cannot parameterize this module
+ * by the vocabulary directly since imported interfaces
+ * and parameter blocks do not combine well in Cryptol.
+ * I.e., we cannot instantiate parameters in the same way
+ * we instantiate an interface. @todo fzeyda: Submit a
+ * GitHub issue wrt this problem—looks like a bug to me. */
+
+import interface Algebra::CyclicGroupI as CyclicGroup
+import interface Algebra::VocabularyI as Vocabulary
+
+/* @note fzeyda: Initially, I imported the above interfaces
+ * without the `as` prefixes. This worked up to a point but
+ * caused issues when I tried to instantiate this module
+ * with EncoderUtils (which is parametrized by the EncoderI
+ * interface. Then, for some reason, the types T and M in
+ * those interfaces are not exposed by this module by the
+ * instance of ExpEncoder. Perhaps another bug in Cryptol. */
+
+/**
+ * Exporting relevant types, constants and functions from
+ * CyclicGroup. We only export what is needed here.
+ */
+type T = CyclicGroup::T
+T'eq = CyclicGroup::T'eq
+G = CyclicGroup::G
+g = CyclicGroup::g
+exp = CyclicGroup::exp
+
+/**
+ * Exporting relevant types, constants and functions from
+ * Vocabulary. We only export what is needed here.
+ */
+type M = Vocabulary::M
+type msgN = Vocabulary::msgN
+message_vocabulary = Vocabulary::message_vocabulary
+
+/**
+ * For convenience, we introduce auxiliary infix syntax
+ * for exponentation using the respective group operation.
+ * This makes the Cryptol model prettier and more closely
+ * aligned with the mathematical account.
+ */
+private (^^) = exp
+
+/*********************/
+/* Private Functions */
+/*********************/
+
+private
+  /**
+   * Lookup table used for decoding messages.
+   *
+   * @note More efficient decoding may be possible if
+   * we sort the elements of the table according to the
+   * first component of each pair and then use binary
+   * search when decoding. However, this requires the
+   * group element type `T` to be an instance of `Cmp`
+   * which, in general, may be too strong. In particular,
+   * we cannot instantiate Cmp for enum user types as
+   * used by the PFEC Elliptic Curve to model Points.
+   */
+  lookup_table : [msgN](T, M)
+  lookup_table = [(g ^^ m, m) | m <- message_vocabulary]
+
+/******************************/
+/* Implementation of EncoderI */
+/******************************/
+
+/**
+ * Determines the set of encodable messages.
+ *
+ * Here, that means that a message must be an element of
+ * the vocabulary `message_vocabulary`.
+ */
+encodable : Set M
+encodable x = elem`{msgN} x message_vocabulary
+
+/**
+ * Encodes a message into a group element.
+ *
+ * We use exponentation of the generator as a generic
+ * encoding operation.
+ */
+Encode : M -> Option T
+Encode x = if (encodable x) then Some (g ^^ x) else None
+
+/**
+ * Decodes a group element into a message.
+ *
+ * Since `g ^^ m` is computationally difficult to invert,
+ * decoding a message is done via a predefined lookup table.
+ */
+Decode : T -> Option M
+Decode y = lookupWithEq T'eq lookup_table y
+
+/****************************************/
+/* Verification of ExpEncoder Instances */
+/****************************************/
+
+/**
+ * Verifies that an encodable message, i.e., within the
+ * vocabulary yields a valid value within the group.
+ */
+private
+  property Encode_encodable_msg (x : M) =
+    case (Encode x) of
+      Some y -> y ∈ G
+      None   -> False
+
+/**
+ * Verifies that an unencodable message, i.e., outside the
+ * vocabulary yields a `None` value.
+ */
+private
+  property Encode_invalid_msg (x : M) =
+    isNone (Encode x)
+
+/**
+ * Verifies that the `Encode` function is well defined.
+ *
+ * Depending on whether x is encodable, invokes either
+ * the Encode_encodable_msg or Encode_invalid_msg test.
+ */
+property Encode_well_defined (x : M) =
+  if (encodable x) then (Encode_encodable_msg x)
+                   else (Encode_invalid_msg x)
+
+/**
+ * Verifies that the `Decode` function is well defined.
+ *
+ * This properties verifies that for every encodable
+ * message m, `Decode (Encode m)` yields a value that
+ * is not equal to `None`.
+ */
+property Decode_well_defined (x : M) =
+  case (Encode x) of
+    Some y -> isSome (Decode y)
+    None   -> True // x is not encodable
+
+/**
+ * Verifies that `Decode` is the inverse of `Encode`.
+ *
+ * This properties verifies that for every encodable
+ * message m, `Decode (Encode m)` yields the same m.
+ */
+property Encode_Decode_inverse (x : M) =
+  case (Encode x) of
+    Some y -> case (Decode y) of
+      Some x' -> x == x'
+      None    -> False
+    None -> True // x is not encodable
