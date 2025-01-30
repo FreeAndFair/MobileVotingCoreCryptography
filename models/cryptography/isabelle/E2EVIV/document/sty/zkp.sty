@@ -1,0 +1,294 @@
+% Copyright 2006-2024 Douglas Wikstrom All Rights Reserved
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Zero-knowledge proofs (of knowledge).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\grafunc}{\ff}
+\newcommand{\grafunci}[1]{\grafunc_{#1}}
+\newcommand{\grafunct}[1]{\grafunc[#1]}
+
+\newcommand{\gratree}{\bbb}
+\newcommand{\gratreei}[1]{\gratree_{#1}}
+\newcommand{\gratreet}[1]{\gratree[#1]}
+
+\newcommand{\graind}{\iota}
+\newcommand{\graindi}[1]{\graind_{#1}}
+
+\newcommand{\graprev}{\psi}
+\newcommand{\graprevi}[1]{\graprev_{#1}}
+
+\newcommand{\graproj}{\tau}
+\newcommand{\graproji}[1]{\graproj_{#1}}
+
+\newcommand{\gradep}{\delta}
+\newcommand{\gradepi}[1]{\gradep_{#1}}
+
+\newcommand{\gradeg}{\ddd}
+\newcommand{\gradegi}[1]{\gradeg_{#1}}
+
+\newcommand{\gradegree}{\mathsf{degree}}
+\newcommand{\gradepth}{\mathsf{depth}}
+\newcommand{\gragrafts}{\mathsf{grafts}}
+
+\newcommand{\gragro}{\gamma}
+\newcommand{\gragroi}[1]{\gragro_{#1}}
+
+\newcommand{\grasha}{\sigma}
+\newcommand{\grashai}[1]{\grasha_{#1}}
+
+% Grafting sequence
+\newcommand{\graGra}{\mathsf{Z}}
+\newcommand{\graGrao}[1]{\graGra^{#1}}
+
+\newcommand{\graSha}{\mathsf{W}}
+\newcommand{\graShao}[1]{\graSha^{#1}}
+
+\newcommand{\graG}[1]{\GGG_{#1}}
+
+\newcommand{\gzetai}[2]{\zetai{#2}^{#1}}
+\newcommand{\gthetai}[2]{\thetai{#2}^{#1}}
+
+
+
+\newcommand{\isolate}{\iota}
+
+\newcommand{\brancht}{\ttt}
+\newcommand{\partt}{\ttt_{\isolate}}
+\newcommand{\startt}{\ttt}
+
+
+\newcommand{\grafP}[1]{\mathsf{G}[#1]}
+\newcommand{\grafV}[1]{\mathsf{G}[#1]}
+
+\newcommand{\artiP}[1]{\mathsf{A}_{\PP}[#1]}
+\newcommand{\artiV}[1]{\mathsf{A}_{\PV}[#1]}
+
+
+
+% Prover.
+\newcommand{\PP}{\mathcal{P}}
+\newcommand{\PPi}[1]{\PP_{#1}}
+\newcommand{\PPstar}{\PP^{*}}
+\newcommand{\PPstarl}{\PP_*}
+\newcommand{\PPstari}[1]{\PPstar_{#1}}
+\newcommand{\PPB}{\PP_{\mathcal{B}}}
+\newcommand{\PPBstar}{\PPstar_{\mathcal{B}}}
+
+\newcommand{\PW}{\mathcal{W}}
+\newcommand{\PWi}[1]{\PW_{#1}}
+
+
+% Verifier.
+\newcommand{\PV}{\mathcal{V}}
+\newcommand{\PVi}[1]{\PV_{#1}}
+\newcommand{\PVstar}{\PV^*}
+\newcommand{\PVstarl}{\PV_*}
+\newcommand{\PVB}{\PV_{\mathcal{B}}}
+
+% Completeness of interactive proof.
+\newcommand{\IPcompleteness}{c}
+\newcommand{\IPcompletenessi}[1]{\IPcompleteness_{#1}}
+
+% Verdict of verifier in interactive proof in various forms.
+\newcommand{\pcprot}{\pi}
+\newcommand{\pcproti}[1]{\pcprot_{#1}}
+\newcommand{\verdict}[5]{\langle #1(#2),#3(#4)\rangle(#5)}
+\newcommand{\verdictMP}[3]{\langle #1,#2\rangle(#3)}
+\newcommand{\verdictMPi}[4]{\langle #1,#2\rangle_{#3}(#4)}
+\newcommand{\verdictHV}[4]{\langle #1(#2),#3\rangle(#4)}
+\newcommand{\verdictS}[2]{\langle #1,#2\rangle}
+\newcommand{\verdictSi}[3]{\langle #1,#2\rangle_{#3}}
+
+% View of verifier in zero-knowledge.
+\newcommand{\view}[5]{\mathsf{view}\verdict{#1}{#2}{#3}{#4}{#5}}
+\newcommand{\viewMP}[3]{\mathsf{view}\verdictMP{#1}{#2}{#3}}
+\newcommand{\viewHV}[4]{\mathsf{view}\verdictHV{#1}{#2}{#3}{#4}}
+
+% Verdict and state.
+\newcommand{\nextPPstarPV}[3]{\verdictMP{\PPstar_{#1,#2}}{\PV}{#3}}
+
+% Transcript of execution of protocol.
+\newcommand{\trans}[3]{\mathsf{trans}\verdictMP{#1}{#2}{#3}}
+
+% Zero knowledge simulator.
+\newcommand{\zkSim}{\mathcal{Z}}
+
+% Special zero knowledge simulator.
+\newcommand{\szkSim}{\mathcal{S}}
+\newcommand{\szkSimi}[1]{\szkSim_{#1}}
+
+% Artificial protocol.
+\newcommand{\artificial}[2]{\langle #1,#2\rangle}
+\newcommand{\artificialprot}[2]{(#1,#2)}
+
+% Instance chooser.
+\newcommand{\PPfc}{\mathcal{I}}
+\newcommand{\pPPfc}[1]{\PPfc[#1]}
+\newcommand{\pPPfci}[2]{\PPfc_{#1}[#2]}
+
+% Challenger.
+\newcommand{\PVfc}{\mathcal{C}}
+\newcommand{\pPVfc}[1]{\PVfc[#1]}
+\newcommand{\pPVfci}[2]{\PVfc_{#1}[#2]}
+\newcommand{\pPVfcib}[2]{\PVfc^{\bot}_{#1}[#2]}
+
+% Extractor for proof of knowledge.
+\newcommand{\PoKExt}{\mathcal{E}}
+
+% Witness extraction algorithm of special sound protocol.
+\newcommand{\ssWname}{W}
+\newcommand{\ssW}{\mathcal{\ssWname}}
+
+% Knowledge extender for artificial protocols.
+\newcommand{\KE}{\mathcal{K}}
+
+% Decision maker.
+\newcommand{\DM}{\mathcal{D}}
+
+% Relation for capturing complement of language used for computational
+% soundness.
+\newcommand{\coRela}{\Rela^{\bot}}
+\newcommand{\coRelai}[1]{\Relai{#1}^{\bot}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Analysis of extractor accepting transcript trees with basis
+% challenge tree for special sound protocols.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+% Matroid chooser
+\newcommand{\ssMatroidChooser}[1]{\mathsf{M}[#1]}
+
+% Validator.
+\newcommand{\ssVal}{\mathcal{V}}
+\newcommand{\ssValio}[2]{\ssVal_{#1}^{#2}}
+
+\newcommand{\schnorrconst}{20}
+\newcommand{\ssfnu}{\ff}
+
+% Validating sampler.
+\newcommand{\ssSamname}{VS}
+\newcommand{\ssSam}{\mathcal{\ssSamname}}
+\newcommand{\ssSamio}[2]{\ssSam_{#1}^{#2}}
+\newcommand{\ssSamdist}{\diststyle{\ssSamname}}
+\newcommand{\ssSamcost}{\ffi{\algostyle{\ssSamname}}}
+
+% Basic sampler.
+\newcommand{\ssSambname}{BS}
+\newcommand{\ssSamb}{\mathcal{\ssSambname}}
+\newcommand{\ssSambo}[1]{\ssSamb^{#1}}
+\newcommand{\ssSambdist}{\diststyle{\ssSambname}}
+\newcommand{\ssSambcost}{\ffi{\algostyle{\ssSambname}}}
+
+% Basic sampler of shadow sampler.
+\newcommand{\ssSamgstarname}{S}
+\newcommand{\ssSamgstar}{\mathcal{\ssSamgstarname}}
+\newcommand{\ssSamgstario}[2]{\ssSamgstar_{#1}^{#2}}
+\newcommand{\ssSamgstaro}[1]{\ssSamgstar^{#1}}
+\newcommand{\ssSamgstardist}{\diststyle{\ssSamgstarname}}
+\newcommand{\ssSamgstarcost}{\ffi{\algostyle{\ssSamgstarname}}}
+
+% Best sampler.
+\newcommand{\ssSamgname}{S}
+\newcommand{\ssSamg}{\mathcal{\ssSamgname}}
+\newcommand{\ssSamgio}[2]{\ssSamg_{#1}^{#2}}
+\newcommand{\ssSamgo}[1]{\ssSamg^{#1}}
+\newcommand{\ssSamgdist}{\diststyle{\ssSamgname}}
+\newcommand{\ssSamgcost}{\ffi{\algostyle{\ssSamgname}}}
+
+% Basic extractor.
+\newcommand{\ssExtbname}{B}
+\newcommand{\ssExtb}{\mathcal{\ssExtbname}}
+\newcommand{\ssExtbi}[1]{\ssExtb_{#1}}
+\newcommand{\ssExtbo}[1]{\ssExtb^{#1}}
+\newcommand{\ssExtbio}[2]{\ssExtb_{#1}^{#2}}
+
+% Basic extractor of shadow sequences.
+\newcommand{\ssExtstarbname}{B}
+\newcommand{\ssExtstarb}{\mathcal{\ssExtstarbname}}
+\newcommand{\ssExtstarbi}[1]{\ssExtstarb_{#1}}
+\newcommand{\ssExtstarbo}[1]{\ssExtstarb^{#1}}
+\newcommand{\ssExtstarbio}[2]{\ssExtstarb_{#1}^{#2}}
+
+% Recursive extractor.
+\newcommand{\ssExtrname}{R}
+\newcommand{\ssExtr}{\mathcal{\ssExtrname}}
+\newcommand{\ssExtri}[1]{\ssExtr_{#1}}
+\newcommand{\ssExtro}[1]{\ssExtr^{#1}}
+\newcommand{\ssExtrio}[2]{\ssExtr_{#1}^{#2}}
+
+% Extractor.
+\newcommand{\ssExtname}{X}
+\newcommand{\ssExt}{\mathcal{\ssExtname}}
+\newcommand{\ssExti}[1]{\ssExt_{#1}}
+\newcommand{\ssExto}[1]{\ssExt^{#1}}
+\newcommand{\ssExtio}[2]{\ssExt_{#1}^{#2}}
+
+% Matroid subdensity.
+\newcommand{\matden}{\omega}
+\newcommand{\pmatden}[2]{\matden_{#1,#2}}
+\newcommand{\pmatdenmax}[1]{\matden_{#1}}
+
+% Matroid tree.
+\newcommand{\matree}{\mathcal{T}}
+\newcommand{\matreei}[1]{\matree(#1)}
+
+% Challenge tree of transcript tree.
+\newcommand{\challtree}[1]{\mathbb{V}(#1)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fiat-Shamir non-interactive zero-knowledge proofs of knowledge.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\FStransform}{\mathsf{FS}}
+
+% Fiat-Shamir prover transform.
+\newcommand{\fsP}[2]{\FStransform^{#2}[#1]}
+
+% Fiat-Shamir verifier transform.
+\newcommand{\fsV}[2]{\FStransform^{#2}[#1]}
+
+% Fiat-Shamir simulator.
+\newcommand{\fsSim}[1]{\zkSim^{#1}}
+
+% Generic proof.
+\newcommand{\fsProof}{\sigma}
+\newcommand{\fsProofi}[1]{\fsProof_{#1}}
+
+% Generic label used in proof.
+\newcommand{\fsLabel}{\ell}
+\newcommand{\fsLabeli}[1]{\fsLabel_{#1}}
+
+% Number of proofs produced using the transform.
+\newcommand{\fsq}{\QQQ}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Schnorr proofs, batching, proofs of shuffles.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Security parameter for random challenges.
+\newcommand{\secpv}{\secpl{v}}
+\newcommand{\secpvi}[1]{\secpi{#1}}
+
+% Security parameter for component size in vectors used for batching.
+\newcommand{\secpe}{\secpl{e}}
+
+% Matroids.
+\newcommand{\matvec}[3]{\bin{#2}_{\zedq^{#3}}}
+
+\newcommand{\matdist}[1]{\bin{#1}_2}
+
+\newcommand{\pmatpermE}[2]{\Ei{#1}[#2]}
+\newcommand{\pmatperm}[3]{\mati{#1,#2}[#3]}
+
+% Matroid trees.
+\newcommand{\mattreelin}[4]{\mati{#1,#2,#4}^{#3}}
+\newcommand{\mattreeperm}[4]{\mati{#1,#2,#4}[#3]}
+
+% Vectors used for batching.
+\newcommand{\ev}{\overline{\eee}}
+\newcommand{\evj}[1]{\ev_{#1}}
+
+%%% Local Variables:
+%%% TeX-master: "evs"
+%%% End:

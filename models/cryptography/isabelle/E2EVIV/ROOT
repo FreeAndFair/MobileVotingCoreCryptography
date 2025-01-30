@@ -1,0 +1,22 @@
+session E2EVIV in "theories" = "HOL-Algebra" +
+  options [document = pdf, document_output = "../output", timeout = 1000]
+  theories
+    Preliminaries
+    ZNP
+  document_files (in "../document")
+    "root.tex"
+    "evs.sty"
+    "evsmacros.sty"
+    "sty/algcomp.sty"
+    "sty/alphabet.sty"
+    "sty/crypto.sty"
+    "sty/draft.sty"
+    "sty/math.sty"
+    "sty/names.sty"
+    "sty/paper.sty"
+    "sty/prep.sty"
+    "sty/refs.sty"
+    "sty/styles.sty"
+    "sty/toolstweaks.sty"
+    "sty/uc.sty"
+    "sty/zkp.sty"

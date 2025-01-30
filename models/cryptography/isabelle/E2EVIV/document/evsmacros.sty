@@ -1,0 +1,49 @@
+% Copyright 2006-2024 Douglas Wikstrom All Rights Reserved
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Compilation of macros partitioned conceptually.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}[95/06/01]
+\ProvidesPackage{evsmacros}
+
+% Macros for draft markings and copyright labels. Only enabled when
+% the "draft" option is used for the class.
+\input{sty/draft.sty}
+
+% Can be redefined in extracted papers to select parts of the contents.
+\input{sty/paper.sty}
+
+% Macros for indexing, referencing theorems, algorithms, etc consistently.
+\input{sty/refs.sty}
+
+% Names and strings that are easy to get wrong.
+\input{sty/names.sty}
+
+% Generic alphabetical macros to avoid typos.
+\input{sty/alphabet.sty}
+
+% Tools and tweaks of symbols.
+\input{sty/toolstweaks.sty}
+
+% Styles for mathematical symbols, indices etc.
+\input{sty/styles.sty}
+
+% Generic mathematical notation.
+\input{sty/math.sty}
+
+% Generic algorithmic notation and complexity theory.
+\input{sty/algcomp.sty}
+
+% Cryptography.
+\input{sty/crypto.sty}
+
+% Zero-knowledge proofs (of knowledge) including Fiat-Shamir transform.
+\input{sty/zkp.sty}
+
+% Universal composability framework (UC).
+\input{sty/uc.sty}
+
+%%% Local Variables:
+%%% TeX-master: "evs"
+%%% End:

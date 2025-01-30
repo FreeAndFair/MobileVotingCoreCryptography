@@ -1,0 +1,76 @@
+% Copyright 2006-2024 Douglas Wikstrom All Rights Reserved
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Notation used to mark manuscript during preparation.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifdraftdoc
+\newcommand{\TODOPLAIN}{\textbf{TODO}}
+\newcommand{\TODO}[1]{
+\marginnote{{\small \textbf{TODO:} #1}}
+}
+
+\newcommand{\TODOBOUND}{\textbf{TODOBOUND}}
+
+\newcommand{\TODOADV}{\textbf{ADV}\xspace}
+
+\newcommand{\WAIT}[1]{\textbf{WAIT: #1}}
+
+\newcommand{\COMPLETEPROOF}{\textbf{COMPLETE PROOF}}
+
+\newcommand{\CITE}{\textbf{[CITE]}\xspace}
+
+\newcommand{\TODOCENTER}[1]{%
+  \begin{vplace}
+    \begin{center}
+      \TODO{#1}
+    \end{center}
+  \end{vplace}
+}
+
+\newcommand{\WAITCENTER}[1]{%
+  \begin{vplace}
+    \begin{center}
+      \WAIT{#1}
+    \end{center}
+  \end{vplace}
+}
+
+% We use this to show who has proof read a given chapter. \evschapter
+% is defined in evs.class and in final version we may replace it
+% by \chapter.
+
+\newcommand{\setvalue}[1]{\pgfkeys{/variables/#1}}
+\newcommand{\getvalue}[1]{\pgfkeysvalueof{/variables/#1}}
+\newcommand{\declare}[1]{%
+ \pgfkeys{
+  /variables/#1.is family,
+  /variables/#1.unknown/.style = {\pgfkeyscurrentpath/\pgfkeyscurrentname/.initial = ##1}
+ }%
+}
+
+\declare{}
+
+\renewcommand{\readby}[1]{
+  \setvalue{PROOFREADERS = #1}
+}
+
+\renewcommand{\proofreadby}{
+  \marginnote{%
+    \textbf{READ BY:}\\
+    \getvalue{PROOFREADERS}
+  }
+}
+
+% Add margin notes for index entries.
+\renewcommand{\ix}[1]{#1\index{#1}\marginnote{\scriptsize #1}}
+\renewcommand{\ixx}[2]{#1\index{#1@#2}\marginnote{\scriptsize #2}}
+
+% Hide index marks for now.
+\hideindexmarks
+
+\fi
+
+%%% Local Variables:
+%%% TeX-master: "evs"
+%%% End:

@@ -1,0 +1,96 @@
+% Copyright 2006-2024 Douglas Wikstrom All Rights Reserved
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Generic algorithmic notation and complexity theory.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generic algorithm.
+\newcommand{\Alg}{\algostyle{Alg}}
+\newcommand{\Algi}[1]{\Alg_{#1}}
+\newcommand{\Sub}{\algostyle{Sub}}
+
+% Turing machines.
+\newcommand{\Machine}{\machinestyle{M}}
+\newcommand{\Machinei}[1]{\Machine_{#1}}
+
+% Ordo and Omega notation.
+\newcommand{\Ordo}{O}
+\newcommand{\pOrdo}[1]{\Ordo\left(#1\right)}
+\newcommand{\bigpOrdo}[1]{\Ordo\big(#1\big)}
+\newcommand{\pOmega}[1]{\Omega\left(#1\right)}
+
+% Unknown negligible, polynomial, and notable function.
+\newcommand{\negl}{\complexityclassstyle{negl}}
+\newcommand{\poly}{\complexityclassstyle{poly}}
+\newcommand{\nota}{\complexityclassstyle{nota}}
+
+% Polynomial running time.
+%\newcommand{\pol}{p}
+\newcommand{\polp}{p}
+\newcommand{\polpp}[1]{\polp(#1)}
+\newcommand{\polpi}[1]{\polp_{#1}}
+\newcommand{\polpl}[1]{\polp_{\labelstyle{#1}}}
+
+\newcommand{\polq}{q}
+\newcommand{\polqp}[1]{\polq(#1)}
+\newcommand{\polqi}[1]{\polq_{#1}}
+\newcommand{\polqip}[2]{\polqi{#1}(#2)}
+
+\newcommand{\polr}{r}
+\newcommand{\polrp}[1]{\polr(#1)}
+\newcommand{\polri}[1]{\polr_{#1}}
+\newcommand{\polrip}[2]{\polri{#1}(#2)}
+
+% NP relations.
+\newcommand{\Rela}{\mathsf{R}}
+\newcommand{\Relai}[1]{\Rela_{#1}}
+
+% Relative density of relations.
+\newcommand{\reladen}{\omega}
+\newcommand{\reladeni}[2]{\reladen_{#1,#2}}
+
+% NP languages.
+\newcommand{\Lang}{\mathsf{L}}
+\newcommand{\Langi}[1]{\Lang_{#1}}
+
+% Complexity classes.
+\newcommand{\TM}{\complexityclassstyle{TM}}
+\newcommand{\PT}{\complexityclassstyle{PT}}
+\newcommand{\PPT}{\complexityclassstyle{PPT}}
+\newcommand{\NP}{\complexityclassstyle{NP}}
+\newcommand{\coNP}{\complexityclassstyle{co\text{-}NP}}
+\newcommand{\ITM}{\complexityclassstyle{ITM}}
+\newcommand{\ITMG}{\complexityclassstyle{G}_{\ITM}}
+
+% Generic oracle.
+\newcommand{\Oracle}{\mathcal{O}}
+
+% Generic "notable" success probability.
+\newcommand{\prob}{\Delta}
+\newcommand{\probi}[1]{\prob_{#1}}
+
+% Running time of generic algorithm.
+\newcommand{\Time}{T}
+\newcommand{\Timei}[1]{\Time_{#1}}
+
+% Random oracle 
+\newcommand{\ROMO}{\mathcal{RO}}
+\newcommand{\ROMOi}[1]{\ROMO_{#1}}
+\newcommand{\PROMO}[2]{\ROMO[#1\mapsto#2]}
+
+% Number of queries programmed in oracle, i.e., its size.
+\newcommand{\ROMOsize}{\si{\ROMO}}
+
+% Number of queries made to random oracle.
+\newcommand{\ROMOq}{\ttt}
+
+% Error labeled by generic random oracle.
+\newcommand{\ROMOerr}{\erri{\ROMO}}
+
+% DDH algorithm.
+\newcommand{\AlgDDH}{\Alg_{\algolabelstyle{DDH}}}
+
+
+%%% Local Variables:
+%%% TeX-master: "evs"
+%%% End:

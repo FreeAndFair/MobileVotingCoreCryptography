@@ -1,0 +1,46 @@
+% Copyright 2006-2024 Douglas Wikstrom All Rights Reserved
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Macros for draft markings and copyright labels. Only enabled when
+% the "draft" option is used for the class.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Show all indices where they first appear in the margin.
+\ifdraftdoc
+\showindexmarktrue
+\fi
+
+\def\PageTopMargin{1in}
+\def\PageLeftMargin{1in}
+
+\newcommand\atxy[3]{%
+  \AddThispageHook{\hbox{\smash{\hspace*{\dimexpr-\PageLeftMargin-\hoffset+#1\relax}%
+  \raisebox{\dimexpr\PageTopMargin+\voffset-#2\relax}{#3}}}}}
+
+% Mark PDF with white text to be able to use pdfgrep and pdftk to cut
+% the compiled manuscript into chapters.
+\newcommand{\evsmarkpdf}[2]{\atxy{1in}{1in}{\smash{\color{white}EVSMARK#1:#2:EVSMARK#1\color{black}}}}
+
+% Draft notice appearing on every page.
+\newcommand{\draftfoottext}{%
+  {\footnotesize\textsf{DRAFT! DO NOT DISTRIBUTE.~~\copyright~\douglaswikstrom, All Rights Reserved}}
+}
+
+\newcommand{\evsclearpage}{
+  \checkoddpage
+  \ifoddpage
+
+  \else
+  $\quad$
+
+  \vspace{9cm}
+  \begin{center}
+    INTENTIONALLY BLANK
+  \end{center}
+  \newpage
+  \fi
+}
+
+%%% Local Variables:
+%%% TeX-master: "evs"
+%%% End:

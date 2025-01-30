@@ -1,0 +1,241 @@
+% Copyright 2006-2024 Douglas Wikstrom All Rights Reserved
+
+% We are not experts in typesetting. This is merely enough to be able
+% to proof read the manuscript.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{evs}[2014/11/01 Electronic voting monograph class]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We use the following packages.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\RequirePackage{times}
+\RequirePackage{ifthen}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{amsfonts}
+\RequirePackage{mathtools}
+\RequirePackage{thmtools}
+\RequirePackage{mathrsfs}
+\RequirePackage{graphicx}
+%\RequirePackage[draft=false]{hyperref}
+\RequirePackage{pstricks}
+\RequirePackage{pst-node}
+\RequirePackage{xspace}
+\RequirePackage{bm}
+\RequirePackage{enumitem}
+\RequirePackage{etoolbox}
+\RequirePackage{fix-cm}
+\RequirePackage{textpos}
+\RequirePackage{mdframed}
+\RequirePackage{blindtext}
+\RequirePackage{listings}
+\RequirePackage{scalerel}
+\RequirePackage{amsopn}
+\RequirePackage{pgfpages}
+\RequirePackage{xifthen}
+\RequirePackage{pgfkeys}
+\RequirePackage{everypage}
+
+% Added by Frank Zeyda
+\newif\ifdraftdoc
+\draftdocfalse
+
+\ifdraftdoc
+\RequirePackage{marginnote}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% All macros for this book except preparation macros.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{evsmacros}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Typeset theorem environments and references to these.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{evsalign}{\align}{\endalign}
+\newenvironment{evsalignstar}{\csname align*\endcsname}{\csname endalign*\endcsname}
+
+% Space below and after "theorem" environment as defined using
+% thmtools.
+\newcommand{\evsspaceabove}{1em}
+\newcommand{\evsspacebelow}{0.7em}
+\newcommand{\evspostheadspace}{0.5em}
+
+\newcommand{\evssmallspaceabove}{0.5em}
+\newcommand{\evssmallspacebelow}{0.3em}
+
+% Styles for "theorem" as defined using thmtools.
+\declaretheoremstyle[
+spaceabove=\evsspaceabove,
+spacebelow=\evsspacebelow,
+headfont=\normalfont\bfseries,
+notefont=\bfseries,
+notebraces={(}{)},
+bodyfont=\normalfont,
+postheadspace=\evspostheadspace,
+% qed={},
+headpunct={.}
+]{evsnormal}
+
+\declaretheoremstyle[
+spaceabove=0pt,
+spacebelow=0pt,
+headfont=\normalfont\bfseries,
+notefont=\bfseries,
+notebraces={(}{)},
+bodyfont=\normalfont,
+postheadspace=\evspostheadspace,
+% qed={},
+headpunct={.}
+]{evsnormalwithframe}
+
+\declaretheoremstyle[
+spaceabove=\evsspaceabove,
+spacebelow=\evsspacebelow,
+headfont=\normalfont\bfseries,
+notefont=\bfseries,
+notebraces={(}{)},
+bodyfont=\itshape,
+postheadspace=\evspostheadspace,
+% qed={},
+headpunct={.}
+]{evsitalicsbody}
+
+\declaretheoremstyle[
+spaceabove=0pt,
+spacebelow=0pt,
+headfont=\normalfont\bfseries,
+notefont=\bfseries,
+notebraces={(}{)},
+bodyfont=\itshape,
+postheadspace=\evspostheadspace,
+% qed={},
+headpunct={.}
+]{evsitalicsbodywithframe}
+
+\declaretheoremstyle[
+spaceabove=\evssmallspaceabove,
+spacebelow=\evssmallspacebelow,
+headfont=\itshape,
+notefont=\bfseries,
+notebraces={(}{)},
+bodyfont=\itshape,
+postheadspace=\evspostheadspace,
+% qed={},
+headpunct={.}
+]{evsitalicsbodyandheadwithframe}
+
+\declaretheoremstyle[
+spaceabove=\evsspaceabove,
+spacebelow=\evsspacebelow,
+headfont=\normalfont\bfseries,
+notefont=\itshape,
+notebraces={(}{)},
+bodyfont=\normalfont,
+postheadspace=\evspostheadspace,
+% qed={},
+headpunct={.}
+]{evsitalicsheader}
+
+\mdfsetup{skipabove=\evsspaceabove, innertopmargin=0, leftmargin=0pt, innerleftmargin=0, innerrightmargin=0, rightmargin=0, innerbottommargin=0, skipbelow=\evsspacebelow, topline=false, leftline=false, rightline=false, bottomline=false, linewidth=1pt}
+
+%\mdfsetup{skipabove=\evsspaceabove, innertopmargin=0, leftmargin=1pt, innerleftmargin=0.5em, innerrightmargin=0, rightmargin=0, innerbottommargin=0, skipbelow=\evsspacebelow, topline=false, rightline=false, bottomline=false, linewidth=1pt}
+
+% Italic font body text
+\declaretheorem[numberwithin=section, style=evsitalicsbodywithframe, name=Lemma]
+{lemma}
+\surroundwithmdframed{lemma}
+
+\declaretheorem[numberlike=lemma, style=evsitalicsbodywithframe, name=Corollary]
+{corollary}
+\surroundwithmdframed{corollary}
+
+\declaretheorem[numberlike=lemma, style=evsitalicsbodywithframe, name=Facts]
+{facts}
+\surroundwithmdframed{facts}
+
+\declaretheorem[numberlike=lemma, style=evsitalicsbodywithframe, name=Theorem]
+{theorem}
+\surroundwithmdframed{theorem}
+
+\declaretheorem[numberlike=lemma, style=evsitalicsbodyandheadwithframe, name=Claim]
+{claim}
+
+% Normal font body text
+\declaretheorem[numberlike=lemma, style=evsnormalwithframe, name=Definition]
+{definition}
+\surroundwithmdframed{definition}
+
+\declaretheorem[numberlike=lemma, style=evsnormalwithframe, name=Experiment]
+{experiment}
+\surroundwithmdframed{experiment}
+
+\declaretheorem[numberlike=lemma, style=evsnormalwithframe, name=Algorithm]
+{algorithm}
+\surroundwithmdframed{algorithm}
+
+\declaretheorem[numberlike=lemma, style=evsnormalwithframe, name=Protocol]
+{protocol}
+\surroundwithmdframed{protocol}
+
+\declaretheorem[numberlike=lemma, style=evsnormalwithframe, name=Subprotocol]
+{subprotocol}
+\surroundwithmdframed{subprotocol}
+
+\declaretheorem[numberlike=lemma, style=evsnormalwithframe,
+name=Functionality]
+{functionality}
+\surroundwithmdframed{functionality}
+
+\declaretheorem[numberlike=lemma, style=evsnormalwithframe,
+name=Subfunctionality]
+{subfunctionality}
+\surroundwithmdframed{subfunctionality}
+
+\declaretheorem[numberlike=lemma, style=evsnormal, name=Example]
+{example}
+
+\declaretheorem[numberlike=lemma, style=evsnormal, name=Example]
+{uexample}
+\renewcommand\theuexample{\unskip}
+
+\declaretheorem[numberlike=lemma, style=evsnormal, name=Remark]
+{remark}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Typesetting enumerations and itemizations.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{evsitemize}{%
+\begin{itemize}[itemsep=0.2ex,topsep=0.8ex,parsep=0.5ex,partopsep=0ex,
+                leftmargin=*]
+}{
+\end{itemize}
+}
+
+\newenvironment{evsenumerate}{%
+\begin{enumerate}[itemsep=0.2ex,topsep=0.8ex,parsep=0.5ex,partopsep=0ex,
+                  leftmargin=*]
+}{
+\end{enumerate}
+}
+
+\newenvironment{evsenumeratei}{%
+\begin{enumerate}[label=\roman*,itemsep=0.2ex,topsep=0.8ex,parsep=0.5ex,partopsep=0ex,
+                  leftmargin=*]
+}{
+\end{enumerate}
+}
+
+\newenvironment{evsenumeratesub}{%
+\begin{enumerate}[itemsep=0ex,topsep=0ex,parsep=0ex,partopsep=0ex,leftmargin=*]
+}{
+\end{enumerate}
+}
+\renewcommand\labelitemii{$\circ$}

@@ -1,0 +1,538 @@
+% Copyright 2006-2024 Douglas Wikstrom All Rights Reserved
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitions of security.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generic security parameter without and with indexing.
+\newcommand{\secp}{n}
+\newcommand{\secpi}[1]{\secp_{#1}}
+\newcommand{\secpl}[1]{\secp_{\securityparamstyle{#1}}}
+
+% Unary encoding of security parameter.
+\newcommand{\usecp}{\allones{\secp}}
+
+% Security parameter for capturing statistically small deficiencies in
+% distributions.
+\newcommand{\secpr}{\secpl{r}}
+
+% Generic experiment used to define the security of a cryptographic
+% primitive.
+\newcommand{\Experi}[3]{\mathsf{Exp}_{#1}^{#2}(#3)}
+
+% Generic state between invokations of steps in experiment.
+\newcommand{\state}{\mathit{state}}
+
+% Probability that variables are equal. This is often used in
+% definitions of security, where forgetting "= 1" is common.
+\newcommand{\Prob}[2]{\pPr{#1=#2}}
+
+% Generic adversary.
+\newcommand{\Adv}{\mathcal{A}}
+\newcommand{\Advi}[1]{\Adv_{#1}}
+\newcommand{\Advl}[1]{\Adv_{\labelstyle{#1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Generic notation.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Symbolic ciphertext
+\newcommand{\symciph}[2]{[#1,#2]}
+\newcommand{\symciphl}[3]{[#1,#2]_{#3}}
+
+
+% Generic public keys.
+\newcommand{\pk}{\mathit{pk}}
+\newcommand{\pkj}[1]{\pk_{#1}}
+
+% Generic private keys.
+\newcommand{\sk}{\mathit{sk}}
+\newcommand{\skj}[1]{\sk_{#1}}
+
+% Generic spaces for labels, messages, randomness, and ciphertexts or
+% codes.
+\newcommand{\LSpace}[1]{\spacestyle{L}_{#1}}
+\newcommand{\MSpace}[1]{\spacestyle{M}_{#1}}
+\newcommand{\RSpace}[1]{\spacestyle{R}_{#1}}
+\newcommand{\CSpace}[1]{\spacestyle{C}_{#1}}
+\newcommand{\CGSpace}[1]{\spacestyle{R}^{\pkcCG}_{#1}}
+
+% Polynomials determining the domain and range of function.
+\newcommand{\domainpol}{d}
+\newcommand{\rangepol}{r}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Computational problems.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generic algorithms for sampling, randomizing, combining, and
+% checking problem instances.
+\newcommand{\PairSample}{\algostyle{Sam}}
+\newcommand{\ProblemSample}{\algostyle{Sam}}
+\newcommand{\ProblemRandomize}{\algostyle{Ran}}
+\newcommand{\ProblemCombine}{\algostyle{Comb}}
+\newcommand{\ProblemCheck}{\algostyle{Check}}
+
+% Computational problems.
+\newcommand{\CP}{\systemstyle{CP}}
+\newcommand{\RSRCheck}{\ProblemCheck}
+\newcommand{\ACPSample}{\ProblemSample}
+\newcommand{\RSRRandomize}{\ProblemRandomize}
+\newcommand{\RSRCombine}{\ProblemCombine}
+
+% Decisional problems.
+\newcommand{\DP}{\systemstyle{DP}}
+\newcommand{\ACPDSample}[1]{\ProblemSample_{#1}}
+\newcommand{\RSRDRandomize}{\ProblemRandomize}
+\newcommand{\RSRDCombine}{\ProblemCombine}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Groups and rings used in cryptographic constructions.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Security parameter corresponding to the logarithm of the order of
+% the group.
+\newcommand{\secpq}{\secpl{q}}
+
+% Prime order group.
+\newcommand{\Gq}{G_{\q}}
+\newcommand{\Gqi}[1]{G_{\q_{#1}}}
+\newcommand{\K}{K}
+
+% Prime order field.
+\newcommand{\zedq}{\zed_{\q}}
+\newcommand{\zedqstar}{\zedq^*}
+\newcommand{\zedpstar}{\zed_{\p}^*}
+
+\newcommand{\ARing}{\mathbbstyle{A}}
+\newcommand{\BGroup}{\mathbbstyle{B}}
+
+
+\newcommand{\PrimeOrderGroups}{\mathsf{P}}
+\newcommand{\PrimeOrderGroupsi}[1]{\mathsf{P}_{#1}}
+
+\newcommand{\ProductGroups}{\mathbb{P}}
+\newcommand{\ProductGroupsi}[1]{\mathbb{P}_{#1}}
+
+\newcommand{\CiphGroup}{\mathbb{C}}
+\newcommand{\CiphGroupi}[1]{\CiphGroup_{#1}}
+
+\newcommand{\CiphList}{\mathbb{L}}
+
+\newcommand{\BaseGroup}{\mathbb{B}}
+\newcommand{\BaseGroupi}[1]{\BaseGroup_{#1}}
+
+
+
+
+% Product group.
+\newcommand{\Group}{\mathbbstyle{G}}
+\newcommand{\Groupi}[1]{\Group_{#1}}
+
+\newcommand{\GroupH}{\mathbbstyle{H}}
+\newcommand{\GroupHi}[1]{\GroupH_{#1}}
+
+% Set of generators of generic group.
+\newcommand{\GroupGenerators}{\Group^{*}}
+
+% Product ring.
+\newcommand{\Ring}{\mathbbstyle{R}}
+\newcommand{\Ringi}[1]{\Ring_{#1}}
+\newcommand{\Rexps}[1]{\Ring_{#1}}
+\newcommand{\RexpsGroup}{\Rexps{\Group}}
+
+% Simplified notation.
+\newcommand{\Gk}[1]{\Group_{#1}}
+\newcommand{\Gkw}[2]{\Group_{#1\times#2}}
+
+% Inner product over ring.
+\newcommand{\innerprod}[2]{\langle#1,#2\rangle}
+
+% Algorithms for, generating, membership test, multiplication,
+% encoding, and decoding in cryptographic groups.
+\newcommand{\GGen}{\algostyle{Gen}}
+\newcommand{\GMem}{\algostyle{Member}}
+\newcommand{\GMul}{\algostyle{Mul}}
+\newcommand{\GEnc}{\algostyle{Encode}}
+\newcommand{\GDec}{\algostyle{Decode}}
+
+% Running time of a multiplication in groups.
+\newcommand{\Tmullabel}{\mathit{m}}
+\newcommand{\Tmul}{\Timei{\Tmullabel}}
+\newcommand{\TGmuli}[1]{\Tmul[#1]}
+\newcommand{\TGmul}{\TGmuli{\Group}}
+\newcommand{\TGqmul}{\Tmul}
+
+% Running time of an exponentiation in groups.
+\newcommand{\Texplabel}{\mathit{e}}
+\newcommand{\Texp}{\Timei{\Texplabel}}
+\newcommand{\TGexpi}[1]{\Texp[#1]}
+\newcommand{\TGexp}{\TGexpi{\Group}}
+\newcommand{\TGqexp}{\Texp}
+
+% Running time of multiplication in ring given as parameter.
+\newcommand{\TRmuli}[1]{\Timei{\Tmullabel}[#1]}
+
+% Running time of multiplication in Z_q.
+\newcommand{\Tzedqmul}{\TRmuli{\zedq}}
+
+% Running time of multiplication in generic ring.
+\newcommand{\TRmul}{\TRmuli{\Ring}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Pseudo-random generators.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Pseudo-random generator without and with indexing.
+\newcommand{\prg}{\algostyle{PRG}}
+\newcommand{\prgi}[1]{\prg_{#1}}
+
+% Bit length of seeds.
+\newcommand{\prgseedlen}{l_{\prg}}
+
+% PRG security experiment.
+\newcommand{\PRGExp}[4]{\Experi{#1,#2}{\mathit{prg},#3}{#4}}
+\newcommand{\PRGProb}[5]{\Prob{\PRGExp{#1}{#2}{#3}{#4}}{#5}}
+
+% Security parameter for seed size of PRG.
+\newcommand{\secps}{\secpl{s}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hash function.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Hash function.
+\newcommand{\HF}{\systemstyle{HF}}
+\newcommand{\HK}{\spacestyle{K}}
+\newcommand{\HKi}[1]{\HK_{#1}}
+\newcommand{\HGen}{\algostyle{Gen}}
+\newcommand{\HEval}{\algostyle{H}}
+\newcommand{\hk}{\mathit{hk}}
+\newcommand{\hki}[1]{\hk_{#1}}
+\newcommand{\hfseedlen}{l_{\HF}}
+
+% Domain and range of hash function.
+\newcommand{\HMSpace}[1]{\spacestyle{M}_{#1}}
+\newcommand{\HDSpace}[1]{\spacestyle{D}_{#1}}
+
+% Polynomials determining the domain and range of hash function
+% mapping bit strings.
+\newcommand{\hfrangepol}{r}
+\newcommand{\hfdomainpol}{d}
+
+% Message to be hashed.
+\newcommand{\hfm}{m}
+\newcommand{\hfmi}[1]{\hfm_{#1}}
+
+%%%%%%%%%%%%%%% Merkle-Damgard construction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\HFMD}[1]{\HF^{#1}}
+\newcommand{\HGenMD}[1]{\HGen^{#1}}
+\newcommand{\HEvalMD}[1]{\HEval^{#1}}
+\newcommand{\HMSpaceMD}[2]{\HMSpace{#2}^{#1}}
+\newcommand{\HDSpaceMD}[2]{\HDSpace{#2}^{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Commitment schemes.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\CS}{\systemstyle{CS}}
+\newcommand{\csGen}{\algostyle{Gen}}
+\newcommand{\csCom}{\algostyle{Com}}
+
+% Spaces of messages, randomness, and commitments.
+\newcommand{\CKSpace}[1]{\spacestyle{CK}_{#1}}
+\newcommand{\csMSpace}[1]{\MSpace{#1}}
+\newcommand{\csRSpace}[1]{\RSpace{#1}}
+\newcommand{\csCSpace}[1]{\CSpace{#1}}
+
+% Key.
+\newcommand{\ck}{\mathit{ck}}
+\newcommand{\cki}[1]{\ck_{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Cryptosystems.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generic scheme.
+\newcommand{\PKC}{\systemstyle{PKC}}
+\newcommand{\pkcGen}{\algostyle{Gen}}
+\newcommand{\pkcEnc}{\algostyle{Enc}}
+\newcommand{\pkcDec}{\algostyle{Dec}}
+
+% Running time of encryption.
+\newcommand{\TEnc}{\Timei{\pkcEnc}}
+
+% Adversary against cryptosystem.
+\newcommand{\pkcAdv}{\Adv}
+
+% Adversary againts cryptosystem with label.
+\newcommand{\pkcAdvl}[1]{\Advl{#1}}
+
+% Spaces for public keys, labels, messages, randomness, and
+% ciphertexts.
+\newcommand{\pkcPKSpace}[1]{\spacestyle{PK}_{#1}}
+\newcommand{\pkcLSpace}[1]{\LSpace{#1}}
+\newcommand{\pkcMSpace}[1]{\MSpace{#1}}
+\newcommand{\pkcRSpace}[1]{\RSpace{#1}}
+\newcommand{\pkcCSpace}[1]{\CSpace{#1}}
+
+\newcommand{\pkcMSpacep}[2]{\MSpace{#1}(#2)}
+\newcommand{\pkcRSpacep}[2]{\RSpace{#1}(#2)}
+\newcommand{\pkcCSpacep}[2]{\CSpace{#1}(#2)}
+
+\newcommand{\pkcCGSpace}[1]{\CGSpace{#1}}
+\newcommand{\pkcFSpace}{\spacestyle{F}}
+
+% Public keys.
+\newcommand{\pkcpk}{\pk}
+\newcommand{\pkcpkj}[1]{\pkj{#1}}
+
+% Private keys.
+\newcommand{\pkcsk}{\sk}
+\newcommand{\pkcskj}[1]{\skj{#1}}
+
+% Label for cryptosystem with labels.
+\newcommand{\pkclabel}{\ell}
+\newcommand{\pkclabeli}[1]{\pkclabel_{#1}}
+
+% CPA security experiment.
+\newcommand{\CPAExp}[4]{\Experi{#1,#2}{\mathit{cpa},#3}{#4}}
+\newcommand{\CPAProb}[5]{\Prob{\CPAExp{#1}{#2}{#3}{#4}}{#5}}
+
+% Sparse Sigma protocol experiment.
+\newcommand{\SSPExp}[3]{\Experi{#1,#2}{\mathit{ssp}}{#3}}
+\newcommand{\SSPProb}[4]{\Prob{\SSPExp{#1}{#2}{#3}}{#4}}
+
+% CCA2 security experiment.
+\newcommand{\CCAExp}[4]{\Experi{#1,#2}{\mathit{cca},#3}{#4}}
+\newcommand{\CCAProb}[5]{\Prob{\CCAExp{#1}{#2}{#3}{#4}}{#5}}
+
+\newcommand{\SIMCCAExp}[5]{\Experi{#1,#2}{\mathit{sim}(#5,#3)}{#4}}
+\newcommand{\SIMCCAProb}[6]{\Prob{\SIMCCAExp{#1}{#2}{#3}{#4}{#5}}{#6}}
+
+\newcommand{\zCCAExp}[4]{\Experi{#1,#2}{\mathit{ranA},#3}{#4}}
+\newcommand{\zCCAProb}[5]{\Prob{\zCCAExp{#1}{#2}{#3}{#4}}{#5}}
+
+\newcommand{\zkCCAExp}[4]{\Experi{#1,#2}{\mathit{zk},#3}{#4}}
+\newcommand{\zkCCAProb}[5]{\Prob{\zkCCAExp{#1}{#2}{#3}{#4}}{#5}}
+
+% Randomness.
+\newcommand{\pkcr}{r}
+\newcommand{\pkcri}[1]{\pkcr_{#1}}
+\newcommand{\pkcrj}[1]{\pkcr_{#1}}
+\newcommand{\pkcrji}[2]{\pkcr_{#1,#2}}
+
+% Ciphertexts. TODO
+\newcommand{\pkcu}{u}
+\newcommand{\pkcui}[1]{\pkcu_{#1}}
+\newcommand{\pkcuj}[1]{\pkcu_{#1}}
+\newcommand{\pkcuji}[2]{\pkcu_{#1,#2}}
+
+\newcommand{\pkcv}{v}
+\newcommand{\pkcvi}[1]{\pkcv_{#1}}
+\newcommand{\pkcvj}[1]{\pkcv_{#1}}
+\newcommand{\pkcvji}[2]{\pkcv_{#1,#2}}
+
+\newcommand{\pkcw}{w}
+\newcommand{\pkcwi}[1]{\pkcw_{#1}}
+\newcommand{\pkcwj}[1]{\pkcw_{#1}}
+\newcommand{\pkcwji}[2]{\pkcw_{#1,#2}}
+
+%%%%%%%%%%%%%%% El Gamal Cryptosystem %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Cryptosystem, key generation, encryption and decryption algorithms.
+
+\newcommand{\pkcelgamal}{\algolabelstyle{EG}}
+\newcommand{\PKCEG}{\PKC_{\pkcelgamal}}
+\newcommand{\pkcGenEG}{\pkcGen^{\pkcelgamal}}
+\newcommand{\pkcEncEG}{\pkcEnc^{\pkcelgamal}}
+\newcommand{\pkcDecEG}{\pkcDec^{\pkcelgamal}}
+
+\newcommand{\pkcvelgamal}{\algolabelstyle{VEG}}
+\newcommand{\PKCVEG}{\PKC_{\pkcvelgamal}}
+\newcommand{\pkcGenVEG}{\pkcGen^{\pkcvelgamal}}
+\newcommand{\pkcEncVEG}{\pkcEnc^{\pkcvelgamal}}
+\newcommand{\pkcDecVEG}{\pkcDec^{\pkcvelgamal}}
+
+% Key width and width of ciphertexts for generalized El Gamal.
+\newcommand{\keywidthEG}{\kappa}
+\newcommand{\widthEG}{\omega}
+
+% Generator of product group used in encryption.
+\newcommand{\gtimes}{\g_{\times}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Augmented cryptosystem.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\APKC}{\systemstyle{APKC}}
+\newcommand{\pkcAug}{\algostyle{Aug}}
+\newcommand{\pkcStrip}{\algostyle{Strip}}
+\newcommand{\pkcCodeBook}{\algostyle{CodeBook}}
+
+% Augmentation secret key space and public key space.
+\newcommand{\pkcASKSpace}[1]{\spacestyle{ASK}_{#1}}
+\newcommand{\pkcAPKSpace}[1]{\spacestyle{APK}_{#1}}
+
+% Augmented keys.
+\newcommand{\pkcpkA}{\pkcpk_{\pkcaugment}}
+\newcommand{\pkcskA}{\pkcsk_{\pkcaugment}}
+
+% Submission security experiment.
+\newcommand{\SSExp}[4]{\Experi{#1,#2}{\mathit{ss},#3}{#4}}
+\newcommand{\SSProb}[5]{\Prob{\SSExp{#1}{#2}{#3}{#4}}{#5}}
+
+\newcommand{\SSExpEQ}{\mathsf{eq}}
+
+%%%%%%%%%%%%%%% Ciphertext extractor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\cgdCX}{\algostyle{X}}
+
+%%%%%%%%%%%%%%% Generic basic and augmentation cryptosystems %%%%%%%%%%%%%
+
+% Basic cryptosystem.
+\newcommand{\pkcbasic}{\algolabelstyle{B}}
+\newcommand{\PKCB}{\PKC_{\pkcbasic}}
+\newcommand{\pkcGenB}{\pkcGen^{\pkcbasic}}
+\newcommand{\pkcEncB}{\pkcEnc^{\pkcbasic}}
+\newcommand{\pkcDecB}{\pkcDec^{\pkcbasic}}
+
+\newcommand{\pkcpkB}{\pkcpk_{\pkcbasic}}
+\newcommand{\pkcskB}{\pkcsk_{\pkcbasic}}
+
+% Augmentation.
+\newcommand{\pkcaugment}{\algolabelstyle{A}}
+\newcommand{\pkcGenA}{\pkcGen^{\pkcaugment}}
+\newcommand{\pkcEncA}{\pkcEnc^{\pkcaugment}}
+\newcommand{\pkcDecA}{\pkcDec^{\pkcaugment}}
+
+%%%%%%%%%%%%%%% Naor-Yung cryptosystem %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\pkcnaoryung}{\algolabelstyle{NY}}
+\newcommand{\PKCNY}{\PKC_{\pkcnaoryung}}
+\newcommand{\pkcGenNY}{\pkcGen^{\pkcnaoryung}}
+\newcommand{\pkcEncNY}{\pkcEnc^{\pkcnaoryung}}
+\newcommand{\pkcDecNY}{\pkcDec^{\pkcnaoryung}}
+\newcommand{\pkcAugNY}{\pkcAug^{\pkcnaoryung}}
+\newcommand{\pkcStripNY}{\pkcStrip^{\pkcnaoryung}}
+
+\newcommand{\pkcPKSpaceNY}[1]{\pkcPKSpace{#1}^{\pkcnaoryung}}
+\newcommand{\pkcSKSpaceNY}[1]{\pkcPKSpace{#1}^{\pkcnaoryung}}
+
+% Keys.
+\newcommand{\pkcpkNY}{\pkcpk}
+\newcommand{\pkcskNY}{\pkcsk}
+
+\newcommand{\pkcMSpaceNY}[1]{\MSpace{#1}^{\pkcnaoryung}}
+\newcommand{\pkcRSpaceNY}[1]{\RSpace{#1}^{\pkcnaoryung}}
+\newcommand{\pkcCSpaceNY}[1]{\CSpace{#1}^{\pkcnaoryung}}
+
+\newcommand{\widthCNY}{\nu}
+
+%%%%%%%%%%%%%%% Codebook Naor-Yung cryptosystem %%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\pkccnaoryung}{{\algolabelstyle{CNY}}}
+\newcommand{\PKCCNY}{\PKC_{\pkccnaoryung}}
+\newcommand{\pkcGenCNY}{\pkcGen^{\pkccnaoryung}}
+\newcommand{\pkcEncCNY}{\pkcEnc^{\pkccnaoryung}}
+\newcommand{\pkcDecCNY}{\pkcDec^{\pkccnaoryung}}
+\newcommand{\pkcAugCNY}{\pkcAug^{\pkccnaoryung}}
+\newcommand{\pkcStripCNY}{\pkcStrip^{\pkccnaoryung}}
+\newcommand{\pkcCodeBookCNY}{\pkcCodeBook^{\pkccnaoryung}}
+
+\newcommand{\pkcPKSpaceCNY}[1]{\pkcPKSpace{#1}^{\pkccnaoryung}}
+\newcommand{\pkcSKSpaceCNY}[1]{\pkcPKSpace{#1}^{\pkccnaoryung}}
+
+% Keys.
+\newcommand{\pkcpkCNY}{\pkcpk}
+\newcommand{\pkcskCNY}{\pkcsk}
+
+\newcommand{\pkcMSpaceCNY}[1]{\MSpace{#1}^{\pkccnaoryung}}
+\newcommand{\pkcRSpaceCNY}[1]{\RSpace{#1}^{\pkccnaoryung}}
+\newcommand{\pkcCSpaceCNY}[1]{\CSpace{#1}^{\pkccnaoryung}}
+
+
+% Generator of product group used in encryption.
+\newcommand{\ztimes}{\zzz_{\times}}
+
+% Two components of ciphertexts.
+\newcommand{\pkcuA}{\pkcu_{\pkcaugment}}
+\newcommand{\pkcuAi}[1]{\pkcu_{\pkcaugment,#1}}
+\newcommand{\pkcuAj}[1]{\pkcu_{\pkcaugment,#1}}
+\newcommand{\pkcuAji}[2]{\pkcu_{\pkcaugment,#1,#2}}
+
+\newcommand{\pkcvB}{\pkcv_{\pkcbasic}}
+\newcommand{\pkcuB}{\pkcu_{\pkcbasic}}
+\newcommand{\pkcuBi}[1]{\pkcu_{\pkcbasic,#1}}
+\newcommand{\pkcuBj}[1]{\pkcu_{\pkcbasic,#1}}
+\newcommand{\pkcuBji}[2]{\pkcu_{\pkcbasic,#1,#2}}
+
+% To components of the randomness.
+\newcommand{\pkcrA}{\pkcr_{\pkcaugment}}
+\newcommand{\pkcrAi}[1]{\pkcrA_{\pkcaugment,#1}}
+\newcommand{\pkcrAj}[1]{\pkcrA_{\pkcaugment,#1}}
+\newcommand{\pkcrAji}[2]{\pkcrA_{\pkcaugment,#1,#2}}
+
+\newcommand{\pkcrB}{\pkcr_{\pkcbasic}}
+\newcommand{\pkcrBi}[1]{\pkcrB_{\pkcbasic,#1}}
+\newcommand{\pkcrBj}[1]{\pkcrB_{\pkcbasic,#1}}
+\newcommand{\pkcrBji}[2]{\pkcrB_{\pkcbasic,#1,#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Signature schemes.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generic signature scheme, key generation, signing and verification
+% algorithms.
+\renewcommand{\SS}{\systemstyle{SS}}
+\newcommand{\ssGen}{\algostyle{Gen}}
+\newcommand{\ssSig}{\algostyle{Sig}}
+\newcommand{\ssVf}{\algostyle{Vf}}
+
+% Space of messages that can be signed.
+\newcommand{\ssMSpace}[1]{\MSpace{#1}}
+\newcommand{\ssSSpace}[1]{\spacestyle{S}_{#1}}
+\newcommand{\ssPKSpace}[1]{\spacestyle{PK}_{#1}}
+
+% Keys.
+\newcommand{\sspk}{\pk}
+\newcommand{\sspkj}[1]{\pkj{#1}}
+\newcommand{\sssk}{\sk}
+\newcommand{\ssskj}[1]{\skj{#1}}
+
+% Signatures.
+\newcommand{\sssig}{\sigma}
+\newcommand{\sssigi}[1]{\sssig_{#1}}
+
+% CMA-Security of signature scheme
+\newcommand{\CMAExp}[3]{\Experi{#1,#2}{\mathit{cma}}{#3}}
+\newcommand{\CMAExpstar}[3]{\Experi{#1,#2}{\mathit{cma}*}{#3}}
+
+%%%%%%%%%%%%%%% Schnorr Signature Scheme %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Schnorr signature scheme, key generation, and signing and
+% verification algorithms.
+\newcommand{\SSS}{\systemstyle{SS}_{\algolabelstyle{S}}}
+\newcommand{\ssGenS}{\ssGen}
+\newcommand{\ssSigS}{\ssSig}
+\newcommand{\ssVfS}{\ssVf}
+
+%%%%%%%%%%%%%%% Feldman-Pedersen Scheme %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Feldman-Pedersen scheme.
+\newcommand{\FP}{\systemstyle{FP}}
+\newcommand{\fpGen}{\algostyle{Gen}}
+\newcommand{\fpSha}{\algostyle{Share}}
+\newcommand{\fpRec}{\algostyle{Recover}}
+\newcommand{\fpSim}{\algostyle{Sim}}
+\newcommand{\fpPro}{\algostyle{Program}}
+\newcommand{\fpwidth}{w}
+
+\newcommand{\fpuu}{\uu}
+
+
+%%% Local Variables:
+%%% TeX-master: "evs"
+%%% End:

@@ -1,0 +1,842 @@
+% Copyright 2006-2024 Douglas Wikstrom All Rights Reserved
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Generic notation.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Invertible concatenation of strings in UC.
+\newcommand{\ucconc}{\|}
+\newcommand{\ucconcXX}[2]{#1\ucconc #2}
+\newcommand{\ucconcXXX}[3]{#1\ucconc #2\ucconc #3}
+
+\newcommand{\SID}{\mathfrak{s}}
+
+\newcommand{\invalidinput}{\Diamond}
+\newcommand{\lookingahead}{\Diamond}
+
+% Label used to specify content of message.
+\newcommand{\uclabel}[1]{{\textsf{#1}}}
+
+% String associated with an instance of a protocol or ideal
+% functionality used as prefix to random oracles.
+\newcommand{\ucPrefix}{\rho}
+\newcommand{\ucPrefixi}[1]{\ucPrefix_{#1}}
+
+% Shorthand notation for models in terms of the protocol and
+% adversaries.
+\newcommand{\ucProtDesc}{\delta}
+\newcommand{\ucProtDescj}[1]{\ucProtDesc_{#1}}
+\newcommand{\ucProtTarget}{\tau}
+\newcommand{\ucProtTargetj}[1]{\ucProtTarget_{#1}}
+\newcommand{\ucProtDescIdeal}{\rho_{\mathscr{S}}}
+
+% Message predicate.
+\newcommand{\ucMessPred}{\rho}
+\newcommand{\ucMessPredi}[1]{\ucMessPred_{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Notation for components defining ITM graphs.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Content of cell of Turing tape.
+\newcommand{\cell}[1]{[#1]}
+
+% Slot.
+\newcommand{\slot}[1]{\raisebox{1.1pt}{${\scriptstyle [#1]}$}}
+
+% Slot with name formed using ITM name.
+\newcommand{\simcat}[2]{#1\mid#2}
+\newcommand{\simslot}[2]{\slot{\simcat{#1}{#2}}}
+
+% Slot of particular ITM.
+\newcommand{\LL}[2]{#1\slot{#2}}
+
+% Edge in ITM graph between two ITMs.
+\newcommand{\EE}[2]{\langle #1,#2\rangle}
+
+% Set of edges between two sets of ITMs.
+\newcommand{\edges}[2]{\mathsf{E}(#1,#2)}
+\newcommand{\edgesself}[1]{\mathsf{E}(#1)}
+
+% Routers.
+\newcommand{\ucR}{\ucentitystyle{R}}
+\newcommand{\ucRj}[1]{\ucR_{#1}}
+\newcommand{\ucRji}[2]{\ucR_{#1,#2}}
+
+% Shorthand for subfunctionality collecting inputs.
+\newcommand{\ucFC}[2]{\ucC_{#1,#2}}
+
+% Generic ITMs with natural semantics.
+\newcommand{\ucM}{\mathcal{M}}
+\newcommand{\ucMj}[1]{\ucM_{#1}}
+\newcommand{\ucMji}[2]{\ucM_{#1,#2}}
+
+% Generic ITMs loosely related to adversaries.
+\newcommand{\ucH}{\ucentitystyle{H}}
+\newcommand{\ucHj}[1]{\ucH_{#1}}
+\newcommand{\ucHji}[2]{\ucH_{#1,#2}}
+
+% Generic ITMs with loosely related to parties.
+\newcommand{\ucX}{\ucentitystyle{X}}
+\newcommand{\ucXj}[1]{\ucX_{#1}}
+\newcommand{\ucXji}[2]{\ucX_{#1,#2}}
+
+\newcommand{\ucY}{\ucentitystyle{Y}}
+\newcommand{\ucYj}[1]{\ucY_{#1}}
+\newcommand{\ucYji}[2]{\ucY_{#1,#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Parties.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Number of servers.
+\newcommand{\uck}{k}
+
+% Threshold number of servers determining security.
+\newcommand{\uct}{t}
+
+% Number of parties providing inputs.
+\newcommand{\ucN}{N}
+
+\newcommand{\ucNl}[1]{\ucN_{\labelstyle{#1}}}
+
+% Number of ciphertexts decrypted.
+\newcommand{\ucNc}{\ucNl{C}}
+
+% Number of lists of ciphertexts decrypted.
+\newcommand{\ucNd}{\ucNl{D}}
+
+% Number of subparties/functionalities of a party.
+\newcommand{\ucf}{f}
+
+% Real adversary.
+\newcommand{\ucA}{\ucentitystyle{A}}
+\newcommand{\ucAj}[1]{\ucA_{#1}}
+
+% Generic class of adversaries.
+\newcommand{\ucCA}{\mathsf{A}}
+\newcommand{\ucCAJ}[1]{\ucCA_{#1}}
+
+% Generic class of environments.
+\newcommand{\ucCZ}{\mathsf{Z}}
+
+% Simulation adversary.
+\newcommand{\ucS}{\ucentitystyle{S}}
+\newcommand{\ucSj}[1]{\ucS_{#1}}
+
+% Generic class of simulation adversaries.
+\newcommand{\ucCS}{\mathsf{S}}
+\newcommand{\ucCSJ}[1]{\ucCS_{#1}}
+
+% Generic adversarial structure.
+\newcommand{\ucCJ}{\mathsf{J}}
+
+% Real party without or with indexing.
+\newcommand{\ucP}{\ucentitystyle{P}}
+\newcommand{\ucPj}[1]{\ucP_{#1}}
+\newcommand{\ucPji}[2]{\ucP_{#1,#2}}
+
+% Corrupted real party without or with indexing.
+\newcommand{\ucPcorr}{\ucP^*}
+\newcommand{\ucPjcorr}[1]{\ucPj{#1}^*}
+\newcommand{\ucPjicorr}[2]{\ucPji{#1}{#2}^*}
+
+% Real party of a subprotocol without and with indexing.
+\newcommand{\ucsP}{\ucentitystyle{U}}
+\newcommand{\ucsPj}[1]{\ucsP_{#1}}
+
+% Dummy party without or with indexing.
+\newcommand{\ucQ}{\ucentitystyle{Q}}
+\newcommand{\ucQj}[1]{\ucQ_{#1}}
+
+% Corrupted dummy party without or with indexing.
+\newcommand{\ucQcorr}{\ucQ^*}
+\newcommand{\ucQjcorr}[1]{\ucQj{#1}^*}
+
+% Dummy sender party without or with indexing.
+\newcommand{\ucW}{\ucentitystyle{W}}
+\newcommand{\ucWj}[1]{\ucW_{#1}}
+
+% Corrupted dummy sender party without or with indexing.
+\newcommand{\ucWcorr}{\ucW^*}
+\newcommand{\ucWjcorr}[1]{\ucWj{#1}^*}
+
+% Environment without and with indexing and with auxiliary input "z".
+\newcommand{\ucZ}{\ucentitystyle{Z}}
+\newcommand{\ucZj}[1]{\ucZ_{#1}}
+
+% Auxiliary input of environment and shorthand.
+\newcommand{\ucz}{z}
+\newcommand{\ucZz}{\ucZ_{\ucz}}
+
+% Template real adversary.
+\newcommand{\ucIT}{\ucentitystyle{T}}
+
+% Outer adversary.
+\newcommand{\ucO}{\ucentitystyle{O}}
+
+% Real adversary resulting from inverse transform of a transform
+% established with a template adversary.
+\newcommand{\ucAinv}{\ucentitystyle{A}^{-1}}
+
+% Additional real user without or with indexing.
+\newcommand{\ucV}{\ucentitystyle{V}}
+\newcommand{\ucVj}[1]{\ucV_{#1}}
+\newcommand{\ucVji}[2]{\ucV_{#1,#2}}
+
+% Additional corrupted user without or with indexing.
+\newcommand{\ucVcorr}{\ucV^*}
+\newcommand{\ucVjcorr}[1]{\ucVj{#1}^*}
+\newcommand{\ucVjicorr}[2]{\ucVji{#1}{#2}^*}
+
+% Additional real observer without or with indexing.
+\newcommand{\ucOj}[1]{\ucO_{#1}}
+\newcommand{\ucOji}[2]{\ucO_{#1,#2}}
+
+% Additional corrupted observer without or with indexing.
+\newcommand{\ucOcorr}{\ucO^*}
+\newcommand{\ucOjcorr}[1]{\ucOj{#1}^*}
+\newcommand{\ucOjicorr}[2]{\ucOji{#1}{#2}^*}
+
+% List of dummy parties.
+\newcommand{\ucISubProt}{\sigma}
+\newcommand{\ucISubProtj}[1]{\ucISubProt_{#1}}
+
+% List of corrupted dummy parties.
+\newcommand{\ucIProtSet}{\ucIProtcorr}
+\newcommand{\ucIProtSetj}[1]{\ucIProtSet_{#1}}
+
+% List of corrupted parties.
+\newcommand{\ucRProtSet}{\ucProtcorr}
+\newcommand{\ucRProtSetj}[1]{\ucRProtSet_{#1}}
+
+% Knowledgeable machine.
+\newcommand{\ucKnowledgeable}[1]{#1^{+}}
+
+% Ignorant machine.
+\newcommand{\ucIgnorant}[1]{#1^{-}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Protocols.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Dummy protocol without or with indexing.
+\newcommand{\ucIProt}{\sigma}
+\newcommand{\ucIProtSubscript}[2]{\ucIProt_{{\scriptscriptstyle #1}}^{#2}}
+\newcommand{\ucIProtj}[1]{\ucIProt_{#1}}
+\newcommand{\ucIProtcorr}{\ucIProt^{*}}
+
+% Real protocol without or with indexing.
+\newcommand{\ucProt}{\pi}
+\newcommand{\ucProtSubscript}[2]{\ucProt_{\textit{#1}}^{#2}}
+\newcommand{\ucProtj}[1]{\ucProt_{#1}}
+\newcommand{\ucProtcorr}{\ucProt^{*}}
+
+% Shorthand for protocol for a generic ideal functionality.
+\newcommand{\ucProtF}{\ucProt_{\ucF}}
+
+% Subprotocol.
+\newcommand{\ucSubProt}{\sigma}
+\newcommand{\ucSubProtj}[1]{\ucSubProt_{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Communication models.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generic communication model.
+\newcommand{\ucC}{\ucentitystyle{C}}
+\newcommand{\ucCj}[1]{\ucC_{#1}}
+\newcommand{\ucCji}[2]{\ucC_{#1,#2}}
+
+% Real communication model.
+\newcommand{\ucCN}{\ucentitystyle{N}}
+\newcommand{\ucRC}[1]{\ucCN_{#1}}
+\newcommand{\ucRCj}[2]{\ucCN_{#1,#2}}
+
+% Ideal communication model.
+\newcommand{\ucI}{\ucentitystyle{I}}
+\newcommand{\ucIC}[1]{\ucI_{#1}}
+\newcommand{\ucICj}[2]{\ucI_{#1,#2}}
+
+% Generic deal functionality.
+\newcommand{\ucF}{\ucentitystyle{F}}
+\newcommand{\ucFj}[1]{\ucF_{#1}}
+
+\newcommand{\ucUnbound}[1]{\{#1\}}
+
+% Template used to define particular ideal functionalities.
+\newcommand{\ucFSubscript}[2]{\ucF_{\uclabelstyle{#1}}^{#2}}
+\newcommand{\ucFDoubleSubscript}[3]{\ucF_{\uclabelstyle{#1},#2}^{#3}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Model maps.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Real free model map, ideal free model map, and hybrid free model
+% map.
+\newcommand{\ucGmap}{\mathscr{G}}
+\newcommand{\ucRmap}{\mathscr{R}}
+\newcommand{\ucImap}{\mathscr{I}}
+\newcommand{\ucHmap}{\mathscr{H}}
+
+% Real free model map, ideal free model map, and hybrid free model map
+% with subscript parameters.
+\newcommand{\ucRmaps}[3]{\ucRmap_{#1,#2,#3}}
+\newcommand{\ucImaps}[2]{\ucImap_{#1,#2}}
+\newcommand{\ucHmaps}[3]{\ucHmap_{#1,#2,#3}}
+
+% Environment map.
+\newcommand{\ucZmap}{\mathscr{Z}}
+\newcommand{\ucZmaps}[1]{\ucZmap_{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Transforms.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generic description of transform.
+\newcommand{\transformencoding}{\beta}
+
+% Generic ITM transform
+\newcommand{\Transform}{\Phi}
+\newcommand{\Transforminv}{\Phi^{-1}}
+\newcommand{\Transformback}{\Theta}
+
+% Swap edges to define transform.
+\newcommand{\swapnp}{\Helptransform_{\mathit{swap}}}
+\newcommand{\swap}[3]{\swapnp\left(#1,#2,#3\right)}
+
+% Simulation and wrapping.
+\newcommand{\Helptransform}{\Omega}
+\newcommand{\itmmachine}[1]{\Helptransform_{\mathit{ITM}}(#1)}
+\newcommand{\wrapper}[3]{\Helptransform_{\mathit{wrap}}(#1,#2,#3)}
+
+% Simulate several ITMs as one.
+\newcommand{\simulateitms}[2]{\Transform_{\mathit{sim}}(#1,#2)}
+
+% Simulate multiple links using one.
+\newcommand{\simulatelinks}[2]{\Transform_{\mathit{link}}(#1,#2)}
+\newcommand{\simulatelinksabuse}[1]{\Transform_{\mathit{link}}(#1)}
+
+% Eliminate redundant communication models.
+\newcommand{\redu}{\mathit{red}}
+\newcommand{\eliminateredundant}[2]{\Transform_{\redu}(#1,#2)}
+\newcommand{\eliminateredundantabuse}[1]{\Transform_{\redu}(#1)}
+
+% Normalize model.
+\newcommand{\normalizemodel}[1]{\Transform_{\mathit{norm}}(#1)}
+
+% Combine multiple ideal functionalities into one.
+\newcommand{\combiningmodel}[2]{\Transform_{\mathit{com}}(#1,#2)}
+\newcommand{\combiningmodelabuse}[1]{\Transform_{\mathit{com}}(#1)}
+
+% Absorb subprotocol into invoking protocol.
+\newcommand{\absorbingmodel}[2]{\Transform_{\mathit{abs}}(#1,#2)}
+\newcommand{\absorbingabuse}[1]{\Transform_{\mathit{abs}}(#1)}
+
+% Simplify model.
+\newcommand{\simplifymodel}[1]{\Transform_{\mathit{clean}}(#1)}
+
+% Collapse part of model.
+\newcommand{\collapsemodel}[1]{\Transform_{\mathit{col}}(#1)}
+\newcommand{\collapsemodelinv}[1]{\Transforminv_{\mathit{col}}(#1)}
+
+% Generate inverse adversary.
+\newcommand{\inverseadversarynp}{\Transform_{\mathit{adv}}}
+\newcommand{\inverseadversary}[2]{\inverseadversarynp(#1,#2)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Message passing.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Symbol for illustrating a message passed.
+\newcommand{\ucarrow}{\Rightarrow}
+
+% Abstract notation for a start and end of an arrow.
+\newcommand{\ucXtoY}[2]{#1\ucarrow #2}
+\newcommand{\ucXtoYtoZ}[3]{#1\ucarrow #2\ucarrow #3}
+\newcommand{\ucXtoYtoZtoW}[4]{#1\ucarrow #2\ucarrow #3\ucarrow #4}
+
+% Input to and output from a mechanism.
+\newcommand{\ucXInput}[2]{\ucXtoY{#1}{#2}}
+\newcommand{\ucXOutput}[2]{\ucXtoY{#1}{#2}}
+
+% Input to and output from a protocol to a calling protocol.
+\newcommand{\ucInput}[1]{\ucXtoY{\square}{#1}}
+\newcommand{\ucOutput}[1]{\ucXtoY{#1}{\square}}
+
+% Message sent to or received from simulated adversary.
+\newcommand{\ucXtoS}[1]{\ucXtoY{#1}{\ucS}}
+\newcommand{\ucXfromS}[1]{\ucXtoY{\ucS}{#1}}
+
+% Message sent to or received from dummy party.
+\newcommand{\ucXtoQj}[2]{\ucXtoY{#1}{\ucQj{#2}}}
+\newcommand{\ucXtoWj}[2]{\ucXtoY{#1}{\ucWj{#2}}}
+\newcommand{\ucQtoX}[2]{\ucXtoY{\ucQj{#1}}{#2}}
+\newcommand{\ucXfromQj}[2]{\ucXtoY{\ucQj{#2}}{#1}}
+
+% Primed variation.
+\newcommand{\ucXtoQpj}[2]{\ucXtoY{#1}{\ucQj{#2}'}}
+\newcommand{\ucXfromQpj}[2]{\ucXtoY{\ucQj{#2}'}{#1}}
+
+% Message sent to multiple dummy parties.
+\newcommand{\ucXtoAllQ}[3]{\left[\ucXtoQj{#1}{#2}\right]_{#2\in #3}}
+\newcommand{\ucXtoAllW}[3]{\left[\ucXtoWj{#1}{#2}\right]_{#2\in #3}}
+
+% Message sent to S and multiple dummy parties.
+\newcommand{\ucXtoSandAllQ}[3]{#1\ucarrow\ucS,\left\{\ucQj{#2}\right\}_{#2\in #3}}
+
+% Message sent to or received from party.
+\newcommand{\ucXtoPj}[2]{\ucXtoY{#1}{\ucPj{#2}}}
+\newcommand{\ucXfromPj}[2]{\ucXtoY{\ucPj{#2}}{#1}}
+
+% Securely realizes (error,time,adversarial threshold,queries)
+\newcommand{\secNONE}{securely realizes\xspace}
+\newcommand{\secX}[1]{$#1$-securely realizes\xspace}
+\newcommand{\secXX}[2]{$\big(#1,#2\big)$-securely realizes\xspace}
+\newcommand{\secXXX}[3]{$\big(#1,#2,#3\big)$-securely realizes\xspace}
+\newcommand{\secXXXX}[4]{$\big(#1,#2,#3,#4\big)$-securely realizes\xspace}
+
+
+\newcommand{\ucFtoAll}[3]{\left[#1\right]_{#2\in#3}}
+
+\newcommand{\ucFtoS}[1]{#1\ucarrow\ucS}
+
+
+% Message received to 
+\newcommand{\ucStoF}[1]{\ucS\ucarrow #1}
+
+\newcommand{\ucMtoX}[2]{#1\ucarrow #2}
+\newcommand{\ucXtoM}[2]{#1\ucarrow #2}
+
+
+
+\newcommand{\ucFtoQ}[2]{#1\ucarrow\ucQj{#2}}
+\newcommand{\ucQtoF}[2]{\ucQj{#1}\ucarrow #2}
+
+\newcommand{\ucFtoW}[2]{#1\ucarrow\ucWj{#2}}
+\newcommand{\ucWtoF}[2]{\ucWj{#1}\ucarrow #2}
+
+\newcommand{\ucPtoQ}[2]{#1\ucarrow\ucQj{#2}}
+\newcommand{\ucQtoP}[2]{\ucQj{#1}\ucarrow #2}
+
+\newcommand{\ucPtoQp}[2]{#1\ucarrow\ucQj{#2}'}
+\newcommand{\ucQptoP}[2]{\ucQj{#1}'\ucarrow #2}
+
+
+\newcommand{\ucZtoP}[1]{\ucZ\ucarrow #1}
+\newcommand{\ucfromftoS}[1]{#1}
+\newcommand{\ucfromftoQ}[2]{#2\ucarrow\ucQj{#1}}
+\newcommand{\ucfromfSP}[2]{#2\ucarrow #1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Notation for values.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%% Sampler %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucSampler}{\ucentitystyle{M}_{\uclabelstyle{s}}}
+\newcommand{\ucSamplerLink}{l_{\uclabelstyle{s}}}
+
+% Label associated with a message in several functionalities.
+\newcommand{\ucSamplerlabel}{\ell}
+\newcommand{\ucSamplerlabeli}[1]{\ucSamplerlabel_{#1}}
+
+
+\newcommand{\ucSampledInput}{\ucentitystyle{M}_{\uclabelstyle{in}}}
+
+\newcommand{\uclabelSamplerdistribution}{\uclabel{distribution}}
+\newcommand{\uclabelSamplersample}{\uclabel{sample}}
+\newcommand{\uclabelSamplervalue}{\uclabel{value}}
+
+%%%%%%%%%%%%%%% Plaintext store %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucStore}{\ucentitystyle{K}}
+\newcommand{\ucStorej}[1]{\ucStore_{#1}}
+\newcommand{\ucCStore}{\ucStore}
+\newcommand{\ucEStore}{\ucStore}
+\newcommand{\ucCStoreLink}{l_{\ucCStoreLabel}}
+
+\newcommand{\uclabelStorestore}{\uclabel{store}}
+
+\newcommand{\ucCStoreLabel}{\uclabelstyle{c}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ideal functionalities and protocols for communication.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Label associated with a message in several functionalities.
+\newcommand{\ucCOMlabel}{\ell}
+
+%%%%%%%%%%%%%%% Authenticated channels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucAC}{\ucFSubscript{\textit{auth}}{}}
+
+%%%%%%%%%%%%%%% One-time authenticated broadcast %%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFOAB}[1]{\ucFSubscript{OAB}{#1}}
+
+\newcommand{\uclabelFOABbroadcast}{\uclabel{broadcast}}
+\newcommand{\uclabelFOABreceive}{\uclabel{receive}}
+
+%%%%%%%%%%%%%%% Unauthenticated bulletin board %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFUBB}[1]{\ucFSubscript{UBB}{#1}}
+\newcommand{\ucProtUBB}[1]{\ucProtSubscript{UBB}{#1}}
+
+\newcommand{\uclabelFUBBpublish}{\uclabel{publish}}
+\newcommand{\uclabelFUBBread}{\uclabel{read}}
+\newcommand{\uclabelFUBBdata}{\uclabel{data}}
+
+%%%%%%%%%%%%%%% Authenticated broadcast %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFAB}[1]{\ucFSubscript{AB}{#1}}
+\newcommand{\ucProtAB}[1]{\ucProtSubscript{AB}{#1}}
+
+% Command strings.
+\newcommand{\uclabelFABbroadcast}{\uclabel{broadcast}}
+\newcommand{\uclabelFABreceive}{\uclabel{receive}}
+\newcommand{\uclabelFABstamp}{\uclabel{stamp}}
+
+% Protocol command strings.
+\newcommand{\uclabelABpk}{\uclabel{pubkey}}
+\newcommand{\ucABsig}{\sigma}
+\newcommand{\ucABsigj}[1]{\ucABsig_{#1}}
+
+% Mutual authenticated broadcast protocol.
+\newcommand{\ucProtMAB}[1]{\ucProtSubscript{MAB}{#1}}
+\newcommand{\ucProtMABp}[2]{\ucProtSubscript{MAB}{#1}[#2]}
+
+%%%%%%%%%%%%%%% Secret authenticated broadcast %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFSAB}[1]{\ucFSubscript{SAB}{#1}}
+
+\newcommand{\uclabelFSABbroadcast}{\uclabel{broadcast}}
+\newcommand{\uclabelFSABreceive}{\uclabel{receive}}
+\newcommand{\uclabelFSABstamp}{\uclabel{stamp}}
+
+\newcommand{\ucProtSAB}[1]{\ucProtSubscript{SAB}{#1}}
+\newcommand{\uclabelSABpk}{\uclabel{pubkey}}
+\newcommand{\ucSABsig}{\sigma}
+\newcommand{\ucSABsigj}[1]{\ucSABsig_{#1}}
+
+% Authenticated input.
+\newcommand{\ucFAI}[1]{\ucFSubscript{AI}{#1}}
+\newcommand{\uclabelFAIbroadcast}{\uclabel{broadcast}}
+\newcommand{\uclabelFAIreceive}{\uclabel{receive}}
+\newcommand{\uclabelFAIstamp}{\uclabel{stamp}}
+
+\newcommand{\ucProtAI}[1]{\ucProtSubscript{AI}{#1}}
+\newcommand{\uclabelAIpk}{\uclabel{pubkey}}
+\newcommand{\ucAIsig}{\sigma}
+\newcommand{\ucAIsigj}[1]{\ucAIsig_{#1}}
+
+%%%%%%%%%%%%%%% Bulletin Board %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFBB}[1]{\ucFSubscript{BB}{#1}}
+
+\newcommand{\uclabelFBBbroadcast}{\uclabel{broadcast}}
+\newcommand{\uclabelFBBreceive}{\uclabel{receive}}
+\newcommand{\uclabelFBBstamp}{\uclabel{stamp}}
+
+\newcommand{\ucBBlabel}{\alpha}
+
+\newcommand{\ucProtBB}[1]{\ucProtSubscript{BB}{#1}}
+\newcommand{\uclabelBBpk}{\uclabel{pubkey}}
+\newcommand{\ucBBsig}{\sigma}
+\newcommand{\ucBBsigj}[1]{\ucBBsig_{#1}}
+
+\newcommand{\ucProtMBB}[1]{\ucProtSubscript{MBB}{#1}}
+
+%%%%%%%%%%%%%%% Submission Log %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFSL}[1]{\ucFSubscript{SL}{#1}}
+
+\newcommand{\uclabelFSLappend}{\uclabel{append}}
+\newcommand{\uclabelFSLread}{\uclabel{read}}
+\newcommand{\uclabelFSLstamp}{\uclabel{stamp}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ideal functionalities and protocols for services.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%% Feldman-Pedersen (Natural) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFPFPlabel}{PFP}
+\newcommand{\ucFPFPsublabel}{PFPS}
+\newcommand{\ucFPFP}[2]{\ucFSubscript{\ucFPFPlabel}{#1,#2}}
+
+%%%%%%%%%%%%%%% Feldman-Pedersen VSS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFFPlabel}{FP}
+\newcommand{\ucFFP}[2]{\ucFSubscript{\ucFFPlabel}{#1,#2}}
+\newcommand{\uclabelFFPgenerate}{\uclabel{generate}}
+
+%%%%%%%%%%%%%%% Feldman-Pedersen (Computational) %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFCFPlabel}{CFP}
+\newcommand{\ucFCFPsublabel}{CFP}
+\newcommand{\ucFCFP}[2]{\ucFSubscript{\ucFCFPlabel}{#1,#2}}
+
+%%%%%%%%%%%%%%% Feldman-Pedersen (Unconditional) %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFUFPlabel}{UFP}
+\newcommand{\ucFUFPsublabel}{FSPS}
+\newcommand{\ucFUFP}[2]{\ucFSubscript{\ucFUFPlabel}{#1,#2}}
+
+%%%%%%%%%%%%%%% Simulated Feldman-Pedersen VSS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFSFPlabel}{SFP}
+\newcommand{\ucFSFPsublabel}{FSPS}
+\newcommand{\ucFSFP}[2]{\ucFSubscript{\ucFSFPlabel}{#1,#2}}
+
+
+
+
+\newcommand{\ucFWFP}[2]{\ucFSubscript{W\ucFFPlabel}{#1,#2}}
+
+\newcommand{\ucFFPsublabel}{FPS}
+\newcommand{\ucProtFP}[2]{\ucProtSubscript{\ucFFPlabel}{#1,#2}}
+\newcommand{\ucSubprotFP}[3]{\ucProtSubscript{\ucFFPsublabel}{#1,#2,#3}}
+\newcommand{\uclabelProtFPgenerate}{\uclabel{generate}}
+
+%%%%%%%%%%%%%%% Filter functionality %%%%%%%%%%%%%%%%
+\newcommand{\ucFFlabel}{F}
+\newcommand{\ucFF}[1]{\ucFSubscript{\ucFFlabel}{#1}}
+
+\newcommand{\uclabelProtFPchecking}{\uclabel{checking}}
+\newcommand{\uclabelProtFPshares}{\uclabel{shares}}
+
+\newcommand{\uclabelProtFPverdict}{\uclabel{verdict}}
+\newcommand{\uclabelProtFPrefute}{\uclabel{refute}}
+
+%%%%%%%%%%%%%%% Distributed key generation and decryption %%%%%%%%%%%%%%%%
+\newcommand{\ucFKGD}[2]{\ucFSubscript{KGD}{#1,#2}}
+\newcommand{\uclabelFKGDgenerate}{\uclabel{generate}}
+\newcommand{\uclabelFKGDdecrypt}{\uclabel{decrypt}}
+\newcommand{\ucKGDm}{\pkcm}
+\newcommand{\ucKGDmj}[1]{\pkcmj{#1}}
+\newcommand{\ucKGDu}{\pkcu}
+\newcommand{\ucKGDuj}[1]{\pkcuj{#1}}
+
+\newcommand{\ucKGDzkplabel}{\ell}
+
+
+\newcommand{\ucFSKGD}[2]{\ucFSubscript{SKGD}{#1,#2}}
+
+\newcommand{\ucFAKGD}[2]{\ucFSubscript{AKGD}{#1,#2}}
+
+\newcommand{\ucProtKGD}[2]{\ucProtSubscript{KGD}{#1,#2}}
+\newcommand{\uclabelProtKGDgenerate}{\uclabel{generate}}
+\newcommand{\uclabelProtKGDdecrypt}{\uclabel{decrypt}}
+
+\newcommand{\ucProtSKGD}[2]{\ucProtSubscript{SKGD}{#1,#2}}
+
+%%%%%%%%%%%%%%% Mix-net %%%%%%%%%%%%%%%%
+\newcommand{\ucFMN}[2]{\ucFSubscript{MN}{#1,#2}}
+\newcommand{\uclabelFMNgenerate}{\uclabel{generate}}
+\newcommand{\uclabelFMNmix}{\uclabel{mix}}
+
+\newcommand{\ucProtMN}[2]{\ucProtSubscript{MN}{#1,#2}}
+
+
+%%%%%%%%%%%%%%% Public key augmentation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFPKA}[3]{\ucFSubscript{PKA}{#1,#2,#3}}
+
+%%%%%%%%%%%%%%% Independent generator %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFIG}[2]{\ucFSubscript{IG}{#1,#2}}
+\newcommand{\uclabelFIGgenerate}{\uclabel{generate}}
+\newcommand{\ucProtIG}[2]{\ucProtSubscript{IG}{#1,#2}}
+
+%%%%%%%%%%%%%%% Coin flipping %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFCF}[2]{\ucFSubscript{CF}{#1,#2}}
+\newcommand{\uclabelFCFinitialize}{\uclabel{initialize}}
+\newcommand{\uclabelFCFgenerate}{\uclabel{generate}}
+
+\newcommand{\ucProtCF}[2]{\ucProtSubscript{CF}{#1,#2}}
+\newcommand{\uclabelCFshares}{\uclabel{shares}}
+
+\newcommand{\ucFCFvaluelabel}{\ell}
+
+% Maximum bit length
+\newcommand{\secpm}{\secpl{m}}
+
+% Protocol wrapping in a distributed public-coin protocol using the
+% coin-flipping functionality for verifier messages.
+\newcommand{\ucProtDPC}[2]{\ucProtSubscript{DPC}{#1,#2}}
+\newcommand{\uclabelFDPCinstance}{\uclabel{instance}}
+
+% Simulated distributed public coin protocol.
+\newcommand{\ucProtSDPC}[2]{\ucProtSubscript{SDPC}{#1,#2}}
+\newcommand{\uclabelFSDPCinstance}{\uclabel{instance}}
+
+% Coin-flipping including random oracle.
+\newcommand{\ucProtCFRO}{\ucProtSubscript{RO}{}}
+
+%%%%%%%%%%%%%%% Shuffler functionality %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFShuf}[2]{\ucFSubscript{S}{#1,#2}}
+\newcommand{\ucFShufAI}[2]{\ucFSubscript{SAI}{#1,#2}}
+
+\newcommand{\uclabelShufpk}{\uclabel{publickey}}
+\newcommand{\uclabelShufciphertexts}{\uclabel{ciphertexts}}
+\newcommand{\uclabelShufShuffled}{\uclabel{shuffled}}
+\newcommand{\uclabelShufGenerate}{\uclabel{generate}}
+
+\newcommand{\ucProtShuf}[2]{\ucProtSubscript{S}{#1,#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ideal functionalities and protocols for submission schemes.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%% Codebook generator %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFCG}[1]{\ucFSubscript{CG}{#1}}
+
+\newcommand{\uclabelCGvoterparams}{\uclabel{voterparams}}
+\newcommand{\uclabelCGsubmit}{\uclabel{submit}}
+\newcommand{\uclabelCGoutput}{\uclabel{output}}
+\newcommand{\uclabelCGhalt}{\uclabel{halt}}
+\newcommand{\uclabelCGmessage}{\uclabel{message}}
+
+\newcommand{\ucCGparams}{\mu}
+\newcommand{\ucCGparamsi}[1]{\ucCGparams_{#1}}
+\newcommand{\ucCGprob}{\delta}
+\newcommand{\ucCGfail}{\bot}
+\newcommand{\ucCGauditf}{f}
+
+% Enciphering function, i.e., essentially a linear map over
+% ciphertexts.
+\newcommand{\ucpcf}{f}
+\newcommand{\ucpcfi}[1]{\ucpcf_{#1}}
+\newcommand{\ucpcF}{F}
+
+
+%%%%%%%%%%%%%%% Encryption labels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\uclabelEciphertext}{\uclabel{ciphertext}}
+\newcommand{\uclabelEcorrupt}{\uclabel{corrupt}}
+\newcommand{\uclabelEencrypt}{\uclabel{encrypt}}
+\newcommand{\uclabelEmessage}{\uclabel{message}}
+\newcommand{\uclabelEverification}{\uclabel{verification}}
+\newcommand{\uclabelEchallenge}{\uclabel{challenge}}
+\newcommand{\uclabelEresponse}{\uclabel{response}}
+
+%%%%%%%%%%%%%%% Encryption parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFDEsampling}{\s}
+\newcommand{\ucFCEcorruptable}{\ccc}
+\newcommand{\ucFCEleak}{\kappa}
+\newcommand{\ucFCEleaki}[1]{\ucFCEleak_{#1}}
+
+%%%%%%%%%%%%%%% Direct encryption %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFDE}[1]{\ucFSubscript{DE}{#1}}
+\newcommand{\ucProtDE}[1]{\ucProtSubscript{DE}{#1}}
+
+%%%%%%%%%%%%%%% Corruptable encryption %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFBCE}[1]{\ucFSubscript{BCE}{#1}}
+\newcommand{\ucFCE}[1]{\ucFSubscript{CE}{#1}}
+
+%%%%%%%%%%%%%%% Challengeable encryption %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFCH}[1]{\ucFSubscript{CH}{#1}}
+
+%%%%%%%%%%%%%%% Verifiable encryption %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFVE}[1]{\ucFSubscript{VE}{#1}}
+
+\newcommand{\ucProtVE}[1]{\ucProtSubscript{VE}{#1}}
+
+\newcommand{\ucFVEfunction}{\nu}
+
+\newcommand{\ucProtRE}[1]{\ucProtSubscript{RE}{#1}}
+
+\newcommand{\ucProtBE}[1]{\ucProtSubscript{BE}{#1}}
+
+
+
+%%%%%%%%%%%%%%% Encryption method %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFEM}[1]{\ucFSubscript{EM}{#1}}
+\newcommand{\uclabelEMencrypt}{\uclabel{encrypt}}
+\newcommand{\uclabelEMmessage}{\uclabel{message}}
+\newcommand{\uclabelEMciphertext}{\uclabel{ciphertext}}
+\newcommand{\uclabelEMcorrupt}{\uclabel{corrupt}}
+
+%%%%%%%%%%%%%%% Leaking encryption method %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFLEM}[1]{\ucFSubscript{LEM}{#1}}
+\newcommand{\uclabelLEMencrypt}{\uclabel{encrypt}}
+\newcommand{\uclabelLEMmessage}{\uclabel{message}}
+\newcommand{\uclabelLEMciphertext}{\uclabel{ciphertext}}
+\newcommand{\uclabelLEMleak}{\uclabel{leak}}
+
+\newcommand{\ucFLEMfunction}{\kappa}
+
+
+
+%%%%%%%%%%%%%%% Encryption device %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFED}[1]{\ucFSubscript{ED}{#1}}
+\newcommand{\uclabelEDencrypt}{\uclabel{encrypt}}
+\newcommand{\uclabelEDmessage}{\uclabel{message}}
+\newcommand{\uclabelEDciphertext}{\uclabel{ciphertext}}
+\newcommand{\uclabelEDcorrupt}{\uclabel{corrupt}}
+
+
+%%%%%%%%%%%%%%% Encryption device %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFNY}[1]{\ucFSubscript{NY}{#1}}
+
+\newcommand{\ucFNYI}[1]{\ucFSubscript{NY-I}{#1}}
+
+\newcommand{\uclabelNYencrypt}{\uclabel{encrypt}}
+\newcommand{\uclabelNYciphertext}{\uclabel{ciphertext}}
+
+%%%%%%%%%%%%%%% Trusted encryptor functionality %%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFTE}[3]{\ucFSubscript{TE}{#1,#2,#3}}
+
+\newcommand{\uclabelTEpk}{\uclabel{pk}}
+\newcommand{\uclabelTEparams}{\uclabel{params}}
+\newcommand{\uclabelTEvoterparams}{\uclabel{voterparams}}
+\newcommand{\uclabelTEsubmit}{\uclabel{submit}}
+\newcommand{\uclabelTEoutput}{\uclabel{output}}
+\newcommand{\uclabelTEhalt}{\uclabel{halt}}
+\newcommand{\uclabelTEmessage}{\uclabel{message}}
+
+\newcommand{\ucTEparams}{\mu}
+\newcommand{\ucTEparamsi}[1]{\ucTEparams_{#1}}
+
+%%%%%%%%%%%%%%% Codebook generator device %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFCGD}[3]{\ucFSubscript{CGD}{#1,#2,#3}}
+\newcommand{\uclabelCGDsspk}{\uclabel{sigpk}}
+\newcommand{\uclabelCGDparams}{\uclabel{params}}
+\newcommand{\uclabelCGDrequest}{\uclabel{request}}
+\newcommand{\uclabelCGDcodebook}{\uclabel{codebook}}
+\newcommand{\uclabelCGDopen}{\uclabel{open}}
+\newcommand{\uclabelCGDrevoked}{\uclabel{revoked}}
+
+\newcommand{\uclabelCGDstatusfunc}{\zeta}
+
+%%%%%%%%%%%%%%% Ciphertext Submission Scheme %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\ucFCSS}[3]{\ucFSubscript{CSS}{#1,#2,#3}}
+\newcommand{\uclabelCSSpk}{\uclabel{public key}}
+\newcommand{\uclabelCSSc}{\uclabel{ciphertext}}
+\newcommand{\uclabelCSSh}{\uclabel{halt}}
+\newcommand{\uclabelCSSo}{\uclabel{output}}
+\newcommand{\uclabelCSSa}{\uclabel{ack}}
+\newcommand{\uclabelCSSx}{\uclabel{aux}}
+
+\newcommand{\ucFPSS}[3]{\ucFSubscript{PSS}{#1,#2,#3}}
+\newcommand{\uclabelPSSm}{\uclabel{plaintext}}
+
+
+%%%%%%%%%%%%%%% Submission parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ucFSSlog}{\LLL}
+\newcommand{\ucFSSlogset}{\Lambda}
+
+\newcommand{\ucFSSeligibilitypredicate}{\epsilon}
+\newcommand{\ucFSSoutputfilter}{\phi}
+\newcommand{\ucFSSidfilter}{\iota}
+\newcommand{\ucFSSackfilter}{\gamma}
+\newcommand{\ucFSSmessagefilter}{\mu}
+\newcommand{\ucFSSreceiptfilter}{\tau}
+\newcommand{\ucFSScorruptionfilter}{\kappa}
+\newcommand{\ucFSScorruptionfilteri}[1]{\ucFSScorruptionfilter_{#1}}
+\newcommand{\ucFSSappendpredicate}{\alpha}
+\newcommand{\ucFSSverificationfunction}{\nu}
+
+%%%%%%%%%%%%%%% Generalized Mix-net Gates %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Key generation gate.
+\newcommand{\ucgKGi}[1]{\ucgate{Gen}_{#1}}
+
+% Decryption gate.
+\newcommand{\ucgDeci}[1]{\ucgate{Dec}_{#1}}
+
+% Encryption gate.
+\newcommand{\ucgEnc}[1]{\ucgate{Enc}[#1]}
+
+% Shuffle gate.
+\newcommand{\ucgShufi}[1]{\ucgate{Shuf}_{#1}}
+
+
+%%% Local Variables:
+%%% TeX-master: "evs"
+%%% End:

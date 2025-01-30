@@ -1,0 +1,33 @@
+% Copyright 2006-2024 Douglas Wikstrom All Rights Reserved
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Macros which simplify definition of other macros, or make things
+% look better.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Macro used to typeset variable size left-middle-right commands.
+\newcommand{\twincommand}[5]%
+{\left #1 \vphantom{#4}#2 \left #3 #4\vphantom{#2} \right.\right #5}
+
+% Replace ugly default \emptyset by \varnothing.
+\makeatletter
+\let\OLDemptyset\emptyset
+\@ifundefined{varnothing}{%
+  % nothing to do
+}{%
+  \renewcommand*{\emptyset}{\varnothing}%
+}
+\makeatother
+
+% AND and OR with some added space around them.
+\newcommand{\wland}{\,\land\,}
+\newcommand{\wlor}{\,\lor\,}
+
+% Pair, triple, quadruple specifying a word, e.g., (2,3)-something.
+\newcommand{\tpxx}[2]{\left(#1,#2\right)}
+\newcommand{\tpxxx}[3]{\left(#1,#2,#3\right)}
+\newcommand{\tpxxxx}[4]{\left(#1,#2,#3,#4\right)}
+
+%%% Local Variables:
+%%% TeX-master: "evs"
+%%% End:
