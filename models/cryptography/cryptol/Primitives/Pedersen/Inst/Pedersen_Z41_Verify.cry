@@ -1,0 +1,36 @@
+/**
+ * Verification of k-Pedersen Commitments in the context
+ * of the additive group of integers modulo 41 (ℤ/41ℤ)
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::Pedersen::Inst::Pedersen_Z41_Verify where
+
+import Primitives::Pedersen::Inst::Pedersen_Z41
+
+/**
+ * Proof that k-Pedersen is correct when instantiated with
+ * the additive group of integers modulo 41 (ℤ/41ℤ)
+ * ```repl
+ * :set tests = 10000
+ * :prove Comm_valid
+ * :prove Comm'Seeded_valid
+ * :prove kComm_valid`{1}
+ * :prove kComm_valid`{2}
+ * :prove kComm_valid`{3}
+ * :prove kComm'Seeded_valid`{1}
+ * :prove kComm'Seeded_valid`{2}
+ * :prove kComm'Seeded_valid`{3}
+ * :prove Open_sound
+ * :check Open'Seeded_sound
+ * :prove kOpen_sound`{1}
+ * :prove kOpen_sound`{2}
+ * :prove kOpen_sound`{3}
+ * :check kOpen'Seeded_sound`{1}
+ * :check kOpen'Seeded_sound`{2}
+ * :check kOpen'Seeded_sound`{3}
+ * ```
+ */
+Discharge_POs = True // we need something to annotate

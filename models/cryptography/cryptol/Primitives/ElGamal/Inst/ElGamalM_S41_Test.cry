@@ -1,0 +1,79 @@
+/**
+ * Smoke test of ElGamal’s Cryptosystem in the context
+ * of a Schnorr Group of order 41 - Monadic Version
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::Inst::ElGamalM_S41_Test where
+
+import Primitives::ElGamal::Inst::ElGamalM_S41
+import Algebra::Encoders::Inst::Encoder_S41
+import Algebra::Encoders::Inst::EncoderUtils_S41
+
+/**
+ * We import the monadic core modules.
+ */
+import Algebra::StateMonad
+import Algebra::RandomMonad
+
+/**
+ * Monadic computation encrypting five group elements.
+ *
+ * @note It would be more elegant to left-fold bind (>>=)
+ * over the list of computations `(map (enc_decM kp) tv)`.
+ * However, this pushes Cryptol typing beyond its limits:
+ * `foldl (>>=) (return []) (map (enc_decM kp) tv)` is
+ * actually not well-typed in Cryptol.
+ */
+mainM : [5]G -> rngState ([5]G)
+mainM tv = (setSeed 42)
+  >>* GenM
+  >>= (\kp -> (return [])
+  >>= (enc_decM kp (tv @ 0))
+  >>= (enc_decM kp (tv @ 1))
+  >>= (enc_decM kp (tv @ 2))
+  >>= (enc_decM kp (tv @ 3))
+  >>= (enc_decM kp (tv @ 4)))
+
+/**
+ * Monadic computation encrypting five group elements.
+ *
+ * This version of mainM produces additional trace messages.
+ */
+mainM'trace : [5]G -> rngState ([5]G)
+mainM'trace tv = (setSeed 42)
+  >>* GenM
+  >>= (\kp -> (return [])
+  >>= (trace_enc_decM kp (tv @ 0))
+  >>= (trace_enc_decM kp (tv @ 1))
+  >>= (trace_enc_decM kp (tv @ 2))
+  >>= (trace_enc_decM kp (tv @ 3))
+  >>= (trace_enc_decM kp (tv @ 4)))
+
+/**
+ * Simple testing function encrypting and decrypting five messages.
+ */
+main : [5][bits]
+main = tv'dec
+  where tv = [0, 1, 5, 23, 31]
+        tv'enc = map Strict'Encode tv
+        tv'run = evalState0 (mainM tv'enc)
+        tv'dec = map Strict'Decode tv'run
+
+/**
+ * Simple testing function encrypting and decrypting five messages
+ * while producing additional trace output.
+ *
+ * @note The trace[Val] functions is currently not supported by
+ * the Cryptol to Rust compiler; the code below does compile
+ * but throws a runtime error (panic) when executed, indicating
+ * that `trace` is not implemented yet.
+ */
+main'trace : [5][bits]
+main'trace = traceVal "test result:" tv'dec
+  where tv = traceVal "test vector:" [0, 1, 5, 23, 31]
+        tv'enc = map Strict'Encode tv
+        tv'run = evalState0 (mainM'trace tv'enc)
+        tv'dec = map Strict'Decode tv'run

@@ -1,0 +1,12 @@
+/**
+ * Instance of k-Pedersen Commitments in the context of
+ * the NIST P-224 Elliptic Curve defined in [FIPS-186-5]
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::Pedersen::Inst::Pedersen_P224 =
+  Primitives::Pedersen::Pedersen {
+    Algebra::Groups::Inst::PFECGroupP224
+  }

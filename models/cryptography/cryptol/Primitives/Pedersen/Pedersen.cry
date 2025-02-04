@@ -1,0 +1,215 @@
+/**
+ * k-Pedersen Commitment Scheme
+ * Section 10.3 of the EVS Draft, February 3, 2025.
+ *
+ * @note Versions of [k]Comm and [k]Open that use
+ * Cyptol's `random _` function with a single seed
+ * are provided in a separate module PedersenSeeded.cry.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::Pedersen::Pedersen where
+
+import Algebra::Set
+
+import interface Algebra::CyclicGroupI
+
+/**
+ * Import derived functions for cyclic groups.
+ */
+import Algebra::CyclicGroupUtils { interface CyclicGroupI } (gproduct)
+
+/**
+ * Reexports type universe of group elements as G.
+ */
+type G = T
+
+/**
+ * Reexports number of group elements (order) as N.
+ *
+ * @todo The group order must be prime in order to
+ * ensure that randomly generated group elements are
+ * also generators. How do we enforce this here?
+ */
+type N = order
+
+/**
+ * For convenience, we define a custom infix syntax
+ * for equality of group elements (≡) and overload
+ * the builtin infix syntax for multiplication and
+ * exponentation to use the group operations. This
+ * makes the Cryptol model look more closely aligned
+ * with the mathematical presentation of k-Pedersen,
+ * i.e., in the EVS draft.
+ */
+infix 20 ≡
+private (≡) = T'eq
+private (*)  = gop
+private (^^) = exp
+
+/**
+ * Encoding of a k-Pedersen commitment
+ *
+ * @note We include all generators (g, h1, h2, .., hk)
+ * into the underlying the data structure. This subsumes
+ * the encoding of a simple Pedersen commitment with only
+ * two generators `(g, h)`.
+ */
+type Commitment k = {g : G, hs : [k]G, c : G}
+
+/**
+ * Determines if a Commitment is well formed
+ */
+is_valid_Commitment : {k} (fin k, k > 0) => Commitment k -> Bool
+is_valid_Commitment c =
+  c.g ∈ G /\ (all inG c.hs) /\ c.c ∈ G
+  where inG x = x ∈ G
+
+/**
+ * Generates a (simple) Pedersen commitment
+ *
+ * The result is an element of type `Commitment 1`.
+ * @param r1 random bits to create generator g
+ * @param r2 random bits to create generator h
+ * @param r fresh random exponent (0 < r < `N)
+ * @param m secret message to commit to (0 < m < `N)
+ */
+Comm : [rngbits] -> [rngbits] -> (Z order) -> (Z order) -> Commitment 1
+Comm r1 r2 r m = kComm`{1} [r1, r2] r [m]
+
+/**
+ * Generates a k-Pedersen commitment
+ *
+ * The result is an instance of type `Commitment k`.
+ * @param rs a list of bit strings used to generate random
+ *        group elements for the generator `g` and list of
+ *        generators `hs` that encode the message vector.
+ * @param r fresh random exponent (0 < r < `N)
+ * @param ms list of secret messages to commit to;
+ *        for each m in ms we require 0 < m < `order
+ */
+kComm : {k} (fin k, k > 0) =>
+        [k + 1][rngbits] -> (Z order) -> [k](Z order) -> Commitment k
+kComm rs r ms = {g = g', hs = hs, c = (g' ^^ (fromZ r)) * (gproduct fs)}
+  where g' = gen (head rs)
+        hs = map gen (tail rs)
+        fs = [h ^^ (fromZ m) | h <- hs | m <- ms]
+        // equiv. zipWith (^^) hs (map fromZ ms)
+
+/**
+ * Opens/verifies a (simple) Pedersen commitment
+ */
+Open : Commitment 1 -> (Z order) -> (Z order) -> Bool
+Open comm r m = kOpen`{1} comm r [m]
+
+/**
+ * Opens/verifies a k-Pedersen commitment
+ */
+kOpen : {k} (fin k, k > 0) => Commitment k -> (Z order) -> [k](Z order) -> Bool
+kOpen comm r ms = comm.c ≡ (comm.g ^^ (fromZ r)) * (gproduct fs)
+  where fs = [h ^^ (fromZ m) | h <- comm.hs | m <- ms]
+        // equiv. zipWith (^^) comm.hs (map fromZ ms)
+
+/*********************/
+/* Testing Functions */
+/*********************/
+
+/**
+ * Smoke test that creates a Pedersen commitment for a single
+ * message, using a single seed for random element generation.
+ * The function returns `True` iff the subsequent opening of the
+ * commitment succeeds.
+ */
+create_and_open_one : (Z order) -> (Z order) -> Bit
+create_and_open_one r m = open
+  where comm = Comm 0 1 r m
+        open = Open comm r m
+
+/**
+ * Smoke test that creates a Pedersen commitment for a single
+ * message, using a single seed for random element generation.
+ * The function returns `True` iff the subsequent opening of the
+ * commitment succeeds. Unlike `create_and_open_one`, it produces
+ * additional trace output for debugging.
+ */
+create_and_open_one'trace : (Z order) -> (Z order) -> Bit
+create_and_open_one'trace r m = open
+  where msg  = traceVal "Message:" m
+        comm = traceVal "Commitment:" (Comm 0 1 r msg)
+        open = traceVal "Verified:" (Open comm r msg)
+
+/**
+ * Smoke test that creates a k-Pedersen commitment for a list of
+ * messages, using a single seed for random element generation.
+ * The function returns `True` iff the subsequent opening of the
+ * commitment succeeds.
+ */
+create_and_open : {k} (fin k, k > 0) => (Z order) -> [k](Z order) -> Bit
+create_and_open r ms = open
+  where rs = zero
+        comm = kComm rs r ms
+        open = kOpen comm r ms
+
+/**
+ * Smoke test that creates a k-Pedersen commitment for a list of
+ * messages, using a single seed for random element generation.
+ * The function returns `True` iff the subsequent opening of the
+ * commitment succeeds. Unlike `create_and_open`, it produces
+ * additional trace output for debugging.
+ */
+create_and_open'trace : {k} (fin k, k > 0) => (Z order) -> [k](Z order) -> Bit
+create_and_open'trace r ms = open
+  where rs = map fromInteger [0 .. k]
+        msgs = traceVal "Messages:" ms
+        comm = traceVal "Commitment:" (kComm rs r msgs)
+        open = traceVal "Verified:" (kOpen comm r ms)
+
+/**************************/
+/* Algorithm Verification */
+/**************************/
+
+/**
+ * Creating a (simple) Pedersen commitment produces a valid instance.
+ */
+property Comm_valid r1 r2 r m =
+  is_valid_Commitment comm
+  where comm = Comm r1 r2 r m
+
+/**
+ * Creating a k-Pedersen commitment produces a valid instance.
+ */
+kComm_valid : {k} (fin k, k > 0) =>
+              [k + 1][rngbits] -> (Z order) -> [k](Z order) -> Bool
+property kComm_valid rs r ms =
+  is_valid_Commitment comm
+  where comm = kComm rs r ms
+
+/**
+ * Opening a (simple) Pedersen commitment succeeds if the correct
+ * randomizers and message is passed.
+ *
+ * @note This does not imply that opening a Pedersen commitment
+ * fails otherwise. Failure if incorrect values are passed is a
+ * probabilistic property and thus outside the scope of reasoning
+ * for Cryptol.
+ */
+property Open_sound r1 r2 r m =
+  Open comm r m
+  where comm = Comm r1 r2 r m
+
+/**
+ * Opening a k-Pedersen commitment succeeds if the correct randomizers
+ * and messages are passed.
+ *
+ * @note This does not imply that opening a Pedersen commitment
+ * fails otherwise. Failure if incorrect values are passed is a
+ * probabilistic property and thus outside the scope of reasoning
+ * for Cryptol.
+ */
+kOpen_sound : {k} (fin k, k > 0) =>
+              [k + 1][rngbits] -> (Z order) -> [k](Z order) -> Bool
+property kOpen_sound rs r ms =
+  kOpen comm r ms
+  where comm = kComm rs r ms

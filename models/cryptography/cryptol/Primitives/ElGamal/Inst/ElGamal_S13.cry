@@ -1,0 +1,12 @@
+/**
+ * Instance of ElGamal’s Cryptosystem in the context
+ * of a Schnorr Group of order 13
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::Inst::ElGamal_S13 =
+  Primitives::ElGamal::ElGamal {
+    Algebra::Groups::Inst::SchnorrGroup13
+  }

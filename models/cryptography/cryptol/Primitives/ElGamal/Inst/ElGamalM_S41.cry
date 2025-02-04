@@ -1,0 +1,12 @@
+/**
+ * Instance of ElGamal’s Cryptosystem in the context
+ * of a Schnorr Group of order 41 - Monadic Version
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::Inst::ElGamalM_S41 =
+  Primitives::ElGamal::ElGamalM {
+    Algebra::Groups::Inst::SchnorrGroup41
+  }

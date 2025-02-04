@@ -1,0 +1,40 @@
+/**
+ * Smoke test of ElGamal’s Cryptosystem in the context
+ * of a Schnorr Group of order 41 and bijective encoding
+ * via the tau function (Section 10.1 of the EVS draft).
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::Inst::ElGamal_S41_Test where
+
+import Primitives::ElGamal::Inst::ElGamal_S41
+import Algebra::Encoders::Inst::Encoder_S41
+import Algebra::Encoders::Inst::EncoderUtils_S41
+
+/**
+ * Simple testing function encrypting and decrypting five messages.
+ */
+main : [5][bits]
+main = tv'dec
+  where tv = [0, 1, 5, 23, 31]
+        tv'enc = map Strict'Encode tv
+        tv'run = map (gen_enc_dec 1 2) tv'enc
+        tv'dec = map Strict'Decode tv'run
+
+/**
+ * Simple testing function encrypting and decrypting five messages
+ * while producing additional trace output.
+ *
+ * @note The trace[Val] functions is currently not supported by
+ * the Cryptol to Rust compiler; the code below does compile
+ * but throws a runtime error (panic) when executed, indicating
+ * that `trace` is not implemented yet.
+ */
+main'trace : [5][bits]
+main'trace = traceVal "test result:" tv'dec
+  where tv = traceVal "test vector:" [0, 1, 5, 23, 31]
+        tv'enc = map Strict'Encode tv
+        tv'run = map (gen_enc_dec 1 2) tv'enc
+        tv'dec = map Strict'Decode tv'run

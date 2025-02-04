@@ -1,0 +1,142 @@
+/**
+ * Generic ElGamal Cryptosystem
+ * Section 10.4 of the EVS Draft, February 3, 2025.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::ElGamal where
+
+import Algebra::Set
+
+import interface Algebra::CyclicGroupI
+
+/**
+ * Reexports type universe of group elements as G.
+ */
+type G = T
+
+/**
+ * Reexports number of group elements (order) as N.
+ */
+type N = order
+
+/**
+ * For convenience, we define a custom infix syntax
+ * for equality of group elements (≡) and overload
+ * the builtin infix syntax for multiplication and
+ * exponentation to use the group operations. This
+ * makes the Cryptol model look more closely aligned
+ * with the mathematical presentation of ElGamal, i.e.,
+ * in the EVS draft.
+ */
+infix 20 ≡
+private (≡) = T'eq
+private (*)  = gop
+private (^^) = exp
+
+/**
+ * ElGamal public/secret key pair
+ */
+type KeyPair = {pk : (T, T), sk : Integer}
+
+/**
+ * Determines if a given KeyPair is valid.
+ */
+is_valid_KeyPair : KeyPair -> Bit
+is_valid_KeyPair kp =
+  pk.0 ∈ G /\
+  pk.1 ∈ G /\
+  pk.1 ≡ pk.0 ^^ sk /\
+  sk > 0 /\ sk < `order
+  where pk = kp.pk
+        sk = kp.sk
+
+/**
+ * Generates an ElGamal KeyPair from a given secret key x.
+ *
+ * @pre x must be in the range [1 ..< order].
+ */
+Gen : Integer -> KeyPair
+Gen x = {pk = (g, y), sk = x} where y = g ^^ x
+
+/**
+ * Encrypts a message m with a public key pk and randomness r.
+ */
+Enc : (T, T) -> T -> Integer -> (T, T)
+Enc pk m r = (g' ^^ r, (y ^^ r) * m) where (g', y) = pk
+
+/**
+ * Decrypts a cipher text (u, v) with a secret key sk.
+ */
+Dec : Integer -> (T, T) -> T
+Dec sk (u, v) = ((inv u) ^^ sk) * v
+
+/**
+ * Mixes two ciphertexts homomorphically.
+ */
+Mix : (T, T) -> (T, T) -> (T, T)
+Mix (c1, c2) (d1, d2) = (c1 * d1, c2 * d2)
+
+/**
+ * Mixes a list of ciphertexts homomorphically.
+ */
+MixList : {n} (fin n, n >= 1) => [n](T, T) -> (T, T)
+MixList l = foldl Mix (head l) (tail l)
+
+/*********************/
+/* Testing Functions */
+/*********************/
+
+/**
+ * Roundtrip function that performs key generation, encryption,
+ * and decryption of a message m : T, based on two random values
+ * r0 and r1, where r0 is used to generate the KeyPair and r1 is
+ * used as randomness for message encryption.
+ */
+gen_enc_dec : Integer -> Integer -> G -> G
+gen_enc_dec r0 r1 m =
+  Dec kp.sk (Enc kp.pk m r1)
+  where kp = Gen r0
+
+/**
+ * Roundtrip function that performs key generation, encryption,
+ * and decryption of a message m : T, based on two random values
+ * r0 and r1, where r0 is used to generate the KeyPair and r1 is
+ * used as randomness for message encryption. Unlike gen_enc_dec,
+ * this function produces additional trace output for debugging.
+ */
+trace_gen_enc_dec : Integer -> Integer -> G -> G
+trace_gen_enc_dec r0 r1 m = d
+  where kp = Gen r0
+        c  = trace "Plaintext:"  m (Enc kp.pk m r1)
+        m' = trace "Ciphertext:" c (Dec kp.sk c)
+        d  = traceVal "Decrypted:" m'
+
+/**************************/
+/* Algorithm Verification */
+/**************************/
+
+/**
+ * Key generation produces a valid key pair.
+ *
+ * Key (Gen)eration uses the give random integer r0.
+ * @note We assume r0 is in the range [1 ..< order].
+ */
+property gen_valid_keypair (r0 : Integer) =
+  r0 > 0 /\ r0 < `order ==> is_valid_KeyPair (Gen r0)
+
+/**
+ * Decryption followed by encryption returns the same message.
+ *
+ * In other words, function Dec is the inverse of function Enc.
+ * Key (Gen)eration and (Enc)ryption use random integers r0 and r1.
+ *
+ * @note For some groups such as ℤ/nℤ or Schnorr with r = 2, the
+ * guard m ∈ G is actually not required for correctness of ElGamal.
+ * However, for expected security properties to hold, all encoded
+ * messages values must be from the subgroup G.
+ */
+property gen_enc_dec_inverse (r0 : Integer) (r1 : Integer) (m : T) =
+  m ∈ G ==> (gen_enc_dec r0 r1 m) ≡ m

@@ -1,0 +1,233 @@
+/**
+ * k-Pedersen Commitment Scheme (seeded variants)
+ * Section 10.3 of the EVS Draft, February 3, 2025.
+ *
+ * @note The Cryptol-to-Rust code generator does not
+ * support Cryptol's `random _` function yet. While
+ * the smoke tests do not call it, it turns out that
+ * compilation errors may nonetheless arise. Hence,
+ * factor out the seeded variants of functions from
+ * PedersenSeeded.cry into a module here.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::Pedersen::PedersenSeeded where
+
+import Algebra::Set
+
+import interface Algebra::CyclicGroupI
+
+/**
+ * Reexports type universe of group elements as G.
+ */
+type G = T
+
+/**
+ * Reexports number of group elements (order) as N.
+ *
+ * @todo The group order must be prime in order to
+ * ensure that randomly generated group elements are
+ * also generators. How do we enforce this here?
+ */
+type N = order
+
+/**
+ * For convenience, we define a custom infix syntax
+ * for equality of group elements (≡) and overload
+ * the builtin infix syntax for multiplication and
+ * exponentation to use the group operations. This
+ * makes the Cryptol model look more closely aligned
+ * with the mathematical presentation of k-Pedersen,
+ * i.e., in the EVS draft.
+ */
+infix 20 ≡
+private (≡) = T'eq
+private (*)  = gop
+private (^^) = exp
+
+/*******************/
+/* Pedersen Import */
+/********************/
+
+/**
+ * We import the unseeded [k]Comm and [k]Open functions.
+ */
+import module Primitives::Pedersen::Pedersen { interface CyclicGroupI } as PC
+
+/*
+ * Reexport relevant types and functions from Pedersen.
+ *
+ * @note Cryptol import is generally not transitive.
+ */
+
+/**
+ * Reexport type definitions and validity predicates.
+ */
+type Commitment k = PC::Commitment k
+
+is_valid_Commitment : {k} (fin k, k > 0) => Commitment k -> Bool
+is_valid_Commitment = PC::is_valid_Commitment
+
+/**
+ * Reexport Pedersen cryptographic functions.
+ *
+ * @note Due what I presume to be a bug in bug in Cryptol, we
+ * cannot just use an equality for type-parametric definitions
+ * but have to declare the function with their full type again.
+ * Otherwise, we end up with a definition whose type, for some
+ * reason, we cannot instantiate anymore.
+ *
+ * @todo File a respective bug report in the cryptol repository.
+ */
+Comm : [rngbits] -> [rngbits] -> (Z order) -> (Z order) -> Commitment 1
+Comm = PC::Comm
+
+kComm : {k} (fin k, k > 0) =>
+        [k + 1][rngbits] -> (Z order) -> [k](Z order) -> Commitment k
+kComm = PC::kComm`{k}
+
+Open : Commitment 1 -> (Z order) -> (Z order) -> Bool
+Open = PC::Open
+
+kOpen : {k} (fin k, k > 0) => Commitment k -> (Z order) -> [k](Z order) -> Bool
+kOpen = PC::kOpen`{k}
+
+/**
+ * Reexport testing functions
+ */
+create_and_open_one : (Z order) -> (Z order) -> Bit
+create_and_open_one       = PC::create_and_open_one
+
+create_and_open_one'trace : (Z order) -> (Z order) -> Bit
+create_and_open_one'trace = PC::create_and_open_one'trace
+
+create_and_open : {k} (fin k, k > 0) => (Z order) -> [k](Z order) -> Bit
+create_and_open           = PC::create_and_open
+
+create_and_open'trace : {k} (fin k, k > 0) => (Z order) -> [k](Z order) -> Bit
+create_and_open'trace     = PC::create_and_open'trace
+
+/**
+ * Reexport verification properties
+ */
+Comm_valid : [rngbits] -> [rngbits] -> (Z order) -> (Z order) -> Bool
+Comm_valid  = PC::Comm_valid
+
+kComm_valid : {k} (fin k, k > 0) =>
+              [k + 1][rngbits] -> (Z order) -> [k](Z order) -> Bool
+kComm_valid = PC::kComm_valid`{k}
+
+Open_sound : [rngbits] -> [rngbits] -> (Z order) -> (Z order) -> Bool
+Open_sound  = PC::Open_sound
+
+kOpen_sound : {k} (fin k, k > 0) =>
+              [k + 1][rngbits] -> (Z order) -> [k](Z order) -> Bool
+kOpen_sound = PC::kOpen_sound
+
+/******************************************/
+/* Seeded variants of [k]Comm and k[Open] */
+/******************************************/
+
+// These are parametrized by way of a single random seed.
+
+/**
+ * Generates a (simple) Pedersen commitment from a seed
+ *
+ * This version uses the built-in `random` function of
+ * Cryptol to create random generations and exponent.
+ * The result is an element of type `Commitment 1`.
+ * @param seed seed from which to create all random values
+ * @param m secret message to commit to (0 < m < `N)
+ */
+Comm'Seeded : [256] -> (Z order) -> Commitment 1
+Comm'Seeded seed m = PC::Comm r1 r2 r m
+  // use Cryptol's built-in `random` function
+  where [r1, r2] = random (seed)
+        r        = random (seed + 1)
+
+/**
+ * Generates a k-Pedersen commitment from a seed
+ *
+ * This version uses the built-in `random` function of
+ * Cryptol to create random generations and exponent.
+ * The result is an instance of type `Commitment k`.
+ * @param seed seed from which to create all random values
+ * @param ms list of secret messages to commit to;
+ *        for each m in ms we require 0 < m < `order
+ */
+kComm'Seeded : {k} (fin k, k > 0) => [256] -> [k](Z order) -> Commitment k
+kComm'Seeded seed ms = PC::kComm rs r ms
+  // use Cryptol's built-in `random` function
+  where rs = random (seed)
+        r  = random (seed + 1)
+
+/**
+ * Opens/verifies a (simple) Pedersen commitment
+ */
+Open'Seeded : Commitment 1 -> [256] -> (Z order) -> Bool
+Open'Seeded comm seed m = PC::Open comm r m
+  where r = random (seed + 1)
+
+/**
+ * Opens/verifies a seeded k-Pedersen commitment
+ */
+kOpen'Seeded : {k} (fin k, k > 0) => Commitment k -> [256] -> [k](Z order) -> Bool
+kOpen'Seeded comm seed ms = PC::kOpen comm r ms
+  where r = random (seed + 1)
+
+/*********************/
+/* Testing Functions */
+/*********************/
+
+/* Note that at the time of writing this component, the Cryptol
+ * to Rust compiler does not support the `random _` function of
+ * Cryptol. Hence we are not using the seeded versions below. */
+
+/**************************/
+/* Algorithm Verification */
+/**************************/
+
+/**
+ * Creating a seeded (simple) Pedersen commitment produces a valid
+ * instance.
+ */
+property Comm'Seeded_valid seed m =
+  is_valid_Commitment comm
+  where comm = Comm'Seeded seed m
+
+/**
+ * Creating a seeded k-Pedersen commitment produces a valid instance.
+ */
+kComm'Seeded_valid : {k} (fin k, k > 0) => [256] -> [k](Z order) -> Bool
+property kComm'Seeded_valid seed ms =
+  is_valid_Commitment comm
+  where comm = kComm'Seeded seed ms
+
+/**
+ * Opening a seeded (simple) Pedersen commitment succeeds if the
+ * correct randomizers and message is passed.
+ *
+ * @note This does not imply that opening a Pedersen commitment
+ * fails otherwise. Failure if incorrect values are passed is a
+ * probabilistic property and thus outside the scope of reasoning
+ * for Cryptol.
+ */
+property Open'Seeded_sound seed m =
+  Open'Seeded comm seed m
+  where comm = Comm'Seeded seed m
+
+/**
+ * Opening a seeded k-Pedersen commitment succeeds if the correct
+ * randomizers and messages are passed.
+ *
+ * @note This does not imply that opening a Pedersen commitment
+ * fails otherwise. Failure if incorrect values are passed is a
+ * probabilistic property and thus outside the scope of reasoning
+ * for Cryptol.
+ */
+kOpen'Seeded_sound : {k} (fin k, k > 0) => [256] -> [k](Z order) -> Bool
+property kOpen'Seeded_sound seed ms =
+  kOpen'Seeded comm seed ms
+  where comm = kComm'Seeded seed ms

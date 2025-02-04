@@ -1,0 +1,11 @@
+/**
+ * Rust entry for smoke test of ElGamal’s Cryptosystem
+ * in the context of a Schnorr Group of order 41 - Monadic Version
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+import Primitives::ElGamal::Inst::ElGamalM_S41_Test as Test
+
+main = Test::main

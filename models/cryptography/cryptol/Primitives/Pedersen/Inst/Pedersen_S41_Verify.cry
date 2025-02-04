@@ -1,0 +1,46 @@
+/**
+ * Verification of k-Pedersen Commitments in the context
+ * of a Schnorr Group of order 41
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::Pedersen::Inst::Pedersen_S41_Verify where
+
+import Primitives::Pedersen::Inst::Pedersen_S41
+
+/**
+ * Proof that k-Pedersen is correct when instantiated with
+ * a Schnorr Group of order 41
+ * ```repl
+ * :set tests = 10000
+ * :check Comm_valid
+ * :exhaust Comm_valid 0 0
+ * :exhaust Comm_valid 0 1
+ * :exhaust Comm_valid 1 0
+ * :exhaust Comm_valid 1 1
+ * :check   Comm'Seeded_valid
+ * :exhaust Comm'Seeded_valid 0
+ * :exhaust Comm'Seeded_valid 1
+ * :check kComm_valid`{1}
+ * :check kComm_valid`{2}
+ * :check kComm_valid`{3}
+ * :check kComm'Seeded_valid`{1}
+ * :check kComm'Seeded_valid`{2}
+ * :check kComm'Seeded_valid`{3}
+ * :check   Open_sound
+ * :exhaust Open_sound 0 0
+ * :exhaust Open_sound 0 1
+ * :exhaust Open_sound 1 0
+ * :exhaust Open_sound 1 1
+ * :check Open'Seeded_sound
+ * :check kOpen_sound`{1}
+ * :check kOpen_sound`{2}
+ * :check kOpen_sound`{3}
+ * :check kOpen'Seeded_sound`{1}
+ * :check kOpen'Seeded_sound`{2}
+ * :check kOpen'Seeded_sound`{3}
+ * ```
+ */
+Discharge_POs = True // we need something to annotate

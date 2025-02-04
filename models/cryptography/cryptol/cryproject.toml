@@ -1,4 +1,5 @@
 modules = [
   "Algebra/**/*.cry",
-  "Common/**/*.cry"
+  "Common/**/*.cry",
+  "Primitives/**/*.cry"
 ]

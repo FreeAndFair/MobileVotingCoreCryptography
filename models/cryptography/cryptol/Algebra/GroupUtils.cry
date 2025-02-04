@@ -1,0 +1,21 @@
+/**
+ * Group Utility Functions
+ *
+ * These are generic functions that can be derived
+ * from the group types, constants and operations.
+ *
+ * @review Define generic exponentiation here as well?
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::GroupUtils where
+
+import interface Algebra::GroupI
+
+/**
+ * Product of a list of group elements
+ */
+gproduct : {n} (fin n) => [n]T -> T
+gproduct = foldl gop identity

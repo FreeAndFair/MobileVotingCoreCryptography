@@ -1,0 +1,12 @@
+/**
+ * Utilities for bitstring encoding of message in the
+ * NIST P-224 Elliptic Curve defined in [FIPS-186-5].
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::Inst::EncoderUtils_P224 =
+       Algebra::EncoderUtils {
+  Algebra::Encoders::Inst::Encoder_P224
+}

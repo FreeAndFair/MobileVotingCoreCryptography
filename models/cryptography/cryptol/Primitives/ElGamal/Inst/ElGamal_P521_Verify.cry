@@ -1,0 +1,22 @@
+/**
+ * Verification of ElGamal’s Cryptosystem in the context of
+ * the NIST P-521 Elliptic Curve defined in [FIPS-186-5]
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::Inst::ElGamal_P521_Verify where
+
+import Primitives::ElGamal::Inst::ElGamal_P521
+
+/**
+ * Proof that ElGamal is correct when instantiated with
+ * the NIST P-521 Elliptic Curve defined in [FIPS-186-5]
+ * ```repl
+ * :set tests = 10000
+ * :check gen_valid_keypair
+ * :check gen_enc_dec_inverse
+ * ```
+ */
+Discharge_POs = True // we need something to annotate

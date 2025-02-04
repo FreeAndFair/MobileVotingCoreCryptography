@@ -1,5 +1,5 @@
 /**
- * Encoding all messages in the Schnorr Group with a
+ * Encoding of all messages in the Schnorr Group with a
  * prime order of 13 by exponentiation of the generator.
  *
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)

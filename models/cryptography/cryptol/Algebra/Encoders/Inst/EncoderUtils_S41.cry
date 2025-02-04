@@ -1,0 +1,13 @@
+/**
+ * Utilities for bitstring encoding of message in
+ * the Schnorr Group with a prime order of 41 and
+ * r of 2 using the tau function (default encoding).
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::Inst::EncoderUtils_S41 =
+       Algebra::EncoderUtils {
+  Algebra::Encoders::Inst::Encoder_S41
+}

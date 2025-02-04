@@ -263,12 +263,21 @@ private
    * @see https://en.wikipedia.org/wiki/Tonelli%E2%80%93Shanks_algorithm
    */
   findLeasti : {p} (oddprime p) => Integer -> Z p -> Integer
-  findLeasti M t = findLeasti'aux 1 (t * t) where
-    findLeasti'aux : Integer -> Z p -> Integer
-    findLeasti'aux i t2i =
-      if t2i == 1 then i
-       |   i  > M then error "unexpected algorithmic behavior (?)"
-      else findLeasti'aux (i + 1) (t2i * t2i)
+  findLeasti M t = findLeasti'aux M 1 (t * t) // where
+  //  findLeasti'aux : Integer -> Z p -> Integer
+  //  findLeasti'aux i t2i =
+  //     if t2i == 1 then i
+  //      |   i  > M then error "unexpected algorithmic behavior (?)"
+  //     else findLeasti'aux (i + 1) (t2i * t2i)
+
+  // @note The cryptol-compiler currently does not support local
+  // functions with closures like the one commented out above; hence,
+  // we had to factor out findLeasti'aux into a separate function.
+  findLeasti'aux : {p} (oddprime p) => Integer -> Integer -> Z p -> Integer
+  findLeasti'aux M i t2i =
+    if t2i == 1 then i
+     |   i  > M then error "unexpected algorithmic behavior (?)"
+    else findLeasti'aux M (i + 1) (t2i * t2i)
 
   /**
    * Utility function for `tonelli_shanks`.
@@ -279,10 +288,17 @@ private
   tonelli_shanks'loop M c t R =
     if t == 0 then 0
      | t == 1 then R
-     | i == M then error "tonelli_shanks applied to quadratic nonresidue"
-    else tonelli_shanks'loop i (b * b) (t * b * b) (R * b)
-    where i = findLeasti M t
-          b = c^^(2^^(M - i - 1))
+    else (
+      /* @note Calculating `i` and `b` in the else scope is crucial
+       * to avoid issues due to eager evaluation of those constants
+       * by the generated Rust code (whereas Cryptol acts lazily here). */
+      if i == M then error "tonelli_shanks applied to quadratic nonresidue"
+      else (
+        tonelli_shanks'loop i (b * b) (t * b * b) (R * b)
+        where b = c^^(2^^(M - i - 1))
+      )
+      where i = findLeasti M t
+    )
 
 /**
  * Finds a square root of a given quadratic residue using the Tonelli-Shanks

@@ -1,0 +1,133 @@
+/**
+ * Pseudo-Random Generator from the DDH Assumption
+ * Section 10.1 of the EVS Draft, February 3, 2025.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::PRG_DDH where
+
+parameter
+  /**
+   * @require p must be a safe prime number.
+   */
+  type p'p : #
+  type constraint (fin p'p, prime p'p, p'p >= 3)
+
+  /**
+   * @require q must be the resp. Sophie Germain prime.
+   */
+  type q'p : #
+  type constraint (fin q'p, prime q'p, q'p >= 3, p'p == 2*q'p + 1)
+
+  /**
+   * @require g must be a generator of the subgroup of quadratic residues.
+   */
+  g'p : Z p'p
+
+  /**
+   * Number of [n_q + n_r] blocks per random number
+   */
+  type k'p : #
+  type constraint (fin k'p, k'p > 0)
+
+  /**
+   * Auxiliary security parameter
+   */
+  type n_r'p : #
+  type constraint (fin n_r'p, n_r'p < lg2 q'p)
+
+/**
+ * Introduce all parameters as module types and constants.
+ *
+ * @note Hopefully, future versions of Cryptol will do this
+ * automatically and by default.
+ */
+type p = p'p
+type q = q'p
+type k = k'p
+type n_r = n_r'p
+g : Z p
+g = g'p
+
+/**
+ * Number of bits in p and q
+ */
+type n_p = lg2 p
+type n_q = lg2 q
+
+/**
+ * Seed for the pseudo-random number generator
+ */
+type seed = { r1 : [n_q + n_r], x : [k][n_q + n_r] }
+
+/**
+ * State of the pseudo-random number generator
+ *
+ * The x values strictly belong to the seed, but recording
+ * them in the state means that we do not have to parametrize
+ * the next and nextN functions by both the seed and the state.
+ */
+type state = { r : [n_q + n_r], x : [k][n_q + n_r] }
+
+/**
+ * Creates an initial state from a given seed.
+ */
+init : seed -> state
+init seed = { r = seed.r1, x = seed.x }
+
+/**
+ * The τ(v) = min(v, p - v) function mapping from Gq to Zq.
+ */
+tau : Z p -> Integer
+tau v = min (fromZ v) (`p - (fromZ v))
+
+/**
+ * Computation of the next state of the PRNG
+ */
+nextState : state -> state
+nextState state =
+    {state | r = fromInteger(tau(v0))}
+  where v0 = g^^(state.r)
+
+/**
+ * Infinite stream of states following some initial state
+ */
+stream : state -> [inf]state
+stream = iterate nextState
+
+/**
+ * Derives bits form a given element of Gq and considering n_r.
+ */
+deriveBits : Z p -> [n_q - n_r]
+deriveBits v = fromInteger(tau(v) % 2^^(`n_q - `n_r))
+
+/**
+ * Obtains a random number from a given state of the PRNG.
+ */
+obtainRandom : state -> [k * (n_q - n_r)]
+obtainRandom state = join (map deriveBits v)
+  where h = map (\x -> g^^x) state.x
+        v = map (\hi -> hi^^(state.r)) h
+
+/**
+ * Generates a random number and returns the successor state.
+ */
+next : state -> ([k * (n_q - n_r)], state)
+next state = (obtainRandom state, state')
+  where state' = nextState state
+
+/**
+ * Generates N random numbers and returns the successor state.
+ */
+nextN : {n} (fin n) => state -> ([n][k * (n_q - n_r)], state)
+nextN state = (map obtainRandom (take`{n} states), states @ `n)
+  where states = stream state
+
+/****************************/
+/* Instantiation Assumption */
+/****************************/
+
+// @wip Perhaps g'p ought be a (numeric) type as well!
+// property g_generates_subgroup = g^^(`q) == 0

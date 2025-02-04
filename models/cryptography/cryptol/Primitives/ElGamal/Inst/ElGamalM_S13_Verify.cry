@@ -1,0 +1,32 @@
+/**
+ * Verification of ElGamal’s Cryptosystem in the context
+ * of a Schnorr Group of order 13 - Monadic Version
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::Inst::ElGamalM_S13_Verify where
+
+import Primitives::ElGamal::Inst::ElGamalM_S13
+
+/**
+ * Proof that ElGamalM is correct when instantiated with
+ * a Schnorr Group of order 13
+ * ```repl
+ * :set tests = 10000
+ * :check gen_valid_keypairM
+ * :check gen_enc_dec_inverseM
+ * :exhaust gen_enc_dec_inverseM 0
+ * :exhaust gen_enc_dec_inverseM 1
+ * :exhaust gen_enc_dec_inverseM 2
+ * :exhaust gen_enc_dec_inverseM 3
+ * :exhaust gen_enc_dec_inverseM 4
+ * :exhaust gen_enc_dec_inverseM 5
+ * :exhaust gen_enc_dec_inverseM 6
+ * :exhaust gen_enc_dec_inverseM 7
+ * :exhaust gen_enc_dec_inverseM 8
+ * :exhaust gen_enc_dec_inverseM 9
+ * ```
+ */
+Discharge_POs = True // we need something to annotate

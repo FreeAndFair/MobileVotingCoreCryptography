@@ -1,0 +1,197 @@
+/**
+ * Generic ElGamal Cryptosystem - Monadic Version
+ * Section 10.4 of the EVS Draft, February 3, 2025.
+ *
+ * We use the RandomMonad to simplify the generation
+ * of random numbers used by Gen and Enc in ElGamal.
+ * Thus we do not have to continually supply random
+ * numbers to those functions anymore; instead, we
+ * assign a seed at the start of the computation and
+ * let the monad produce new random number (via the
+ * random() function) whenever randomness is required.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::ElGamalM where
+
+import Algebra::Set
+import Algebra::StateMonad
+import Algebra::RandomMonad
+
+import interface Algebra::CyclicGroupI
+
+/**
+ * Reexports type universe of group elements as G.
+ */
+type G = T
+
+/**
+ * Reexports number of group elements (order) as N.
+ */
+type N = order
+
+/**
+ * For convenience, we define a custom infix syntax
+ * for equality of group elements (≡) and overload
+ * the builtin infix syntax for multiplication and
+ * exponentation to use the group operations. This
+ * makes the Cryptol model look more closely aligned
+ * with the mathematical presentation of ElGamal, i.e.,
+ * in the EVS draft.
+ */
+infix 20 ≡
+private (≡) = T'eq
+private (*)  = gop
+private (^^) = exp
+
+/******************/
+/* ElGamal Import */
+/******************/
+
+/**
+ * We import and lift the non-monadic version of ElGamal.
+ */
+import module Primitives::ElGamal::ElGamal { interface CyclicGroupI } as EG
+
+/**
+ * Reexport relevant types and functions from ElGamal.
+ *
+ * @note Cryptol import is generally not transitive.
+ */
+type KeyPair = EG::KeyPair
+
+is_valid_KeyPair = EG::is_valid_KeyPair
+
+/*******************/
+/* Monadic Lifting */
+/*******************/
+
+/**
+ * Generates an ElGamal KeyPair with a random secret key.
+ *
+ * Randomness to create the secret key is obtained from
+ * the underlying RandomMonad.
+ *
+ * @note I presume that a small random value such as 1
+ * would be insecure, since it simplifies the discrete
+ * logarithm problem and thus deriving the private key.
+ * The probability for such values occurring ought be
+ * negligible, and we shall not guard against it here;
+ * the Rust library wrapper using this function may,
+ * however, may need to consider this possibility and
+ * provide ways to guard against it.
+ */
+GenM : rngState KeyPair
+GenM = (nextIntInside 1 `order)
+   >>= (\sk -> return (EG::Gen sk))
+
+/**
+ * Encrypts a message m with a public key pk.
+ *
+ * Randomness is obtained from the RandomMonad.
+ */
+EncM : (T, T) -> T -> rngState (T, T)
+EncM pk m = (nextIntInside 1 `order)
+        >>= (\r -> return (EG::Enc pk m r))
+
+/**
+ * Decrypts a cipher text (u, v) with a secret key sk.
+ */
+DecM : Integer -> (T, T) -> rngState T
+DecM sk (u, v) = return (EG::Dec sk (u, v))
+
+/**
+ * Mixes two ciphertexts homomorphically.
+ */
+MixM : (T, T) -> (T, T) -> rngState (T, T)
+MixM c1 c2 = return (EG::Mix c1 c2)
+
+/**
+ * Mixes a list of ciphertexts homomorphically.
+ */
+MixListM : {n} (fin n, n >= 1) => [n](T, T) -> rngState (T, T)
+MixListM l = return (EG::MixList l)
+
+/*********************/
+/* Testing Functions */
+/*********************/
+
+/**
+ * Roundtrip function that performs encryption and decryption
+ * of a message m : G. This version uses the monadic functions
+ * EncM and DecM and does not output trace messages. Since it
+ * does not invoke GenM, the key pair has to be passed to it.
+ * Note that the monadic computation processes an accumulated
+ * list of results of type [n]G which it extends by one value.
+ */
+enc_decM : {n} (fin n) => KeyPair -> G -> ([n]G -> State [256] ([n + 1]G))
+enc_decM kp m =
+      (\r  -> (EncM kp.pk m)
+  >>= (\c  -> (DecM kp.sk c))
+  >>= (\d  -> (return (r # [d]))))
+
+/**
+ * Roundtrip function that performs encryption and decryption
+ * of a message m : G. This version uses the monadic functions
+ * EncM and DecM and moreover outputs trace messages. Since it
+ * does not invoke GenM, the key pair has to be passed to it.
+ * Note that the monadic computation processes an accumulated
+ * list of results of type [n]G which it extends by one value.
+ */
+trace_enc_decM : {n} (fin n) => KeyPair -> G -> ([n]G -> State [256] ([n + 1]G))
+trace_enc_decM kp m =
+      (\r  -> trace "Plaintext:"  m (EncM kp.pk m)
+  >>= (\c  -> trace "Ciphertext:" c (DecM kp.sk c))
+  >>= (\d  -> trace "Decrypted:"  d (return (r # [d]))))
+
+/**
+ * Roundtrip function that performs key generation, encryption,
+ * and decryption of a message m : T, based on a seed s : [256].
+ * This version uses the monadic functions GenM, EncM and DecM.
+ */
+gen_enc_decM : [256] -> G -> State [256] G
+gen_enc_decM s m = (setSeed s) >>* GenM
+  >>= (\kp -> (EncM kp.pk m)
+  >>= (\c  -> (DecM kp.sk c)))
+
+/**
+ * Roundtrip function that performs key generation, encryption,
+ * and decryption of a message m : T, based on a seed s : [256].
+ * This version uses the monadic functions GenM, EncM and DecM
+ * and moreover outputs trace messages.
+ */
+trace_gen_enc_decM : [256] -> G -> State [256] G
+trace_gen_enc_decM s m = (setSeed s) >>* GenM
+  >>= (\kp -> trace "Plaintext:"  m (EncM kp.pk m)
+  >>= (\c  -> trace "Ciphertext:" c (DecM kp.sk c)))
+  >>= (\d  -> trace "Decrypted:"  d (return d))
+
+/**************************/
+/* Algorithm Verification */
+/**************************/
+
+/**
+ * Monadic key generation produces a valid key pair.
+ *
+ * Key (Gen)eration is based on a random seed s : [256].
+ */
+property gen_valid_keypairM (s : [256]) =
+  is_valid_KeyPair (evalState0 ((setSeed s) >>* GenM))
+
+/**
+ * Monadic decryption followed by encryption returns the same
+ * message.
+ *
+ * In other words, computation DecM computes the inverse of EncM.
+ * Key generation and encryption use randomness derived from the
+ * random seed s : [256].
+ *
+ * @note For some groups such as ℤ/nℤ or Schnorr with r = 2, the
+ * guard m ∈ G is actually not required for correctness of ElGamal.
+ * However, for expected security properties to hold, all encoded
+ * messages values must be from the subgroup G.
+ */
+property gen_enc_dec_inverseM (s : [256]) (m : T) =
+  m ∈ G ==> evalState0 (gen_enc_decM s m) ≡ m

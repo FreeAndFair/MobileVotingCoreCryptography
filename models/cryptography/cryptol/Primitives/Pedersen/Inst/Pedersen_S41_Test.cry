@@ -1,0 +1,36 @@
+/**
+ * Smoke test of k-Pedersen Commitments in the context
+ * of a Schnorr Group of order 41
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::Pedersen::Inst::Pedersen_S41_Test where
+
+import Primitives::Pedersen::Inst::Pedersen_S41
+
+/**
+ * Smoke test creating and opening a k-Pedersen commitment for
+ * five messages.
+ *
+ * @note We use a seed of 0 for random number generation.
+ */
+main : Bit
+main = create_and_open 0 tv
+  where tv = [0, 1, 5, 23, 31]
+
+
+/**
+ * Smoke test creating and opening a k-Pedersen commitment for
+ * five messages while producing additional trace output.
+ *
+ * @note We use a seed of 0 for random number generation.
+ * @note The trace[Val] functions is currently not supported by
+ * the Cryptol to Rust compiler; the code below does compile
+ * but throws a runtime error (panic) when executed, indicating
+ * that `trace` is not implemented yet.
+ */
+main'trace : Bit
+main'trace = create_and_open'trace 0 tv
+  where tv = [0, 1, 5, 23, 31]

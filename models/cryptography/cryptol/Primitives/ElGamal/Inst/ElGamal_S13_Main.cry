@@ -1,0 +1,13 @@
+/**
+ * Rust entry for smoke test of ElGamal’s Cryptosystem
+ * in the context of a Schnorr Group of order 13 and
+ * generic encoding via exponentiation.
+ * (The vocabulary is the full set of group elements.)
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+import Primitives::ElGamal::Inst::ElGamal_S13_Test as Test
+
+main = Test::main
