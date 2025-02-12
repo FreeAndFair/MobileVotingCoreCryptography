@@ -60,4 +60,4 @@ jobs:
             -v "${{ github.workspace }}":/workspace \
             -w /workspace \
             freeandfair/de-ple-e2eviv:latest \
-            clafer "/workspace/${{ matrix.clafer-file }}"
+            clafer -v "/workspace/${{ matrix.clafer-file }}"

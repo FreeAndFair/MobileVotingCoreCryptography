@@ -1,0 +1,30 @@
+# .github/workflows/run-makefile-for-ple-docker-image.yml
+# Author: Daniel M. Zimmerman
+# Created: 2024-02-14
+# Modified: 2025-02-14
+
+name: Run Makefile for PLE Docker Image
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - 'docker/**'
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Build PLE Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run `make` in `docker/de-ple-e2eviv`
+        run: |
+          echo "Processing docker image"
+          cd docker/de-ple-e2eviv
+          make

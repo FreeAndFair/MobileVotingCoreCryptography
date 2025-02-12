@@ -98,6 +98,10 @@ ENV LC_ALL="en_US.UTF-8"
 # Copy start-up script for starting all three Clafer IDEs.
 COPY resources/startup.sh /root/
 
+# Create bash alias for Clafer in root's home directory, to
+# ensure "clafer -v" can find the jar files.
+RUN echo "alias clafer='clafer --tooldir=/opt/clafer/${CLAFER_TOOLS_VER}'" >> /root/.bash_aliases
+
 # Include lando and clafer CLI tools in PATH.
 ENV PATH="/opt/clafer/$CLAFER_TOOLS_VER:$PATH"
 ENV PATH="/opt/lando/bin:$PATH"

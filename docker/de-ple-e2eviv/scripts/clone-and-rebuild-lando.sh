@@ -5,7 +5,7 @@ set -e # exit immediately upon error(s)
 ROOT_DIR=$(dirname -- "$(dirname -- "$(readlink -f -- "$0")")")
 
 # Git URL and version of the Lando tool distribution
-LANDO_REPO_URL="git@github.com:GaloisInc/BESSPIN-Lando.git"
+LANDO_REPO_URL="https://github.com/GaloisInc/BESSPIN-Lando.git"
 LANDO_VERSION=db552ec74d4532611280693438207a72a23045b4
 
 # ANSI escape sequences for colorful terminal output
