@@ -18,9 +18,9 @@ The audit system shall be open and comprehensive, and actively report on potenti
 
 // Reference: Rec(2004)11 Appendix III, E. II. 103.
 Audit System Data
-The audit system shall record times, events, and actions, including: 
-a. all voting-related information, including the number of eligible voters, the number of votes cast, the number of invalid votes, the counts and recounts, etc.; 
-b. any attacks on the operation of the e-voting system and its communications infrastructure; 
+The audit system shall record times, events, and actions, including:
+a. all voting-related information, including the number of eligible voters, the number of votes cast, the number of invalid votes, the counts and recounts, etc.;
+b. any attacks on the operation of the e-voting system and its communications infrastructure;
 c. system failures, malfunctions, and other threats to the system.
 
 // Reference: Rec(2004)11 Audit, III. Monitoring

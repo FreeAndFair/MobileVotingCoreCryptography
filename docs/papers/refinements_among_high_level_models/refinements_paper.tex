@@ -18,7 +18,7 @@
 \usepackage{verbatim}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
-\setlength {\marginparwidth}{2cm} 
+\setlength {\marginparwidth}{2cm}
 \usepackage{todonotes}
 \usepackage{enumitem}
 \usepackage[backend=biber, style=numeric, sorting=nyt]{biblatex}
@@ -26,8 +26,8 @@
 \parindent 0pt
 \setlength{\parskip}{10pt plus 1pt minus 1pt}
 
-\usepackage{tocloft} 
-\setlength\cftparskip{2pt} 
+\usepackage{tocloft}
+\setlength\cftparskip{2pt}
 
 \renewcommand{\subsectionautorefname}{section}
 \renewcommand{\subsubsectionautorefname}{section}
@@ -39,15 +39,15 @@
 \DefTblrTemplate{firsthead, middlehead,lasthead}{default}{}
 
 % detect Overleaf using the job name
-\ifnum\pdfstrcmp{\jobname}{output}=0 
+\ifnum\pdfstrcmp{\jobname}{output}=0
 % "Dark Mode" for Overleaf ------
 \usepackage{xcolor}
 \pagecolor[rgb]{0,0,0} %black
 \color[rgb]{0.7,0.7,0.7} %grey
-\hypersetup{linkcolor=yellow,citecolor=yellow,filecolor=white,urlcolor=yellow} 
+\hypersetup{linkcolor=yellow,citecolor=yellow,filecolor=white,urlcolor=yellow}
 % ----------------------
 \else
-\hypersetup{linkcolor=blue,citecolor=blue,filecolor=black,urlcolor=blue} 
+\hypersetup{linkcolor=blue,citecolor=blue,filecolor=black,urlcolor=blue}
 % nothing else to do in non-Overleaf case for now; perhaps
 % this will automatically trigger export of tables later
 \fi
@@ -176,17 +176,17 @@ The miscellaneous DSLs that we occasionally use to complement these core choices
 \begin{itemize}
 
     \item state machines (e.g., Asmeta~\cite{Asmeta}, State Charts~\cite{WelcomeWorld}, TLA+~\cite{LamportTLAHome}, and SAL~\cite{SymbolicAnalysis})
-    
+
     \item cryptographic protocols (e.g., Tamarin~\cite{TamarinProver}, ProVerif~\cite{ProVerifCryptographic}, and F*~\cite{ProofOrientedProgramming})
-    
+
     \item role-based access control (e.g., Cedar~\cite{AmazonWebServicesCedarPolicy})
-    
+
     \item general logical theories (e.g., Coq/Roq~\cite{CoqProof}, Lean~\cite{LeanProgramming}, PVS~\cite{PrototypeVerification}, and Isabelle~\cite{Isabelle})
-    
+
     \item languages used to describe reactive or control systems (e.g., SCADE~\cite{AnsysSCADE}, MATLAB~\cite{TheMathWorksInc.MATLAB}, Simulink~\cite{TheMathWorksInc.SimulinkSimulation}, and RoboStar~\cite{RoboStar})
-    
+
     \item expressive Behavioral Interface Specification Languages (BISLs) (e.g., JML~\cite{OpenJML} and ACSL~\cite{ANSIISO})
-    
+
     \item architecture or feature models (e.g., UML~\cite{UnifiedModeling} and Clafer~\cite{ClaferLightweight})
 
 \end{itemize}
@@ -318,7 +318,7 @@ citizen: THEORY
 BEGIN
   CitizenID: TYPE = nat
   NO_ID: CitizenID = 0
-  
+
   Sex: TYPE = {male, female}
 
   Citizen: TYPE = [#
@@ -383,21 +383,21 @@ Other features are quite rich, and they have interrelationships. In order to ens
 \begin{itemize}
 
     \item subsystems map to feature models
-    
+
     \item components that are variants map to features
-    
+
     \item queries of components map to features that have associated values
-    
+
     \item domain model containment maps to feature model containment
-    
+
     \item component subtyping maps to feature model subtyping
-    
+
     \item component features that are variants or are statically or dynamically configurable map to feature attributes of their refined type
-    
+
     \item component constraints expressed on variants are mapped to refined constraints on their feature models
-    
+
     \item requirements that are statically expressible within a feature model are mapped to refined constraints on their feature models
-    
+
     \item since events are state transitions, and map within the domain model to commands on components, and scenarios are sequences of events, they are both only mapped to features in a dynamic feature model, if one is used, such as a feature model for a command line interface
 
 \end{itemize}
@@ -453,4 +453,3 @@ Many DSLs only permit the statement of propositional terms, and thus the only ma
 \printbibliography[heading=bibintoc]
 
 \end{document}
-

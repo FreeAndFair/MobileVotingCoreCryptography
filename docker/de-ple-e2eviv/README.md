@@ -74,7 +74,7 @@ We note that the container is run interactively by the scripts and is automatica
 
 ## Miscellaneous Information
 
-The `de-ple-e2eviv` image is built for the `linux/amd64` platform, so we do not expect any issues when running it in an Linux environment and on Intel architecture, or in the GitHub/GitLab CI. 
+The `de-ple-e2eviv` image is built for the `linux/amd64` platform, so we do not expect any issues when running it in an Linux environment and on Intel architecture, or in the GitHub/GitLab CI.
 We have not produced an `arm64` image for macOS on Apple Silicon because [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/) can execute `amd64` images via [Rosetta 2](https://developer.apple.com/documentation/apple-silicon/about-the-rosetta-translation-environment) emulation.
 Should a multi-platform image be desired in the future, please contact the Free & Fair RDE team, preferably [Daniel Zimmerman](mailto:dmz@freeandfair.us?subject=RE%3A%20Help%20with%20DE%2FPLE%20docker%20image) or [Frank Zeyda](mailto:frank.zeyda@freeandfair.us?subject=RE%3A%20Help%20with%20DE%2FPLE%20docker%20image).
 

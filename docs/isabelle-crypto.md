@@ -42,7 +42,7 @@ They support different strategies of mechanized reasoning:
 - Reasoning via the Semantics
 and take advantage of Isabelle's facilities for generic theory and proof engineering, i.e., via [locales](https://isabelle.in.tum.de/doc/locales.pdf).
 
-The library looks fairly comprehensive, but I am not sure how it compares to [EasyCrypt](https://www.easycrypt.info/) (which also supports game-based cryptographic proofs) in terms of capability and completeness. 
+The library looks fairly comprehensive, but I am not sure how it compares to [EasyCrypt](https://www.easycrypt.info/) (which also supports game-based cryptographic proofs) in terms of capability and completeness.
 
 (**@todo fzeyda**: compare both systems and possibly others if we
 decide to revisit proofs of security properties via

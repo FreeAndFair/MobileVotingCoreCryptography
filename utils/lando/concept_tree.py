@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 # When called with the path to a Lando JSON file as a command
-# line parameter, this script generates an ANSI-colored textual 
-# tree representation of the concepts in the Lando specification. 
-# 
-# It may be further extended in the future to show different 
-# relationships or otherwise elucidate more of the Lando model's 
+# line parameter, this script generates an ANSI-colored textual
+# tree representation of the concepts in the Lando specification.
+#
+# It may be further extended in the future to show different
+# relationships or otherwise elucidate more of the Lando model's
 # structure.
 
 import sys, os, re

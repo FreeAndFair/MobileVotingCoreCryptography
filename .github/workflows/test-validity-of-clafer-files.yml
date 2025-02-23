@@ -61,4 +61,3 @@ jobs:
             -w /workspace \
             freeandfair/de-ple-e2eviv:latest \
             clafer "/workspace/${{ matrix.clafer-file }}"
-          
