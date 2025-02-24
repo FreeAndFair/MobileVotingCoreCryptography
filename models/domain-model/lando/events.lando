@@ -59,8 +59,8 @@ events Trustee Interactions
 
 events Verifier Interactions
 
-  Verifier Request Election Information
-  A verifier requests election information from the public bulletin board.
+  Verifier Request Election Data
+  A verifier requests election data from the public bulletin board.
 
   Verifier Report Results
   A verifier publicly reports the results of the verification they have carried out on public bulletin board data.
@@ -187,7 +187,7 @@ events Election Administrator Server Interactions
   EAS Request Voter Authentication
   The election administrator server requests voter authentication for a specific voter from an authentication service.
 
-  EAS Send Election Information
+  EAS Send Available Elections
   The election administration server sends information about the election(s) available to a specific voter to the voting application, or information that authentication failed.
 
   EAS Write Election Manifest
@@ -213,11 +213,11 @@ events Election Administrator Server Interactions
 // Bulletin Board", for brevity in naming.
 
 events Public Bulletin Board Interactions
-  PBB Send All Election Information
-  The public bulletin board sends all the election information it has upon request.
+  PBB Send All Election Data
+  The public bulletin board sends all the election data it has upon request.
 
-  PBB Send Selected Election Information
-  The public bulletin board sends selected election information upon request.
+  PBB Send Selected Election Data
+  The public bulletin board sends selected election data upon request.
 
 
 // Trustee Application Interactions are those that are triggered by a trustee
@@ -230,10 +230,13 @@ events Public Bulletin Board Interactions
 events Trustee Application Interactions
 
   TA Sign In
-  The trustee application authenticates to the trustee application server.
+  The trustee application authenticates to the trustee administration server.
 
   TA Write Trustee Key
   The trustee application writes the generated trustee key material to persistent storage.
+
+  TA Send Key Loaded
+  The trustee application sends a message to the trustee administration server indicating that the trustee has loaded their key.
 
   TA Request Shuffle Approval
   The trustee application requests approval from the trustee to perform the shuffle.
@@ -245,39 +248,39 @@ events Trustee Application Interactions
   The trustee application requests approval from the trustee to decrypt results.
 
   TA Send Shuffled Ballots
-  The trustee application sends shuffled ballots to the trustee application server.
+  The trustee application sends shuffled ballots to the trustee administration server.
 
   TA Send Decryption Information
-  The trustee application sends information to the trustee application server to decrypt the shuffled ballots.
+  The trustee application sends information to the trustee administration server to decrypt the shuffled ballots.
 
 
-// Trustee Application Server Interactions are those that are triggered by
-// the trustee authentication server, in response to actions taken by the
+// Trustee Administration Server Interactions are those that are triggered by
+// the trustee administration server, in response to actions taken by the
 // election administrator or trustee applications. We use TAS as an
-// abbreviation for "Trustee Application Server", for brevity in naming.
+// abbreviation for "Trustee Administration Server", for brevity in naming.
 // Note that these are currently at a higher level of granularity than the
 // full cryptographic protocol, as the full cryptographic protocol has not
 // yet been finalized.
 
-events Trustee Application Server Interactions
+events Trustee Administration Server Interactions
 
   TAS Send Threshold Reached
-  The trustee application server notifies the trustee applications that enough trustees have signed in to begin the shuffling and decryption process.
+  The trustee administration server notifies the trustee applications that enough trustees have signed in to begin the shuffling and decryption process.
 
   TAS Send Election Information
-  The trustee application server sends election information to the trustee applications.
+  The trustee administration server sends election information to the trustee applications.
 
   TAS Send Decryption Request
-  The trustee application server sends a decryption request to the trustee applications.
+  The trustee administration server sends a decryption request to the trustee applications.
 
   TAS Write Decrypted Tally
-  The trustee application server writes the decrypted tally to persistent storage (only for homomorphic tallying).
+  The trustee administration server writes the decrypted tally to persistent storage (only for homomorphic tallying).
 
-  TAS Send Ballots to Printer
-  The trustee application server sends the decrypted and shuffled ballots to the ballot printer.
+  TAS Send Printable Ballots
+  The trustee administration server sends the decrypted and shuffled ballots to the ballot printer.
 
-  TAS Write Election Information
-  The trustee application server writes election information to persistent storage.
+  TAS Update Election Manifest
+  The trustee administration server writes an updated election manifest to persistent storage.
 
 
 // Voting Application Interactions are those that are triggered by the voting
@@ -301,11 +304,11 @@ events Voting Application Interactions
   VA Send Ballot
   The voting application sends a voted ballot to the digital ballot box.
 
-  VA Show Ballot Check Initiation Information
+  VA Show Initial Ballot Check Information
   The voting application shows information to the voter that can be used to initiate the ballot check process.
 
-  VA Spoil Ballot
-  The voting application sends a spoil ballot request to the digital ballot box.
+  VA Check Ballot
+  The voting application sends a check ballot request to the digital ballot box.
 
   VA Request Ballot Check Information Confirmation
   The voting application requests confirmation from the voter that the ballot check information displayed in a ballot check application matches the ballot check information displayed in the voting application.
@@ -319,5 +322,33 @@ events Voting Application Interactions
   VA Cast Ballot
   The voting application sends a cast ballot request to the digital ballot box and records with the election administration server that the voter has voted.
 
+  VA Voter Has Voted
+  The voting application sends a message to the election administration server indicating that the voter has voted.
+
   VA Show Contingency information
   The voting application shows the voter information about what to do if the voting session could not be completed successfully (e.g., a failed ballot check or other failed cryptographic protocol interaction).
+
+// Election Administrator Storage Interactions are those that are triggered
+// by the Election Administrator Storage device in response to low-level
+// commands. This is an abstraction of simply reading the data from a storage
+// device.
+
+events Election Administrator Storage Interactions
+
+  EAStorage Send Election Manifest
+  The storage device sends the election manifest stored on it to an application.
+
+  EAStorage Send Election Data
+  The storage device sends the election data stored on it to an application.
+
+  EAStorage Send Decrypted Tally
+  The storage device sends the decrypted tally stored on it to an application.
+
+// Trustee Storage Interactions are those that are triggered by the Trustee
+// Storage device in response to low-level commands. This is an abstraction
+// of simply reading the data from a storage device.
+
+events Trustee Storage Interactions
+
+  TStorage Send Trustee Key
+  The storage device sends the trustee key stored on it to an application.
