@@ -35,7 +35,7 @@ ARG CLAFER_TOOLS_URL="https://gsd.uwaterloo.ca/clafer-tools-bin/$CLAFER_TOOLS_ZI
 RUN apt-get clean && \
     apt-get update && \
     apt-get upgrade -y && \
-    apt-get upgrade -y build-essential wget unzip git pip npm openjdk-17-jre plantuml libncurses5 locales && \
+    apt-get upgrade -y build-essential wget unzip git python3-pip npm openjdk-17-jre plantuml libncurses5 locales && \
     apt-get clean
 
 # Install "jsons" library from PyPI.

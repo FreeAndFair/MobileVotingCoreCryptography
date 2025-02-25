@@ -23,8 +23,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Run `make` in `docker/de-ple-e2eviv`
+      - name: Run `make image` in `docker/de-ple-e2eviv`
         run: |
           echo "Processing docker image"
           cd docker/de-ple-e2eviv
-          make
+          make image
