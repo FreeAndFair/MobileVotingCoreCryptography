@@ -1,7 +1,7 @@
 # .github/workflows/test-validity-of-changed-clafer-files.yml
 # Author: Luke Myers, Daniel M. Zimmerman
 # Created: 2024-09-25
-# Modified: 2024-09-28
+# Modified: 2025-03-15
 
 name: Test Validity of Changed Clafer Files
 
@@ -24,7 +24,7 @@ jobs:
             fetch-depth: 0
         - name: Get changed files
           id: changed-files
-          uses: tj-actions/changed-files@v45
+          uses: FreeAndFair/changed-files@v45
           with:
             matrix: true
             files: |

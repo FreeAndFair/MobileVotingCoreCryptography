@@ -1,6 +1,7 @@
 # .github/workflows/test-validity-of-refinements-paper.yml
 # Author: Daniel M. Zimmerman
 # Created: 2025-02-20
+# Modified: 2025-03-15
 
 # This workflow tests the validity of the "Refinements Among
 # High Level Models" paper by building it. It also saves the
@@ -22,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install/Restore TeXLive Environment
-        uses: teatimeguest/setup-texlive-action@v3
+        uses: FreeAndFair/setup-texlive-action@v3
         with:
           packages: |
             scheme-full
