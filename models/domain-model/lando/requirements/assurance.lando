@@ -1,27 +1,23 @@
 // partof: Non Functional Requirements
-// General non-functional assurance requirements which increase system and election assurance.
+// General non-functional assurance requirements that increase system and election assurance.
 requirements Assurance Requirements
 
-// Reference: David Jefferson
-Client Environments
-Client side software (applications, apps, scripts, etc.) should be free of known bugs on a wide range of platform and software stack combinations intended to be usable as voting terminals.
-
-// Reference: David Jefferson
+// Reference: adapted from David Jefferson
 Authentication Resilience
-There must be no way to automate forging or invalidation of voter authentications without compromising the cryptographic protocols or secrets used in the system.
+There must be no way to automate forging or invalidation of voter authentications without compromising the cryptographic protocols, cryptographic secrets, authentication algorithm, or authentication data used by the protocol.
 
-// Reference: David Jefferson
+// Reference: adapted from David Jefferson
 Open Documentation
-All aspects of the design, architecture, algorithms, and documentation for the entire Internet voting system (not just the E2EV core) should be published and available for free download by anyone.
+All aspects of the design, architecture, algorithms, and documentation of the protocol shall be published and available for free download by anyone.
 
-// Reference: David Jefferson
+// Reference: adapted from David Jefferson
 Documentation Consistency
-As the system changes, all documentation must be kept up to date. No new version of an E2EV Internet voting system may be certified until all documentation is up to date.
+All documentation shall be kept up to date as the protocol design or implementation changes.
 
-// Reference: David Jefferson
+// Reference: adapted from David Jefferson
 Open Source
-The source code, build scripts, issue tracking system, security features, and related development information for the entire Internet voting system (all versions for all platforms) shall be made publicly available for free download and inspection by anyone.
+The source code, build scripts, security features, and related development artifacts for the protocol shall be made publicly available for free download and inspection by anyone.
 
 // Reference: David Jefferson
 Source License
-The source code for all parts of the E2EV Internet voting system shall be made publicly available under a license that permits anyone to download the code and build, instrument, and test it.
+The source code for the protocol implementation shall be made publicly available under a license that permits anyone to download the code and build, instrument, and test it.

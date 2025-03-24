@@ -2,39 +2,13 @@
 // General procedural requirements for digital election systems.
 requirements Procedural Requirements
 
-// Reference: Rec(2004)11 Transparency
-// Reference: Rec(2004)11 Appendix I, B. I. 20.
-Voter Comprehension and Confidence
-The electoral authority shall take steps to ensure that voters understand and have confidence in the e-voting system in use.
-
-// Reference: Rec(2004)11 Appendix I, B. I. 21.
-Public System Function
-Information on the functioning of an e-voting system shall be made publicly available.
-
-// Reference: Rec(2004)11 Appendix I, B. I. 22.
-Voter Practice
-Voters shall be provided with an opportunity to practice any new method of e-voting before, and separately from, the moment of casting an electronic vote.
-
-// Reference: Rec(2004)11 Appendix I, B. I. 23.
-Observer Invariants
-Any observers, to the extent permitted by law, shall be able to be present to observe and comment on the e-elections, including the establishing of the results.
-
-// Reference: Rec(2004)11 Verifiability and Accountability
-// Reference: Rec(2004)11 Appendix I, B. II. 24.
-Disclosure Obligations
-The components of the e-voting system shall be disclosed, at least to the competent electoral authorities, as required for verification and certification purposes.
-
-// Reference: Rec(2004)11 Appendix I, B. II. 25.
-Certification Obligations
-Before any e-voting system is introduced, and at appropriate intervals thereafter, and in particular after any changes are made to the system, an independent body, appointed by the electoral authorities, shall verify that the e-voting system is working correctly and that all the necessary security measures have been taken.
-
 // Reference: Rec(2004)11 Appendix I, B. II. 26.
 Recount Supported
-There shall be the possibility for a recount. Other features of the e-voting system that may influence the correctness of the results shall be verifiable.
+The protocol shall allow the implementation of a system that makes recounts possible. Features of the protocol that may influence the correctness of the results shall be verifiable.
 
 // Reference: Rec(2004)11 Appendix I, B. II. 27.
 Rerun Supported
-The e-voting system shall not prevent the partial or complete re-run of an election or a referendum.
+The protocol shall not prevent the implementation of a system that can perform a partial or complete re-run of an election or a referendum.
 
 // Reference: Rec(2004)11 Reliability and Security
 // Reference: Rec(2004)11 Appendix I, B. III. 28.
@@ -43,32 +17,12 @@ The electoral authority shall ensure the reliability and security of the e-votin
 
 // Reference: Rec(2004)11 Appendix I, B. III. 29.
 No Fraud or Intervention
-All possible steps shall be taken to avoid the possibility of fraud or unauthorized intervention affecting the system during the whole voting process.
-
-// Reference: Rec(2004)11 Appendix I, B. III. 30.
-System Availability
-The e-voting system shall contain measures to preserve the availability of its services during the e-voting process. It shall resist, in particular, malfunction, breakdowns, or denial of service attacks.
-
-// Reference: Rec(2004)11 Appendix I, B. III. 31.
-System Genuine and Correct
-Before any e-election or e-referendum takes place, the competent electoral authority shall satisfy itself that the e-voting system is genuine and operates correctly.
-
-// Reference: Rec(2004)11 Appendix I, B. III. 32.
-System and Data Access Control
-Only persons appointed by the electoral authority shall have access to the central infrastructure, the servers, and the election data. There shall be clear rules established for such appointments. Critical technical activities shall be carried out by teams of at least two people. The composition of the teams shall be regularly changed. As far as possible, such activities shall be carried out outside election periods.
-
-// Reference: Rec(2004)11 Appendix I, B. III. 33.
-Open Ballot Box Invariants
-While an electronic ballot box is open, any authorized intervention affecting the system shall be carried out by teams of at least two people, be the subject of a report, and be monitored by representatives of the competent electoral authority and any election observers.
+All possible steps shall be taken to avoid the possibility of fraud or unauthorized intervention affecting the protocol during the whole voting process.
 
 // Reference: Rec(2004)11 Appendix I, B. III. 34.
 Votes Invariants
-The e-voting system shall maintain the availability and integrity of the votes. It shall also maintain the confidentiality of the votes and keep them sealed until the counting process. If stored or communicated outside controlled environments, the votes shall be encrypted.
+The protocol shall maintain the availability (to the extent it controls this) and integrity of the votes. It shall also maintain the confidentiality of the votes and keep them sealed until the counting process. If stored or communicated outside controlled environments, the votes shall be encrypted.
 
 // Reference: Rec(2004)11 Appendix I, B. III. 35.
 Sealed Votes Voter Relation
 Votes and voter information shall remain sealed as long as the data is held in a manner where they can be associated. Authentication information shall be separated from the voter's decision at a predefined stage in the e-election or e-referendum.
-
-// Reference: David Jefferson
-Verification Failure Procedures
-There must be clear technical and legal procedures for how to proceed in the event that voters can prove that their votes were not received accurately or counted, or if the official election verification application does not verify that the Internet part of the election was correct.

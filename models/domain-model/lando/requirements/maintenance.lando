@@ -1,6 +1,0 @@
-// partof: Non Functional Requirements
-// General requirements relating to the maintenance of digital election systems.
-requirements Maintenance Requirements
-
-Electoral Authority Patch
-The electoral authority has the right and ability to patch election systems to correct flaws discovered in the algorithms, implementation, or deployment.

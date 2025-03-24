@@ -1,6 +1,0 @@
-// partof: Non Functional Requirements
-// General requirements on the evolvability of digital election systems.
-requirements Evolvability Requirements
-
-Electoral Authority Update
-The electoral authority has the right and ability to update election systems to conform to changes in applicable law, available technology, or the system threat model.

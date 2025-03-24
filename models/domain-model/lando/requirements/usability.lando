@@ -2,16 +2,10 @@
 // General usability requirements of digital election systems.
 requirements Usability Requirements
 
-// Reference: Kiniry/Zimmerman
-Mandatory Usability Testing
-Usability testing for disabled and abled voters shall be performed, and the reports of the testing made public. The system must achieve satisfactory usability testing results before being used in a binding election.
-
-
-// Reference: David Jefferson
+// Reference: adapted from David Jefferson
 Vote Confirmation
-If a voter receives the final 'Thank you for voting' confirmation, then she/he can be certain the ballot was recorded.
-
+The protocol shall support a system that ensures, given an honest voting client application, that when a voter receives the final 'Thank you for voting' confirmation she/he can be certain the ballot was recorded.
 
 // Reference: David Jefferson
 Uncertain Voter Revote
-If the voter is uncertain about the state of their ballot, he/she is free to attempt to vote again.
+The protocol shall support the voter attempting to vote again, in cases when the voter is uncertain about the state of their ballot.

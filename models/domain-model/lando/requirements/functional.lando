@@ -10,34 +10,21 @@ Ballot casting shall be atomic with respect to server failures.
 Deterministic Voting Process
 If a server side failure occurs, no voter's balloting can be left in an unknown state.
 
-// Reference: David Jefferson
+// Reference: adapted from David Jefferson
 Ballot Final States
-Either a ballot is securely and completely cast and the voter is marked as having voted, or no ballot is recorded and the voter is not marked as having voted.
+The protocol shall support a system that ensures, for each ballot cast attempt, that either a ballot is securely and completely cast and the voter is marked as having voted, or no ballot is recorded as having been cast and the voter is not marked as having voted.
 
 // Reference: David Jefferson
 Vote Record Monotonicity
-If the system and the law allows a voter to cast multiple votes with only the last one counting, or to cast a partial ballot with the option of modifying it later, then each voting session must be atomic with respect to server failures. If a failure occurs during the voter's last session, then the votes cast as of his or her previous session will count.
+The protocol shall support a system with the following properties: 1) if the system and the law allows a voter to cast multiple votes with only the last one counting, or to cast a partial ballot with the option of modifying it later, then each voting session is atomic with respect to server failures; and 2) if a failure occurs during the voter's last session, then the votes cast as of his or her previous session will count.
 
-// Reference: David Jefferson
-Receipt Freedom
-There must be no way for voters to prove to another party any information regarding how they voted in any race (beyond what is mathematically deducible from the final distribution of votes).
-
-// Reference: David Jefferson
-Valid Ballot Provenance
-Once it is determined that a ballot will be counted, the ballot shall be irrevocably separated from the identification of the voter who cast it.
+Similar Receipt Freedom
+The ability for a voter to use protocol-provided artifacts to prove to another party any information regarding how they voted in any race (beyond what is mathematically deducible from the final distribution of votes) must be similar to that for existing non-Internet absentee/remote voting mechanisms.
 
 // Reference: David Jefferson
 Multi Ballot Record
-If the voting system permits voters to modify or replace their previously cast ballots, only the latest vote by each voter in each race shall be counted in the final tally.
+The protocol shall support a system such that, if it is permitted for voters to modify or replace their previously cast ballots, only the latest vote by each voter in each race shall be counted in the final tally.
 
 // Reference: David Jefferson
 No Double Vote
-But for systems supporting Multi Ballot Record, the voting system shall not record more than one vote for any voter in any race.
-
-// Reference: David Jefferson
-No Advertising
-The voting system client must not display or permit the display of any advertising or commercial logos in the window that contains the voting session, other than those of the election jurisdiction itself.
-
-// Reference: David Jefferson
-No External Links
-The voting system client must not display any links to other sites except for help in the mechanics of voting.
+The protocol shall support a voting system that ensures not more than one vote for any voter in any race is recorded, when Multi Ballot Record is not supported.

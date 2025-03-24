@@ -6,7 +6,3 @@ requirements High-Level Project Requirements
 // Reference: Free Democracy Foundation
 Paper Ballots for Tabulation
 The protocol must allow for the generation of paper ballots at the end of the process, for tabulation using the same tabulation machines that are used for ballots voted on paper in the jurisdiction.
-
-// Reference: Free Democracy Foundation
-VoteHub Ballot Check User Experience
-The protocol must allow voters to carry out a ballot check (effectively, a Benaloh challenge) with the user experience currently implemented for the ballot check in the VoteHub application, or a minor refinement to that user experience.
