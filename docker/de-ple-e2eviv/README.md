@@ -70,6 +70,14 @@ Inside the Docker container, the following command-line tools are available: `la
 
 The container is run interactively by the scripts and is automatically destroyed after exiting the image, i.e., via typing `exit`.  Inside the container, all tool installations can be found under `/opt`.
 
+## Vulnerabilities Reported by Docker Scout
+
+Docker Scout currently flags "fixable critical or high-profile vulnerabilities" in this image. We do not intend to address these, as they do not pose any risk when using the Docker container with standard privileges to run the Clafer and Lando tooling. They are caused by:
+
+  1. The use of Ubuntu 22.04 instead of a more recent version, which is required to provide the correct `libncurses` library for `claferIG`;
+  2. The fact that Chocosolver (built from the latest revision of https://github.com/GaloisInc/chocosolver) currently requires an old version of `protobuf-java`;
+  3. The fact that the Clafer Configurator (built from the latest revision of https://github.com/gsdlab/ClaferConfigurator), which is no longer actively maintained, uses an old version of `npm`.
+
 ## Miscellaneous Information
 
 The `de-ple-e2eviv` image is built for the `linux/amd64` platform, so we do not expect any issues when running it in an Linux environment and on Intel architecture, or in the GitHub/GitLab CI.

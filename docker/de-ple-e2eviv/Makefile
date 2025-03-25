@@ -7,10 +7,14 @@
 DOCKER_REPOSITORY := registry-1.docker.io
 
 # Organization within the Docker repository to push to.
-DOCKER_ORGANIZATON := freeandfair
+DOCKER_ORGANIZATION := freeandfair
 
 # Name of the Docker image to be created.
 IMAGE=de-ple-e2eviv
+
+# Image platform to use (we are restricted to "linux/amd64" because we don't
+# currently have arm64 versions of the tools we're including).
+IMAGE_PLATFORM=linux/amd64
 
 # Docker-compatible command to use.  A standard alternative is `podman`.
 # Override via an environment variable (e.g., "make DOCKER=podman ...").
@@ -23,9 +27,13 @@ DOCKER=docker
 DOCKER_VERSION := $(shell $(DOCKER) --version)
 DOCKER_OR_PODMAN := $(firstword $(DOCKER_VERSION))
 
-DOCKER_BUILD_ARGS=--platform="linux/amd64"
+# Note: SBOM is currently disabled because of a containerd bug,
+# https://github.com/containerd/containerd/issues/11440 - fixed
+# in containerd but not yet in Docker Desktop
+DOCKER_BUILD_ARGS=--platform=$(IMAGE_PLATFORM) --attest type=provenance,mode=max --attest type=sbom
 ifeq ($(DOCKER_OR_PODMAN), podman)
-# modify build arguments for Podman here
+	# For Podman, we don't use Docker-specific attestation or SBOM options
+	DOCKER_BUILD_ARGS=--platform=$(IMAGE_PLATFORM)
 endif
 
 # Default target: help
@@ -74,12 +82,12 @@ save:
 
 # Pull Docker image from DockerHub private repository.
 pull: login
-	$(DOCKER) pull $(DOCKER_ORGANIZATON)/$(IMAGE):latest
+	$(DOCKER) pull --platform=$(IMAGE_PLATFORM) $(DOCKER_ORGANIZATION)/$(IMAGE):latest
 
 # Push Docker image to DockerHub private repository.
 push: login
-	$(DOCKER) image tag $(IMAGE) $(DOCKER_ORGANIZATON)/$(IMAGE):latest
-	$(DOCKER) push $(DOCKER_ORGANIZATON)/$(IMAGE):latest
+	$(DOCKER) image tag $(IMAGE) $(DOCKER_ORGANIZATION)/$(IMAGE):latest
+	$(DOCKER) push $(DOCKER_ORGANIZATION)/$(IMAGE):latest
 
 # Push Docker image from local image cache / store.
 remove:

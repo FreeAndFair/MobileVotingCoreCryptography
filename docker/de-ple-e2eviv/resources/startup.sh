@@ -16,20 +16,20 @@ ANSI_GRAY="\e[37m"
 # ClaferIDE is running on port 8094 (must be exposed)
 echo -e "Starting ${ANSI_BOLD}ClaferIDE${ANSI_NORM} on port 8094 ..."
 cd /opt/clafer/ClaferIDE/Server &&
-node ClaferIDE.js > /root/ClaferIDE.log 2>&1 &
+node ClaferIDE.js > /home/ple/ClaferIDE.log 2>&1 &
 
 # ClaferConfigurator is running on port 8093 (must be exposed)
 echo -e "Starting ${ANSI_BOLD}ClaferConfigurator${ANSI_NORM}on port 8093 ..."
 cd /opt/clafer/ClaferConfigurator/Server &&
-node ClaferConfigurator.js > /root/ClaferConfigurator.log 2>&1 &
+node ClaferConfigurator.js > /home/ple/ClaferConfigurator.log 2>&1 &
 
 # ClaferMooVisualizer is running on port 8092 (must be exposed)
 echo -e "Starting ${ANSI_BOLD}ClaferMooVisualizer${ANSI_NORM} on port 8092 ..."
 cd /opt/clafer/ClaferMooVisualizer/Server &&
-node ClaferMooVisualizer.js > /root/ClaferMooVisualizer.log 2>&1 &
+node ClaferMooVisualizer.js > /home/ple/ClaferMooVisualizer.log 2>&1 &
 
 # Diplay information where .log files for the above can be found.
-echo "See /root/{ClaferIDE,ClaferConfigurator,ClaferMooVisualizer}.log for errors"
+echo "See /home/ple/{ClaferIDE,ClaferConfigurator,ClaferMooVisualizer}.log for errors"
 echo
 
 # Display information on how to access the IDEs from localhost.

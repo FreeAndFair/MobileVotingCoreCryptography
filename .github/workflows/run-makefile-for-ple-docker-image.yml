@@ -20,6 +20,20 @@ jobs:
     name: Build PLE Docker Image
     runs-on: ubuntu-latest
     steps:
+      - name: Uninstall Old Docker
+        run: |
+          sudo apt-get remove -y docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc
+
+      - name: Install Current Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          daemon-config: |
+            {
+              "features": {
+                "containerd-snapshotter": true
+              }
+            }
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
