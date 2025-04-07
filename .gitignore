@@ -3,3 +3,5 @@
 venv*
 *.el
 *.bcf-SAVE-ERROR
+*.als
+*.js

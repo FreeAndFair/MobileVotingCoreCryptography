@@ -1,0 +1,369 @@
+theory nss_sapic begin
+
+/*
+  Protocol: Needham-Schroeder Symmetric
+  Modeler: Daniel M. Zimmerman
+  Date: December 2024-February 2025
+  Source: Wikipedia (https://en.wikipedia.org/wiki/Needham%E2%80%93Schroeder_protocol)
+  Status: working, all lemmas proven
+
+  Based (mostly) on the ProVerif Needham-Schroeder typed pi-calculus example
+  (https://gitlab.inria.fr/bblanche/proverif/-/blob/master/proverif/examples/pitype/secr-auth/NeedhamSchroederSK.pv)
+ */
+
+/*
+  The Protocol
+
+  A = Initiator, B = Responder, S = Server, Na and Nb = nonces,
+  Kas and Kbs = Initiator/Responder shared keys with Server,
+  Ks = session key, c0 and c1 = constants used in the session
+  key exchange instead of incrementing/decrementing the nonce):
+
+  1. A -> S: A, B, Na
+  2. S -> A: {Na, B, Ks, {Ks, A}Kbs}Ka
+  3. A -> B: {Ks, A}Kbs
+  4. B -> A: {'c1', Nb}Ks
+  5. A -> B: {'c0', Nb}Ks
+ */
+
+/*
+  The built-in 'symmetric-encryption' theory seems to cause problems for
+  ProVerif translation, so we're not using it here, instead explicitly
+  defining the functions. We also define a sharedkey function to get
+  server/host shared keys, and an unused function so that the ProVerif
+  translation will have the "nonce" type declared (otherwise it fails to
+  declare it and it has to be added manually).
+ */
+
+functions:
+  senc/2, sdec/2[destructor],
+  sharedkey(host):key[private],
+  unused():nonce
+
+equations:
+  sdec(senc(m, k), k) = m
+
+// The translation option below helps with ProVerif translation.
+
+// options: translation-state-optimisation
+
+// Process Definitions
+
+/*
+  The initiator process.
+ */
+let Initiator() = (
+  // The session secret (hopefully the adversary never learns this).
+  new secretA: bitstring;
+
+  /*
+    The adversary starts the process by choosing identities xA
+    (the initiator identity) and xB (the responder identity). If xA
+    is not the same as xB, we continue the protocol.
+   */
+  in(<xA: host, xB: host>);
+
+  if (not (xA = xB)) then (
+    // Get our shared key from the private key function.
+    let Kas = sharedkey(xA) in (
+      event SharedKeyWithServer(xA, Kas);
+      // Send protocol message 1.
+      new Na: nonce;
+      event OUT_INITIATOR_1_Na(<xA, xB, Na>, Na);
+      out(<xA, xB, Na>);
+
+      // Receive protocol message 2.
+      in(X2: bitstring);
+
+      let <=Na: nonce, =xB: host, Ks: key, omfs> = sdec(X2, Kas) in (
+        event Initiated(xA, xB, Ks);
+        event IN_INITIATOR_2_omfs(X2, omfs);
+        // Send protocol message 3.
+        event OUT_INITIATOR_3(omfs);
+        out(omfs);
+
+        // Receive protocol message 4.
+        in(X4);
+
+        let <'c1', Nb: nonce> = sdec(X4, Ks) in (
+          event IN_INITIATOR_4_Nb(X4, Nb);
+          let X5 = <'c0', Nb> in (
+            // Send protocol message 5.
+            event SessionKeyConfirmed(xA, xB, Ks, Nb);
+            out(senc(X5, Ks));
+
+            // Send a secret with the session key.
+            event Secret(secretA, Ks);
+            out(senc(secretA, Ks))
+
+            // Success! (from Initiator's perspective)
+          )
+        )
+      )
+    )
+  )
+)
+
+/*
+  The responder process.
+ */
+let Responder() = (
+  // The session secret (hopefully the adversary never learns this).
+  new secretB: bitstring;
+
+  /*
+    The adversary starts the process by choosing identity xB.
+   */
+  in(xB: host);
+
+  // Get our shared key from the private key function.
+  let Kbs: key = sharedkey(xB) in (
+    event SharedKeyWithServer(xB, Kbs);
+    // Receive protocol message 3.
+    in(X3);
+    event IN_RESPONDER_3(X3);
+
+    let <Ks: key, xA: host> = sdec(X3, Kbs) in (
+      /*
+        If xA is our host ID, we stop the protocol, as we can't
+        start a session with "ourselves".
+        */
+      if (not (xA = xB)) then (
+        // Send protocol message 4.
+        new Nb: nonce;
+        event Honest(xB, Nb);
+        let X4 = senc(<'c1', Nb>, Ks) in (
+          event OUT_RESPONDER_4_Nb(X4, Nb);
+          out(X4);
+
+          // Receive protocol message 5
+          in(senc(<'c0', =Nb: nonce>, =Ks));
+
+          // Success!
+          event SessionKeyReconfirmed(xA, xB, Ks, Nb);
+
+          // Send a secret with the session key.
+          event Secret(secretB, Ks);
+          out(senc(secretB, Ks))
+        )
+      )
+    )
+  )
+)
+
+/*
+  The server process. It doesn't distinguish between honest
+  and dishonest hosts.
+ */
+let Server() = (
+  // Receive protocol message 1.
+  in(<h1: host, h2:host, n:nonce>);
+  event IN_SERVER_n(<h1, h2, n>, n);
+  // h1 and h2 must be different hosts.
+  if (not (h1 = h2)) then (
+    // Get the shared keys from the private key function.
+    let K1 = sharedkey(h1) in (
+      let K2 = sharedkey(h2) in (
+        event SharedKeyWithServer(h1, K1);
+        event SharedKeyWithServer(h2, K2);
+        // Send protocol message 2.
+        new Ks: key;
+        event SessionKeyCreated(h1, h2, Ks);
+        let omfs = senc(<Ks, h1>, K2) in
+        let X2 = senc(<n, h2, Ks, omfs>, K1) in (
+          event OUT_SERVER_omfs(X2, omfs);
+          out(X2);
+
+          /*
+             Reveal the session key to the adversary; ideally this
+             would be done in a second protocol phase (as in ProVerif)
+             but SAPIC+ doesn't support that.
+           */
+
+           event SessionKeyRevealed(h1, h2, Ks);
+           out(Ks)
+        )
+      )
+    )
+  )
+)
+
+process: (
+      !Initiator()
+  ||
+      !Responder()
+  ||
+      !Server()
+)
+
+/*
+  This restriction states that the adversary cannot learn the keys
+  shared between the server and the clients. It is not clear to me
+  why this is necessary for this theory; the keys are generated by
+  a private function and should not be learnable by the adversary.
+  It needs further investigation.
+ */
+ /*
+restriction LongTermKeys:
+  "(All h k #i. SharedKeyWithServer(h, k)@i ==> not (Ex #j. KU(k)@j))"
+*/
+
+/*
+  Sources lemmas help Tamarin determine what the possible sources
+  for secret values like nonces are, given messaging patterns;
+  sometimes, Tamarin can't figure this out for itself.
+ */
+lemma Types [sources]:
+  "
+    (All h1 h2 n #i.
+          IN_SERVER_n(<h1, h2, n>, n)@i
+      ==>
+          (
+              (Ex #j. KU(n)@j & j < i)
+            |
+              (Ex #j. OUT_INITIATOR_1_Na(<h1, h2, n>, n)@j & j < i)
+          )
+    )
+  &
+    (All m n #i.
+          IN_INITIATOR_4_Nb(m, n)@i
+      ==>
+          (
+              (Ex #j. KU(n)@j & j < i)
+            |
+              (Ex #j. OUT_RESPONDER_4_Nb(m, n)@j & j < i)
+          )
+    )
+  &
+    (All m n #i.
+          IN_INITIATOR_2_omfs(m, n)@i
+      ==>
+          (
+              (Ex #j. KU(n)@j & j < i)
+            |
+              (Ex #j. OUT_SERVER_omfs(m, n)@j & j < i)
+          )
+    )
+  &
+    (All m #i.
+          IN_RESPONDER_3(m)@i
+      ==>
+          (
+              (Ex #j. KU(m)@j & j < i)
+            |
+              (Ex #j. OUT_INITIATOR_3(m)@j & j < i)
+          )
+    )
+  "
+
+/*
+  The Executability lemma shows that it is possible to execute the
+  protocol to completion, and thus that other security properties
+  do not hold vacuously.
+ */
+lemma Executable:
+  exists-trace
+  "
+    Ex A B Ks n #i #j #k.
+        SessionKeyCreated(A, B, Ks)@i
+      &
+        SessionKeyConfirmed(A, B, Ks, n)@j
+      &
+        SessionKeyReconfirmed(A, B, Ks, n)@k
+  "
+
+/*
+  The SymmetricSessionStart lemma proves that the responder starting
+  a session always means the initiator did too, unless the session
+  key was previously revealed. This only applies to honest initiators
+  and servers (restricted by the "Initiated" and "SessionKeyCreated"
+  facts).
+ */
+lemma SymmetricSessionStart:
+  "
+    All A B Ks n #i #j.
+            Initiated(A, B, Ks)@i
+          &
+            SessionKeyReconfirmed(A, B, Ks, n)@j
+      ==>
+            (Ex #k. SessionKeyConfirmed(A, B, Ks, n)@k & #k < #j)
+          |
+            (Ex E #k. SessionKeyRevealed(E, B, Ks)@k & #k < #j)
+  "
+
+/*
+  The SessionKeySecrecy lemma proves that the adversary can't know
+  a properly-established session key unless it has explicitly been
+  leaked.
+ */
+lemma SessionKeySecrecy:
+  "
+    All A B Ks #i #j #k.
+            Initiated(A, B, Ks)@i
+          &
+            SessionKeyCreated(A, B, Ks)@j
+          &
+            K(Ks)@k
+      ==>
+          (Ex #l. SessionKeyRevealed(A, B, Ks)@l & #l < #k)
+  "
+
+/*
+  The ProtocolSecrecy lemma is the main security property we want to prove:
+  for every possible selection of principals, session key, and nonce, all
+  secrets sent with the session key remain secret until after the session
+  key is revealed.
+ */
+lemma ProtocolSecrecy:
+  "
+    All A B Ks n s #i #j #k #l.
+          SessionKeyConfirmed(A, B, Ks, n)@i
+        &
+          SessionKeyReconfirmed(A, B, Ks, n)@j
+        &
+          Secret(s, Ks)@k
+        &
+          K(s)@l
+    ==>
+        (Ex #m. SessionKeyRevealed(A, B, Ks)@m & #m < #l)
+  "
+
+
+/*
+  The ReplayAttack lemma shows that the responder can start a second
+  session with the same key and a different "initiator" (actually the
+  adversary) because the session key can leak. This is the flaw that
+  was found in the original Needham-Schroeder protocol.
+ */
+lemma ReplayAttack:
+  exists-trace
+  "
+    Ex A B E Ks n1 n2 #i #j #k.
+        SessionKeyConfirmed(A, B, Ks, n1)@i
+      &
+        SessionKeyReconfirmed(A, B, Ks, n1)@j
+      &
+        SessionKeyReconfirmed(E, B, Ks, n2)@k
+      &
+        not (A = E)
+  "
+
+/*
+  The NoReplayWithoutKeyReveal lemma proves that the replay attack is
+  only possible when a session key leaks.
+ */
+lemma NoReplayWithoutKeyReveal:
+  all-traces
+  "
+    All A B E Ks n1 n2 #i #j #k.
+            SessionKeyConfirmed(A, B, Ks, n1)@i
+          &
+            SessionKeyReconfirmed(A, B, Ks, n1)@j
+          &
+            SessionKeyReconfirmed(E, B, Ks, n2)@k
+      ==>
+            (#j = #k & A = E)
+          |
+            (Ex #l. SessionKeyRevealed(A, B, Ks)@l)
+  "
+end

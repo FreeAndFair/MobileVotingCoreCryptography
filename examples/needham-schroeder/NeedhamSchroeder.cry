@@ -1,0 +1,291 @@
+// Needham-Schroeder primitive Cryptol model
+// Ian Sweet <isweet@galois.com>
+// Joe Kiniry <kiniry@freeandfair.us>
+// Daniel M. Zimmerman <dmz@freeandfair.us>
+
+// This is the minimal definition of the Needham-Schroder symmetric
+// key protocol, written in Cryptol.  "Minimal" in the sense that it
+// defines all of the types and functions necessary to specify a
+// complete refinement of the protocol: no more, no less.
+//
+// By specifying all types and functions of the protocol, this also
+// constitutes a formal domain engineering model of the protocol.  In
+// order to reason about it from a domain engineering point of view,
+// we must ensure that we can codify all elements in the informal
+// domain engineering model: all components and their features and
+// constraint, all events, all scenarios, and all requirements.
+//
+// Or, more properly, all that are _encodable_ in this particular
+// formal framework.  We will see below that, because of Cryptol's
+// design, it has limitations that can only be addressed through the
+// use of other protocol-reasoning-specific DSLs and tools, like
+// Tamarin (https://tamarin-prover.com/).
+//
+// In order to use this protocol specification in practice, one must:
+//   1. choose concrete (rather than abstract) types for `Identity`,
+//      `Nonce`, `Key`, `Cipher`, etc.,
+//   2. parametrize the whole thing by a Cryptol "module interface"
+//      for the encryption scheme, and
+//   3. replaces instances of key and nonce generation with a
+//      probability monad.
+// After doing these three things, the entire specification would be
+// a pure Cryptol free of user-defined `primitive`s, and could be
+// instantiated with any encryption scheme, and you can then run it.
+//
+// Per the Wikipedia summary of the protocol:
+// ```
+// The Needham–Schroeder protocol is one of the two key transport
+// protocols intended for use over an insecure network, both proposed
+// by Roger Needham and Michael Schroeder.
+// These are:
+//
+// The Needham–Schroeder Symmetric Key Protocol, based on a symmetric
+// encryption algorithm. It forms the basis for the Kerberos
+// protocol. This protocol aims to establish a session key between two
+// parties on a network, typically to protect further communication.
+//
+// The Needham–Schroeder Public-Key Protocol, based on public-key
+// cryptography. This protocol is intended to provide mutual
+// authentication between two parties communicating on a network, but
+// in its proposed form is insecure.
+// ```
+// @see https://en.wikipedia.org/wiki/Needham%E2%80%93Schroeder_protocol
+//
+// This module implements both the original broken symmetric key
+// protocol (needhamSchroeder) and the fixed symmetric key protocol
+// (needhamSchroederFixed) described on the Wikipedia page.
+
+// @note kiniry We name constructs like modules, types, and functions
+// using conventions appropriate for the DSL we are using.
+
+// @design kiniry Names are the main mechanism for refinement, thus,
+// names must syntactically map across refinements.
+
+// @example kiniry E.g., the Cryptol module
+// `NeedhamSchroederSymmetric` specifies the symmetric version of the
+// Needham-Schroeder protocol, and it abstracts to the Tamarin theory
+// `needhamschroedersymmetric`.
+
+// @design kiniry A Cryptol module is said to *refine* a Tamarin
+// module, as each type, function, and property in its signature is a
+// refinement of the corresponding type, function, and property in the
+// Tamarin theory's signature.
+
+// @design kiniry This specification also refines the
+// `NeedhamSchroederSymmetric` SysML package.
+
+// @design kiniry This specification refines to the concrete Cryptol
+// specification `NeedhamSchroederImpl`.
+
+// @refine NeedhamSchroeder |= NeedhamSchroederImpl
+
+module NeedhamSchroeder where
+
+// Utility
+enum Maybe a = Nothing | Just a
+
+fst (a, b) = a
+snd (a, b) = b
+
+(.) : {a, b, c} (b -> c) -> (a -> b) -> a -> c
+f . g = \x -> f (g x)
+
+// Encryption Model
+primitive type Key : *
+primitive keyEq   : Key -> Key -> Bit
+primitive keyGen  : () -> Key
+
+primitive type {a : *} Cipher a : *
+primitive encrypt : {a} Key -> a -> Cipher a
+primitive decrypt : {a} Key -> Cipher a -> a
+
+// Protocol Identities and Nonces
+primitive type Identity : *
+primitive alice : Identity
+primitive bob   : Identity
+primitive identityEq : Identity -> Identity -> Bit
+
+primitive type Nonce : *
+primitive nonceGen   : () -> Nonce
+primitive nonceInc   : Nonce -> Nonce
+primitive nonceEq    : Nonce -> Nonce -> Bit
+
+// In the private key setting, we suppose that Alice and Bob have pre-shared keys to communicate with the server
+primitive aliceServerKey : Key
+primitive bobServerKey   : Key
+
+// State Monad
+type State s a = s -> (a, s)
+
+return : {s, a} a -> State s a
+return x s = (x, s)
+
+runState : {s, a} State s a -> s -> (a, s)
+runState a s = a s
+
+(>>=) : {s, a, b} State s a -> (a -> State s b) -> State s b
+a1 >>= fa2 = \s -> runState (fa2 (fst (runState a1 s))) (snd (runState a1 s))
+
+get : {s} State s s
+get s = (s, s)
+
+put : {s} s -> State s ()
+put x s = ((), x)
+
+modify : {s} (s -> s) -> State s ()
+modify f = get >>= \x -> put (f x)
+
+// ===== Protocol State =====
+
+// The first projection is Alice's stored session key, the second is Bob's
+type ProtocolState = (Maybe Key, Maybe Key)
+
+// ===== Alice =====
+aliceNonce : Nonce
+aliceNonce = nonceGen ()
+
+aliceSaveSessionKey : Key -> State ProtocolState ()
+aliceSaveSessionKey key = modify (\(_, bobSessionKey) -> (Just key, bobSessionKey))
+
+aliceGetSessionKey : State ProtocolState (Maybe Key)
+aliceGetSessionKey = get >>= \(a, _) -> return a
+
+// Original protocol messages
+// A -> S : (A, B, N_{A})
+aliceRequestSessionKey : State ProtocolState (Identity, Identity, Nonce)
+aliceRequestSessionKey = return (alice, bob, aliceNonce)
+
+// A -> B : Enc[K_{BS}](K_{AB}, A)
+aliceHandleServerResponse : Cipher (Nonce, Key, Identity, Cipher (Key, Identity)) -> State ProtocolState (Cipher (Key, Identity))
+aliceHandleServerResponse serverMsg =
+  if      (~(nonceEq serverNonce aliceNonce)) then error "nonce mismatch" // TODO(isweet): Use an error monad instead?
+  else if (~(identityEq idB bob))             then error "wrong party"
+  else aliceSaveSessionKey recvdSessionKey >>= \() -> return sessionKeyPackage
+  where (serverNonce, recvdSessionKey, idB, sessionKeyPackage) = decrypt aliceServerKey serverMsg
+
+// A -> B : Enc[K_{AB}](N_{B} + 1)
+aliceRespond : Cipher Nonce -> State ProtocolState (Cipher Nonce)
+aliceRespond challengeMsg = aliceGetSessionKey >>= \maybeSessionKey ->
+  case maybeSessionKey of
+    Nothing               -> error "impossible"
+    Just storedSessionKey -> return (encrypt storedSessionKey (nonceInc (decrypt storedSessionKey challengeMsg)))
+
+// Fixed protocol messages
+// A -> B : (A)
+aliceIdentify : State ProtocolState (Identity)
+aliceIdentify = return (alice)
+
+// A -> S : (A, B, N_{A}, Enc[K_{BS}](A, N'_{B}))
+aliceRequestSessionKeyFixed : Cipher (Identity, Nonce) -> State ProtocolState (Identity, Identity, Nonce, Cipher (Identity, Nonce))
+aliceRequestSessionKeyFixed bobMsg = return (alice, bob, aliceNonce, bobMsg)
+
+// A -> B : Enc[K_{BS}](K_{AB}, A, N'_{B})
+aliceHandleServerResponseFixed : Cipher (Nonce, Key, Identity, Cipher (Key, Identity, Nonce)) -> State ProtocolState (Cipher (Key, Identity, Nonce))
+aliceHandleServerResponseFixed serverMsg =
+  if      (~(nonceEq serverNonce aliceNonce)) then error "nonce mismatch"
+  else if (~(identityEq idB bob))             then error "wrong party"
+  else aliceSaveSessionKey recvdSessionKey >>= \() -> return sessionKeyPackage
+  where (serverNonce, recvdSessionKey, idB, sessionKeyPackage) = decrypt aliceServerKey serverMsg
+
+// A -> B : Enc[K_{AB}](N_{B} + 1)
+// aliceRespond is the same as in the original broken protocol
+
+// ===== Bob =====
+bobNonce : Nonce
+bobNonce = nonceGen ()
+
+bobNoncePrime : Nonce
+bobNoncePrime = nonceGen ()
+
+bobSaveSessionKey : Key -> State ProtocolState ()
+bobSaveSessionKey key = modify (\(aliceSessionKey, _) -> (aliceSessionKey, Just key))
+
+bobGetSessionKey : State ProtocolState (Maybe Key)
+bobGetSessionKey = get >>= \(_, b) -> return b
+
+// Original protocol messages
+// B -> A : Enc[K_{AB}](N_{B})
+bobChallenge : Cipher (Key, Identity) -> State ProtocolState (Cipher Nonce)
+bobChallenge sessionKeyPackage =
+  if (~(identityEq idA alice)) then error "wrong party"
+  else bobSaveSessionKey recvdSessionKey >>= \() -> return (encrypt recvdSessionKey bobNonce)
+  where (recvdSessionKey, idA) = decrypt bobServerKey sessionKeyPackage
+
+bobVerify : Cipher Nonce -> State ProtocolState Bit
+bobVerify aliceResponse = bobGetSessionKey >>= \maybeSessionKey ->
+  case maybeSessionKey of
+    Nothing               -> error "impossible"
+    Just storedSessionKey -> return (nonceEq (nonceInc bobNonce) (decrypt storedSessionKey aliceResponse))
+
+// Fixed protocol messages
+// B -> A : Enc[K_{BS}](A, N'_{B})
+bobRespondToIdentification : Identity -> State ProtocolState (Cipher (Identity, Nonce))
+bobRespondToIdentification id = return (encrypt bobServerKey (id, bobNoncePrime))
+
+// B -> A : Enc[K_{AB}](N_{B})
+bobChallengeFixed : Cipher (Key, Identity, Nonce) -> State ProtocolState (Cipher Nonce)
+bobChallengeFixed sessionKeyPackage =
+  if      (~(nonceEq serverNonce bobNoncePrime)) then error "nonce mismatch"
+  else if (~(identityEq idA alice))              then error "wrong party"
+  else bobSaveSessionKey recvdSessionKey >>= \() -> return (encrypt recvdSessionKey bobNonce)
+  where (recvdSessionKey, idA, serverNonce) = decrypt bobServerKey sessionKeyPackage
+
+// bobVerify is the same as in the original broken protocol
+
+// ===== Server =====
+sessionKey : Key
+sessionKey = keyGen ()
+
+// Original protocol messages
+// S -> A : Enc[K_{AS}](N_{A}, K_{AB}, B, Enc[K_{BS}](K_{AB}, A))
+serverSession : (Identity, Identity, Nonce) -> Cipher (Nonce, Key, Identity, Cipher (Key, Identity))
+serverSession (a, b, na) = encrypt aliceServerKey (na, sessionKey, b, sessionKeyPackage)
+  where sessionKeyPackage = encrypt bobServerKey (sessionKey, a)
+
+// Fixed protocol messages
+// S -> A : Enc[K_{AS}](N_{A}, K_{AB}, B, Enc[K_{BS}](K_{AB}, A, N'_{B}))
+serverSessionFixed : (Identity, Identity, Nonce, Cipher (Identity, Nonce)) -> Cipher (Nonce, Key, Identity, Cipher (Key, Identity, Nonce))
+serverSessionFixed (a, b, na, bobNoncePrimePackage) =
+  if (~(identityEq a aPrime)) then error "wrong party"
+  else encrypt aliceServerKey (na, sessionKey, b, sessionKeyPackage)
+  where sessionKeyPackage = encrypt bobServerKey (sessionKey, a, noncePrime)
+  where (aPrime, noncePrime) = decrypt bobServerKey bobNoncePrimePackage
+
+// ===== All Together =====
+// Original protocol
+needhamSchroederM : State ProtocolState Bit
+needhamSchroederM =
+  aliceRequestSessionKey >>=
+  (return . serverSession) >>=
+  aliceHandleServerResponse >>=
+  bobChallenge >>=
+  aliceRespond >>=
+  bobVerify
+
+needhamSchroeder : Bit
+needhamSchroeder = case maybeAliceSessionKey of
+    Just aliceSessionKey -> case maybeBobSessionKey of
+      Just bobSessionKey -> (keyEq aliceSessionKey bobSessionKey) && bobVerified
+      _                  -> False
+    _                    -> False
+  where (bobVerified, (maybeAliceSessionKey, maybeBobSessionKey)) = runState needhamSchroederM (Nothing, Nothing)
+
+// Fixed protocol
+needhamSchroederFixedM : State ProtocolState Bit
+needhamSchroederFixedM =
+  aliceIdentify >>=
+  bobRespondToIdentification >>=
+  aliceRequestSessionKeyFixed >>=
+  (return . serverSessionFixed) >>=
+  aliceHandleServerResponseFixed >>=
+  bobChallengeFixed >>=
+  aliceRespond >>=
+  bobVerify
+
+needhamSchroederFixed : Bit
+needhamSchroederFixed = case maybeAliceSessionKey of
+    Just aliceSessionKey -> case maybeBobSessionKey of
+      Just bobSessionKey -> (keyEq aliceSessionKey bobSessionKey) && bobVerified
+      _                  -> False
+    _                    -> False
+  where (bobVerified, (maybeAliceSessionKey, maybeBobSessionKey)) = runState needhamSchroederFixedM (Nothing, Nothing)

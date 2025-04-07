@@ -1,0 +1,416 @@
+theory nss_rules_fixed begin
+
+/*
+  Protocol: Fixed Needham-Schroeder Symmetric
+  Modeler: Daniel M. Zimmerman
+  Date: February 2025
+  Source: Wikipedia (https://en.wikipedia.org/wiki/Needham%E2%80%93Schroeder_protocol)
+  Status: executable, all lemmas verified,
+          needs a "long term keys stay secret" restriction (see comments later)
+
+  Based on "needham_schroeder_symmetric_rules.spthy", adapted loosely from a version
+  of the original protocol implemented by Ralf Sasse.
+*/
+
+/*
+  The Protocol
+
+  A = Alice, B = Bob, S = Server, Na, Npb, Nb = nonces,
+  Kas and Kbs = Alice/Bob shared keys with Server,
+  Kab = session key, c0 and c1 = constants used in the session
+  key exchange instead of incrementing/decrementing the nonce):
+
+  1. A -> B: A
+  2. B -> A: {A, Npb}Kbs
+  3. A -> S: A, B, Na, {A, Npb}Kbs
+  4. S -> A: {Na, B, Kab, {Kab, A, Npb}Kbs}Kas
+  5. A -> B: {Kab, A, Npb}Kbs
+  6. B -> A: {c1, Nb}Kab
+  7. A -> B: {c0, Nb}Kab
+
+  This addresses the replay attack from the original protocol by
+  requiring the session key to be delivered to Bob with a different
+  nonce each time. Note that we have slightly modified steps 6 and 7
+  (in the original algorithm, the nonce has some mathematical function
+  applied to it to confirm its receipt) such that a different constant
+  is sent in each direction with the nonce; this makes Tamarin's
+  proofs easier and does not change the security of the algorithm
+  (the nonce must still be decrypted in order to change the message
+  containing it).
+*/
+
+builtins: symmetric-encryption
+
+/*
+  The `Setup` rule generates the action fact KeyGen($A); it creates
+  a key ~k for public host $A and records the persistent fact that
+  it is shared with the server (!SharedKeyWithServer($A, ~k)).
+ */
+rule Setup:
+  [ Fr(~k) ]
+  --[ KeyGen($A), SharedKey($A, ~k) ]->
+  [ !SharedKeyWithServer($A, ~k) ]
+
+/*
+   The `RevealSessionKey` rule, which generates action fact
+   `SessionKeyRevealed`, reveals the session key by sending it on the
+   public channel only after a session has successfully started.
+   This is necessary to enable the replay attack.
+ */
+rule RevealSessionKey:
+  [ !SessionKeySent(A, B, k) ]
+  --[ SessionKeyRevealed(A, B, k) ]->
+  [ Out(k) ]
+
+/*
+  The `Initiator2` rule models the receipt of protocol message 2
+  and the sending of protocol message 3. It establishes action
+  fact `Initiated` and generates a fresh value `~Na`, and fires
+  only after all of the following occur:
+  - A shared key has been established between the initiator and
+    the server.
+  - A message has arrived, which is purported to be {A, Npb}Kbs,
+    but which is effectively opaque to the initiator.
+  When executed, it establishes a linear fact `Initiator2Complete`
+  that relates `$A` and `$B` with `~Na`, and sends the quad
+  <A, B, Na, X2> (protocol message 3) on the public channel.
+ */
+rule Initiator2 [role="Initiator"]:
+  let X3 = <$A, $B, ~Na, X2> in
+  [ Fr(~Na),
+    In(X2) ]
+  --[ Initiated($A, $B, ~Na),
+      IN_INITIATOR_2(X2),
+      OUT_INITIATOR_3_X2(X3, X2),
+      OUT_INITIATOR_3_Na(X3, ~Na) ]->
+  [ Initiator2Complete($A, $B, ~Na),
+    Out(X3) ]
+
+/*
+  The 'Initiator4` rule models the receipt of protocol message 4
+  and the sending of protocol message 5. It generates action fact
+  `SessionKeyRelayed`, and fires only after all of the following occur:
+  - the Initiator2Complete fact has been established for some `$A`,
+    `$B`, and nonce (that is, rule Initiator2 was executed)
+  - a key `Kas` has been shared between $A and the server.
+  - a message (protocol message 4) is available on the public
+    channel that is encrypted with `Kas` and contains the correct
+    nonce, `B`, a session key `Kab`, and an opaque bitstring
+    (that is assumed to be a message encrypted with the key the
+    server shares with `B`).
+  The rule sends out the opaque bitstring (protocol message 5)
+  and establishes the `Initiator4Complete` fact, allowing the
+  initiator to wait for protocol message 6. Note that the
+  `Initiator2Complete` fact that triggered this rule is consumed
+  by the rule's execution, so the rule only runs once per run
+  of `Initiator2Complete` (this is true for subsequent rules as
+  well and is the typical way of modeling process execution,
+  akin to a program counter).
+ */
+rule Initiator4 [role="Initiator"]:
+  let X4 = senc(<Na, B, Kab, X5>, Kas) in
+  [ Initiator2Complete(A, B, Na),
+    !SharedKeyWithServer(A, Kas),
+    In(X4) ]
+  --[ SessionKeyRelayed(A, B, Kab),
+      IN_INITIATOR_4_Kab(X4, Kab),
+      IN_INITIATOR_4_X5(X4, X5) ]->
+  [ Initiator4Complete(A, B, Na, Kab),
+    Out(X5) ]
+
+/*
+  The `Initiator6` rule, which generates action fact
+  `SessionKeyConfirmed`, models the receipt of protocol message 6
+  and the sending of protocol message 7w. It fires only after both
+  of the following occur:
+  - rule Initiator4 completes for a specific `A`, `B`, `Na` and
+    `Kab`
+  - a message (protocol message 6) is available on the public
+    channel that is encrypted with `Kab` and contains constant `c1`
+    and a nonce Nb
+  The rule sends protocol message 7, containing constant `c0` and
+  the same nonce Nb, encrypted with the same key, to prove that
+  the initiator and responder have the same session key.
+*/
+rule Initiator6 [role="Initiator"]:
+  let X6 = senc(<'c1', Nb>, Kab) in
+  [ Initiator4Complete(A, B, Na, Kab),
+    In(X6) ]
+  --[ SessionKeyConfirmed(A, B, Kab, Nb),
+      IN_INITIATOR_6_Nb(X6, Nb) ]->
+  [ Initiator6Complete(A, B, Kab, Nb),
+    Out(senc(<'c0', Nb>, Kab)) ]
+
+/*
+  The `Responder1` rule, which generates action fact
+  `ResponderInitialized`, models the receipt of protocol message 1
+  by the responder (the first communication the responder receives).
+  Note that this particular message can just as easily be generated
+  by the adversary, and in fact there is no explicit rule for the
+  initiator that generates it. The rule fires only after there is a
+  shared key established for the responder identity with the server.
+  It sends protocol message 2, which includes a nonce and the
+  identity of the host the responder believes it is communicating
+  with.
+ */
+rule Responder1 [role="Responder"]:
+  let X2 = senc(<A, ~Npb>, Kbs) in
+  [ !SharedKeyWithServer($B, Kbs),
+    In(A),
+    Fr(~Npb) ]
+  --[ ResponderInitialized(A, $B, ~Npb),
+      OUT_RESPONDER_2(X2) ]->
+  [ Responder1Complete(A, $B, ~Npb),
+    Out(X2) ]
+
+ /*
+  The `Responder5` rule, which generates action fact
+  `SessionKeyReceived`, models the receipt of protocol message 5
+  by the responder. It fires only after both of the following occur:
+  - a shared key `Kbs` is established between the server and `B`
+  - a messsage (protocol message 5) is available on the public
+    channel containing a session key `Kab`, hostname `A`, and nonce
+    `Npb`, encrypted with `Kbs`
+  The rule sends out a new nonce `Nb` and a constant, encrypted
+  with the session key (protocol message 6) and establishes fact
+  `Responder5Complete` to enable the responder to receive
+  protocol message 7.
+ */
+rule Responder5 [role="Responder"]:
+  let X5 = senc(<Kab, A, Npb>, Kbs)
+      X6 = senc(<'c1', ~Nb>, Kab) in
+  [ Responder1Complete(A, B, Npb),
+    !SharedKeyWithServer(B, Kbs),
+    In(X5),
+    Fr(~Nb) ]
+  --[ SessionKeyReceived(A, B, Kab, ~Nb),
+      OUT_RESPONDER_6_Nb(X6, ~Nb) ]->
+  [ Responder5Complete(A, B, Kab, ~Nb),
+    Out(X6) ]
+
+/*
+  The `Responder7` rule, which generates action fact
+  `SessionKeyReconfirmed`, models the receipt of protocol message 7
+  by the responder, ending the protocol. It fires only after both of
+  the following occur:
+  - the Responder5 rule completes for a specific `A`, `B`, `Kab`
+    and `Nb`.
+  - a message (protocol message 5) is available on the public channel
+    containing constant `c0` and the same nonce Nb that was sent in
+    protocol message 4.
+  The rule establishes the persistent fact SessionStarted, which
+  allows secrets to be sent with rule SendASecret.
+ */
+rule Responder7 [role="Responder"]:
+  [ Responder5Complete(A, B, Kab, Nb),
+    In(senc(<'c0', Nb>, Kab)) ]
+  --[ SessionKeyReconfirmed(A, B, Kab, Nb) ]->
+  [ !SessionStarted(A, B, Kab, Nb) ]
+
+/*
+  The `SendASecret` rule communicates secrets using a session key
+  in a started session. The security property we want to prove
+  will be that these secrets stay secret unless a session key is
+  leaked.
+ */
+rule SendASecret:
+  [ !SessionStarted(A, B, Kab, Nb), Fr(~s) ]
+  --[ Secret(~s, Kab) ]->
+  [ Out(senc(~s, Kab)) ]
+
+/*
+  The `Server` rule, which generates action fact `SessionKeyCreated`,
+  models the receipt of protocol message 3 and sending of protocol
+  message 4 by the server. It fires only after both of the following
+  occur:
+  - a message is available on the public channel containing host IDs
+    `$A` and `$B`, a nonce `Na`, and a message encrypted with `Kbs`
+    containing `A` and a nonce `Npb`
+  - shared keys `Kas` and `Kbs` have been established with `$A` and
+    `$B`, respectively.
+  The rule generates a session key `Kab` and sends protocol message 4,
+  encrypted with key `Kas`, which includes `Kab`, nonce `Na`,
+  the identity `$B`, and an internal message encrypted with `Kbs`
+  containing `Kab`, the identity `A`, and nonce `Npb`.
+ */
+rule Server [role="Server"]:
+  let X2 = senc(<A, Npb>, Kbs)
+      X3 = <A, B, Na, X2>
+      X5 = senc(<~Kab, A, Npb>, Kbs)
+      X4 = senc(<Na, B, ~Kab, X5>, Kas) in
+  [ !SharedKeyWithServer(A, Kas),
+    !SharedKeyWithServer(B, Kbs),
+    In(X3),
+    Fr(~Kab) ]
+  --[ SessionKeyCreated(A, B, ~Kab),
+      IN_SERVER_3_X2(X3, X2),
+      IN_SERVER_3_Na(X3, Na),
+      OUT_SERVER_4_Kab(X4, ~Kab),
+      OUT_SERVER_4_X5(X4, X5) ]->
+  [ !SessionKeySent(A, B, ~Kab),
+    Out(X4) ]
+
+/*
+  This restriction (assumption) states that every principal can only
+  have generated a single shared key with the server; it does this
+  by asserting that all occurrences of the action fact KeyGen(A),
+  for a given A, must have happened at the same time.
+ */
+restriction SingleSharedKeyPerPrincipal:
+  "
+    All A #i #j.
+          KeyGen(A)@i
+        & KeyGen(A)@j
+    ==>
+          #i = #j
+  "
+
+/*
+  This restriction states that the adversary cannot learn the keys
+  shared between the server and the clients. It is not clear to me
+  why this is necessary for this theory; in the non-fixed version,
+  it was not necessary, but in this version, without this rule
+  Tamarin seems to proceed from the assumption that the adversary
+  can synthesize these shared keys out of thin air. It needs further
+  investigation.
+ */
+restriction SharedKeysRemainSecret:
+  "
+    All A k #i.
+          SharedKey(A, k)@i
+      ==>
+          not (Ex #j. KU(k)@j)
+  "
+
+/*
+  Sources lemmas help Tamarin determine what the possible sources
+  for secret values like nonces are, given messaging patterns;
+  sometimes, Tamarin can't figure this out for itself.
+ */
+lemma Sources [sources]:
+  all-traces
+  "
+      (
+        All m n #i.
+            IN_INITIATOR_4_Kab(m, n)@i
+        ==>
+            (
+              (Ex #j. KU(n)@j & #j < #i)
+            |
+              (Ex #j. OUT_SERVER_4_Kab(m, n)@j & #j < #i)
+            )
+      )
+    &
+      (
+        All m n #i.
+            IN_INITIATOR_4_X5(m, n)@i
+        ==>
+            (
+              (Ex #j. KU(n)@j & #j < #i)
+            |
+              (Ex #j. OUT_SERVER_4_X5(m, n)@j & #j < #i)
+            )
+      )
+    &
+      (
+        All m n #i.
+            IN_INITIATOR_6_Nb(m, n)@i
+        ==>
+            (
+              (Ex #j. KU(n)@j & #j < #i)
+            |
+              (Ex #j. OUT_RESPONDER_6_Nb(m, n)@j & #j < #i)
+            )
+      )
+  "
+
+/*
+  The Executability lemma shows that it is possible to execute the
+  protocol to completion, and thus that other security properties
+  do not hold vacuously.
+ */
+lemma Executable:
+  exists-trace
+  "
+    Ex A B Ks n #i #j #k.
+        SessionKeyCreated(A, B, Ks)@i
+      &
+        SessionKeyConfirmed(A, B, Ks, n)@j
+      &
+        SessionKeyReconfirmed(A, B, Ks, n)@k
+  "
+
+/*
+  The SymmetricSessionStart lemma proves that the responder starting
+  a session always means the initiator did too, unless the session
+  key was previously revealed. The "Initiated" fact is a necessary
+  prerequisite to show that the initiator is honest.
+ */
+lemma SymmetricSessionStart:
+  all-traces
+  "
+    All A B Ks n1 n2 #i #j.
+            Initiated(A, B, n1)@i
+          &
+            SessionKeyReconfirmed(A, B, Ks, n2)@j
+      ==>
+            (Ex #k. SessionKeyConfirmed(A, B, Ks, n2)@k & #k < #j)
+          |
+            (Ex E #k. SessionKeyRevealed(E, B, Ks)@k & #k < #j)
+  "
+
+/*
+  The SessionKeySecrecy lemma proves that the adversary can't know
+  a properly-established session key unless it has explicitly been
+  leaked.
+ */
+lemma SessionKeySecrecy:
+  all-traces
+  "
+    All A B Ks n #i #j.
+            Initiated(A, B, n)@i
+          &
+            SessionKeyCreated(A, B, Ks)@j
+          &
+            (Ex #k. K(Ks)@k)
+      ==>
+          (Ex #k. SessionKeyRevealed(A, B, Ks)@k)
+  "
+
+/*
+  The ProtocolSecrecy lemma is the main security property we want to prove:
+  for every possible selection of principals, session key, and nonce, all
+  secrets sent with the session key remain secret until after the session
+  key is revealed.
+ */
+lemma ProtocolSecrecy:
+  "
+    All A B Ks n s #i #j #k #l.
+          SessionKeyConfirmed(A, B, Ks, n)@i
+        &
+          SessionKeyReconfirmed(A, B, Ks, n)@j
+        &
+          Secret(s, Ks)@k
+        &
+          K(s)@l
+    ==>
+        (Ex #m. SessionKeyRevealed(A, B, Ks)@m & #m < #l)
+  "
+
+/*
+  The NoReplayAttack lemma shows that the responder cannot start a second
+  session with the same key and a different "initiator". This demonstrates
+  that the flaw in the original protocol is fixed.
+ */
+lemma NoReplayAttack:
+  all-traces
+  "
+    All A B Ks n1 #i #j.
+          SessionKeyConfirmed(A, B, Ks, n1)@i
+        &
+          SessionKeyReconfirmed(A, B, Ks, n1)@j
+    ==>
+        not (Ex E n2 #k. SessionKeyReconfirmed(E, B, Ks, n2)@k & not (A = E))
+  "
+
+end
