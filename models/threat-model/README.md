@@ -43,7 +43,7 @@ These tools are called [db/parse.py](db/parse.py), which is used to create the d
 
 Historically, in order to best understand and review complex threat models, authorities typically want them written down in a structured, static fashion (e.g., as Word or PDF documents). Recently, it has been recognized that an interactive view of complex threat models is valuable, as it permits a cybersecurity reviewer to navigate the threat model dynamically, asking questions, finding answers, and critiquing what is found. Therefore, we have built support for both of these modes of viewing and interacting with the threat model.
 
-The static view of the model is written [in LaTeX](threat_model.tex) and its dynamic components, which come from updates to the YAML threat model specification, are automatically rendered into the document.  These dynamic components are generated with the `latex` target in the provided `Makefile`, and the `pdf` target builds the PDF version of the threat model.
+The static view of the model is written [in LaTeX](threat-model.tex) and its dynamic components, which come from updates to the YAML threat model specification, are automatically rendered into the document.  These dynamic components are generated with the `latex` target in the provided `Makefile`, and the `pdf` target builds the PDF version of the threat model.
 
 The dynamic view of the model is available through a web browser, permitting a user to "surf" the model interactively.  In order to run the threat model server, use the [db/server.py](db/server.py) command after creating the database, then browse to [localhost:8991]().  This can also be done by using the `browser` and `stop` targets in
 the `Makefile`.

@@ -42,7 +42,7 @@ Note also that `make` only builds the image locally and does not push it to the 
 
 ## Deploying the Docker Image
 
-In order to deploy the Docker image, use the make command `make push` after building the image.  This command requires the user to log into [DockerHub](https://hub.docker.com/) and to be a member of the [FreeAndFair](https://hub.docker.com/repository/docker/freeandfair) DockerHub organization with appropriate permissions to push into the [freeandfair/de-ple-e2eviv](https://hub.docker.com/repository/docker/freeandfair/de-ple-e2eviv) image repository.  The build target performs that login automatically before pushing, but it can also be triggered manually via `make login` (to log in) and `make logout` (to log out).  The user will have to provide their DockerHub username and password at this point.
+In order to deploy the Docker image, use the make command `make push` after building the image.  This command requires the user to log into [DockerHub](https://hub.docker.com/) and to be a member of the [FreeAndFair](https://hub.docker.com/orgs/freeandfair) DockerHub organization with appropriate permissions to push into the [freeandfair/de-ple-e2eviv](https://hub.docker.com/repository/docker/freeandfair/de-ple-e2eviv) image repository.  The build target performs that login automatically before pushing, but it can also be triggered manually via `make login` (to log in) and `make logout` (to log out).  The user will have to provide their DockerHub username and password at this point.
 
 ## Loading the Docker Image
 
@@ -57,12 +57,12 @@ command, assuming `de-ple-e2eviv.tar` has first been downloaded from a suitable 
 ## Executing the Docker Image
 
 There are two ways to run the Docker image: either locally or from the Free & Fair DockerHub remote repository.  For each of these options, a script is provided inside the `scripts` folder:
-- [`run-ple-local.sh`](./scripts/run-ple-local.sh)
-- [`run-ple-remote.sh`](./scripts/run-ple-remote.sh)
+- [`run-de-ple-local.sh`](./scripts/run-de-ple-local.sh)
+- [`run-de-ple-remote.sh`](./scripts/run-de-ple-remote.sh)
 
-Running the image locally (`run-ple-local.sh`) requires that it be either loaded or built first, as described above.  Running the image from the Free & Fair DockerHub repository (`run-ple-remote.sh`) does **not** require any prerequisite load or build; only the script itself, and permissions to access the [de-ple-e2eviv](https://hub.docker.com/repository/docker/freeandfair/de-ple-e2eviv) image repository, are required.
+Running the image locally (`run-de-ple-local.sh`) requires that it be either loaded or built first, as described above.  Running the image from the Free & Fair DockerHub repository (`run-de-ple-remote.sh`) does **not** require any prerequisite load or build; only the script itself, and permissions to access the [de-ple-e2eviv](https://hub.docker.com/repository/docker/freeandfair/de-ple-e2eviv) image repository, are required.
 
-Note that when executing `run-ple-remote.sh` from the command line, the user will initially have to provide access credentials for DockerHub in order to log into that repository.  Afterwards, the image should be downloaded and run automatically.  Running locally does not require any access credentials, only that the image must have previously been built or loaded.
+Note that when executing `run-de-ple-remote.sh` from the command line, the user will initially have to provide access credentials for DockerHub in order to log into that repository.  Afterwards, the image should be downloaded and run automatically.  Running locally does not require any access credentials, only that the image must have previously been built or loaded.
 
 Both scripts perform some additional setup to expose ports `8092`, `8093`, and `8094` in order to make the various Clafer browser-based IDEs available: **ClaferMooVisualizer**, **ClaferConfigurator**, and **ClaferIDE**.  While the container is running, the IDEs are accessed from the host via using the URLs `localhost:8092`, `localhost:8093` and `localhost:8094` in one's favorite web browser.
 
