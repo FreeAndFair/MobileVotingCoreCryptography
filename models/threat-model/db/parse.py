@@ -84,15 +84,16 @@ def sql_insert_attack(attack_dict):
     description = attack_dict['description']
     return f"""INSERT INTO ATTACK (identifier, name, description, is_abstract, instanceof_fk, context_fk, likelihood, impact) VALUES (?, '{attack_dict['name']}', {sql_quote(description)}, {attack_dict['is_abstract']}, {instance_of_sql}, {context_sql}, {likelihood}, {impact});"""
 
-def sql_insert_mitigation(identifier, name, description):
+def sql_insert_mitigation(identifier, name, description, scope):
     """ Returns SQL text for a mitigation insert.
 
         :param identifier: The mitigation identifier, as specified explicitly in the yaml.
         :param name: The mitigation name.
         :param description: The mitigation description.
+        :param scope: The mitigation scope.
         :returns: The SQL text.
     """
-    return f"""INSERT INTO MITIGATION (identifier, name, description) VALUES ('{identifier}', '{name}', {sql_quote(description)});"""
+    return f"""INSERT INTO MITIGATION (identifier, name, description, scope) VALUES ('{identifier}', '{name}', {sql_quote(description)}, {sql_quote(scope)});"""
 
 def sql_insert_attack_children():
     """ Returns SQL text for inserting attack parent child relationships.
@@ -381,8 +382,8 @@ def generate_mitigation_inserts(yaml_data, inserts = []):
     """
 
     for identifier, mitigation in yaml_data.items():
-        name, description = mitigation
-        inserts.append(sql_insert_mitigation(identifier, name, description))
+        name, description, scope = mitigation
+        inserts.append(sql_insert_mitigation(identifier, name, description, scope))
 
     return inserts, len(yaml_data)
 
@@ -419,8 +420,8 @@ def db_init(db_file_path):
     conn.execute("drop table if exists `ATTACK_CHILDREN`;")
     conn.execute("""CREATE TABLE IF NOT EXISTS "PROPERTY" (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `identifier` TEXT UNIQUE NOT NULL, `name` TEXT UNIQUE NOT NULL, `description` TEXT, `kind` TEXT CHECK(kind in ('Model', 'E-voting', 'Stride')), `parent_fk` INTEGER, FOREIGN KEY(parent_fk) REFERENCES `PROPERTY`(id));""")
     conn.execute("""CREATE TABLE `PROPERTY_RELATION` (`left_fk` INTEGER NOT NULL REFERENCES `PROPERTY`(`id`), `right_fk` INTEGER NOT NULL REFERENCES `PROPERTY`(`id`));""")
-    conn.execute("""CREATE TABLE IF NOT EXISTS "CONTEXT" (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `identifier` TEXT UNIQUE NOT NULL, `name` TEXT UNIQUE NOT NULL, kind TEXT NOT NULL CHECK (kind in ('Subsystem', 'Network', 'Actor', 'Primitive', 'Data')), description TEXT);""")
-    conn.execute("""CREATE TABLE IF NOT EXISTS "MITIGATION" (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `identifier` TEXT UNIQUE NOT NULL, `name` TEXT NOT NULL, description TEXT);""")
+    conn.execute("""CREATE TABLE IF NOT EXISTS "CONTEXT" (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `identifier` TEXT UNIQUE NOT NULL, `name` TEXT UNIQUE NOT NULL, kind TEXT NOT NULL CHECK (kind in ('Subsystem', 'Network', 'Actor', 'Primitive', 'Data')), description TEXT, scope TEXT);""")
+    conn.execute("""CREATE TABLE IF NOT EXISTS "MITIGATION" (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `identifier` TEXT UNIQUE NOT NULL, `name` TEXT NOT NULL, description TEXT, scope TEXT);""")
     conn.execute("""CREATE TABLE `ATTACK_PROPERTY` (`attack_fk` INTEGER NOT NULL REFERENCES `ATTACK`(`id`), `property_fk` INTEGER NOT NULL REFERENCES `PROPERTY`(`id`));""")
     conn.execute("""CREATE TABLE IF NOT EXISTS "ATTACK_MITIGATION" (`attack_fk` INTEGER NOT NULL REFERENCES `ATTACK`(`id`), `mitigation_fk` INTEGER REFERENCES `MITIGATION`(`id`), `rationale` TEXT, PRIMARY KEY(attack_fk, mitigation_fk));""")
     conn.execute("""CREATE TABLE `ATTACK_CHILDREN` (`parent_fk` INTEGER NOT NULL REFERENCES `ATTACK`(`id`), `child_fk` INTEGER NOT NULL REFERENCES `ATTACK`(`id`), PRIMARY KEY(parent_fk, child_fk));""")
@@ -718,8 +719,8 @@ def json_schema():
             "^[a-zA-Z0-9_%+-]+$": {
                 "type": "array",
                 "items": {"type": "string"},
-                "minItems": 2,
-                "maxItems": 2,
+                "minItems": 3,
+                "maxItems": 3,
             }
         }
     }

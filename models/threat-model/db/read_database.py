@@ -34,7 +34,7 @@ def build_data_structures(db_file_path):
     # Fetch data from the database
     properties = fetch_data(db_file_path, "SELECT id, name, description, kind, parent_fk, identifier FROM PROPERTY")
     contexts = fetch_data(db_file_path, "SELECT id, name, kind, description, identifier FROM CONTEXT")
-    mitigations = fetch_data(db_file_path, "SELECT id, name, description, identifier FROM MITIGATION")
+    mitigations = fetch_data(db_file_path, "SELECT id, name, description, identifier, scope FROM MITIGATION")
     attacks = fetch_data(db_file_path, "SELECT id, identifier, name, description, is_abstract, instanceof_fk, context_fk, likelihood, impact FROM ATTACK")
     attack_properties = fetch_data(db_file_path, "SELECT attack_fk, property_fk FROM ATTACK_PROPERTY")
     attack_mitigations = fetch_data(db_file_path, "SELECT attack_fk, mitigation_fk, rationale FROM ATTACK_MITIGATION")
@@ -44,7 +44,7 @@ def build_data_structures(db_file_path):
     # Build dictionaries for each entity
     property_dict = {prop[0]: {'id': prop[0], 'name': prop[1], 'description': prop[2], 'kind': prop[3], 'identifier': prop[5], 'parent': None, 'children': [], 'related_properties': [], 'attacks': []} for prop in properties}
     context_dict = {ctx[0]: {'id': ctx[0], 'name': ctx[1], 'kind': ctx[2], 'description': ctx[3], 'identifier': ctx[4]} for ctx in contexts}
-    mitigation_dict = {mit[0]: {'id': mit[0], 'name': mit[1], 'description': mit[2], 'identifier': mit[3], 'attacks': []} for mit in mitigations}
+    mitigation_dict = {mit[0]: {'id': mit[0], 'name': mit[1], 'description': mit[2], 'identifier': mit[3], 'scope': mit[4], 'attacks': []} for mit in mitigations}
     attack_dict = {atk[0]: {'id': atk[0], 'identifier': atk[1], 'name': atk[2], 'description': atk[3], 'is_abstract': atk[4], 'instance_of': None, 'context': None, 'likelihood': atk[7], 'impact': atk[8], 'properties': [], 'mitigations': [], 'children': [], 'parents': []} for atk in attacks}
 
     # Link related entities

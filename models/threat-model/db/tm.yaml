@@ -1592,8 +1592,11 @@ attacks:
         intentionally disabling/destroying some or all of the subsystems. The
         system cannot mitigate against these.
 
-# ========================================================================
-# Mitigations aim to prevent an attack, or lessen its impact.
+# ===========================================================================
+# Mitigations aim to prevent an attack, or lessen its impact. Each mitigation
+# has a name, an explanation, and a scope ('core', 'partially-core',
+# 'non-core') to indicate whether it is provided entirely, partially, or not
+# at all by the cryptographic core library.
 #
 # Json Schema:
 #
@@ -1602,66 +1605,83 @@ mitigations:
   M1:
   - Cast as intended verifiability
   - A voter can verify that their ballot was cast as they intended.
+  - partially-core
   M2:
   - Recorded as cast verifiability
   - A voter can verify that their recorded ballot is identical to the one they cast.
+  - partially-core
   M3:
   - Counted as recorded verifiability
   - A voter can verify that their ballot was counted.
+  - partially-core
   M4:
   - Eligibility verifiability
   - An independent verifier can verify that no ineligible ballots were counted.
+  - partially-core
   M5:
   - Message signatures
   - Messages on the network are digitally signed.
+  - core
   M6:
   - TLS
   - Messages on the network use transport level security.
+  - non-core
   M7:
   - Cybersecurity---Malware
   - The system deployment incorporates general cybersecurity practices aimed to protect
     against malware.
+  - non-core
   M8:
   - Cybersecurity---Intrusion
   - The system deployment incorporates general cybersecurity practices aimed to protect
     against intrusion.
+  - non-core
   M9:
   - Cybersecurity---Escalation
   - The system deployment incorporates general cybersecurity practices aimed to protect
     against privilege escalation.
+  - non-core
   M10:
   - Cybersecurity---Virtualization
   - The system deployment incorporates general cybersecurity practices aimed to protect
     against virtualization-related attack vectors.
+  - non-core
   M11:
   - Dependency minimization
   - External software dependencies are minimized to those that are essential to system
     operation.
+  - partially-core
   M12:
   - Security proof
   - A security proof of the protocol provides evidence that the selected primitives
     are secure with respect to precise assumptions and choices of security parameters.
+  - core
   M13:
   - Formal verification
   - Formal verification techniques are used to formally prove implementation correctness
     for internal code.
+  - partially-core
   M14:
   - External audits
   - External performers are engaged to conduct source code audits of internal code.
+  - non-core
   M15:
   - Formally verified dependencies
   - External software dependencies are selected prioritizing those that have been
     subject to previous verification.
+  - partially-core
   M16:
   - Audited platforms
   - OS/Hardware dependencies are selected prioritizing those that have been subject
     to audits.
+  - non-core
   M17:
   - Trust distribution
   - The actor's role is distributed such that the cooperation of several parties is
     required to perform its operations. An adversary must control or convince a sufficient
     number of parties to carry out the attack. The use of a threshold cryptographic
     system is an example of Trust distribution, but also of {M25} (Operational redundancy).
+  - partially-core
   M18:
   - Ballot uniqueness audit
   - 'From Küsters et al.~{[[KustersEtAlClashAttacks2012]]}: In addition to checking
@@ -1670,21 +1690,26 @@ mitigations:
     all ballots (including the submitted ballot) constructed by the browser are different.
     For this purpose, a voter would typically record the ballots in some way, e.g.,
     by having them emailed to her, and then compare these ballots.'
+  - core
   M19:
   - Tamper evident bulletin board
-  - A hashchain is used to implement the bulletin board.
+  - A hash chain is used to implement the bulletin board.
+  - core
   M20:
   - Controlled environment
   - The physical location housing the {AGN} as well as the hardware on which the {TA}
     and {TAS} run is a controlled environment with restricted access.
+  - non-core
   M21:
   - Non-malleable cryptosystem
   - A CCA2-secure cryptosystem (e.g., Naor-Yung) is used to make ciphertexts non-malleable.
+  - core
   M22:
   - Proof of plaintext knowledge
   - Zero-knowledge proofs of plaintext knowledge attached to cast ballots are required
     when casting. Adversaries casting related ballots will not be able to produce
     such proofs. See Bernhard et al.~{[[BernhardEtAlHowNot2012a]]}
+  - core
   M23:
   - Ballot weeding
   - Duplicates are removed from the set of ballots submitted to the mixnet; see Bernhard
@@ -1693,32 +1718,39 @@ mitigations:
     consider when the duplicate weeding takes place, either at cast time or during
     mixnet submission. For example, detection at cast time can lead to performance
     problems, whereas postponing this to mixnet submission time can lead to disputes.
+  - core
   M24:
   - Voter pseudonyms
   - Data published to achieve {M4} (Eligibility verifiability) only reveals pseudonyms.
     Even if ballot encryption is compromised, its content cannot be linked to real
     identities using public information. See Haines et al.~{[[HainesEtAlSoKSecure2023]]}
     for other approaches to everlasting privacy.
+  - core
   M25:
   - Operational redundancy
   - The use of redundant subsystems or actors allows individual elements to fail without
     compromising the overall operation of the system. The use of a threshold cryptographic
     system is an example of Operational redundancy, but also of {M17} (Trust distribution).
+  - partially-core
   M26:
   - Denial of service protection
   - Standard denial of service protection techniques, typically offered by cloud vendors,
     are employed.
+  - non-core
   M27:
   - Cybersecurity---Supply chains
   - The system deployment incorporates general cybersecurity practices aimed to protect
     against supply chain attacks, for example attestation.
+  - non-core
   M28:
   - Domain separation
   - Cryptographic primitives are used in a way that ensures that they are not used
     in multiple contexts.
+  - core
   M29:
   - Append-only trustee board
   - Each trustee maintains a local, append-only view of the protocol board.
+  - core
 
 # Contexts are used when instantiating abstract attacks. They represent the loose
 # notion of "where" the instantiated attack is carried out.
