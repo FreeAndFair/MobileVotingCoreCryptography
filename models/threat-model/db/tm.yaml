@@ -1690,11 +1690,11 @@ mitigations:
     all ballots (including the submitted ballot) constructed by the browser are different.
     For this purpose, a voter would typically record the ballots in some way, e.g.,
     by having them emailed to her, and then compare these ballots.'
-  - core
+  - partially-core
   M19:
   - Tamper evident bulletin board
   - A hash chain is used to implement the bulletin board.
-  - core
+  - partially-core
   M20:
   - Controlled environment
   - The physical location housing the {AGN} as well as the hardware on which the {TA}
@@ -1718,7 +1718,7 @@ mitigations:
     consider when the duplicate weeding takes place, either at cast time or during
     mixnet submission. For example, detection at cast time can lead to performance
     problems, whereas postponing this to mixnet submission time can lead to disputes.
-  - core
+  - partially-core
   M24:
   - Voter pseudonyms
   - Data published to achieve {M4} (Eligibility verifiability) only reveals pseudonyms.
@@ -1746,11 +1746,11 @@ mitigations:
   - Domain separation
   - Cryptographic primitives are used in a way that ensures that they are not used
     in multiple contexts.
-  - core
+  - partially-core
   M29:
   - Append-only trustee board
   - Each trustee maintains a local, append-only view of the protocol board.
-  - core
+  - partially-core
 
 # Contexts are used when instantiating abstract attacks. They represent the loose
 # notion of "where" the instantiated attack is carried out.

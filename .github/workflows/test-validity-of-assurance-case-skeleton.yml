@@ -1,0 +1,44 @@
+# .github/workflows/test-validity-of-assurance-case-skeleton.yml
+# Author: Daniel M. Zimmerman
+# Created: 2025-05-15
+# Modified: 2025-06-09
+
+# This workflow tests the validity of the assurance case skeleton
+# by building it (and the threat model database).
+
+name: Test Validity of Assurance Case Skeleton
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - 'assurance/**'
+
+  workflow_dispatch:
+
+jobs:
+  threat-model:
+    name: Run "Make" on Assurance Case Skeleton
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Packages
+        run: sudo apt-get install build-essential
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Python Dependencies for Assurance Case Skeleton
+        run: |
+          cd assurance/scripts
+          pip install -r requirements.txt
+
+      - name: Run `make skeleton` in Assurance Directory
+        run: |
+          cd assurance
+          make ci
+
+      - name: Save the Generated Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: assurance_case_skeleton
+          path: assurance/advocate-project

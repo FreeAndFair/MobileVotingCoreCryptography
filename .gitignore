@@ -6,3 +6,4 @@ venv*
 *.als
 *.js
 .cryproject/
+__pycache__/

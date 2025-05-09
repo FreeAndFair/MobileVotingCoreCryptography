@@ -1,0 +1,74 @@
+functional architecture 1.2 E2E-VIV_FunctionalArchitecture
+
+    deviation a1 "Every voter must be able to cast their vote (C1, C2) such that their participation is not denied or hampered."
+    deviation a2 "All participants must be able to perform applicable verification operations (V1, V2, V3, V4) such that verifiability is not denied or hampered."
+    deviation a3 "The election outcome must be computed in a timely fashion."
+    deviation a4 "The election public key must be computed in a timely fashion."
+    deviation c1 "Votes are cast correctly."
+        deviation c1_1 "Each cryptogram cast by the VA is an encryption of data that accurately represents the voter's intent."
+    deviation c2 "Cast votes are correctly recorded."
+        deviation c2_1 "Each cryptogram recorded in the BB is identical to a cryptogram cast by the VA."
+    deviation c3 "Recorded votes are correctly counted."
+        deviation c3_1 "The set of cryptograms input to the mixing process is correct."
+            deviation c3_1_1 "Each cryptogram input to the mixing process must match one-to-one with an eligible voter."
+            deviation c3_1_2 "Each cryptogram input to the mixing process must match one-to-one with a cryptogram recorded in the ballot box."
+        deviation c3_2 "The set of cryptograms output by the mixing process must match one-to-one with the input set of cryptograms, such that each output cryptogram is an equivalent encryption of its matching input cryptogram."
+        deviation c3_3 "The set of cryptograms input to the decryption process is identical to the output of the mixing process."
+        deviation c3_4 "Each plaintext output by the decryption process must have been decrypted correctly."
+            deviation c3_4_1 "Each partial decryption of every cryptogram must have been computed correctly."
+            deviation c3_4_2 "Each plaintext for every cryptogram must have been computed correctly from its partial decryptions."
+        deviation c3_5 "The election outcome is correctly computed."
+            deviation c3_5_1 "The input to the tabulation algorithm is identical to the output of the decryption process."
+            deviation c3_5_2 "The tabulation algorithm is correctly applied."
+        deviation c3_6 "The set of printed ballots must match one-to-one with the decrypted plaintext outputs."
+        deviation c3_7 "The mixing, decryption, tabulation, and printing processes cannot begin until the election period is over and all cryptograms have been collected in the ballot box."
+    deviation d1 "A voter claims to have cast a ballot $b$, while the election authority claims that they did not cast $b$."
+    deviation d2 "A voter claims to have not cast a ballot $b$, while the election authority claims that they did cast $b$."
+    deviation d3 "A voter claims that their device is producing incorrect cryptograms, while the election authority is unable to verify this claim."
+    deviation p1 "It must not be possible to link a voter to their vote."
+        deviation p1_1 "The only information on voter selections leaked by the voter application is the computed cryptogram."
+        deviation p1_2 "It must not be possible for anyone to decrypt cryptograms in the absence of a threshold of trustees."
+        deviation p1_3 "It must not be possible for anyone to determine the complete mixing permutations or randomization factors."
+        deviation p1_4 "The decryption process must only operate on cryptograms output from the mixing process."
+    deviation p2 "It must not be possible for future computationally unbounded adversaries to link a voter to their vote using published data from past elections."
+    deviation p3 "It must not be possible for a voter to prove how they voted."
+        deviation p3_1 "A voter does not gain a receipt that can be used to prove to anyone else that they voted in a certain way."
+        deviation p3_2 "A voter cannot cooperate with a coercer to prove that they voted in a certain way."
+    deviation v1 "Cast-as-intended verifiability"
+        deviation v1_1 "Voters must be able to verify C1.1 for their cryptograms."
+    deviation v2 "Recorded-as-cast verifiability"
+        deviation v2_1 "Voters must be able to verify C2.1 for their cryptograms."
+    deviation v3 "Counted-as-recorded verifiability"
+        deviation v3_1 "Anyone must be able to verify C3.1.2, C3.2, C3.3, C3.4, and C3.5."
+    deviation v4 "Eligibility verifiability"
+        deviation v4_1 "Anyone must be able to verify C3.1.1."
+    deviation v5 "Software independence"
+        deviation v5_1 "An (undetected) change or error in the software cannot cause an undetectable change or error in an election outcome."
+
+function availability "Availability" system {
+    deviations [a1, a2, a3, a4]
+}
+
+function confidentiality "Confidentiality" system {
+    deviations [p1, p1_1, p1_2, p1_3, p1_4, p2, p3, p3_1, p3_2]
+}
+
+function correctness "Correctness" system {
+    deviations [c1, c1_1, c2, c2_1, c3, c3_1, c3_1_1, c3_1_2, c3_2, c3_3, c3_4, c3_4_1, c3_4_2, c3_5, c3_5_1, c3_5_2, c3_6, c3_7]
+}
+
+function dispute_freeness "Dispute Freeness" system {
+    deviations [d1, d2, d3]
+}
+
+function verifiability "Verifiability" system {
+    deviations [v1, v1_1, v2, v2_1, v3, v3_1, v4, v4_1, v5, v5_1]
+}
+
+function core "core functionality" system
+
+function oos "oos functionality" system
+
+function partially-core "partially-core functionality" system
+
+function non-core "non-core functionality" system

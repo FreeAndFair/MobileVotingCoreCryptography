@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>advocate-project</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>gov.nasa.arc.advocate.requirements.nattable.editor.requirementsFileAuditor</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.sirius.nature.modelingproject</nature>
+		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
+		<nature>gov.nasa.arc.advocate.common.ui.advocateAuditor</nature>
+	</natures>
+</projectDescription>
