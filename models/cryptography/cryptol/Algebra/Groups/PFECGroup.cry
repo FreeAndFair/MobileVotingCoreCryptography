@@ -1,6 +1,10 @@
 /**
  * Elliptic Curves over Prime Field Group
  *
+ * This is a wrapping of the cryptol-specs PFEC module
+ * in order to implement the CyclicGroupI interface of
+ * the E2EVIV algebraic framework.
+ *
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)
  * @copyright Free & Fair 2025
  * @version 0.1
@@ -8,12 +12,13 @@
 module Algebra::Groups::PFECGroup where
 
 import Algebra::Set
+import Algebra::Utils(lg2floor, bv2Z)
 
 /**
  * The parameters of the PFEC module from cryptol-specs
- * are extracted into a Cryptol interface PFECInterface
+ * are factored into a Cryptol interface PFECInterface
  * so that we can forward those parameters when importing
- * and instantiating the PFEC module below.
+ * and instantiating the the Algebra::PFEC module below.
  */
 import interface Algebra::PFECInterface
 
@@ -36,9 +41,16 @@ import Algebra::PFEC { interface PFECInterface } as EC
 type order = n'
 
 /**
- * Bits require to encode a group element
+ * Bits allotted to encode a group element
  */
-type bits = lg2 n' - k
+type bits = lg2floor n' - k
+
+/**
+ * Bits used to generate a random group element
+ *
+ * @todo Check with Douglas Wikström if the below is appropriate.
+ */
+type rngbits = lg2 P
 
 /**
  * Type universe of group elements (affine coordinate space)
@@ -91,28 +103,30 @@ inv = EC::sub EC::Infinity
 /**
  * Encoding a message as a group element
  *
- * Uses Koblitz's approach to encode a bit vector of a
+ * Uses Koblitz's approach (2) to encode a bit vector of
  * a given length `bits - k` into a valid curve point.
  * Note that k can be freely chosen within [1 ..< bits]
  * and determines the probability that the encoding of a
  * given bitstring fails, being approximately 2^(-(2^k)).
  * @see https://doi.org/10.1090/S0025-5718-1987-0866109-5
- *
- * @todo implement this function (!)
  */
 enc : [bits] -> T
-enc x = error "enc for PFEC groups not yet implemented"
+enc = EC::encBits
 
 /**
  * Decoding a group element into a message
  *
- * Uses Koblitz's approach to decode a valid elliptic
+ * Uses Koblitz's approach (2) to decode a valid elliptic
  * curve point into a bit vector of length `bits - k`.
  * Note that k can be freely chosen within [1 ..< bits]
  * and must be the same value used when encoding with enc.
  * @see https://doi.org/10.1090/S0025-5718-1987-0866109-5
- *
- * @todo implement this function (!)
  */
-dec :T -> [bits]
-dec y = error "dec for PFEC groups not yet implemented"
+dec : T -> [bits]
+dec = EC::decPoint
+
+/**
+ * Generation of a random group element from a (random) bitstring.
+ */
+gen : [rngbits] -> T
+gen r = EC::findPoint (bv2Z r)

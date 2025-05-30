@@ -16,13 +16,13 @@ module Algebra::Encoders::ExpEncoder where
 import Algebra::Set
 import Algebra::Utils(lookupWithEq, isSome, isNone)
 
-// parameter
 /* @note Unfortunately, we cannot parameterize this module
  * by the vocabulary directly since imported interfaces
  * and parameter blocks do not combine well in Cryptol.
  * I.e., we cannot instantiate parameters in the same way
  * we instantiate an interface. @todo fzeyda: Submit a
  * GitHub issue wrt this problem—looks like a bug to me. */
+// parameter
 
 import interface Algebra::CyclicGroupI as CyclicGroup
 import interface Algebra::VocabularyI as Vocabulary

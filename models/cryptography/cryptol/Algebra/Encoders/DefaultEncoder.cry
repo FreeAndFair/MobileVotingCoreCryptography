@@ -1,0 +1,79 @@
+/**
+ * Encoder that use a group's default encoding method
+ *
+ * Where it makes sense, every implementation of the
+ * [Cyclic]GroupI module interface defines a default
+ * method for encoding a bitstring into a group element.
+ * This module exposes that method as an implementation
+ * of the EncoderI interface.
+ *
+ * @implements Algebra::EncoderI
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::DefaultEncoder where
+
+import Algebra::Set
+
+/* @note We need to import via `as` so that we can
+ * separately define the type T in this module. Just
+ * importing the interface does not seem to define it,
+ * and the attempt `type T = Algebra::CyclicGroup::T`
+ * is rejected by Cryptol. This looks like a bug. */
+import interface Algebra::CyclicGroupI as CyclicGroup
+
+/**
+ * Type universe of group elements
+ */
+type T = CyclicGroup::T
+
+/**
+ * Bits allotted to encode a group element
+ */
+type bits = CyclicGroup::bits
+
+/**
+ * Underlying message type
+ */
+type M = [bits]
+
+/**
+ * Equality of group elements
+ *
+ * @note We additionally expose T'eq from CyclicGroupI
+ * since this may be relevant for the importing module.
+ */
+T'eq : T -> T -> Bool
+T'eq = CyclicGroup::T'eq
+
+/**
+ * Carrier set of the group
+ *
+ * @note We additionally expose G from CyclicGroupI
+ * since this may be relevant for the importing module.
+ */
+G : Set T
+G = CyclicGroup::G
+
+/**
+ * Determines the set of encodable messages.
+ */
+encodable : Set M // equiv. M -> Bool
+encodable m = True // isSome (Encode m)
+
+/**
+ * Encodes a message into a group element.
+ *
+ * @todo Perhaps consider that the CyclicGroup::enc may
+ * be parameterized in terms of an option type, so that
+ * failure is propagated here from CyclicGroupI to EncoderI.
+ */
+Encode : M -> Option T
+Encode m = Some (CyclicGroup::enc m) // CyclicGroup::enc m
+
+/**
+ * Decodes a group element into a message.
+ */
+Decode : T -> Option M
+Decode c = if c ∈ CyclicGroup::G then Some (CyclicGroup::dec c) else None

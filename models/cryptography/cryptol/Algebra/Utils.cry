@@ -16,6 +16,35 @@ module Algebra::Utils where
  */
 type Rel a = a -> a -> Bool
 
+/********************/
+/* Type Constraints */
+/********************/
+
+/**
+ * Named type constraint requiring a numeric type to be even.
+ */
+type constraint even a = (a % 2 == 0)
+
+/**
+ * Named type constraint requiring a numeric type to be odd.
+ */
+type constraint odd a = (a % 2 == 1)
+
+/**
+ * Named type constraint requiring a numeric type to be an odd prime number.
+ */
+type constraint oddprime a = (fin a, prime a, a >= 3)
+
+/**
+ * Type operator to calculate the floor logarithm wrt base 2.
+ */
+type lg2floor n = (width n) - 1 // equal (lg2 (n - 1)) - 1
+
+/**
+ * Type operator to calculate the ceiling logarithm wrt base 2.
+ */
+type lg2ceil n = lg2 n
+
 /*************************/
 /* Auxiliary Conversions */
 /*************************/
@@ -142,3 +171,275 @@ lookupWithEq eq l x | n == 0 => None
            else lookupWithEq (~) (tail l) x
   where (a, b) = head l
         (~)    = eq
+
+/*************************/
+/* Prime Group Utilities */
+/*************************/
+
+/**
+ * Determines if a given Integral value type is even.
+ */
+isEven : {a} (Integral a) => a -> Bool
+isEven x = (toInteger x) % 2 == 0
+
+/**
+ * Determines if a given Integral value type is odd.
+ */
+isOdd : {a} (Integral a) => a -> Bool
+isOdd x = (toInteger x) % 2 == 1
+
+/**
+ * Computes the Legendre symbol.
+ *
+ * @pre type parameter n must be an odd prime
+ */
+legendre: {n} (oddprime n) => Z n -> Integer
+legendre z = if z == 0                  then  0
+              | z^^((`n - 1) / 2) ==  1 then  1
+              | z^^((`n - 1) / 2) == -1 then -1
+             else error "unexpected algorithmic behavior"
+
+/**
+ * Checks if a given number is a quadratic residue in a
+ * multiplicative modular group of prime order.
+ *
+ * @pre type parameter n must be an odd prime
+ * @note zero is considered a quadratic residue too
+ */
+isQuadraticResidue : {n} (oddprime n) => Z n -> Bool
+isQuadraticResidue z = legendre z >= 0
+
+/**
+ * Checks if a given number is a quartic residue in a
+ * multiplicative modular group of prime order.
+ *
+ * @pre type parameter n must be an odd prime
+ * @note zero is considered a quartic residue too
+ */
+isQuarticResidue : {n} (oddprime n) => Z n -> Bool
+isQuarticResidue z = z^^((`n - 1) / 4) == 1
+
+/**
+ * Finds a quadratic residue starting the search from a given value.
+ *
+ * @pre type parameter n must be an odd prime
+ * @post returns a quadratic residue not equal to zero
+ */
+findQuadraticResidue : {n} (oddprime n) => Z n -> Z n
+findQuadraticResidue z =
+  if legendre z == 1 then z else findQuadraticResidue (z + 1)
+
+/**
+ * Finds a quadratic nonresidue starting the search from a given value.
+ *
+ * @pre type parameter n must be an odd prime
+ * @post returns a quadratic nonresidue not equal to zero
+ */
+findQuadraticNonResidue : {n} (oddprime n) => Z n -> Z n
+findQuadraticNonResidue z =
+  if legendre z == -1 then z else findQuadraticNonResidue (z + 1)
+
+/****************************/
+/* Tonelli-Shanks Algorithm */
+/****************************/
+
+private
+  /**
+   * Utility function for `tonelli_shanks`.
+   *
+   * @see https://en.wikipedia.org/wiki/Tonelli%E2%80%93Shanks_algorithm
+   */
+  factorOutPow2 : Integer -> (Integer, Integer)
+  factorOutPow2 n =
+    if n == 0 then (0, 0) else factorOutPow2'aux (n, 0) where
+    factorOutPow2'aux : (Integer, Integer) -> (Integer, Integer)
+    factorOutPow2'aux (Q, S) =
+      if isEven Q then factorOutPow2'aux (Q / 2, S + 1)
+                  else (Q, S)
+
+  /**
+   * Utility function for `tonelli_shanks`.
+   *
+   * @see https://en.wikipedia.org/wiki/Tonelli%E2%80%93Shanks_algorithm
+   */
+  findLeasti : {p} (oddprime p) => Integer -> Z p -> Integer
+  findLeasti M t = findLeasti'aux 1 (t * t) where
+    findLeasti'aux : Integer -> Z p -> Integer
+    findLeasti'aux i t2i =
+      if t2i == 1 then i
+       |   i  > M then error "unexpected algorithmic behavior (?)"
+      else findLeasti'aux (i + 1) (t2i * t2i)
+
+  /**
+   * Utility function for `tonelli_shanks`.
+   *
+   * @see https://en.wikipedia.org/wiki/Tonelli%E2%80%93Shanks_algorithm
+   */
+  tonelli_shanks'loop : {p} (oddprime p) => Integer -> Z p -> Z p -> Z p -> Z p
+  tonelli_shanks'loop M c t R =
+    if t == 0 then 0
+     | t == 1 then R
+     | i == M then error "tonelli_shanks applied to quadratic nonresidue"
+    else tonelli_shanks'loop i (b * b) (t * b * b) (R * b)
+    where i = findLeasti M t
+          b = c^^(2^^(M - i - 1))
+
+/**
+ * Finds a square root of a given quadratic residue using the Tonelli-Shanks
+ * algorithm.
+ *
+ * @pre type parameter p must be an odd prime
+ * @pre the argument n is a quadratic residue modulo p
+ * @see https://en.wikipedia.org/wiki/Tonelli%E2%80%93Shanks_algorithm
+ */
+tonelli_shanks : {p} (oddprime p) => Z p -> Z p
+tonelli_shanks n = tonelli_shanks'loop M c t R
+  where (Q, S) = factorOutPow2 (`p - 1)
+        z = findQuadraticNonResidue`{p} 1
+        M = S
+        c = z^^Q
+        t = n^^Q
+        R = n^^((Q + 1) / 2)
+
+/**
+ * Finds a square root of a given quadratic residue using a combination
+ * of methods.
+ *
+ * @note Attempts some shortcuts due to Lagrange that speed up the
+ * computation before applying the Tonelli-Shanks algorithm via
+ * `tonelli_shanks` (which is more costly).
+ *
+ * @pre type parameter p must be an odd prime
+ * @pre the argument n is a quadratic residue modulo p
+ */
+sqrtZ : {p} (oddprime p) => Z p -> Z p
+sqrtZ n = if `p % 4 == 3 then n ^^ ((`p + 1) / 4)
+           | `p % 8 == 5 then
+            if isQuarticResidue`{p} n then r // due to Lagrange
+                                      else r * 2 ^^ ((`p - 1) / 4)
+            where r =  n ^^ ((`p + 3) / 8)
+         else tonelli_shanks`{p} n
+
+/**************************/
+/* Testing & Verification */
+/**************************/
+
+/**
+ * Field size of the NIST P-256 Elliptic Curve defined in [FIPS-186-5]
+ *
+ * @note used for random testing of `tonelli_shanks` and `sqrtZ`
+ */
+private type P256 = 115792089210356248762697446949407573530086143415290314195533631308867097853951
+
+/**
+ * Property that `tonelli_shanks n` produces the correct result.
+ *
+ * @pre type parameter p must be an odd prime
+ * @post if n is a quadratic residue, returns true iff `tonelli_shanks n`
+ * correctly calculates one of the square roots of n modulo p
+ * @post if n is a quadratic nonresidue, vacuously returns true
+ */
+private tonelli_shanks_correct : {p} (oddprime p) => Z p -> Bool
+property tonelli_shanks_correct (n : Z p) =
+  isQuadraticResidue n ==> r^^2 == n where r = tonelli_shanks n
+
+/**
+ * Exhaustively verifies the implementation of the Tonelli-Shanks
+ * algorithm for small primes (< 100).
+ *
+ * ```repl
+ * :exhaust tonelli_shanks_correct`{3}
+ * :exhaust tonelli_shanks_correct`{5}
+ * :exhaust tonelli_shanks_correct`{7}
+ * :exhaust tonelli_shanks_correct`{11}
+ * :exhaust tonelli_shanks_correct`{13}
+ * :exhaust tonelli_shanks_correct`{17}
+ * :exhaust tonelli_shanks_correct`{19}
+ * :exhaust tonelli_shanks_correct`{23}
+ * :exhaust tonelli_shanks_correct`{29}
+ * :exhaust tonelli_shanks_correct`{31}
+ * :exhaust tonelli_shanks_correct`{37}
+ * :exhaust tonelli_shanks_correct`{41}
+ * :exhaust tonelli_shanks_correct`{43}
+ * :exhaust tonelli_shanks_correct`{47}
+ * :exhaust tonelli_shanks_correct`{53}
+ * :exhaust tonelli_shanks_correct`{59}
+ * :exhaust tonelli_shanks_correct`{61}
+ * :exhaust tonelli_shanks_correct`{67}
+ * :exhaust tonelli_shanks_correct`{71}
+ * :exhaust tonelli_shanks_correct`{73}
+ * :exhaust tonelli_shanks_correct`{79}
+ * :exhaust tonelli_shanks_correct`{83}
+ * :exhaust tonelli_shanks_correct`{89}
+ * :exhaust tonelli_shanks_correct`{97}
+ * ```
+ */
+verify_tonelli_shanks_small_primes = True // we need something to annotate
+
+/**
+ * Tests the implementation of the Tonelli-Shanks algorithm for the
+ * field size of the NIST P-256 Elliptic Curve defined in [FIPS-186-5].
+ *
+ * ```repl
+ * :set tests = 100000
+ * :check tonelli_shanks_correct`{P256}
+ * ```
+ */
+test_tonelli_shanks_P256 = True // we need something to annotate
+
+/**
+ * Property that `sqrtZ n` produces the correct result.
+ *
+ * @pre type parameter p must be an odd prime
+ * @post if n is a quadratic residue, returns true iff `sqrtZ n`
+ * correctly calculates one of the square roots of n modulo p
+ * @post if n is a quadratic nonresidue, vacuously returns true
+ */
+private sqrtZ_correct : {p} (oddprime p) => Z p -> Bool
+property sqrtZ_correct (n : Z p) =
+  isQuadraticResidue n ==> r^^2 == n where r = sqrtZ n
+
+/**
+ * Exhaustively verifies the sqrtZ function for small primes
+ * (< 100) to calculate the square root of a quadratic residue
+ * in a multiplicative group of odd prime order.
+ *
+ * ```repl
+ * :exhaust sqrtZ_correct`{3}
+ * :exhaust sqrtZ_correct`{5}
+ * :exhaust sqrtZ_correct`{7}
+ * :exhaust sqrtZ_correct`{11}
+ * :exhaust sqrtZ_correct`{13}
+ * :exhaust sqrtZ_correct`{17}
+ * :exhaust sqrtZ_correct`{19}
+ * :exhaust sqrtZ_correct`{23}
+ * :exhaust sqrtZ_correct`{29}
+ * :exhaust sqrtZ_correct`{31}
+ * :exhaust sqrtZ_correct`{37}
+ * :exhaust sqrtZ_correct`{41}
+ * :exhaust sqrtZ_correct`{43}
+ * :exhaust sqrtZ_correct`{47}
+ * :exhaust sqrtZ_correct`{53}
+ * :exhaust sqrtZ_correct`{59}
+ * :exhaust sqrtZ_correct`{61}
+ * :exhaust sqrtZ_correct`{67}
+ * :exhaust sqrtZ_correct`{71}
+ * :exhaust sqrtZ_correct`{73}
+ * :exhaust sqrtZ_correct`{79}
+ * :exhaust sqrtZ_correct`{83}
+ * :exhaust sqrtZ_correct`{89}
+ * :exhaust sqrtZ_correct`{97}
+ * ```
+ */
+verify_sqrtZ_small_primes = True // we need something to annotate
+
+/**
+ * Tests the the sqrtZ function for the field size of the
+ * NIST P-256 Elliptic Curve defined in [FIPS-186-5].
+ *
+ * ```repl
+ * :set tests = 100000
+ * :check sqrtZ_correct`{P256}
+ * ```
+ */
+test_sqrtZ_P256 = True // we need something to annotate

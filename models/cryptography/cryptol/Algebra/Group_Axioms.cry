@@ -180,14 +180,22 @@ property exp_correct_exhaust x (z : Z order) =
   where k = fromZ z
 
 /**
- * Decoding an encoded bitvector gives back the same value,
- * provided that the value is inside the range [0 ..< order].
+ * Decoding an encoded bitvector gives back the same value.
+ *
+ * @note There is no property: `x ∈ G ==> enc (dec x) ≡ x`
+ * since not all group elements may be in the range of the
+ * `enc` function.
  */
 property enc_dec_inverse (bv : [bits]) =
-  bv >= 0 /\ (toInteger bv) < `order ==> dec (enc bv) == bv
+  dec (enc bv) == bv
 
 /**
- * Encoding a decoded group element gives back the same value.
+ * Random generation of group elements is correct (sound).
+ *
+ * @note It is outside the reasoning scope of Cryptol
+ * to prove any probabilistic properties of `gen`;
+ * i.e., related to the resulting output distribution
+ * based on the distribution of bitvector inputs.
  */
-property dec_enc_inverse (x : T) =
-  x ∈ G ==> enc (dec x) ≡ x
+property gen_in_G (bv : [rngbits]) =
+  (gen bv) ∈ G

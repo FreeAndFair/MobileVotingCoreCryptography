@@ -12,6 +12,7 @@
  * the `enc` and `dec` functions. This is useful where there
  * is an obvious and standard encoding of group elements.
  *
+ * @implements Algebra::EncoderI
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)
  * @copyright Free & Fair 2025
  * @version 0.1
@@ -20,6 +21,7 @@ interface module Algebra::EncoderI where
 
 import Algebra::Set
 
+// @note interface modules cannot be extended in Cryptol.
 // import interface Algebra::CyclicGroupI
 
 /**

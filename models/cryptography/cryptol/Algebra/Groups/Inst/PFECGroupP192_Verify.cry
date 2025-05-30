@@ -29,6 +29,9 @@ import Algebra::Groups::Inst::PFECGroupP192_POs
  * :prove valid_identity
  * :check valid_inverse
  * :check exp_correct_check
+ * :check enc_dec_inverse
+ * :prove all enc_dec_inverse [-3, -2, -1, 0, 1, 2, 3]
+ * :check gen_in_G
  * ```
  *
  * @note Due to the group size, g_generates_G cannot be

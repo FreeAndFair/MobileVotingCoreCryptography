@@ -30,6 +30,7 @@
 interface module Algebra::GroupI where
 
 import Algebra::Set
+import Algebra::Utils(lg2floor)
 
 /**
  * Order of the group
@@ -43,15 +44,37 @@ type constraint (fin order, order >= 1)
 /**
  * Bits allotted to encode a group element
  *
- * This type is used by the `enc` and `dec` functions.
- * Note that bits may be strictly less than `lg2 order`,
- * e.g., to facilitate generic encoding of bitstring
- * into Elliptic Curve points using Koblitz's method.
- * Where the group order is not a power of 2, we assume
- * that only bit strings in [0 ..< order] are encodable.
+ * This type is used by the domain and codomain of the
+ * `enc` and `dec` functions.
+ *
+ * @note We previously used a looser type constraint
+ * `bits <= lg2 order` here, which meant that some
+ * bitstrings may not be encodable. Douglas Wikström
+ * recommended that the `enc` function ought be total.
+ * Hence, whenever `order` is not a power of 2, we
+ * necessarily throw a few group elements away.
+ *
+ * @note There may be other reasons for `bits` to be
+ * strictly less than `lg2floor order`, even if
+ * the group order is a power of 2. E.g., encoding
+ * schemes for elliptic curves typically require a
+ * certain number of _twiddle bits_ to find a valid
+ * curve point, see Neal Koblitz's paper, Sect. 3:
+ * @see https://evervault.com/papers/koblitz.pdf
  */
 type bits : #
-type constraint (bits > 0, bits <= lg2 order)
+type constraint (fin bits, bits > 0, bits <= lg2floor order)
+
+/**
+ * Bits used to generate a random group element
+ *
+ * @note Douglas Wikström noted that we need at least
+ * `lg2 order` bits from the random source to satisfy
+ * safety properties of the resulting probability
+ * distribution of group elements. More are fine too!
+ */
+type rngbits : #
+type constraint (fin rngbits, rngbits >= lg2 order)
 
 /**
  * Type universe of group elements
@@ -128,6 +151,13 @@ inv : T -> T
  * identity (exp x k) == (exp (inv x) -k) for x ∈ G.
  * Naturally, we also assume (exp x 0) == identity and
  * (exp x 1) == x for all x ∈ G.
+ *
+ * @todo fzeyda: Douglas Wikström encourage exploration
+ * of using a constraint (Field a) for the exponent type.
+ * Or perhaps introduce another type parameter for the
+ * exponent type. I understand that custom instantiation
+ * of type classes is limited in Cryptol, so we may need
+ * some more creative ways to achieve this if so.
  */
 exp : {a} (Integral a) => T -> a -> T
 
@@ -135,14 +165,9 @@ exp : {a} (Integral a) => T -> a -> T
  * Encoding a message as a group element
  *
  * This function defines a default encoding of a
- * bitstring of predefined length `bits` into the
- * group if there is an obvious candidate for it.
- *
- * Note that if [bits] contains more elements than
- * the group order (order type), then application
- * of enc to bistrings equal or greater than order
- * is undefined. Otherwise a unique corresponding
- * group element shall be returned.
+ * bitstring of predefined length `bits` into a
+ * group element if there is an obvious canonical
+ * way to do so.
  */
 enc : [bits] -> T
 
@@ -150,14 +175,18 @@ enc : [bits] -> T
  * Decoding a group element into a message
  *
  * If the given group element e is in the
- * group's carrier set (e ∈ G), its unique
+ * range of the `enc` function, its unique
  * bitvector representation shall be returned.
  * Otherwise, the result may be any value and
  * is considered to be undefined.
- * @todo What about valid group elements that
- * cannot be decoded? Do we consider such?
  */
 dec : T -> [bits]
+
+/**
+ * Generation of a random group element from a (random)
+ * bitstring.
+ */
+gen : [rngbits] -> T
 
 /* @note fzeyda: Initially, I used `Integer` to
  * uniformly represent messages to be encoded but

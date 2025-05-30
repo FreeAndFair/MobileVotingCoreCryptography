@@ -54,6 +54,8 @@ module Algebra::PFEC where
 
 import Common::utils(half, mul2, mul3, mul4, mul8, ZtoBV)
 
+include "PFECExtensions.inc"
+
 parameter
     /**
      * Field size `P`.
@@ -334,15 +336,6 @@ xCoord: Point -> Option (Z P)
 xCoord p = case p of
     Infinity   -> None
     Affine x _ -> Some x
-
-/**
- * Extract the y-coordinate `Z P` value, if the point is not the point at
- * infinity.
- */
-yCoord: Point -> Option (Z P)
-yCoord p = case p of
-    Infinity   -> None
-    Affine _ y -> Some y
 
 private
     type ProjectivePoint = { x : Z P, y : Z P, z : Z P }
@@ -777,7 +770,7 @@ private
     /**
      * Calculate x / y in a field.
      * ```repl
-     * :prove  2 %/ 2 == (1 : Z 3)
+     * :prove 2 %/ 2 == (1 : Z 3)
      * ```
      */
     (%/) : {a} (Field a) => a -> a -> a

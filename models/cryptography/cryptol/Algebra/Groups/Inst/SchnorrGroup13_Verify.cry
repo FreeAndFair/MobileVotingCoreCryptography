@@ -31,6 +31,7 @@ import Algebra::Groups::Inst::SchnorrGroup13_POs
  * :check exp_correct_check
  * :exhaust exp_correct_exhaust
  * :exhaust g_generates_G
+ * :exhaust gen_in_G
  * ```
  */
 Discharge_POs = True // we need something to annotate

@@ -11,7 +11,7 @@
 module Algebra::Groups::ZnAddGroup where
 
 import Algebra::Set
-import Algebra::Utils(bv2Z, Z2bv)
+import Algebra::Utils(lg2floor, bv2Z, Z2bv)
 
 parameter
   /**
@@ -28,9 +28,14 @@ parameter
 type order = n
 
 /**
- * Bits require to encode a group element
+ * Bits allotted to encode a group element
  */
-type bits = lg2 n
+type bits = lg2floor n // previously `lg2 n`
+
+/**
+ * Bits used to generate a random group element
+ */
+type rngbits = lg2 n
 
 /**
  * Type universe of group elements
@@ -90,3 +95,9 @@ enc = bv2Z
  */
 dec : T -> [bits]
 dec = Z2bv
+
+/**
+ * Generation of a random group element from a (random) bitstring.
+ */
+gen : [rngbits] -> T
+gen = bv2Z

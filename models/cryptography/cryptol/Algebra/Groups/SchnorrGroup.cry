@@ -25,6 +25,7 @@
 module Algebra::Groups::SchnorrGroup where
 
 import Algebra::Set
+import Algebra::Utils(lg2floor)
 
 parameter
   /**
@@ -59,9 +60,14 @@ parameter
 type order = q
 
 /**
- * Bits require to encode a group element
+ * Bits allotted to encode a group element
  */
-type bits = lg2 q
+type bits = lg2floor q // previously `lg2 n`
+
+/**
+ * Bits used to generate a random group element
+ */
+type rngbits = lg2 q
 
 /**
  * Type universe of (over)group elements
@@ -149,3 +155,14 @@ enc x | r == 2 => if z ∈ G then z else (-z)
 dec : T -> [bits]
 dec y | r == 2 => fromInteger ((tau y) - 1)
       | r != 2 => error "dec only applicable when parameter r is 2"
+
+/**
+ * Generation of a random group element from a (random) bitstring.
+ *
+ * @todo Currently, we are using exponentiation of g for random
+ * group element generation. This is not cryptographically safe
+ * and is merely used for testing. Future work might explore a
+ * more suitable algorithm for constructing random group elements.
+ */
+gen : [rngbits] -> T
+gen r = exp g r
