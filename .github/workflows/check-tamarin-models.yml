@@ -1,0 +1,36 @@
+# .github/workflows/check-tamarin-models.yml
+# Author: Daniel M. Zimmerman
+# Created: 2025-06-06
+# Modified: 2025-06-06
+
+name: Check Tamarin Model Syntax
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - 'models/cryptography/tamarin/**'
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Generate and Check Syntax of Tamarin Models
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_READ_ONLY_TOKEN_USERNAME }}
+          password: ${{ secrets.DOCKER_READ_ONLY_TOKEN }}
+
+      - name: Run `make ci` in `models/cryptography/tamarin`
+        run: |
+          echo "Processing models/cryptography/tamarin"
+          cd models/cryptography/tamarin
+          DOCKER=yes make ci

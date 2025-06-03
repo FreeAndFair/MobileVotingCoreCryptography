@@ -1,15 +1,15 @@
-# .github/workflows/run-makefile-for-ple-docker-image.yml
+# .github/workflows/run-makefile-for-cpv-docker-image.yml
 # Author: Daniel M. Zimmerman
-# Created: 2024-02-14
+# Created: 2025-06-06
 # Modified: 2025-06-06
 
-name: Run Makefile for PLE Docker Image
+name: Run Makefile for CPV Docker Image
 
 on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
     paths:
-      - 'docker/de-ple-e2eviv/**'
+      - 'docker/cpv-e2eviv/**'
   push:
     branches:
       - 'main'
@@ -17,7 +17,7 @@ on:
 
 jobs:
   test:
-    name: Build PLE Docker Image
+    name: Build CPV Docker Image
     runs-on: ubuntu-latest
     steps:
       - name: Uninstall Old Docker
@@ -37,8 +37,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Run `make image` in `docker/de-ple-e2eviv`
+      - name: Run `make image` in `docker/cpv-e2eviv`
         run: |
           echo "Processing docker image"
-          cd docker/de-ple-e2eviv
+          cd docker/cpv-e2eviv
           make image
