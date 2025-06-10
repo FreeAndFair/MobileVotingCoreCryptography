@@ -75,7 +75,7 @@ rule VoterAuthentication_Temporary:
 lemma Executability_VoterAuthentication:
   exists-trace
   "
-    ∃ #t. VoterAuthentication_Executed()@t
+    Ex #t. VoterAuthentication_Executed()@t
   "
 dnl
 ifdef(<!STANDALONE!>,<!

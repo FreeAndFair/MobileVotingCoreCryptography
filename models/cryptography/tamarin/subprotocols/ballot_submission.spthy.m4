@@ -74,7 +74,7 @@ rule BallotSubmission_Temporary:
 lemma Executability_BallotSubmission:
   exists-trace
   "
-    ∃ #t. BallotSubmission_Executed()@t
+    Ex #t. BallotSubmission_Executed()@t
   "
 dnl
 ifdef(<!STANDALONE!>,<!

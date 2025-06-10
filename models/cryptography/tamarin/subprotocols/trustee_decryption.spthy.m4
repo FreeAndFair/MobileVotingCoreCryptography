@@ -74,7 +74,7 @@ rule TrusteeDecryption_Temporary:
 lemma Executability_TrusteeDecryption:
   exists-trace
   "
-    ∃ #t. TrusteeDecryption_Executed()@t
+    Ex #t. TrusteeDecryption_Executed()@t
   "
 dnl
 ifdef(<!STANDALONE!>,<!

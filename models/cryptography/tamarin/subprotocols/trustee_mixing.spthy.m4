@@ -74,7 +74,7 @@ rule TrusteeMixing_Temporary:
 lemma Executability_TrusteeMixing:
   exists-trace
   "
-    ∃ #t. TrusteeMixing_Executed()@t
+    Ex #t. TrusteeMixing_Executed()@t
   "
 dnl
 ifdef(<!STANDALONE!>,<!

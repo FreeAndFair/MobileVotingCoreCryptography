@@ -1,5 +1,7 @@
 dnl
-dnl This is the m4 input file for the composition of all the subprotocols.
+dnl This is the m4 input file for the composition of all the subprotocols
+dnl that take place outside the air-gapped network (i.e., exposed to the
+dnl Internet).
 dnl
 dnl @author Daniel M. Zimmerman
 dnl @copyright Free & Fair 2025
@@ -14,27 +16,28 @@ define(`QUOTE_CHANGED')
 changequote(`<!', `!>')
 dnl
 dnl This particular composition is uncomplicated; we just include the
-dnl common primitives and all the subprotocol rules and lemmas.
+dnl common primitives and all the relevant subprotocol rules and lemmas.
 dnl
 /*
-  Full E2E-VIV Protocol
-  (Composition of All Subprotocols)
+  E2E-VIV Protocol - Composition of Internet-Exposed Subprotocols
 
-  This theory is a composition of all the subprotocol theories. It will
-  likely at some point include additional "cross-subprotocol" lemmas as
-  well, but for now is just a straightforward composition.
+  This theory is a composition of all the subprotocol theories for those
+  subprotocols that are executed on systems exposed to the Internet. It
+  will likely at some point include additional "cross-subprotocol" lemmas
+  as well, but for now is just a straightforward composition.
 
   @author Daniel M. Zimmerman
   @copyright Free & Fair 2025
   @version 0.1
  */
 
-theory e2eviv
+theory e2eviv_internet
 
 begin
 
 #include "../common/primitives.spthy.inc"
-
+#include "../common/channels.spthy.inc"
+#include "../common/bulletinboard.spthy.inc"
 
 /* Ballot Cast */
 
@@ -47,18 +50,6 @@ include(subprotocols/ballot_check.spthy.m4)
 /* Ballot Submission */
 
 include(subprotocols/ballot_submission.spthy.m4)
-
-/* Election Key Generation */
-
-include(subprotocols/election_key_generation.spthy.m4)
-
-/* Trustee Decryption */
-
-include(subprotocols/trustee_decryption.spthy.m4)
-
-/* Trustee Mixing */
-
-include(subprotocols/trustee_mixing.spthy.m4)
 
 /* Voter Authentication */
 

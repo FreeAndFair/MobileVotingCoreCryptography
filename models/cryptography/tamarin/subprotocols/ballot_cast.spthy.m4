@@ -74,7 +74,7 @@ rule BallotCast_Temporary:
 lemma Executability_BallotCast:
   exists-trace
   "
-    ∃ #t. BallotCast_Executed()@t
+    Ex #t. BallotCast_Executed()@t
   "
 dnl
 ifdef(<!STANDALONE!>,<!

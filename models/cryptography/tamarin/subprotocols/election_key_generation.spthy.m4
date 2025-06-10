@@ -75,7 +75,7 @@ rule ElectionKeyGeneration_Temporary:
 lemma Executability_ElectionKeyGeneration:
   exists-trace
   "
-    ∃ #t. ElectionKeyGeneration_Executed()@t
+    Ex #t. ElectionKeyGeneration_Executed()@t
   "
 dnl
 ifdef(<!STANDALONE!>,<!

@@ -1,15 +1,13 @@
 # .github/workflows/verify-tamarin-models.yml
 # Author: Daniel M. Zimmerman
 # Created: 2025-06-06
-# Modified: 2025-06-06
+# Modified: 2025-06-19
 
 name: Verify Tamarin Models
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
-    paths:
-      - 'models/cryptography/tamarin/**'
+  # We run this for pushes to `main` and on manual workflow dispatch,
+  # but not on PRs, because it can use excessive resources.
   push:
     branches:
       - 'main'
@@ -17,7 +15,7 @@ on:
 
 jobs:
   test:
-    name: Generate and Verify Executability of Tamarin Models
+    name: Generate and Verify Executability/Safety of Tamarin Models
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -34,3 +32,9 @@ jobs:
           echo "Processing models/cryptography/tamarin"
           cd models/cryptography/tamarin
           DOCKER=yes make cv
+
+      - name: Save the Generated Tamarin Outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: tamarin-output
+          path: models/cryptography/tamarin/output/*

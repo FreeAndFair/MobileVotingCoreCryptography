@@ -9,10 +9,15 @@
 # but when run in CI, it is an invocation of a Docker container
 # instead.
 TAMARIN = tamarin-prover
+
+# Docker image information (used if DOCKER is defined in the environment)
 DOCKER_IMAGE = freeandfair/cpv-e2eviv:latest
 ifdef DOCKER
 	TAMARIN = docker run --volume "$(PWD):/work" --workdir /work $(DOCKER_IMAGE) tamarin-prover
 endif
+
+# Timeout for Tamarin runs (default 10 minutes, overridable by TIMEOUT in environment)
+TIMEOUT ?= 10m
 
 # Display a brief help page listing possible commands/targets.
 help:
@@ -23,7 +28,8 @@ help:
 	@echo "compositions   - generate Tamarin models for protocol compositions (*)"
 	@echo "composed-all   - generate a Tamarin model composing all subprotocols"
 	@echo "syntax         - check syntax of all generated models (**)"
-	@echo "executability  - check executability of all generated models (**)"
+	@echo "executability  - check executability lemmas of all generated models (**)"
+	@echo "safety         - check safety lemmas of all generated models (**)"
 	@echo "clean          - remove all generated models and outputs"
 	@echo ""
 	@echo "(*)  - see 'compositions/README.md' for more information about"
@@ -63,19 +69,32 @@ compositions: $(COMPOSITION_DESTS)
 # Execute Tamarin to check syntax of all generated models.
 syntax:
 	$(info [info] checking syntax of all generated models...)
-	@$(foreach SPTHY, $(wildcard generated_standalone/*.spthy), \
-		$(TAMARIN) --parse-only $(SPTHY) > /dev/null;)
-	@$(foreach SPTHY, $(wildcard generated_composed/*.spthy), \
-		$(TAMARIN) --parse-only $(SPTHY) > /dev/null;)
+	@$(foreach SPTHY, $(wildcard generated_standalone/*.spthy generated_composed/*.spthy), \
+		$(TAMARIN) --parse-only $(SPTHY) > /dev/null || exit 1;)
 
-# Execute Tamarin to check executability of all generated models.
+# Execute Tamarin to check executability of all generated models. This
+# reports an error either if Tamarin fails, or if any lemma is falsified.
 executability:
 	$(info [info] checking executability of all generated models...)
 	@mkdir -p output
-	$(foreach SPTHY, $(wildcard generated_standalone/*.spthy), \
-		$(TAMARIN) --prove="Executability*" --output-dot=output/$(basename $(notdir $(SPTHY)))-executability.dot $(SPTHY);)
-	$(foreach SPTHY, $(wildcard generated_composed/*.spthy), \
-		$(TAMARIN) --prove="Executability*" --output-dot=output/$(basename $(notdir $(SPTHY)))-executability.dot $(SPTHY);)
+	$(foreach SPTHY, $(wildcard generated_standalone/*.spthy generated_composed/*.spthy), \
+		timeout $(TIMEOUT) $(TAMARIN) --prove="Executability*" \
+		--output-dot=output/$(basename $(notdir $(SPTHY)))-executability.dot > \
+		output/$(basename $(notdir $(SPTHY)))-executability.out $(SPTHY) || exit 1;)
+	@grep falsified output/*.out || echo "RESULT: no lemmas falsified"
+	@ ! grep -q falsified output/*.out
+
+# Execute Tamarin to check safety lemmas for all generated models. This
+# reports an error either if Tamarin fails, or if any lemma is falsified.
+safety:
+	$(info [info] checking safety of all generated models...)
+	@mkdir -p output
+	$(foreach SPTHY, $(wildcard generated_standalone/*.spthy generated_composed/*.spthy), \
+		timeout $(TIMEOUT) $(TAMARIN) --prove="Safety*" \
+		--output-dot=output/$(basename $(notdir $(SPTHY)))-safety.dot > \
+		output/$(basename $(notdir $(SPTHY)))-safety.out $(SPTHY) || exit 1;)
+	@grep falsified output/*.out || echo "RESULT: no lemmas falsified"
+	@ ! grep -q falsified output/*.out
 
 # Cleans up all dynamically generated files, including caches.
 clean:
@@ -85,7 +104,7 @@ clean:
 # Continuous integration/verification target.
 ci: subprotocols compositions syntax
 
-cv: subprotocols compositions executability
+cv: subprotocols compositions executability safety
 
 # List of phony targets
-.PHONY: default help subprotocols compositions syntax executability clean ci cv
+.PHONY: default help subprotocols compositions syntax executability safety clean ci cv
