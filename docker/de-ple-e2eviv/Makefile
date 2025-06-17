@@ -27,13 +27,11 @@ DOCKER=docker
 DOCKER_VERSION := $(shell $(DOCKER) --version)
 DOCKER_OR_PODMAN := $(firstword $(DOCKER_VERSION))
 
-# Note: SBOM is currently disabled because of a containerd bug,
-# https://github.com/containerd/containerd/issues/11440 - fixed
-# in containerd but not yet in Docker Desktop
-DOCKER_BUILD_ARGS=--platform=$(IMAGE_PLATFORM) --attest type=provenance,mode=max --attest type=sbom
+# For Podman, we do not use Docker-specific attestation or SBOM options
 ifeq ($(DOCKER_OR_PODMAN), podman)
-	# For Podman, we don't use Docker-specific attestation or SBOM options
-	DOCKER_BUILD_ARGS=--platform=$(IMAGE_PLATFORM)
+DOCKER_BUILD_ARGS=--platform=$(IMAGE_PLATFORM)
+else
+DOCKER_BUILD_ARGS=--platform=$(IMAGE_PLATFORM) --attest type=provenance,mode=max --attest type=sbom
 endif
 
 # Default target: help
