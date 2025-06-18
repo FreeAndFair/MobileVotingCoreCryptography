@@ -1,0 +1,48 @@
+# .github/workflows/test-generation-of-rust-code.yml
+# Author: Daniel M. Zimmerman
+# Created: 2025-06-18
+# Modified: 2025-06-18
+
+name: Test Generation of Rust Code from Cryptol
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - 'models/cryptography/cryptol/**'
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Generate Rust Code with Cryptol Compiler
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_READ_ONLY_TOKEN_USERNAME }}
+          password: ${{ secrets.DOCKER_READ_ONLY_TOKEN }}
+
+      - name: Pull Docker Image
+        run: docker pull freeandfair/cryptol-compiler:latest
+
+      - name: Generate Rust Code from Cryptol
+        run: |
+          echo "Generating Rust code from models/cryptography/cryptol..."
+          cd models/cryptography/cryptol
+          CRYPTOL_COMPILER="WORKDIR=/work/cryptol MOUNTDIR=.. ../../../utils/cryptol/cryptol-compiler" make rust
+
+      - name: Test Generated Rust Code
+        run: |
+          echo "Testing generated Rust code..."
+          cd models/cryptography/cryptol
+          make test

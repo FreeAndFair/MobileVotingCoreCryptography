@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Cryptol Compiler "Emulation" Script
+#
+# This script runs the Cryptol compiler from a Docker image as though it is
+# locally installed.
+#
+# Environment variables that can be set (and their defaults)
+#
+# MOUNTDIR: The local filesystem directory to mount within the Docker image.
+# It will be mounted at "/work". This may need to be something other than
+# the current working directory, depending on what files Cryptol needs
+# access to. It defaults to the current working directory.
+#
+# WORKDIR: The working directory within the Docker image, defaults to "/work".
+# It may need to be something different, depending on the setting for
+# MOUNTDIR relative to the local current working directory.
+
+set -e # exit immediately upon error(s)
+
+# URL of the docker repository
+REPOSITORY="registry-1.docker.io"
+
+# Name of the organization
+ORGANIZATION="freeandfair"
+
+# Name of the docker image to run
+IMAGE="cryptol-compiler"
+
+# Version of the docker image to run
+TAG="latest"
+
+# Platform
+PLATFORM1="--platform linux/amd64"
+PLATFORM2="--platform linux/arm64"
+PLATFORM="" # let OS choose
+
+# Port mapping to expose Clafer IDE tools
+PORT_OPTS=""
+
+# Mount point within the container.
+MOUNTPOINT="/work"
+
+# Working directory within the container.
+WORKDIR=${WORKDIR:-$MOUNTPOINT}
+
+# Directory in the local filesystem to mount in the container.
+MOUNTDIR=$(realpath ${MOUNTDIR:-"."})
+
+# Volume mapping. We map the current directory.
+VOLUME="$MOUNTDIR:$MOUNTPOINT"
+
+# Log into dockerhub if the image is not present.
+if [ -z "$(docker images -q $ORGANIZATION/$IMAGE:$TAG 2> /dev/null)" ]; then
+  echo "Logging into docker repository: $REPOSITORY"
+  docker login $REPOSITORY
+fi
+
+# Run container interactively and automatically destroy it when exiting.
+docker run --rm $PLATFORM $PORT_OPTS -v "$VOLUME" -w "$WORKDIR" $ORGANIZATION/$IMAGE:$TAG cryptol-compiler $*
