@@ -1,6 +1,7 @@
 # .github/workflows/test-validity-of-cryptol-files.yml
 # Author: Daniel M. Zimmerman
 # Created: 2025-05-01
+# Modified: 2025-06-19
 
 # This action uses Cryptol project files to not only typecheck all the
 # Cryptol files in each project, but also to check all their docstrings
@@ -10,17 +11,20 @@
 name: Test Validity of Cryptol Files
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
-    paths:
-      - '**.cry'
-      - '**/cryproject.toml'
-
+  # We run this for pushes to `main` and on manual workflow dispatch,
+  # but not on PRs, because it can use excessive resources and sometimes
+  # the caching doesn't work correctly. We also run it twice a week on
+  # `main` so that the cache for main doesn't disappear after GitHub's
+  # 7 day cache timeout.
   push:
     branches:
       - 'main'
 
   workflow_dispatch:
+
+  schedule:
+    - cron: '31 7 * * 1' # every week on Monday
+    - cron: '31 7 * * 5' # every week on Friday
 
 jobs:
   build-matrix:
