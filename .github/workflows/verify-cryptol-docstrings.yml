@@ -1,0 +1,122 @@
+# .github/workflows/verify-cryptol-docstrings.yml
+# Author: Daniel M. Zimmerman
+# Created: 2025-05-01
+# Modified: 2025-06-24
+
+# This action uses Cryptol project files to not only typecheck all the
+# Cryptol files in each project, but also to check all their docstrings
+# (performing verification/validation as necessary). It uses GitHub's
+# caches to avoid duplicating effort.
+
+name: Verify Cryptol Docstrings
+
+on:
+  # We run this for pushes to `main` and on manual workflow dispatch,
+  # but not on PRs, because it can use excessive resources and sometimes
+  # the caching doesn't work correctly. We also run it twice a week on
+  # `main` so that the cache for main doesn't disappear after GitHub's
+  # 7 day cache timeout.
+  push:
+    branches:
+      - 'main'
+
+  workflow_dispatch:
+
+  schedule:
+    - cron: '31 7 * * 1' # every week on Monday
+    - cron: '31 7 * * 5' # every week on Friday
+
+jobs:
+  build-matrix:
+    name: Generate Matrix of Cryptol Projects
+    runs-on: ubuntu-latest
+    outputs:
+      cryptol-project-dirs: ${{ steps.generate-matrix.outputs.cryptol-project-dirs }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate Matrix
+        id: generate-matrix
+        shell: bash
+        run: |
+          # Find all directories containing cryproject.toml files and
+          # convert to JSON array
+          dirs=$(find . -type f -name 'cryproject.toml' -exec dirname {} \; | xargs -0 -n1 printf "%s\n" | grep . | jq -R . | jq -s .)
+          # Set the output using multiline syntax
+          echo "cryptol-project-dirs<<EOF" >> $GITHUB_OUTPUT
+          echo "$dirs" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+  check-project:
+    name: Check Cryptol Project
+    needs: build-matrix
+    runs-on: ubuntu-latest
+    if: fromJson(needs.build-matrix.outputs.cryptol-project-dirs)[0] != null
+    strategy:
+      fail-fast: false
+      matrix:
+        cryptol-project-dir: ${{ fromJson(needs.build-matrix.outputs.cryptol-project-dirs) }}
+    # Permissions are required to delete cache keys.
+    permissions:
+      actions: write
+      contents: read
+    env:
+      # The path to the Cryptol cache for this project.
+      CRYPTOL_CACHE: ${{ matrix.cryptol-project-dir }}/.cryproject/loadcache.toml
+      # The key for the cache.
+      CRYPTOL_CACHE_KEY: ${{ github.head_ref || github.ref_name }}-${{ matrix.cryptol-project-dir }}
+      CRYPTOL_DEFAULT_KEY: main-${{ matrix.cryptol-project-dir }}
+      # To use GitHub's CLI in a workflow, we need the workflow token
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    container:
+      image: ghcr.io/galoisinc/cryptol:latest
+      options: --user root
+    steps:
+      # First, install dependencies (GitHub CLI)
+      - name: Install Dependencies
+        run: |
+          apt-get update && apt-get install -y git wget
+          wget https://github.com/cli/cli/releases/download/v2.69.0/gh_2.69.0_linux_amd64.tar.gz
+          tar xzvf gh_2.69.0_linux_amd64.tar.gz
+          mv gh_2.69.0_linux_amd64/bin/gh /usr/local/bin/
+      # Next, check out the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Here, we check out the submodules; we did not do that above, because
+          # we don't want to actually do CI on all of `cryptol-specs`
+          submodules: recursive
+      # Next, check to see if this branch has a cache; if not we'll fall back
+      # to the main branch's cache (if any)
+      - name: Load Cache
+        id: load-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.CRYPTOL_CACHE }}
+          key: ${{ env.CRYPTOL_CACHE_KEY }}
+      # If the cache missed, try to load the main branch cache
+      - name: Cache Fallback
+        uses: actions/cache/restore@v4
+        if: steps.load-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ env.CRYPTOL_CACHE }}
+          key: ${{ env.CRYPTOL_DEFAULT_KEY }}
+      # Use Cryptol to load the project, regardless of the cache result
+      - name: Load Cryptol Project and Delete Old Cache
+        run: |
+          git config --global --add safe.directory '*'
+          echo "The following GitHub caches exist:"
+          gh cache list
+          echo "Deleting cache key ${{ env.CRYPTOL_CACHE_KEY }}."
+          gh cache delete ${{ env.CRYPTOL_CACHE_KEY }} || true
+          cryptol --project ${{ matrix.cryptol-project-dir }}
+      # Cache the generated files in .cryproject, even if the previous
+      # step failed
+      - name: Save Cache
+        if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.CRYPTOL_CACHE }}
+          key: ${{ env.CRYPTOL_CACHE_KEY }}

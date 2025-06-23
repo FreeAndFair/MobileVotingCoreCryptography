@@ -1,30 +1,26 @@
 # .github/workflows/test-validity-of-cryptol-files.yml
 # Author: Daniel M. Zimmerman
 # Created: 2025-05-01
-# Modified: 2025-06-19
+# Modified: 2025-06-24
 
-# This action uses Cryptol project files to not only typecheck all the
-# Cryptol files in each project, but also to check all their docstrings
-# (performing verification/validation as necessary). It uses GitHub's
-# caches to avoid duplicating effort.
+# This action uses Cryptol project files and the Cryptol remote API to
+# typecheck all the Cryptol files in each project, but _not_ check
+# their docstrings.
 
 name: Test Validity of Cryptol Files
 
 on:
-  # We run this for pushes to `main` and on manual workflow dispatch,
-  # but not on PRs, because it can use excessive resources and sometimes
-  # the caching doesn't work correctly. We also run it twice a week on
-  # `main` so that the cache for main doesn't disappear after GitHub's
-  # 7 day cache timeout.
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - '**.cry'
+      - '**/cryproject.toml'
+
   push:
     branches:
       - 'main'
 
   workflow_dispatch:
-
-  schedule:
-    - cron: '31 7 * * 1' # every week on Monday
-    - cron: '31 7 * * 5' # every week on Friday
 
 jobs:
   build-matrix:
@@ -67,19 +63,16 @@ jobs:
       # The key for the cache.
       CRYPTOL_CACHE_KEY: ${{ github.head_ref || github.ref_name }}-${{ matrix.cryptol-project-dir }}
       CRYPTOL_DEFAULT_KEY: main-${{ matrix.cryptol-project-dir }}
-      # To use GitHub's CLI in a workflow, we need the workflow token
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     container:
-      image: ghcr.io/galoisinc/cryptol:latest
+      # Note: we need the nightly image to support loading projects with docstrings
+      image: ghcr.io/galoisinc/cryptol-remote-api:nightly
       options: --user root
     steps:
       # First, install dependencies (GitHub CLI)
       - name: Install Dependencies
         run: |
-          apt-get update && apt-get install -y git wget
-          wget https://github.com/cli/cli/releases/download/v2.69.0/gh_2.69.0_linux_amd64.tar.gz
-          tar xzvf gh_2.69.0_linux_amd64.tar.gz
-          mv gh_2.69.0_linux_amd64/bin/gh /usr/local/bin/
+          apt-get update && apt-get install -y git wget python3-pip python-is-python3
+          pip install cryptol
       # Next, check out the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -88,35 +81,11 @@ jobs:
           # Here, we check out the submodules; we did not do that above, because
           # we don't want to actually do CI on all of `cryptol-specs`
           submodules: recursive
-      # Next, check to see if this branch has a cache; if not we'll fall back
-      # to the main branch's cache (if any)
-      - name: Load Cache
-        id: load-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.CRYPTOL_CACHE }}
-          key: ${{ env.CRYPTOL_CACHE_KEY }}
-      # If the cache missed, try to load the main branch cache
-      - name: Cache Fallback
-        uses: actions/cache/restore@v4
-        if: steps.load-cache.outputs.cache-hit != 'true'
-        with:
-          path: ${{ env.CRYPTOL_CACHE }}
-          key: ${{ env.CRYPTOL_DEFAULT_KEY }}
-      # Use Cryptol to load the project, regardless of the cache result
-      - name: Load Cryptol Project and Delete Old Cache
+      # Next, start the Cryptol remote API
+      - name: Start Cryptol Remote API
         run: |
-          git config --global --add safe.directory '*'
-          echo "The following GitHub caches exist:"
-          gh cache list
-          echo "Deleting cache key ${{ env.CRYPTOL_CACHE_KEY }}."
-          gh cache delete ${{ env.CRYPTOL_CACHE_KEY }} || true
-          cryptol --project ${{ matrix.cryptol-project-dir }}
-      # Cache the generated files in .cryproject, even if the previous
-      # step failed
-      - name: Save Cache
-        if: success() || failure()
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ env.CRYPTOL_CACHE }}
-          key: ${{ env.CRYPTOL_CACHE_KEY }}
+          /usr/local/bin/cryptol-remote-api http --host 0.0.0.0 --port 8080 / &
+      # Use our utility script to load the project
+      - name: Load Cryptol Project
+        run: |
+          utils/cryptol/load_cryptol_project.py ${{ matrix.cryptol-project-dir }}
