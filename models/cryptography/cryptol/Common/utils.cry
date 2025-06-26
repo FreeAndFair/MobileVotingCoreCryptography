@@ -1,1 +1,150 @@
-../../cryptol-specs/Common/utils.cry
+/*
+
+General utility functions for use across implementations.
+
+@copyright Galois, Inc
+@copyright Amazon.com or its affiliates.
+
+@author Sean Weaver
+@author Nichole Schmanski <nls@galois.com>
+@author Rob Dockins
+@author Andrei Stefanescu
+@editor Ryan Scott <rscott@galois.com>
+@editor Rod Chapman <rodchap@amazon.com>
+
+*/
+module Common::utils where
+
+/**
+ * A functional view of the while loop.
+ * `condition` and `body` are functions applied to `initial_state`.
+ * `body` is applied to the state if `condition initial_state` is `True`.
+ */
+while : {a} (a -> Bit) -> (a -> a) -> a -> a
+while condition body initial_state =
+  if(condition initial_state) then while condition body (body initial_state)
+  else initial_state
+
+/**
+ * A functional view of the do-while loop.
+ * Like the `while` function, except `body` is guaranteed to be applied
+ * on the first iteration.
+ */
+dowhile : {a} (a -> Bit) -> (a -> a) -> a -> a
+dowhile condition body initial_state =
+  if(condition next_state) then while condition body next_state else next_state
+  where next_state = body initial_state
+
+/**
+ * Convert a `Z` type to a bitvector.
+ */
+ZtoBV : {p, a} (fin p, p >= 1, fin a) => Z p -> [a]
+ZtoBV x = (fromInteger (fromZ x))
+
+/**
+ * Convert a bitvector to a `Z` type.
+ */
+BVtoZ : {p, a} (fin p, p >= 1, fin a) => [a] -> Z p
+BVtoZ x = (fromInteger (toInteger x))
+
+/**
+ * Convert between `Z` types defined over different moduli.
+ */
+ZtoZ : {p, q} (fin p, fin q, p >= 1, q >= 1) => Z p -> Z q
+ZtoZ x = (fromInteger (fromZ x))
+
+/**
+ * Convert an integer to a bitvector.
+ */
+integerToBV : {m} (fin m) => Integer -> [m]
+integerToBV x = fromInteger x
+
+/**
+ * Convert a bitvector to an integer.
+ */
+integerFromBV : {m} (fin m) => [m] -> Integer
+integerFromBV x = toInteger x
+
+/**
+ * Convert an integer to a bitvector.
+ * If the result of the conversion is less than 3,
+ * return 3 instead of the conversion result.
+ */
+integerModulusFromBV : {m} (fin m) => [m] -> Integer
+integerModulusFromBV x = if (integerFromBV x) < 3 then 3 else (integerFromBV x)
+
+/**
+ * Check if an integer is even.
+ */
+isEven : Integer -> Bit
+isEven x = ~((fromInteger x) : [1]) ! 0
+
+/**
+ * Calculate the absolute value of an integer.
+ */
+abs : Integer -> Integer
+abs x = if x >= zero then x else zero-x
+
+/**
+ * Unzip a sequence of tuples into a tuple of sequences.
+ */
+unzip : {a,f,s} [a](f,s) -> ([a]f,[a]s)
+unzip tuples = (map (\x -> x.0) tuples , map (\x -> x.1) tuples)
+
+/**
+ * "Multiply" `x` by `2` in an additive group.
+ */
+mul2 x = x + x
+
+/**
+ * "Multiply" `x` by `3` in an additive group.
+ */
+mul3 x = x + mul2 x
+
+/**
+ * "Multiply" `x` by `4` in an additive group.
+ */
+mul4 x = mul2(mul2 x)
+
+/**
+ * "Multiply" `x` by `8` in an additive group.
+ */
+mul8 x = mul2(mul4 x)
+
+type constraint isOdd a = (a / 2) * 2 == a - 1
+
+/**
+ * Calculate "half" of a quantity in a mod `p` context.
+ * I.e., `half x + half x == x`.
+ */
+half : {p} (fin p, p >= 3, isOdd p) => Z p -> Z p
+half x = fromInteger (if isEven xint then xint/2 else ((xint + `p) / 2))
+  where
+    xint = fromZ x
+
+/**
+ * Verify that `half` is correct.
+ * ```repl
+ * :prove half_correct `{7}
+ * ```
+ */
+half_correct : {p} (fin p, p >= 3, isOdd p) => Z p -> Bit
+property half_correct x = half x + half x == x
+
+/**
+ * Function composition, specialized to functions from `(a -> a)`.
+ * In particular, `(compose f g) x == g (f x)`.
+ */
+compose : {a} () => (a -> a) -> (a -> a) -> a -> a
+compose f g = \x -> g (f x)
+
+/**
+ * Composition of many functions from `(a -> a)`.
+ * In particular, `(composeMany [a, b, c]) x == c (b (a x))`.
+ */
+composeMany : {nf, a} () => [nf](a -> a) -> a -> a
+composeMany fcns
+    | nf == 0 => \x -> x
+    | nf == 1 => fcns@0
+    | nf == 2 => compose (fcns@0) (fcns@1)
+    | nf > 2  => compose (fcns@0) (composeMany (drop `{1} fcns))

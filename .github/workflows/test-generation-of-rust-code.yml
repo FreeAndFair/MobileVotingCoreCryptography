@@ -39,10 +39,20 @@ jobs:
         run: |
           echo "Generating Rust code from models/cryptography/cryptol..."
           cd models/cryptography/cryptol
-          CRYPTOL_COMPILER="WORKDIR=/work/cryptol MOUNTDIR=.. ../../../utils/cryptol/cryptol-compiler" make rust
+          rust_target_check=$(make -n rust 2>&1 || true)
+          if [[ "$rust_target_check" != *"'rust' target not yet supported"* ]]; then
+            CRYPTOL_COMPILER="../../../utils/cryptol/cryptol-compiler" make rust
+            touch /tmp/rust-generated
+          else
+            echo "Rust build not yet supported, skipping."
+          fi
 
       - name: Test Generated Rust Code
         run: |
-          echo "Testing generated Rust code..."
-          cd models/cryptography/cryptol
-          make test
+          if [[ -e /tmp/rust-generated ]]; then
+            echo "Testing generated Rust code..."
+            cd models/cryptography/cryptol
+            make test
+          else
+            echo "Rust build not yet supported, skipping."
+          fi
