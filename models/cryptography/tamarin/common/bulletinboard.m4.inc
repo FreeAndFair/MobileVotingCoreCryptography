@@ -75,7 +75,7 @@ rule BulletinBoard_Terminate [role="BulletinBoard"]:
   `BB_Current` linear fact is removed from the environment for a
   unique `bbid`, and can never be regenerated for that `bbid` (unless
   somebody composes these rules with a new rule that does so) because
-  `bbid` is a fresh value` in the only rule that can establish a
+  `bbid` is a fresh value in the only rule that can establish a
   `BB_Current(bbid, ...)` fact for a `bbid` that doesn't have one.
  */
 restriction BulletinBoard_NotTerminated:

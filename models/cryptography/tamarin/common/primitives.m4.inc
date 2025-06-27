@@ -102,7 +102,6 @@ define(<!INCLUDED_INEQUALITY!>)dnl
  */
 restriction Inequality:
   "All x #i. Neq(x, x)@i ==> F"
-
 !>, <!!>)dnl
 dnl
 ifelse(eval(!defined_bool(<!INCLUDED_ONLYONCE!>) && defined_bool(<!USE_ONLYONCE!>)), eval(1), <!

@@ -8,6 +8,7 @@ dnl
 ifdef(<!defined_bool!>, <!!>, <!include(m4_utils/defined_bool.m4)!>)dnl
 ifelse(eval(!defined_bool(<!INCLUDED_AUTHENTICATED_CHANNELS!>) && defined_bool(<!USE_AUTHENTICATED_CHANNELS!>)), eval(1), <!
 define(<!INCLUDED_AUTHENTICATED_CHANNELS!>)dnl
+
 /*
   An authenticated channel, where messages are guaranteed to be from
   the claimed sender but are not encrypted and can be received by
@@ -67,24 +68,57 @@ define(<!INCLUDED_SECURE_CHANNELS!>)dnl
   A secure channel, where messages are guaranteed to be from the
   claimed sender and to only be received by the claimed recipient
   No other recipient (including the adversary) can learn the message
-  contents from the channel; however, the message can be replayed
-  (because the `!SecureMessage` fact is persistent).
+  contents from the channel without an endpoint reveal. The messages
+  are linear facts, so they cannot be replayed and there is no
+  guarantee of ordering if multiple messages are in the same channel
+  at once.
 
   Usage: Instead of `Out(m)` and `In(m)` facts, use
-  `SecureSend(S, R, m)` and `SecureReceive(S, R, m)`, where `S`
-  is the sender, `R` is the receiver, and `m` is the message.
+  `SecureSend(~cid, S, R, m)` and `SecureReceive(~cid, S, R, m)`,
+  where `~cid` is a fresh channel ID when the channel is created,
+  `S` is the sender, `R` is the receiver, and `m` is the message.
+  Channels are bidirectional (modeling two-way TLS connections),
+  but each fresh `~cid` should be used for only one such bidirectional
+  connection.
 
-  Note: The `!SecureMessage` fact should never be used outside these
-  two rules.
+  Note: The `SecureMessage` fact should never be used outside the
+  secure channel rules.
  */
 
 rule SecureChannel_Send:
-    [ SecureSend(S, R, m) ]
-  --[ SecureChannel_Out(S, R, m) ]->
-    [ !SecureMessage(S, R, m) ]
+    [ SecureSend(~cid, S, R, m) ]
+  --[ SecureChannel_Out(~cid, S, R, m),
+      SecureChannel_Message(m) ]->
+    [ SecureMessage(~cid, S, R, m) ]
 
 rule SecureChannel_Receive:
-    [ !SecureMessage(S, R, m) ]
-  --[ SecureChannel_In(S, R, m) ]->
-    [ SecureReceive(S, R, m) ]
+    [ SecureMessage(~cid, S, R, m) ]
+  --[ SecureChannel_In(~cid, S, R, m) ]->
+    [ SecureReceive(~cid, S, R, m) ]
+ifdef(<!USE_SECURE_CHANNELS_INJECTION!>, <!
+/*
+  This rule models a compromised sender on a secure channel,
+  where the adversary can inject messages.
+ */
+rule SecureChannel_Compromised_Inject:
+    [ In(<~cid, S, R, m>) ]
+  --[ Reveal(S, 'SecureChannel'),
+      SecureChannel_Injected(~cid, S, R, m),
+      SecureChannel_InjectedMessage(m) ]->
+    [ SecureMessage(~cid, S, R, m) ]
 !>, <!!>)dnl
+ifdef(<!USE_SECURE_CHANNELS_INTERCEPTION!>, <!
+/*
+  This rule models the interception of a message on a secure
+  channel.
+*/
+rule SecureChannel_Compromised_Intercept:
+    [ SecureMessage(~cid, S, R, m) ]
+  --[ Reveal(R, 'SecureChannel'),
+      SecureChannel_Intercepted(~cid, S, R, m),
+      SecureChannel_InterceptedMessage(m) ]->
+    [ Out(~cid),
+      Out(S),
+      Out(R),
+      Out(m) ]
+!>, <!!>)!>, <!!>)dnl
