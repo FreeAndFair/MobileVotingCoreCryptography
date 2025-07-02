@@ -36,7 +36,7 @@ theory ballot_cast
 
 begin
 
-#include "../common/primitives.spthy.inc"
+include(common/primitives.m4.inc)
 !>)dnl
 dnl If STANDALONE is defined, all mocks are always required
 ifdef(<!STANDALONE!>,<!define(BALLOT_CAST_MOCKS)!>)dnl

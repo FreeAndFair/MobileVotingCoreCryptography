@@ -1,23 +1,17 @@
-/*
-  Tamarin formalization of the public bulletin board. This implements the
-  board as a hash chain of messages, which is manipulated directly using
-  linear facts and writes its entries using persistent facts (while
-  emitting appropriate action facts for traceability/reasoning).
-
-  @author Daniel M. Zimmerman
-  @copyright Free & Fair 2025
-  @version 0.1
- */
-
-#ifdef BULLETINBOARD_SPTHY_INC
-
-/* The bulletin board is already included and should not be included again. */
-
-#else
-#define BULLETINBOARD_SPTHY_INC
-
-#include "./primitives.spthy.inc"
-#include "./channels.spthy.inc"
+dnl
+dnl Tamarin formalization of the public bulletin board. This implements the
+dnl board as a hash chain of messages, which is manipulated directly using
+dnl linear facts and writes its entries using persistent facts (while
+dnl emitting appropriate action facts for traceability/reasoning).
+dnl
+dnl @author Daniel M. Zimmerman
+dnl @copyright Free & Fair 2025
+dnl @version 0.1
+dnl
+ifdef(<!BULLETINBOARD_SPTHY!>, <!!>, <!
+define(<!BULLETINBOARD_SPTHY!>)dnl
+include(common/primitives.m4.inc)dnl
+include(common/channels.m4.inc)dnl
 
 /*
   This rule creates a new bulletin board from request id `reqid`
@@ -206,5 +200,4 @@ lemma Safety_BB_LastIsLast [reuse]:
       ==>
           (%midx << %lidx | %midx = %lidx) & #j < #i
   "
-
-#endif
+!>)dnl

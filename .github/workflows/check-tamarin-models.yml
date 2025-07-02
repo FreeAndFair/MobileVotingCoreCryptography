@@ -3,7 +3,7 @@
 # Created: 2025-06-06
 # Modified: 2025-06-06
 
-name: Check Tamarin Model Syntax
+name: Check Tamarin Model Syntax and Manual Proofs
 
 on:
   pull_request:
@@ -17,7 +17,7 @@ on:
 
 jobs:
   test:
-    name: Generate and Check Syntax of Tamarin Models
+    name: Generate and Check Syntax and Manual Proofs for Tamarin Models
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository

@@ -1,29 +1,22 @@
-/*
-  Tamarin built-ins, functions, equations, macros, and restrictions used
-  across the models.
-
-  @author Daniel M. Zimmerman
-  @copyright Free & Fair 2025
-  @version 0.1
- */
-
-#ifdef PRIMITIVES_SPTHY_INC
-
-/* The primitives are already included and should not be included again. */
-
-#else
-#define PRIMITIVES_SPTHY_INC
-
+dnl
+dnl Tamarin built-ins, functions, equations, macros, and restrictions used
+dnl across the models.
+dnl
+dnl @author Daniel M. Zimmerman
+dnl @copyright Free & Fair 2025
+dnl @version 0.1
+dnl
+dnl We always include all the Tamarin built-ins we might need, if they
+dnl aren't already included.
+ifdef(<!PRIMITVES_BUILTINS!>, <!!>, <!
+ifdef(<!defined_bool!>, <!!>, <!include(m4_utils/defined_bool.m4)!>)dnl
+define(<!PRIMITIVES_BUILTINS!>)dnl
 builtins:
   symmetric-encryption, asymmetric-encryption, hashing, natural-numbers, multiset
-
-functions:
-  TBD/0
-
-equations:
-  TBD() = TBD()
-
-#ifdef USE_EUFCMA_SIGNING | INCLUDE_ALL_PRIMITIVES
+!>)dnl
+dnl
+ifelse(eval((!defined_bool(<!INCLUDED_EUFCMA_SIGNING!>)) && defined_bool(<!USE_EUFCMA_SIGNING!>)), eval(1), <!
+define(<!INCLUDED_EUFCMA_SIGNING!>)dnl
 /*
   We use restrictions to model signature verification with EUF-CMA security
   as described in Chapter 15 of the Tamarin book. Thus, any rule that depends
@@ -91,60 +84,68 @@ restriction SignatureDeterminism:
       ==>
           res1 = res2
   "
-
-#endif
-#ifdef USE_EQUALITY | INCLUDE_ALL_PRIMITIVES
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_EQUALITY!>) && defined_bool(<!USE_EQUALITY!>)), eval(1), <!
+define(<!INCLUDED_EQUALITY!>)dnl
 /*
   Restriction that a rule can only execute if two values are equivalent.
  */
 restriction Equality:
   "All x y #i. Eq(x, y)@i ==> x = y"
-
-#endif
-#ifdef USE_INEQUALITY | INCLUDE_ALL_PRIMITIVES
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_INEQUALITY!>) && defined_bool(<!USE_INEQUALITY!>)), eval(1), <!
+define(<!INCLUDED_INEQUALITY!>)dnl
 /*
   Restriction that a rule can only execute if two values are not equivalent.
  */
 restriction Inequality:
   "All x #i. Neq(x, x)@i ==> F"
 
-#endif
-#ifdef USE_ONLYONCE | INCLUDE_ALL_PRIMITIVES
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_ONLYONCE!>) && defined_bool(<!USE_ONLYONCE!>)), eval(1), <!
+define(<!INCLUDED_ONLYONCE!>)dnl
 /*
   Restriction that a rule can only be executed once in the entire trace.
  */
 restriction OnlyOnce:
   "All #i #j. OnlyOnce()@i & OnlyOnce()@#j ==> #i = #j"
-
-#endif
-#ifdef USE_UNIQUE | INCLUDE_ALL_PRIMITIVES
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_UNIQUE!>) && defined_bool(<!USE_UNIQUE!>)), eval(1), <!
+define(<!INCLUDED_UNIQUE!>)dnl
 /*
   Restriction that a rule specified by a single value can only be executed
   once in the entire trace.
  */
 restriction Unique:
   "All x #i #j. Unique(x)@i & Unique(x)@j ==> #i = #j"
-
-#endif
-#ifdef USE_LESSTHAN | INCLUDE_ALL_PRIMITIVES
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_LESSTHAN!>) && defined_bool(<!USE_LESSTHAN!>)), eval(1), <!
+define(<!INCLUDED_LESSTHAN!>)dnl
 /*
   Restriction that a rule can only be executed if one natural number is
   less than another.
  */
 restriction LessThan:
   "All %x %y #i. LessThan(%x, %y)@i ==> %x << %y"
-
-#endif
-#ifdef USE_ATMOST | INCLUDE_ALL_PRIMITIVES
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_ATMOST!>) && defined_bool(<!USE_ATMOST!>)), eval(1), <!
+define(<!INCLUDED_ATMOST!>)dnl
 /*
   Restriction that a rule can only be executed if one natural number is
   at most (less than or equal to) another.
  */
 restriction AtMost:
   "All %x %y #i. AtMost(%x, %y)@i ==> %x << %y | %x = %y"
-
-#endif
-#ifdef USE_NOTINMULTISET | INCLUDE_ALL_PRIMITIVES
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_NOTINMULTISET!>) && defined_bool(<!USE_NOTINMULTISET!>)), eval(1), <!
+define(<!INCLUDED_NOTINMULTISET!>)dnl
 /*
   Restriction that a multiset must not contain the specified member.
  */
@@ -155,9 +156,10 @@ restriction NotInMultiset:
       ==>
           All x y. s = x + y ==> not (m = x)
   "
-
-#endif
-#ifdef USE_INMULTISET | INCLUDE_ALL_PRIMITIVES
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_INMULTISET!>) && defined_bool(<!USE_INMULTISET!>)), eval(1), <!
+define(<!INCLUDED_INMULTISET!>)dnl
 /*
   Restriction that a multiset must contain the specified member.
  */
@@ -166,8 +168,6 @@ restriction InMultiset:
     All m s #i.
           InMultiset(m, s)@i
       ==>
-          Ex x y. (s = x + y) & (m = x)
+          Ex x. s = m + x
   "
-
-#endif
-#endif
+!>, <!!>)dnl

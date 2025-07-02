@@ -4,14 +4,22 @@
 # Modified: 2025-06-19
 
 name: Verify Tamarin Models
-
 on:
   # We run this for pushes to `main` and on manual workflow dispatch,
   # but not on PRs, because it can use excessive resources.
   push:
     branches:
       - 'main'
+
   workflow_dispatch:
+    inputs:
+      timeout:
+        description: 'Timeout for Tamarin CV Run'
+        required: false
+        default: '90m'
+
+env:
+  TIMEOUT: ${{ github.event.inputs.timeout || '90m' }}
 
 jobs:
   test:
@@ -31,9 +39,10 @@ jobs:
         run: |
           echo "Processing models/cryptography/tamarin"
           cd models/cryptography/tamarin
-          DOCKER=yes make cv
+          DOCKER=yes timeout $TIMEOUT make cv
 
       - name: Save the Generated Tamarin Outputs
+        if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: tamarin-output

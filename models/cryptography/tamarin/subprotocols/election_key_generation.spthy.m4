@@ -23,11 +23,30 @@ dnl
 ifdef(<!QUOTE_CHANGED!>,<!!>,<!changequote(`<!', `!>')!>)dnl
 dnl
 ifdef(<!STANDALONE!>,<!/*
+include(m4_utils/forloop.m4)dnl
   Election Key Generation Subprotocol
 
-  Explanation goes here.
+  This protocol implements the election key generation process, which is
+  carried out by trustees in two rounds. In the first round, the trustees
+  - who already know each others' names and public keys - generate their
+  private key shares and the pairwise key shares they share with the other
+  trustees, encrypt the latter appropriately for each recipient, and post
+  them to the trustee bulletin board. In the second round, they use the
+  information posted in the first round to generate the election public
+  key.
 
-  @author Daniel M. Zimmerman
+  The trustee bulletin board is implemented as (1) a set of persistent
+  facts for what messages the TAS has seen, (2) a set of persistent facts
+  per trustee for what messages that trustee has seen, (3) a submission
+  mechanism for messages that is very much like a typical Tamarin secure
+  channel, and (4) a mechanism for each trustee to maintain its own local
+  bulletin board that follows the TAS bulletin board, also via a mechanism
+  very much like a typical Tamarin secure channel. Injection of messages is
+  possible on the TAS bulletin board, as is the revelation of private keys
+  and private shares to the adversary, but direct injection of messages to
+  the local trustee bulletin boards is _not_ possible in this model.
+
+  @uthor Daniel M. Zimmerman
   @copyright Free & Fair 2025
   @version 0.1
  */
@@ -36,48 +55,57 @@ theory election_key_generation
 
 begin
 
-#include "../common/primitives.spthy.inc"
-!>)dnl
+dnl
+dnl We define the specific restrictions we're going to use, so that we don't
+dnl get warnings about restrictions referencing actions that don't exist.
+dnl
+define(<!USE_UNIQUE!>)dnl
+define(<!USE_EUFCMA_SIGNING!>)dnl
+define(<!USE_EQUALITY!>)dnl
+define(<!USE_INEQUALITY!>)dnl
+include(common/primitives.m4.inc)
+!>)
+dnl
+dnl Include the macros (both m4 and Tamarin) shared by all the trustee
+dnl subprotocols; note that the path is relative to the Makefile (and thus
+dnl the working directory for m4), _not_ to this file.
+
+define(<!ELECTION_KEY_GENERATION!>)dnl
+include(subprotocols/includes/trustee_macros.m4.inc)dnl
+dnl
 dnl If STANDALONE is defined, all mocks are always required
 ifdef(<!STANDALONE!>,<!define(ELECTION_KEY_GENERATION_MOCKS)!>)dnl
 dnl
-ifdef(<!ELECTION_KEY_GENERATION_MOCKS!>,<!
-/*
-  Mocks necessary for running the election key generation subprotocol without
-  other subprotocols go here. There may end up being multiple such blocks
-  controlled by different macro definitions, depending on what subprotocol
-  combinations need to be generated and what needs to be mocked for each
-  combination.
-*/
-
+ifdef(<!ELECTION_KEY_GENERATION_MOCKS!>,<!dnl
+dnl
+dnl Include the mock for the trustee setup protocol, so that the trustees
+dnl and their individual keys are all initialized properly and everything
+dnl starts in the correct state.
+dnl
+dnl
+include(subprotocols/includes/mock_trustee_setup.m4.inc)dnl
 !>)dnl
 dnl
-/* Rules for election key generation subprotocol go here. */
-
-/*
-  This rule is just to allow CI to pass until we put in real executability
-  lemmas. It establishes a single fact, and that's about it.
- */
-rule ElectionKeyGeneration_Temporary:
-  [] --[ ElectionKeyGeneration_Executed() ]-> []
-
-/*
-  Lemmas for election key generation subprotocol go here.
-
-  Executability lemmas must start with "Executability" in order to be
-  automatically checked in CV.
- */
-
-/*
-  This lemma is just to allow CV to pass until we put in real
-  executability lemmas.
- */
-lemma Executability_ElectionKeyGeneration:
-  exists-trace
-  "
-    Ex #t. ElectionKeyGeneration_Executed()@t
-  "
+dnl Include the rules for the TAS.
 dnl
+
+include(subprotocols/includes/election_key_generation_rules_tas.m4.inc)dnl
+dnl
+dnl Include the rules for the trustees.
+dnl
+
+include(subprotocols/includes/election_key_generation_rules_trustee.m4.inc)dnl
+dnl
+dnl Include the rules that allow an adversary (i.e., a corrupt trustee)
+dnl to attempt to submit trustee messages.
+dnl
+
+include(subprotocols/includes/election_key_generation_rules_adversary.m4.inc)dnl
+dnl
+dnl Include the lemmas.
+dnl
+
+include(subprotocols/includes/election_key_generation_lemmas.m4.inc)dnl
 ifdef(<!STANDALONE!>,<!
 end
 !>)dnl

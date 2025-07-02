@@ -35,11 +35,7 @@ theory bulletinboard_instantiation
 
 begin
 
-#include "../common/bulletinboard.spthy.inc"
-
-dnl The following is an m4 include because Tamarin cannot include
-dnl files with "_" in their names
-dnl
+include(common/bulletinboard.m4.inc)
 include(other/bulletinboard_instantiation.spthy.inc)
 
 end

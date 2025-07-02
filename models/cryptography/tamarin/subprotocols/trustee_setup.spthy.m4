@@ -52,15 +52,16 @@ begin
   We define the specific restrictions we're going to use, so that we don't
   get warnings about restrictions referencing actions that don't exist.
  */
-#define USE_EQUAL
-#define USE_UNIQUE
-#define USE_EUFCMA_SIGNING
-#include "../common/primitives.spthy.inc"
+define(<!USE_EQUAL!>)dnl
+define(<!USE_UNIQUE!>)dnl
+define(<!USE_EUFCMA_SIGNING!>)dnl
+include(common/primitives.m4.inc)
 !>)
 dnl
 dnl Include the macros (both m4 and Tamarin) shared by all the trustee
 dnl subprotocols; note that the path is relative to the Makefile (and thus
 dnl the working directory for m4), _not_ to this file.
+define(<!TRUSTEE_SETUP!>)dnl
 include(subprotocols/includes/trustee_macros.m4.inc)
 dnl
 dnl The trustee setup protocol is the first one to run, and thus requires

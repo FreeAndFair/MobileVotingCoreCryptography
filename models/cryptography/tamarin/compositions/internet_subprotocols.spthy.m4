@@ -35,9 +35,9 @@ theory e2eviv_internet
 
 begin
 
-#include "../common/primitives.spthy.inc"
-#include "../common/channels.spthy.inc"
-#include "../common/bulletinboard.spthy.inc"
+include(common/primitives.m4.inc)
+include(common/channels.m4.inc)
+include(common/bulletinboard.m4.inc)
 
 /* Ballot Cast */
 

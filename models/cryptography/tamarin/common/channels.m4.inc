@@ -1,18 +1,13 @@
-/*
-  Tamarin channel rules shared by multiple subprotocols.
-
-  @author Daniel M. Zimmerman
-  @copyright Free & Fair 2025
-  @version 0.1
- */
-
-#ifdef CHANNELS_SPTHY_INC
-
-/* The channels are already included and should not be included again. */
-
-#else
-#define CHANNELS_SPTHY_INC
-
+dnl
+dnl Tamarin channel rules shared by multiple subprotocols.
+dnl
+dnl @author Daniel M. Zimmerman
+dnl @copyright Free & Fair 2025
+dnl @version 0.1
+dnl
+ifdef(<!defined_bool!>, <!!>, <!include(m4_utils/defined_bool.m4)!>)dnl
+ifelse(eval(!defined_bool(<!INCLUDED_AUTHENTICATED_CHANNELS!>) && defined_bool(<!USE_AUTHENTICATED_CHANNELS!>)), eval(1), <!
+define(<!INCLUDED_AUTHENTICATED_CHANNELS!>)dnl
 /*
   An authenticated channel, where messages are guaranteed to be from
   the claimed sender but are not encrypted and can be received by
@@ -36,8 +31,10 @@ rule AuthenticatedChannel_Receive:
     [ !AuthenticatedMessage(S, m), In(R) ]
   --[ AuthenticatedChannel_In(S, R, m) ]->
     [ AuthenticatedReceive(S, R, m) ]
-
-
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_CONFIDENTIAL_CHANNELS!>) && defined_bool(<!USE_CONFIDENTIAL_CHANNELS!>)), eval(1), <!
+define(<!INCLUDED_CONFIDENTIAL_CHANNELS!>)dnl
 /*
   A confidential channel, where messages are guaranteed to be received
   only by the claimed recipient, but not to be sent by the claimed
@@ -62,8 +59,10 @@ rule ConfidentialChannel_Receive:
     [ !ConfidentialMessage(R, m), In(S) ]
   --[ ConfidentialChannel_In(S, R, m) ]->
     [ ConfidentialReceive(S, R, m) ]
-
-
+!>, <!!>)dnl
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_SECURE_CHANNELS!>) && defined_bool(<!USE_SECURE_CHANNELS!>)), eval(1), <!
+define(<!INCLUDED_SECURE_CHANNELS!>)dnl
 /*
   A secure channel, where messages are guaranteed to be from the
   claimed sender and to only be received by the claimed recipient
@@ -88,5 +87,4 @@ rule SecureChannel_Receive:
     [ !SecureMessage(S, R, m) ]
   --[ SecureChannel_In(S, R, m) ]->
     [ SecureReceive(S, R, m) ]
-
-#endif
+!>, <!!>)dnl

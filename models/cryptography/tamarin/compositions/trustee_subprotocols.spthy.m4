@@ -1,6 +1,6 @@
 dnl
-dnl This is the m4 input file for the composition of all the trustee
-dnl subprotocols after initial setup.
+dnl This is the m4 input file for the composition of the trustee
+dnl subprotocols at the end of the election.
 dnl
 dnl @author Daniel M. Zimmerman
 dnl @copyright Free & Fair 2025
@@ -23,9 +23,11 @@ dnl
 /*
   E2E-VIV Protocol - Composition of Trustee Subprotocols
 
-  This theory is a composition of all the subprotocol theories for the
-  trustees, not including the initial trustee setup that ensures that
-  trustees agree on their public keys and the election configuration.
+  This theory is a composition of the election-ending subprotocol
+  theories for the trustees; it does not include the initial trustee
+  setup that ensures that trustees agree on their public keys and the
+  election configuration, or the election public key generation that
+  takes place before the election.
 
   @author Daniel M. Zimmerman
   @copyright Free & Fair 2025
@@ -36,14 +38,7 @@ theory e2eviv_trustee
 
 begin
 
-/*
-  We define the specific restrictions we're going to use, so that we don't
-  get warnings about restrictions referencing actions that don't exist.
- */
-#define USE_UNIQUE
-/* additions to this TBD based on yet-unwritten subprotocols */
-#include "../common/primitives.spthy.inc"
-
+include(common/primitives.m4.inc)
 dnl
 dnl Set the number of trustees to 3.
 dnl
@@ -58,10 +53,6 @@ dnl We also need to include the mock trustee setup.
 dnl
 include(subprotocols/includes/mock_trustee_setup.m4.inc)
 dnl
-/* Election Key Generation */
-
-include(subprotocols/election_key_generation.spthy.m4)
-
 /* Trustee Mixing */
 
 include(subprotocols/trustee_mixing.spthy.m4)

@@ -16,8 +16,12 @@ ifdef DOCKER
 	TAMARIN = docker run --volume "$(PWD):/work" --workdir /work $(DOCKER_IMAGE) tamarin-prover
 endif
 
-# Timeout for Tamarin runs (default 10 minutes, overridable by TIMEOUT in environment)
-TIMEOUT ?= 10m
+# M4 defines (to control proof script inclusion)
+ifdef INCLUDE_PROOF_SCRIPTS
+	M4_DEFINES = -DINCLUDE_PROOF_SCRIPTS
+else
+	M4_DEFINES =
+endif
 
 # Display a brief help page listing possible commands/targets.
 help:
@@ -30,8 +34,12 @@ help:
 	@echo "syntax         - check syntax of all generated models (**)"
 	@echo "executability  - check executability lemmas of all generated models (**)"
 	@echo "safety         - check safety lemmas of all generated models (**)"
+	@echo "proofscript    - check all lemmas with included proof scripts (**)"
 	@echo "clean          - remove all generated models and outputs"
 	@echo ""
+	@echo "Define the 'INCLUDE_PROOF_SCRIPTS' environment variable to include"
+	@echo "proof scripts in Tamarin output, where applicable."
+	@echo
 	@echo "(*)  - see 'compositions/README.md' for more information about"
 	@echo "       what is built by this build target"
 	@echo "(**) - these build targets work only on the current set of"
@@ -49,7 +57,7 @@ SUBPROTOCOL_DESTS = $(subst subprotocols/,generated_standalone/,$(SUBPROTOCOL_SO
 generated_standalone/%.spthy: subprotocols/%.spthy.m4
 	$(info [info] generating standalone model for $<...)
 	@mkdir -p generated_standalone
-	@m4 -E -DSTANDALONE $< > $@
+	@m4 -E -DSTANDALONE $(M4_DEFINES) $(CV_DEFINES) $< > $@
 
 subprotocols: $(SUBPROTOCOL_DESTS)
 
@@ -62,7 +70,7 @@ COMPOSITION_DESTS = $(subst compositions/,generated_composed/,$(COMPOSITION_SOUR
 generated_composed/%.spthy: compositions/%.spthy.m4
 	$(info [info] generating model for composition $<...)
 	@mkdir -p generated_composed
-	@m4 -E $< > $@
+	@m4 -E $(M4_DEFINES) $(CV_DEFINES) $< > $@
 
 compositions: $(COMPOSITION_DESTS)
 
@@ -78,7 +86,7 @@ executability:
 	$(info [info] checking executability of all generated models...)
 	@mkdir -p output
 	$(foreach SPTHY, $(wildcard generated_standalone/*.spthy generated_composed/*.spthy), \
-		timeout $(TIMEOUT) $(TAMARIN) --prove="Executability*" \
+		$(TAMARIN) --prove="Executability*" \
 		--output-dot=output/$(basename $(notdir $(SPTHY)))-executability.dot > \
 		output/$(basename $(notdir $(SPTHY)))-executability.out $(SPTHY) || exit 1;)
 	@grep falsified output/*.out || echo "RESULT: no lemmas falsified"
@@ -90,11 +98,24 @@ safety:
 	$(info [info] checking safety of all generated models...)
 	@mkdir -p output
 	$(foreach SPTHY, $(wildcard generated_standalone/*.spthy generated_composed/*.spthy), \
-		timeout $(TIMEOUT) $(TAMARIN) --prove="Safety*" \
+		$(TAMARIN) --prove="Safety*" \
 		--output-dot=output/$(basename $(notdir $(SPTHY)))-safety.dot > \
 		output/$(basename $(notdir $(SPTHY)))-safety.out $(SPTHY) || exit 1;)
 	@grep falsified output/*.out || echo "RESULT: no lemmas falsified"
 	@ ! grep -q falsified output/*.out
+
+# Execute Tamarin to check the proof scripts for all lemmas that have
+# them in all generated models. This reports an error if Tamarin fails,
+# or if any lemma is not marked "verified".
+proofscript:
+	$(info [info] checking proof scripts of all generated models...)
+	@mkdir -p output
+	$(foreach SPTHY, $(wildcard generated_standalone/*.spthy generated_composed/*.spthy), \
+		$(TAMARIN) > output/$(basename $(notdir $(SPTHY)))-proofscript.out \
+		$(SPTHY) || exit 1;)
+	@cat output/*-proofscript.out | grep ProofScript | grep -v NoProofScript | grep -v verified | grep -v lemma > output/combined-proofscript-results.out || echo "RESULT: all proof scripts verified"
+	@cat output/combined-proofscript-results.out
+	@! [ -s output/combined-proofscript-results.out ]
 
 # Cleans up all dynamically generated files, including caches.
 clean:
@@ -104,7 +125,9 @@ clean:
 # Continuous integration/verification target.
 ci: subprotocols compositions syntax
 
-cv: subprotocols compositions executability safety
+# Always include the proof scripts for CV
+cv: CV_DEFINES = -DINCLUDE_PROOF_SCRIPTS
+cv: subprotocols compositions proofscript executability safety
 
 # List of phony targets
-.PHONY: default help subprotocols compositions syntax executability safety clean ci cv
+.PHONY: default help subprotocols compositions syntax executability safety proofscript clean ci cv
