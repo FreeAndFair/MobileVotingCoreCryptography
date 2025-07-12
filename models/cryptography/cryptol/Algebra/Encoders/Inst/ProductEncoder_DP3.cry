@@ -1,0 +1,13 @@
+/**
+ * Parameter instance for a ProductEncoder with three elements
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::Inst::ProductEncoder_DP3 where
+
+/**
+ * Number of elements in the underlying direct product
+ */
+type n = 3

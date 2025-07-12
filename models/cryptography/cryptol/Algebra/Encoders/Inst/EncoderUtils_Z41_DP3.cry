@@ -1,0 +1,14 @@
+/**
+ * Utilities for bitstring encoding of message
+ * in a product with three components over the
+ * additive group of integers modulo 41 (ℤ/41ℤ)
+ * using the identity mapping (default encoding).
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::Inst::EncoderUtils_Z41_DP3 =
+       Algebra::EncoderUtils {
+  Algebra::Encoders::Inst::Encoder_Z41_DP3
+}

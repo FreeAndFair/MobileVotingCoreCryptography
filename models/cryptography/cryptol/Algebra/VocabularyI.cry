@@ -32,6 +32,13 @@ interface module Algebra::VocabularyI where
  * future by removing the type constraints on M in favor
  * of providing corresponding functions M'toInt and M'Eq
  * as part of the instantiation.
+ *
+ * @note The `Integral` type constraint lets us use expN
+ * within the ExpEncoder generic encoder. Otherwise, we
+ * would need to equate type M with the exponent type `E`
+ * of the underlying group. This is currently not possible
+ * in Cryptol since interface constraints only seem to be
+ * able to equate numeric types and not value types.
  */
 type M : *
 type constraint (Integral M, Eq M)

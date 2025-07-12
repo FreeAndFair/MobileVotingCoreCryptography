@@ -1,0 +1,13 @@
+/**
+ * Instance of ElGamal’s Cryptosystem in the context
+ * of the direct product group of three components over
+ * the NIST P-521 Elliptic Curve defined in [FIPS-186-5]
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::Inst::ElGamal_P521_DP3 =
+  Primitives::ElGamal::ElGamal {
+    Algebra::Groups::Inst::PFECGroupP521_DP3
+  }

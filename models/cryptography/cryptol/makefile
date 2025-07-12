@@ -68,6 +68,22 @@ rust:
 	@$(call hline)
 	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamal_p521" --crate=elgamal_p521 --entry-module=Primitives::ElGamal::ElGamal --driver Primitives/ElGamal/Inst/ElGamal_P521_Main.cry
 	@$(call hline)
+	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamal_z41_dp3" --crate=elgamal_z41_dp3 --entry-module=Primitives::ElGamal::ElGamal --driver Primitives/ElGamal/Inst/ElGamal_Z41_DP3_Main.cry
+	@$(call hline)
+	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamal_s13_dp3" --crate=elgamal_s13_dp3 --entry-module=Primitives::ElGamal::ElGamal --driver Primitives/ElGamal/Inst/ElGamal_S13_DP3_Main.cry
+	@$(call hline)
+	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamal_s41_dp3" --crate=elgamal_s41_dp3 --entry-module=Primitives::ElGamal::ElGamal --driver Primitives/ElGamal/Inst/ElGamal_S41_DP3_Main.cry
+	@$(call hline)
+	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamal_p192_dp3" --crate=elgamal_p192_dp3 --entry-module=Primitives::ElGamal::ElGamal --driver Primitives/ElGamal/Inst/ElGamal_P192_DP3_Main.cry
+	@$(call hline)
+	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamal_p224_dp3" --crate=elgamal_p224_dp3 --entry-module=Primitives::ElGamal::ElGamal --driver Primitives/ElGamal/Inst/ElGamal_P224_DP3_Main.cry
+	@$(call hline)
+	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamal_p256_dp3" --crate=elgamal_p256_dp3 --entry-module=Primitives::ElGamal::ElGamal --driver Primitives/ElGamal/Inst/ElGamal_P256_DP3_Main.cry
+	@$(call hline)
+	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamal_p384_dp3" --crate=elgamal_p384_dp3 --entry-module=Primitives::ElGamal::ElGamal --driver Primitives/ElGamal/Inst/ElGamal_P384_DP3_Main.cry
+	@$(call hline)
+	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamal_p521_dp3" --crate=elgamal_p521_dp3 --entry-module=Primitives::ElGamal::ElGamal --driver Primitives/ElGamal/Inst/ElGamal_P521_DP3_Main.cry
+	@$(call hline)
 	# Instances of Primitives::ElGamal::ElGamalM (monadic version)
 	$(CRYPTOL_COMPILER) $(CRYPTOL_COMPILER_OPTS) -o "$(RUST_GEN_DIR)/elgamalm_z41" --crate=elgamalm_z41 --entry-module=Primitives::ElGamal::ElGamalM --driver Primitives/ElGamal/Inst/ElGamalM_Z41_Main.cry # DOES NOT COMPILE
 	@$(call hline)
@@ -114,6 +130,22 @@ test: # rust
 	cd $(RUST_GEN_DIR)/elgamal_p384 && cargo build && cargo run
 	@$(call hline)
 	cd $(RUST_GEN_DIR)/elgamal_p521 && cargo build && cargo run
+	@$(call hline)
+	cd $(RUST_GEN_DIR)/elgamal_z41_dp3 && cargo build && cargo run
+	@$(call hline)
+	cd $(RUST_GEN_DIR)/elgamal_s13_dp3 && cargo build && cargo run
+	@$(call hline)
+	cd $(RUST_GEN_DIR)/elgamal_s41_dp3 && cargo build && cargo run
+	@$(call hline)
+	cd $(RUST_GEN_DIR)/elgamal_p192_dp3 && cargo build && cargo run
+	@$(call hline)
+	cd $(RUST_GEN_DIR)/elgamal_p224_dp3 && cargo build && cargo run
+	@$(call hline)
+	cd $(RUST_GEN_DIR)/elgamal_p256_dp3 && cargo build && cargo run
+	@$(call hline)
+	cd $(RUST_GEN_DIR)/elgamal_p384_dp3 && cargo build && cargo run
+	@$(call hline)
+	cd $(RUST_GEN_DIR)/elgamal_p521_dp3 && cargo build && cargo run
 	@$(call hline)
 	# cd $(RUST_GEN_DIR)/elgamalm_z41 && cargo build && cargo run
 	@$(call hline)

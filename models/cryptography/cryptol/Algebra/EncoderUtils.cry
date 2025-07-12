@@ -8,9 +8,9 @@
  * to unpack those option values in several places and deal
  * with the None case when we assume such ought be avoided
  * by design. Hence, this module defines so-called "strict"
- * versions of those functions with stronger preconditions,
- * which raise errors if passed arguments for which the
- * original functions would return None.
+ * versions of those functions with stronger preconditions;
+ * these version raise errors if passed arguments for which
+ * the original functions would return None.
  *
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)
  * @copyright Free & Fair 2025
@@ -46,3 +46,39 @@ Strict'Decode y =
   case (Decode y) of
     Some x -> x
     None   -> error "Strict'Decode requires message to be decodable"
+
+/**
+ * Encodes a list of messages into a list of group element.
+ *
+ * @note This function is useful when dealing with product
+ * groups.
+ */
+EncodeList : {n} (fin n) => [n]M -> [n](Option T)
+EncodeList = map Encode
+
+/**
+ * Decodes a list of group element into a list of message.
+ *
+ * @note This function is useful when dealing with product
+ * groups.
+ */
+DecodeList : {n} (fin n) => [n]T -> [n](Option M)
+DecodeList = map Decode
+
+/**
+ * Encodes a list of messages into a list of group element.
+ *
+ * @note This function is useful when dealing with product
+ * groups.
+ */
+Strict'EncodeList : {n} (fin n) => [n]M -> [n]T
+Strict'EncodeList = map Strict'Encode
+
+/**
+ * Decodes a list of group element into a list of message.
+ *
+ * @note This function is useful when dealing with product
+ * groups.
+ */
+Strict'DecodeList : {n} (fin n) => [n]T -> [n]M
+Strict'DecodeList = map Strict'Decode

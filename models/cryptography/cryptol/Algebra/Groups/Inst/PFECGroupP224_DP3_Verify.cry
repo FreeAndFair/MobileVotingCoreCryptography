@@ -1,0 +1,39 @@
+/**
+ * NIST P-224 Elliptic Curve defined in [FIPS-186-5] —
+ * Direct Product with three components (Verification)
+ * @see https://doi.org/10.6028/NIST.FIPS.186-5
+ *
+ * @note Even for small DirectProduct groups, we current
+ * cannot prove that g is a generator of the group. This
+ * is because the g_generates_G property is not usable in
+ * this context.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::PFECGroupP224_DP3_Verify where
+
+import Algebra::Groups::Inst::PFECGroupP224_DP3_POs
+
+/**
+ * Proof that cyclic group axioms hold for PFECGroupP224_DP3.
+ *
+ * ```repl
+ * :set tests = 10000
+ * :prove identity_in_G
+ * :check G_closed_under_gop
+ * :prove G_closed_under_inv
+ * :check G_closed_under_exp
+ * :prove generator_in_G
+ * :check associative
+ * :check commutative
+ * :prove valid_identity
+ * :check valid_inverse
+ * :check expZ_correct
+ * :check enc_dec_inverse
+ * :prove all enc_dec_inverse [-3, -2, -1, 0, 1, 2, 3]
+ * :check gen_in_G
+ * ```
+ */
+Discharge_POs = True // we need something to annotate

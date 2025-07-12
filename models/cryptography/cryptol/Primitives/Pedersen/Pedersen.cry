@@ -19,7 +19,7 @@ import interface Algebra::CyclicGroupI
 /**
  * Import derived functions for cyclic groups.
  */
-import Algebra::CyclicGroupUtils { interface CyclicGroupI } (gproduct)
+import Algebra::CyclicGroupUtils { interface CyclicGroupI }
 
 /**
  * Reexports type universe of group elements as G.
@@ -39,7 +39,7 @@ type N = order
  * For convenience, we define a custom infix syntax
  * for equality of group elements (≡) and overload
  * the builtin infix syntax for multiplication and
- * exponentation to use the group operations. This
+ * exponentiation to use the group operations. This
  * makes the Cryptol model look more closely aligned
  * with the mathematical presentation of k-Pedersen,
  * i.e., in the EVS draft.
@@ -47,7 +47,7 @@ type N = order
 infix 20 ≡
 private (≡) = T'eq
 private (*)  = gop
-private (^^) = exp
+private (^^) = expN
 
 /**
  * Encoding of a k-Pedersen commitment

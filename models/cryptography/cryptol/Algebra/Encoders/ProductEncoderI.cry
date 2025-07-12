@@ -1,0 +1,14 @@
+/**
+ * Interface module defining the parameters of ProductEncoder
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+interface module Algebra::Encoders::ProductEncoderI where
+
+/**
+ * Number of elements in the underlying direct product
+ */
+type n : #
+type constraint (fin n)

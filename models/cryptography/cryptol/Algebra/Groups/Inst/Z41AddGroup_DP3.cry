@@ -1,0 +1,13 @@
+/**
+ * Additive Group of Integers Modulo 41 (ℤ/41ℤ) —
+ * Direct Product with three components
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::Z41AddGroup_DP3 =
+       Algebra::Groups::DirectProduct {
+         DirectProductI = Algebra::Groups::DP::DP3,
+         BASE = Algebra::Groups::Inst::Z41AddGroup
+       }

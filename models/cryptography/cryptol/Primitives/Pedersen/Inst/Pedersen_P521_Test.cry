@@ -26,7 +26,7 @@ main = create_and_open 0 tv
  * five messages while producing additional trace output.
  *
  * @note We use a seed of 0 for random number generation.
- * @note The trace[Val] functions is currently not supported by
+ * @note The trace[Val] functions are currently not supported by
  * the Cryptol to Rust compiler; the code below does compile
  * but throws a runtime error (panic) when executed, indicating
  * that `trace` is not implemented yet.

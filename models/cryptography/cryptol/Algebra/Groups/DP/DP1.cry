@@ -1,0 +1,17 @@
+/**
+ * DirectProductI instance for a product with one component
+ *
+ * @note The direct product here is isomorphic to
+ * the base group. This instance was merely added
+ * for completeness and verification purposes.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::DP::DP1 where
+
+/**
+ * Number of group elements in the direct product (1)
+ */
+type n = 1

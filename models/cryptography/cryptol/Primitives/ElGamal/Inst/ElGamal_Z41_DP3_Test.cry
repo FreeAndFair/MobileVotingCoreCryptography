@@ -1,0 +1,46 @@
+/**
+ * Smoke test of ElGamal’s Cryptosystem in the context
+ * of the direct product group of three components over
+ * the additive group of integers modulo 41 (ℤ/41ℤ)
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Primitives::ElGamal::Inst::ElGamal_Z41_DP3_Test where
+
+import Primitives::ElGamal::Inst::ElGamal_Z41_DP3
+import Algebra::Encoders::Inst::Encoder_Z41_DP3
+import Algebra::Encoders::Inst::EncoderUtils_Z41_DP3
+
+/* @note Encoder_Z41 encodes 5 bits (lg2floor 41)
+ * thus, Encoder_Z41_DP3 encodes 3 * 5 = 15 bits
+ * The encoder automatically splites 15-bit values
+ * into 3-bit packets during the default encoding
+ * operation. */
+
+/**
+ * Simple testing function encrypting and decrypting five messages.
+ */
+main : [5][bits]
+main = tv'dec
+  where tv = [0, 1, 2, 5, 32767]
+        tv'enc = map Strict'Encode tv
+        tv'run = map (gen_enc_dec 1 2) tv'enc
+        tv'dec = map Strict'Decode tv'run
+
+/**
+ * Simple testing function encrypting and decrypting five messages
+ * while producing additional trace output.
+ *
+ * @note The trace[Val] functions are currently not supported by
+ * the Cryptol to Rust compiler; the code below does compile
+ * but throws a runtime error (panic) when executed, indicating
+ * that `trace` is not implemented yet.
+ */
+main'trace : [5][bits]
+main'trace = traceVal "test result:" tv'dec
+  where tv = traceVal "test vector:" [0, 1, 2, 5, 32767]
+        tv'enc = map Strict'Encode tv
+        tv'run = map (gen_enc_dec 1 2) tv'enc
+        tv'dec = map Strict'Decode tv'run

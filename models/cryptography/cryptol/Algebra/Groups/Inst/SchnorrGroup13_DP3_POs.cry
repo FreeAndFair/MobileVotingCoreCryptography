@@ -1,0 +1,12 @@
+/**
+ * Schnorr Group with a prime order of 13 —
+ * Direct Product with three components (Proof Obligations)
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::SchnorrGroup13_DP3_POs =
+  Algebra::CyclicGroup_Axioms {
+    Algebra::Groups::Inst::SchnorrGroup13_DP3
+  }

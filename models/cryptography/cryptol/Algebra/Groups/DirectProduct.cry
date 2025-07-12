@@ -1,0 +1,118 @@
+/**
+ * Generic direct product of a cyclic group
+ *
+ * We represent the direct product as a list over the
+ * base group's type, with a predefined length n which
+ * is provided as a parameter during instantiation.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::DirectProduct where
+
+import Algebra::Set
+import Algebra::Utils(Rel)
+
+/**
+ * Number of components in the product group
+ */
+import interface Algebra::Groups::DirectProductI
+
+/**
+ * Group to be lifted into a direct product
+ */
+import interface Algebra::CyclicGroupI as BASE
+
+// parameter
+//   /**
+//    * Number of group elements in the direct product
+//    */
+//  type n : #
+//  type constraint (fin n, n > 0)
+
+/**
+ * Order of the generated group
+ */
+type order = BASE::order ^^ n
+
+/**
+ * Bits allotted to encode a group element
+ */
+type bits = n * BASE::bits
+
+/**
+ * Bits used to generate a random group element
+ */
+type rngbits = n * BASE::rngbits
+
+/**
+ * Type universe of group elements
+ */
+type T = [n]BASE::T
+
+/**
+ * Generic exponent type
+ */
+type E = [n]BASE::E
+
+/**
+ * Equality of group elements
+ */
+T'eq : Rel T
+T'eq x y = and (zipWith BASE::T'eq x y)
+
+/**
+ * Carrier set of the group (product type)
+ */
+G : Set T
+G = all BASE::G
+
+/**
+ * Generator element of the group (replicated)
+ */
+g : T
+g = repeat`{n} BASE::g
+
+/**
+ * Identity element of the group (replicated)
+ */
+identity : T
+identity = repeat`{n} BASE::identity
+
+/**
+ * Binary group operation (pointwise)
+ */
+gop : T -> T -> T
+gop = zipWith BASE::gop
+
+/**
+ * Exponentiation operation (pointwise)
+ */
+exp : T -> E -> T
+exp = zipWith BASE::exp
+
+/**
+ * Inverse of a given element (pointwise)
+ */
+inv : T -> T
+inv = map BASE::inv
+
+/**
+ * Encoding a message as a group element (split bits)
+ */
+enc : [bits] -> T
+enc ms = map BASE::enc (split ms)
+
+/**
+ * Decoding a group element into a message (join bits)
+ */
+dec : T -> [bits]
+dec gs = join (map BASE::dec gs)
+
+/**
+ * Generates of a random group element from a (random)
+ * bitstring (split bits).
+ */
+gen : [rngbits] -> T
+gen bv = map BASE::gen (split bv)

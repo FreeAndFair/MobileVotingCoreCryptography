@@ -43,6 +43,11 @@ type rngbits = lg2 n
 type T = Z n
 
 /**
+ * Exponent type
+ */
+type E = Z n
+
+/**
  * Equality of group elements
  */
 T'eq = (==)
@@ -74,9 +79,8 @@ gop = (+)
 /**
  * Exponentiation operation (multiplication)
  */
-exp : {a} (Integral a) => T -> a -> T
-exp x k = x * (fromInteger i)
-  where i = toInteger k
+exp : T -> E -> T
+exp = (*)
 
 /**
  * Inverse of a given element (negation)

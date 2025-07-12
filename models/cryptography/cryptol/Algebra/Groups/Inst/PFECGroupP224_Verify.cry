@@ -28,7 +28,7 @@ import Algebra::Groups::Inst::PFECGroupP224_POs
  * :check commutative
  * :prove valid_identity
  * :check valid_inverse
- * :check exp_correct_check
+ * :check expZ_correct
  * :check enc_dec_inverse
  * :prove all enc_dec_inverse [-3, -2, -1, 0, 1, 2, 3]
  * :check gen_in_G

@@ -1,0 +1,13 @@
+/**
+ * DirectProductI instance for a product with two component
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::DP::DP2 where
+
+/**
+ * Number of group elements in the direct product (2)
+ */
+type n = 2

@@ -4,8 +4,6 @@
  * These are generic functions that can be derived
  * from the group types, constants and operations.
  *
- * @review Define generic exponentiation here as well?
- *
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)
  * @copyright Free & Fair 2025
  * @version 0.1
@@ -19,3 +17,19 @@ import interface Algebra::GroupI
  */
 gproduct : {n} (fin n) => [n]T -> T
 gproduct = foldl gop identity
+
+/**
+ * Exponentiation defined for integral exponents
+ *
+ * @review We could deal with negative exponents
+ * here explicitly, or defer that problem to the
+ * `fromInteger` function of the underlying Ring.
+ */
+expN : {a} (Integral a) => T -> a -> T
+expN x n = exp x (fromInteger i) where i = toInteger n
+
+/**
+ * Exponentiation defined for `Z order` exponents
+ */
+expZ : T -> (Z order) -> T
+expZ x z = exp x (fromInteger i) where i = fromZ z

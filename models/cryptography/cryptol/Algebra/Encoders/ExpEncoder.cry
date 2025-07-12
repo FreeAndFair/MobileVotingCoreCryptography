@@ -1,5 +1,5 @@
 /**
- * Generic Encoder that use Generator Exponentation
+ * Generic Encoder that use Generator Exponentiation
  *
  * Encodes messages `m` as `g ^^ m` within the exponent
  * ring/field of the underlying cyclic group. This works
@@ -25,7 +25,7 @@ import Algebra::Utils(lookupWithEq, isSome, isNone)
 // parameter
 
 import interface Algebra::CyclicGroupI as CyclicGroup
-import interface Algebra::VocabularyI as Vocabulary
+import interface Algebra::VocabularyI  as Vocabulary
 
 /* @note fzeyda: Initially, I imported the above interfaces
  * without the `as` prefixes. This worked up to a point but
@@ -33,7 +33,15 @@ import interface Algebra::VocabularyI as Vocabulary
  * with EncoderUtils (which is parametrized by the EncoderI
  * interface. Then, for some reason, the types T and M in
  * those interfaces are not exposed by this module by the
- * instance of ExpEncoder. Perhaps another bug in Cryptol. */
+ * instance of ExpEncoder. I believe this PR notes it too:
+ * @see https://github.com/GaloisInc/cryptol/issues/1699 */
+
+/* @note Interface constraints like the below seem only be
+ * applicable to numeric types (kind #). Hence, the below
+ * does not work as both E and M are value types (kind *). */
+// interface constraint (CyclicGroup::E == Vocabulary::M)
+
+import Algebra::CyclicGroupUtils { interface CyclicGroup } (expN)
 
 /**
  * Exporting relevant types, constants and functions from
@@ -54,12 +62,22 @@ type msgN = Vocabulary::msgN
 message_vocabulary = Vocabulary::message_vocabulary
 
 /**
- * For convenience, we introduce auxiliary infix syntax
- * for exponentation using the respective group operation.
- * This makes the Cryptol model prettier and more closely
- * aligned with the mathematical account.
+ * For readability, we introduce auxiliary infix syntax
+ * for exponentiation using the _derived_ group operation
+ * for integral exponents (expN) defined in CyclicGroupUtils.
+ *
+ * @note It would be neater nice to use exp here but this
+ * raises a number of problems. Firstly, we cannot impose
+ * an interface constraint that equates the exponent type E
+ * and Encoder's message type M due to a limitation of what
+ * constitutes interface constraints in Cryptol. Secondly,
+ * if E and M are not precisely the same time, we also face
+ * issues when instantiating this module. I.e., M being an
+ * Integer would not work if the exponent type is `Z _`,
+ * meaning that vocabularies need to be tied to the type E
+ * of the group in whose context they are used.
  */
-private (^^) = exp
+private (^^) = expN
 
 /*********************/
 /* Private Functions */
@@ -97,7 +115,7 @@ encodable x = elem`{msgN} x message_vocabulary
 /**
  * Encodes a message into a group element.
  *
- * We use exponentation of the generator as a generic
+ * We use exponentiation of the generator as a generic
  * encoding operation.
  */
 Encode : M -> Option T
@@ -120,19 +138,17 @@ Decode y = lookupWithEq T'eq lookup_table y
  * Verifies that an encodable message, i.e., within the
  * vocabulary yields a valid value within the group.
  */
-private
-  property Encode_encodable_msg (x : M) =
-    case (Encode x) of
-      Some y -> y ∈ G
-      None   -> False
+property Encode_encodable_msg (x : M) =
+  case (Encode x) of
+    Some y -> y ∈ G
+    None   -> False
 
 /**
  * Verifies that an unencodable message, i.e., outside the
  * vocabulary yields a `None` value.
  */
-private
-  property Encode_invalid_msg (x : M) =
-    isNone (Encode x)
+property Encode_invalid_msg (x : M) =
+  isNone (Encode x)
 
 /**
  * Verifies that the `Encode` function is well defined.

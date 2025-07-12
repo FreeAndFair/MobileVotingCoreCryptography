@@ -58,6 +58,11 @@ type rngbits = lg2 P
 type T = EC::Point
 
 /**
+ * Exponent type
+ */
+type E = Z n'
+
+/**
  * Equality of group elements
  */
 T'eq : T -> T -> Bool
@@ -90,9 +95,8 @@ gop = EC::add
 /**
  * Exponentiation operation (point multiplication)
  */
-exp : {a} (Integral a) => T -> a -> T
-exp x k = EC::scmul i x
-  where i = toInteger k
+exp : T -> E -> T
+exp x k = EC::scmul (fromZ k) x
 
 /**
  * Inverse of a given element (point subtraction from Infinity)

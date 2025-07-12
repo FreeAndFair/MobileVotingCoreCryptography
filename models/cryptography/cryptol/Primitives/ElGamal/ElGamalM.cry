@@ -36,7 +36,7 @@ type N = order
  * For convenience, we define a custom infix syntax
  * for equality of group elements (≡) and overload
  * the builtin infix syntax for multiplication and
- * exponentation to use the group operations. This
+ * exponentiation to use the group operations. This
  * makes the Cryptol model look more closely aligned
  * with the mathematical presentation of ElGamal, i.e.,
  * in the EVS draft.

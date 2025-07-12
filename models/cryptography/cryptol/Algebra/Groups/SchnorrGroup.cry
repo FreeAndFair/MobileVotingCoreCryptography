@@ -25,7 +25,7 @@
 module Algebra::Groups::SchnorrGroup where
 
 import Algebra::Set
-import Algebra::Utils(lg2floor)
+import Algebra::Utils(lg2floor, bv2Z)
 
 parameter
   /**
@@ -75,6 +75,11 @@ type rngbits = lg2 q
 type T = Z p
 
 /**
+ * Exponent type
+ */
+type E = Z q
+
+/**
  * Equality of group elements
  */
 T'eq = (==)
@@ -93,7 +98,7 @@ G x = x != 0 /\ x^^`q == 1
  * This is a subgroup of (ℤ/pℤ)* with order q.
  */
 g : T
-g = `h^^`r
+g = `h ^^ `r
 
 /**
  * Identity element of the group (one)
@@ -108,18 +113,16 @@ gop : T -> T -> T
 gop = (*)
 
 /**
+ * Exponentiation operation
+ */
+exp : T -> E -> T
+exp x k = x ^^ (fromZ k)
+
+/**
  * Inverse of a given element (division)
  */
 inv : T -> T
 inv = recip
-
-/**
- * Exponentiation operation
- */
-exp : {a} (Integral a) => T -> a -> T
-exp x k = if n >= 0 then (x^^n)
-                    else (inv x)^^(-n)
-          where n = toInteger k
 
 /**
  * The τ(v) = min(v, p - v) function used in PRG_DDH.
@@ -165,4 +168,4 @@ dec y | r == 2 => fromInteger ((tau y) - 1)
  * more suitable algorithm for constructing random group elements.
  */
 gen : [rngbits] -> T
-gen r = exp g r
+gen r = exp g (bv2Z r)

@@ -1,0 +1,14 @@
+/**
+ * Encoding of messages in a product with three
+ * components over the NIST P-384 Elliptic Curve
+ * defined in [FIPS-186-5]
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::Inst::Encoder_P384_DP3 =
+       Algebra::Encoders::ProductEncoder {
+  BASE   = Algebra::Encoders::Inst::Encoder_P384,
+  PARAMS = Algebra::Encoders::Inst::ProductEncoder_DP3
+}

@@ -1,0 +1,37 @@
+/**
+ * Schnorr Group with a prime order of 41 —
+ * Direct Product with three components (Verification)
+ *
+ * @note Even for small DirectProduct groups, we current
+ * cannot prove that g is a generator of the group. This
+ * is because the g_generates_G property is not usable in
+ * this context.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::SchnorrGroup41_DP3_Verify where
+
+import Algebra::Groups::Inst::SchnorrGroup41_DP3_POs
+
+/**
+ * Proof that cyclic group axioms hold for SchnorrGroup41_DP3.
+ *
+ * ```repl
+ * :set tests = 100000
+ * :prove identity_in_G
+ * :check G_closed_under_gop
+ * :check G_closed_under_inv
+ * :check G_closed_under_exp
+ * :prove generator_in_G
+ * :prove associative
+ * :prove commutative
+ * :prove valid_identity
+ * :prove valid_inverse
+ * :check expZ_correct
+ * :exhaust enc_dec_inverse
+ * :exhaust gen_in_G
+ * ```
+ */
+Discharge_POs = True // we need something to annotate

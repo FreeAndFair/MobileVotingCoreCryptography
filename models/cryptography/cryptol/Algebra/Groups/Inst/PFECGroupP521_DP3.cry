@@ -1,0 +1,14 @@
+/**
+ * NIST P-521 Elliptic Curve defined in [FIPS-186-5] —
+ * Direct Product with three components
+ * @see https://doi.org/10.6028/NIST.FIPS.186-5
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Groups::Inst::PFECGroupP521_DP3 =
+       Algebra::Groups::DirectProduct {
+         DirectProductI = Algebra::Groups::DP::DP3,
+         BASE = Algebra::Groups::Inst::PFECGroupP521
+       }

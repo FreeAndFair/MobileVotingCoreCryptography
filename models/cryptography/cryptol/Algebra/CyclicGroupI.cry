@@ -18,9 +18,6 @@
  * the correct type, and not crash or panic, regardless
  * of the elements to which they are applied.
  *
- * @comment Douglas Wikström: Consider 'Z order' as the
- * exponent type instead of {a} (Integral a) or Integer.
- *
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)
  * @copyright Free & Fair 2025
  * @version 0.1
@@ -93,6 +90,44 @@ type T : *
 // type constraint (Eq T)
 
 /**
+ * Generic exponent type
+ *
+ * For generic definition of exponentiation we require
+ * the exponent type to be a member of Cryptol's Ring
+ * class. Since the Ring class includes a function
+ * fromInteger : {a} (Ring a) => Integer -> Ring a,
+ * we can easily derive a function that uses integer
+ * exponents from the generic exponentiation below,
+ * see the `CyclicGroupUtils` module.
+ *
+ * Note that `Eq E` is additionally required to provide
+ * a generic recursive definition of exponentiation in
+ * the `CyclicGroup_Axioms` module against which we can verify
+ * the definition of exp in concrete groups.
+ *
+ * @note Douglas Wikström encouraged exploration of using
+ * a constraint (Field E) for the exponent type. Sadly,
+ * unlike Ring, the Field type class lacks instantiations
+ * for product and list types. This would prevent us from
+ * instantiating E with a tuple or product type, i.e, in
+ * direct product groups. (I understand that user-level
+ * instantiation of type classes is currently not supported
+ * in Cryptol.)
+ *
+ * Alternatively, we may not impose any type constraint
+ * on E here. While this precludes a generic (canonical)
+ * definition of exponentiation, concrete instances of
+ * CyclicGroupI can always provide their own definition.
+ *
+ * @note Douglas Wikström also recommended using `Z order`
+ * as a monomorphic exponent type. However, this would not
+ * allow us to instantiate E suitably for product groups,
+ * unless we provide a mapping from `Z order` to tuples.
+ */
+type E : *
+type constraint (Ring E, Eq E)
+
+/**
  * Equality of group elements
  *
  * Since not all Cryptol types implement the Eq type
@@ -130,7 +165,7 @@ identity : T
  * The group operation must be closed under the set G.
  * That is, if x ∈ G and y ∈ G then (gop x y) ∈ G.
  *
- * TODO: Do we usually expect gop to be commutative?
+ * @review Do we usually expect gop to be commutative?
  */
 gop : T -> T -> T
 
@@ -150,28 +185,20 @@ inv : T -> T
 /**
  * Repeated application of group operation
  *
- * While exponentiation may be defined generically,
- * permitting instances to define it concretely
- * can result in more efficient implementations.
- * Exponentation must be closed for all integral
- * exponents of a valid group element. That is, for
- * x ∈ G and k an Integer we must have (exp x k) ∈ G.
- * Also, since g is a generator, (exp g k) shall
- * cycle through all elements of G for 0 <= k < `order.
+ * We assume that G is closed under exponentiation
+ * for all elements of type E and all valid group
+ * elements of type T. That is, for x ∈ G and
+ * k : E, we have (exp x k) ∈ G. Also, since g
+ * is a generator, (exp g k) shall cycle through
+ * all elements of G for 0 <= k < `order.
  *
- * To handle negative exponents, exp shall obey the
- * identity (exp x k) == (exp (inv x) -k) for x ∈ G.
- * Naturally, we also assume (exp x 0) == identity and
- * (exp x 1) == x for all x ∈ G.
- *
- * @todo fzeyda: Douglas Wikström encourage exploration
- * of using a constraint (Field a) for the exponent type.
- * Or perhaps introduce another type parameter for the
- * exponent type. I understand that custom instantiation
- * of type classes is limited in Cryptol, so we may need
- * some more creative ways to achieve this if so.
+ * To handle negative exponents when applicable
+ * for type E, exp shall moreover obey the identity:
+ * (exp x k) == (exp (inv x) (-k)) for x ∈ G.
+ * Naturally, we also require (exp x 0) == identity
+ * and (exp x 1) == x for all x ∈ G.
  */
-exp : {a} (Integral a) => T -> a -> T
+exp : T -> E -> T
 
 /**
  * Encoding a message as a group element

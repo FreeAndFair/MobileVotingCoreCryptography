@@ -1,0 +1,13 @@
+/**
+ * Utilities for encoding messages in a product with
+ * three components over the NIST P-256 Elliptic Curve
+ * defined in [FIPS-186-5]
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::Inst::EncoderUtils_P256_DP3 =
+       Algebra::EncoderUtils {
+  Algebra::Encoders::Inst::Encoder_P256_DP3
+}

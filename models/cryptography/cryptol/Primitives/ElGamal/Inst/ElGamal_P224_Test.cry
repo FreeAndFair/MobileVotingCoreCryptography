@@ -27,7 +27,7 @@ main = tv'dec
  * Simple testing function encrypting and decrypting five messages
  * while producing additional trace output.
  *
- * @note The trace[Val] functions is currently not supported by
+ * @note The trace[Val] functions are currently not supported by
  * the Cryptol to Rust compiler; the code below does compile
  * but throws a runtime error (panic) when executed, indicating
  * that `trace` is not implemented yet.

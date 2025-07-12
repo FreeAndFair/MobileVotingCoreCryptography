@@ -1,0 +1,13 @@
+/**
+ * Rust entry for smoke test of ElGamal’s Cryptosystem
+ * in the context of the direct product group of three
+ * components over the NIST P-384 Elliptic Curve defined
+ * in [FIPS-186-5]
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+import Primitives::ElGamal::Inst::ElGamal_P384_DP3_Test as Test
+
+main = Test::main

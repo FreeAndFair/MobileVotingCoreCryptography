@@ -1,0 +1,133 @@
+/**
+ * Lifts of a given Encoder to a product of messages.
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+module Algebra::Encoders::ProductEncoder where
+
+import Algebra::Set
+import Algebra::Utils(isSome, isNone, valOf)
+
+/**
+ * Base encoder which we want to lift to products.
+ */
+import interface Algebra::EncoderI as BASE
+
+/* @note Unfortunately, we cannot parameterize this module
+ * by the number of elements in the product directly, since
+ * imported interfaces and parameter blocks do not combine
+ * well in Cryptol. I.e., we cannot instantiate parameters
+ * and interface at the same time. @todo fzeyda Submit a
+ * GitHub issue wrt this problem—looks like a bug to me. */
+// parameter
+//   type n : #
+//   type constraint (fin n)
+
+/**
+ * Defines the fixed number of elements in the product.
+ */
+import interface Algebra::Encoders::ProductEncoderI as PARAMS
+
+interface constraint (Eq BASE::M)
+
+/**
+ * The message type M and group element type T of the BASE
+ * encoder are lifted to lists in this encoder. I.e., we are
+ * using lists to encode products of the derised length n.
+ */
+type n = PARAMS::n
+type M = [n]BASE::M
+type T = [n]BASE::T
+
+/**
+ * Determines if a given list of Option values contains one
+ * or more None elements.
+ */
+private
+  containsNone : {k, a} (fin k) => [k](Option a) -> Bool
+  containsNone = any isNone
+
+/**
+ * Determines the set of encodable message lists (of size n).
+ */
+encodable : Set M // equiv. M -> Bool
+encodable = all BASE::encodable
+
+/**
+ * Encodes a list of messages into a list of group elements.
+ */
+Encode : M -> Option T
+Encode xs =
+  if containsNone ys then None
+                     else Some (map valOf ys)
+  where ys = map BASE::Encode xs
+
+/**
+ * Decodes a list of group elements into a list of messages.
+ */
+Decode : T -> Option M
+Decode ys =
+  if containsNone xs then None
+                     else Some (map valOf xs)
+  where xs = map BASE::Decode ys
+
+/********************************************/
+/* Verification of ProductEncoder Instances */
+/********************************************/
+
+/**
+ * Determines whether a product of messages ought be
+ * encodable. This shall be the case if for _all_
+ * messages in the product, the Encode function of
+ * the BASE encoder yields Some value.
+ */
+private
+  property Encode_encodable_msg (xs : M) =
+    ~(containsNone (map BASE::Encode xs))
+
+/**
+ * Determines whether a product of messages ought not
+ * be encodable. This shall be the case if for _some_
+ * message in the product, the Encode function of
+ * the BASE encoder yields a None result.
+ */
+private
+  property Encode_invalid_msg (xs : M) =
+    containsNone (map BASE::Encode xs)
+
+/**
+ * Verifies that the `Encode` function is well defined.
+ *
+ * Depending on whether x is encodable, invokes either
+ * the Encode_encodable_msg or Encode_invalid_msg test.
+ */
+property Encode_well_defined (x : M) =
+  if (encodable x) then (Encode_encodable_msg x)
+                   else (Encode_invalid_msg x)
+
+/**
+ * Verifies that the `Decode` function is well defined.
+ *
+ * This properties verifies that for every encodable
+ * message m, `Decode (Encode m)` yields a value that
+ * is not equal to `None`.
+ */
+property Decode_well_defined (x : M) =
+  case (Encode x) of
+    Some y -> isSome (Decode y)
+    None   -> True // x is not encodable
+
+/**
+ * Verifies that `Decode` is the inverse of `Encode`.
+ *
+ * This properties verifies that for every encodable
+ * message m, `Decode (Encode m)` yields the same m.
+ */
+property Encode_Decode_inverse (x : M) =
+  case (Encode x) of
+    Some y -> case (Decode y) of
+      Some x' -> x == x'
+      None    -> False
+    None -> True // x is not encodable

@@ -1,0 +1,20 @@
+/**
+ * Parameters for DirectProduct group instantiation
+ *
+ * @review It would be neater if we could make type
+ * n a parameter of the DirectProduct module. But
+ * imported interfaces and parameters seem not to
+ * combine well in Cryptol — at least we did not
+ * find a way to concurrently instantiate them ...
+ *
+ * @author Frank Zeyda (frank.zeyda@freeandfair.us)
+ * @copyright Free & Fair 2025
+ * @version 0.1
+ */
+interface module Algebra::Groups::DirectProductI where
+
+/**
+ * Number of group elements in the direct product
+ */
+type n : #
+type constraint (fin n, n > 0)

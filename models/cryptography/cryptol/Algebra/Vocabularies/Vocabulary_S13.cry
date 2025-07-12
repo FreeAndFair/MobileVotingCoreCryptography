@@ -12,6 +12,9 @@ module Algebra::Vocabularies::Vocabulary_S13 where
 /* Instantiation of VocabularyI */
 /********************************/
 
+// @note `Z 13` cannot be used as it is not an integral type (?)
+// @todo Submit an issue about this to the Cryptol GitHub page;
+// I do not see why Z 13 may not be coerced from/to an integer (?)
 type M = Integer
 type msgN = 13
 message_vocabulary : [msgN]M
