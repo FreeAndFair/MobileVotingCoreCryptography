@@ -127,7 +127,7 @@ ci: subprotocols compositions syntax
 
 # Always include the proof scripts for CV
 cv: CV_DEFINES = -DINCLUDE_PROOF_SCRIPTS
-cv: subprotocols compositions proofscript executability safety
+cv: subprotocols proofscript executability safety
 
 # List of phony targets
 .PHONY: default help subprotocols compositions syntax executability safety proofscript clean ci cv

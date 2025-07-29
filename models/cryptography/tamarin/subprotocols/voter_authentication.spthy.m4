@@ -43,6 +43,7 @@ theory voter_authentication
 begin
 
 define(<!USE_UNIQUE!>)dnl
+define(<!USE_PSEUDONYM!>)dnl
 include(common/primitives.m4.inc)
 define(<!USE_SECURE_CHANNELS!>)dnl
 define(<!USE_SECURE_CHANNELS_INJECTION!>)dnl
@@ -133,9 +134,6 @@ macros:
   Msg_VA_Authentication_Complete(ec_hash, pk_voter, token) = <'VA_Authentication_Complete', ec_hash, pk_voter, token>,
   Msg_EAS_Authentication_Result(ec_hash, result, pseudo, pk_voter, ballot_style) = <'EAS_Authentication_Result', result, ec_hash, pseudo, pk_voter, ballot_style>,
   Msg_EAS_Authorize_Voter(ec_hash, pseudo, pk_voter, ballot_style) = <'EAS_Authorize_Voter', ec_hash, pseudo, pk_voter, ballot_style>
-
-functions:
-  pseudonym/1 [private]
 
 include(subprotocols/includes/voter_authentication_rules.spthy.inc)
 dnl

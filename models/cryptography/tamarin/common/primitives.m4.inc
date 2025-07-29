@@ -86,6 +86,39 @@ restriction SignatureDeterminism:
   "
 !>, <!!>)dnl
 dnl
+ifelse(eval((!defined_bool(<!INCLUDED_ABSTRACTED_NAOR_YUNG!>)) && defined_bool(<!USE_ABSTRACTED_NAOR_YUNG!>)), eval(1), <!
+define(<!USE_ABSTRACTED_NAOR_YUNG!>)dnl
+/*
+  Ballots are encrypted using the Naor-Yung construction with the election
+  public key and a randomizer, such that either the election private key or
+  the randomizer can be used to decrypt them. In the real system, this will
+  be done with exponentiation-heavy group operation, which are not really
+  feasible to model in Tamarin. Thus, we use an equational abstraction for
+  the encryption that models the ability to decrypt with either "key",
+  maintains the property that an encryption consists of two ciphertexts and
+  a corresponding proof, and allows for checking the corresponding proof.
+ */
+
+functions:
+  ny_encrypt_c1/3, /* ciphertext 1 */
+  ny_encrypt_c2/3, /* ciphertext 2 */
+  ny_encrypt_p/3,  /* proof */
+  ny_decrypt/3,    /* decryption function */
+  ny_check/3       /* proof check function */
+
+equations:
+  /* The ciphertext can be decrypted with the private key corresponding
+     to the encrypting public key. */
+  ny_decrypt(ny_encrypt_c1(pt, pk(k), r), ny_encrypt_c2(pt, pk(k), r), k) = pt,
+
+  /* The ciphertext can be decrypted with the randomness. */
+  ny_decrypt(ny_encrypt_c1(pt, pk(k), r), ny_encrypt_c2(pt, pk(k), r), r) = pt,
+
+  /* A proof can be verified if it was generated from the same parameters
+      as the ciphertexts. */
+  ny_check(ny_encrypt_c1(pt, pk(k), r), ny_encrypt_c2(pt, pk(k), r), ny_encrypt_p(pt, pk(k), r)) = true
+!>, <!!>)dnl
+dnl
 ifelse(eval(!defined_bool(<!INCLUDED_EQUALITY!>) && defined_bool(<!USE_EQUALITY!>)), eval(1), <!
 define(<!INCLUDED_EQUALITY!>)dnl
 /*
@@ -169,4 +202,9 @@ restriction InMultiset:
       ==>
           Ex x. s = m + x
   "
+!>, <!!>)dnl
+ifelse(eval(!defined_bool(<!INCLUDED_PSEUDONYM!>) && defined_bool(<!USE_PSEUDONYM!>)), eval(1), <!
+define(<!INCLUDED_PSEUDONYM!>)dnl
+functions:
+  pseudonym/1 [private] /* voter pseudonym */
 !>, <!!>)dnl

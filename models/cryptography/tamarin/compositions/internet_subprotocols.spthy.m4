@@ -35,9 +35,15 @@ theory e2eviv_internet
 
 begin
 
+define(<!USE_UNIQUE!>)dnl
+define(<!USE_EUFCMA_SIGNING!>)dnl
+define(<!USE_ABSTRACTED_NAOR_YUNG!>)dnl
+define(<!USE_PSEUDONYM!>)dnl
 include(common/primitives.m4.inc)
+define(<!USE_SECURE_CHANNELS!>)dnl
+define(<!USE_SECURE_CHANNELS_INJECTION!>)dnl
+define(<!USE_SECURE_CHANNELS_INTERCEPTION!>)dnl
 include(common/channels.m4.inc)
-include(common/bulletinboard.m4.inc)
 
 /* Ballot Cast */
 
