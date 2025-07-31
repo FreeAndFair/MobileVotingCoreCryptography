@@ -47,15 +47,15 @@ solve( (∃ #j.
                              ) ▶₂ #vr.3 )
                         case SecureChannel_Receive_case_1
                         solve( BallotStyleCount( ~ec, %idx_bs_unused ) ▶₀ #vr.6 )
-                          case VoterAuthentication_Mock_BallotStyle
+                          case Mock_BallotStyle
                           solve( VoterCount( ~ec, %idx_ev_unused ) ▶₀ #vr.7 )
-                            case VoterAuthentication_Mock_EC_And_Initial_Counters
+                            case Mock_EC_And_Initial_Counters
                             solve( BallotStyleCount( ~ec, %i.2 ) ▶₀ #vr.8 )
-                              case VoterAuthentication_Mock_BallotStyle
+                              case Mock_BallotStyle
                               solve( VoterCount( ~ec, %i.3 ) ▶₀ #vr.9 )
-                                case VoterAuthentication_Mock_EC_And_Initial_Counters
+                                case Mock_EC_And_Initial_Counters
                                 solve( BallotStyleCount( ~ec, %unused ) ▶₀ #vr.10 )
-                                  case VoterAuthentication_Mock_BallotStyle
+                                  case Mock_BallotStyle
                                   solve( SecureReceive( ~cid_as, 'AS', <~ec, 'EAS'>,
                                                         <'AS_Authentication_Result', ~session_id, $voter_id,
                                                          'successful'>
@@ -121,11 +121,11 @@ solve( (∃ #j.
                                                                ) ▶₁ #vr.20 )
                                                           case SecureChannel_Receive_case_1
                                                           solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.21 )
-                                                            case VoterAuthentication_Mock_BallotStyle
+                                                            case Mock_BallotStyle
                                                             solve( BallotStyleCount( ~ec, %i.2 ) ▶₀ #vr.23 )
-                                                              case VoterAuthentication_Mock_BallotStyle
+                                                              case Mock_BallotStyle
                                                               solve( BallotStyleCount( ~ec, %i.3 ) ▶₀ #vr.24 )
-                                                                case VoterAuthentication_Mock_BallotStyle
+                                                                case Mock_BallotStyle
                                                                 solve( SecureReceive( ~cid, <~ec, 'EAS'>,
                                                                                       'AS',
                                                                                       <
@@ -143,111 +143,111 @@ solve( (∃ #j.
                                                                     case SecureChannel_Receive_case_1
                                                                     solve( BallotStyleCount( ~ec, %i.1
                                                                            ) ▶₀ #vr.33 )
-                                                                      case VoterAuthentication_Mock_BallotStyle
+                                                                      case Mock_BallotStyle
                                                                       solve( BallotStyleCount( ~ec, %i.2
                                                                              ) ▶₀ #vr.34 )
-                                                                        case VoterAuthentication_Mock_BallotStyle
+                                                                        case Mock_BallotStyle
                                                                         solve( BallotStyleCount( ~ec, %i.3
                                                                                ) ▶₀ #vr.35 )
-                                                                          case VoterAuthentication_Mock_BallotStyle
+                                                                          case Mock_BallotStyle
                                                                           solve( BallotStyleCount( ~ec, %i.1
                                                                                  ) ▶₀ #vr.36 )
-                                                                            case VoterAuthentication_Mock_BallotStyle
+                                                                            case Mock_BallotStyle
                                                                             solve( BallotStyleCount( ~ec, %i.2
                                                                                    ) ▶₀ #vr.37 )
-                                                                              case VoterAuthentication_Mock_BallotStyle
+                                                                              case Mock_BallotStyle
                                                                               solve( BallotStyleCount( ~ec,
                                                                                                        %i.3
                                                                                      ) ▶₀ #vr.38 )
-                                                                                case VoterAuthentication_Mock_BallotStyle
+                                                                                case Mock_BallotStyle
                                                                                 solve( BallotStyleCount( ~ec,
                                                                                                          %i.1
                                                                                        ) ▶₀ #vr.39 )
-                                                                                  case VoterAuthentication_Mock_BallotStyle
+                                                                                  case Mock_BallotStyle
                                                                                   solve( BallotStyleCount( ~ec,
                                                                                                            %i.2
                                                                                          ) ▶₀ #vr.40 )
-                                                                                    case VoterAuthentication_Mock_BallotStyle
+                                                                                    case Mock_BallotStyle
                                                                                     solve( BallotStyleCount( ~ec,
                                                                                                              %i.3
                                                                                            ) ▶₀ #vr.41 )
-                                                                                      case VoterAuthentication_Mock_BallotStyle
+                                                                                      case Mock_BallotStyle
                                                                                       solve( BallotStyleCount( ~ec,
                                                                                                                %i.1
                                                                                              ) ▶₀ #vr.42 )
-                                                                                        case VoterAuthentication_Mock_BallotStyle
+                                                                                        case Mock_BallotStyle
                                                                                         solve( BallotStyleCount( ~ec,
                                                                                                                  %i.2
                                                                                                ) ▶₀ #vr.43 )
-                                                                                          case VoterAuthentication_Mock_BallotStyle
+                                                                                          case Mock_BallotStyle
                                                                                           solve( BallotStyleCount( ~ec,
                                                                                                                    %i.3
                                                                                                  ) ▶₀ #vr.44 )
-                                                                                            case VoterAuthentication_Mock_BallotStyle
+                                                                                            case Mock_BallotStyle
                                                                                             solve( BallotStyleCount( ~ec,
                                                                                                                      %i.1
                                                                                                    ) ▶₀ #vr.45 )
-                                                                                              case VoterAuthentication_Mock_BallotStyle
+                                                                                              case Mock_BallotStyle
                                                                                               solve( BallotStyleCount( ~ec,
                                                                                                                        %i.2
                                                                                                      ) ▶₀ #vr.46 )
-                                                                                                case VoterAuthentication_Mock_BallotStyle
+                                                                                                case Mock_BallotStyle
                                                                                                 solve( BallotStyleCount( ~ec,
                                                                                                                          %i.3
                                                                                                        ) ▶₀ #vr.47 )
-                                                                                                  case VoterAuthentication_Mock_BallotStyle
+                                                                                                  case Mock_BallotStyle
                                                                                                   solve( BallotStyleCount( ~ec,
                                                                                                                            %i.1
                                                                                                          ) ▶₀ #vr.48 )
-                                                                                                    case VoterAuthentication_Mock_BallotStyle
+                                                                                                    case Mock_BallotStyle
                                                                                                     solve( BallotStyleCount( ~ec,
                                                                                                                              %i.2
                                                                                                            ) ▶₀ #vr.49 )
-                                                                                                      case VoterAuthentication_Mock_BallotStyle
+                                                                                                      case Mock_BallotStyle
                                                                                                       solve( BallotStyleCount( ~ec,
                                                                                                                                %i.3
                                                                                                              ) ▶₀ #vr.50 )
-                                                                                                        case VoterAuthentication_Mock_BallotStyle
+                                                                                                        case Mock_BallotStyle
                                                                                                         solve( BallotStyleCount( ~ec,
                                                                                                                                  %i.1
                                                                                                                ) ▶₀ #vr.51 )
-                                                                                                          case VoterAuthentication_Mock_BallotStyle
+                                                                                                          case Mock_BallotStyle
                                                                                                           solve( BallotStyleCount( ~ec,
                                                                                                                                    %i.2
                                                                                                                  ) ▶₀ #vr.52 )
-                                                                                                            case VoterAuthentication_Mock_BallotStyle
+                                                                                                            case Mock_BallotStyle
                                                                                                             solve( BallotStyleCount( ~ec,
                                                                                                                                      %i.3
                                                                                                                    ) ▶₀ #vr.53 )
-                                                                                                              case VoterAuthentication_Mock_BallotStyle
+                                                                                                              case Mock_BallotStyle
                                                                                                               solve( BallotStyleCount( ~ec,
                                                                                                                                        %i.1
                                                                                                                      ) ▶₀ #vr.54 )
-                                                                                                                case VoterAuthentication_Mock_BallotStyle
+                                                                                                                case Mock_BallotStyle
                                                                                                                 solve( BallotStyleCount( ~ec,
                                                                                                                                          %i.2
                                                                                                                        ) ▶₀ #vr.55 )
-                                                                                                                  case VoterAuthentication_Mock_BallotStyle
+                                                                                                                  case Mock_BallotStyle
                                                                                                                   solve( BallotStyleCount( ~ec,
                                                                                                                                            %i.3
                                                                                                                          ) ▶₀ #vr.56 )
-                                                                                                                    case VoterAuthentication_Mock_BallotStyle
+                                                                                                                    case Mock_BallotStyle
                                                                                                                     solve( BallotStyleCount( ~ec,
                                                                                                                                              %i.1
                                                                                                                            ) ▶₀ #vr.57 )
-                                                                                                                      case VoterAuthentication_Mock_EC_And_Initial_Counters
+                                                                                                                      case Mock_EC_And_Initial_Counters
                                                                                                                       solve( BallotStyleCount( ~ec,
                                                                                                                                                %i.1
                                                                                                                              ) ▶₀ #vr.58 )
-                                                                                                                        case VoterAuthentication_Mock_BallotStyle
+                                                                                                                        case Mock_BallotStyle
                                                                                                                         solve( BallotStyleCount( ~ec,
                                                                                                                                                  %i.2
                                                                                                                                ) ▶₀ #vr.59 )
-                                                                                                                          case VoterAuthentication_Mock_EC_And_Initial_Counters
+                                                                                                                          case Mock_EC_And_Initial_Counters
                                                                                                                           solve( BallotStyleCount( ~ec,
                                                                                                                                                    %i.1
                                                                                                                                  ) ▶₀ #vr.49 )
-                                                                                                                            case VoterAuthentication_Mock_EC_And_Initial_Counters
+                                                                                                                            case Mock_EC_And_Initial_Counters
                                                                                                                             SOLVED // trace found
                                                                                                                           qed
                                                                                                                         qed

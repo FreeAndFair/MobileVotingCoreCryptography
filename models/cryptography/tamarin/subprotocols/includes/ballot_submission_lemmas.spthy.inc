@@ -1,4 +1,4 @@
-/* Lemmas for voter authentication protocol. */
+/* Lemmas for ballot submission protocol. */
 
 /* No Sources Lemma Necessary (Yet) */
 

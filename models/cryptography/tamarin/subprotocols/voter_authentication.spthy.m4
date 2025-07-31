@@ -59,62 +59,7 @@ dnl If STANDALONE is defined, all mocks are always required
 ifdef(<!STANDALONE!>,<!define(VOTER_AUTHENTICATION_MOCKS)!>)dnl
 dnl
 ifdef(<!VOTER_AUTHENTICATION_MOCKS!>,<!
-/*
-  The initial counters for ballot styles and voters are %1, and
-  the election configuration is just a fresh variable.
- */
-rule VoterAuthentication_Mock_EC_And_Initial_Counters [role="Mock"]:
-    [ Fr(~ec) ]
-  --[ Unique(<'EC_And_Initial_Counters', ~ec>),
-      ElectionConfiguration_Trace(~ec) ]->
-    [ BallotStyleCount(~ec, %1),
-      VoterCount(~ec, %1) ]
-
-/*
-  Mock ballot styles into the environment. We simply
-  generate an arbitrary number of persistent facts with ballot style
-  identifiers for later use.
- */
-rule VoterAuthentication_Mock_BallotStyle [role="Mock"]:
-    [ BallotStyleCount(~ec, %i),
-      Fr(~ballot_style) ]
-  --[ BallotStyle_Trace(~ec, ~ballot_style, %i) ]->
-    [ !BallotStyle(~ec, ~ballot_style, %i),
-      BallotStyleCount(~ec, %i %+ %1) ]
-
-/*
-  Mock a voter registration database into the environment (for a voter
-  that is eligible for this election). Voter IDs are Tamarin public
-  variables (because we want the adversary to be able to attempt
-  masquerading as a voter), that are distinguished by persistent facts
-  associating them with eligibility information.
- */
-rule VoterAuthentication_Mock_VoterRegistration_Eligible [role="Mock"]:
-    [ VoterCount(~ec, %i),
-      !BallotStyle(~ec, ~ballot_style, %unused) ]
-  --[ Unique(<'VoterRegistration', ~ec, $V>),
-      EligibleVoter_Trace(~ec, $V, ~ballot_style, %i) ]->
-    [ !EligibleVoter(~ec, $V, ~ballot_style, %i),
-      VoterCount(~ec, %i %+ %1) ]
-
-/*
-  Stop registering voters and ballot styles, then broadcast the
-  election configuration. This also tells the DBB to start authorizing
-  voters with index %1 for this election. Note the requirement for
-  the rule, which ensures there is at least one eligible voter, one
-  ineligible voter, and one ballot style.
- */
-rule VoterAuthentication_Mock_Finalize_Election_Setup [role="Mock"]:
-    [ !BallotStyle(~ec, ~bs_unused, %idx_bs_unused),
-      !EligibleVoter(~ec, $EV, ~ev_bs_unused, %idx_ev_unused),
-      BallotStyleCount(~ec, %next_idx_bs_unused),
-      VoterCount(~ec, %next_idx_v_unused) ]
-  --[ Unique(<'FinalizeElectionSetup', ~ec>),
-      Finalize_Election_Setup_Trace(~ec) ]->
-    [ !ElectionConfiguration(~ec),
-      BB_Create_Request(~ec, ~ec),
-      DBB_State_ReceiveAuthorizeVoter(~ec, %1),
-      Out(~ec) ]
+include(subprotocols/includes/mock_election_setup.m4.inc)
 !>)
 dnl
 macros:

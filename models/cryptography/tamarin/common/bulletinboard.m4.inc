@@ -200,4 +200,23 @@ lemma Safety_BB_LastIsLast [reuse]:
       ==>
           (%midx << %lidx | %midx = %lidx) & #j < #i
   "
+dnl
+ifelse(eval(!defined_bool(<!INCLUDED_NO_BB_ENTRY_WITH_HASH!>) && defined_bool(<!USE_NO_BB_ENTRY_WITH_HASH!>)), eval(1), <!
+define(<!INCLUDED_NO_BB_ENTRY_WITH_HASH!>)dnl
+restriction NoBBEntryWithHash:
+  "
+    All bbid hash #i.
+          NoBBEntryWithHash(bbid, hash)@i
+      ==>
+          not (
+            Ex contents %idx #j.
+            (
+                BB_Trace_Entry(bbid, contents, hash, %idx)@j
+              &
+                #j < #i
+            )
+          )
+  "
+!>, <!!>)dnl
+dnl
 !>)dnl

@@ -18,7 +18,7 @@ solve( !BB_Root( ~ec, bbid, r_unused, rh_unused ) ▶₁ #i )
               case BallotSubmission_DBB_AppendSubmittedBallot_case_2
               by sorry
             next
-              case BallotSubmsision_Mock_DBBTimestamp
+              case BallotSubmission_Initialize_DBBTimestamp
               solve( DBB_State_ConfirmBallotPosting( ~ec, ~va_id, ~cid, pseudo,
                                                      <'BBEntry_Ballot_Submission', ~ec, %1,
                                                       <'VA_Submit_Ballot', ~ec, pseudonym($V),
@@ -51,87 +51,87 @@ solve( !BB_Root( ~ec, bbid, r_unused, rh_unused ) ▶₁ #i )
                        ) ▶₁ #vr.9 )
                   case SecureChannel_Receive_case_1
                   solve( BallotStyleCount( ~ec, %idx_bs_unused ) ▶₀ #vr.1 )
-                    case BallotSubmission_Mock_BallotStyle
+                    case Mock_BallotStyle
                     solve( VoterCount( ~ec, %idx_ev_unused ) ▶₀ #vr.2 )
-                      case BallotSubmission_Mock_EC_And_Initial_Counters
+                      case Mock_EC_And_Initial_Counters
                       solve( BallotStyleCount( ~ec, %unused ) ▶₀ #vr.5 )
-                        case BallotSubmission_Mock_BallotStyle
+                        case Mock_BallotStyle
                         solve( BallotStyleCount( ~ec, %unused ) ▶₀ #vr.6 )
-                          case BallotSubmission_Mock_BallotStyle
+                          case Mock_BallotStyle
                           solve( BallotStyleCount( ~ec, %idx_bs ) ▶₀ #vr.11 )
-                            case BallotSubmission_Mock_BallotStyle
+                            case Mock_BallotStyle
                             solve( VoterCount( ~ec, %idx_ev ) ▶₀ #vr.12 )
-                              case BallotSubmission_Mock_EC_And_Initial_Counters
-                              solve( AuthCount( ~ec, %idx ) ▶₀ #vr.10 )
-                                case BallotSubmission_Mock_Finalize_Election_Setup
+                              case Mock_EC_And_Initial_Counters
+                              solve( DBB_State_ReceiveAuthorizeVoter( ~ec, %idx ) ▶₀ #vr.10 )
+                                case Mock_Finalize_Election_Setup
                                 solve( VoterCount( ~ec, %i.3 ) ▶₀ #vr.4 )
-                                  case BallotSubmission_Mock_EC_And_Initial_Counters
+                                  case Mock_EC_And_Initial_Counters
                                   solve( BallotStyleCount( ~ec, %i.3 ) ▶₀ #vr.15 )
-                                    case BallotSubmission_Mock_BallotStyle
+                                    case Mock_BallotStyle
                                     solve( BallotStyleCount( ~ec, %i.2 ) ▶₀ #vr.3 )
-                                      case BallotSubmission_Mock_BallotStyle
+                                      case Mock_BallotStyle
                                       solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.13 )
-                                        case BallotSubmission_Mock_BallotStyle
+                                        case Mock_BallotStyle
                                         by sorry
                                       next
-                                        case BallotSubmission_Mock_EC_And_Initial_Counters
+                                        case Mock_EC_And_Initial_Counters
                                         solve( BallotStyleCount( ~ec, %i.2 ) ▶₀ #vr.16 )
-                                          case BallotSubmission_Mock_BallotStyle
+                                          case Mock_BallotStyle
                                           by sorry
                                         next
-                                          case BallotSubmission_Mock_EC_And_Initial_Counters
+                                          case Mock_EC_And_Initial_Counters
                                           solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.15 )
-                                            case BallotSubmission_Mock_BallotStyle
+                                            case Mock_BallotStyle
                                             solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.16 )
-                                              case BallotSubmission_Mock_BallotStyle
+                                              case Mock_BallotStyle
                                               by sorry
                                             next
-                                              case BallotSubmission_Mock_EC_And_Initial_Counters
+                                              case Mock_EC_And_Initial_Counters
                                               SOLVED // trace found
                                             qed
                                           qed
                                         qed
                                       qed
                                     next
-                                      case BallotSubmission_Mock_EC_And_Initial_Counters
+                                      case Mock_EC_And_Initial_Counters
                                       simplify
                                       by contradiction /* cyclic */
                                     qed
                                   next
-                                    case BallotSubmission_Mock_EC_And_Initial_Counters
+                                    case Mock_EC_And_Initial_Counters
                                     by sorry
                                   qed
                                 next
-                                  case BallotSubmission_Mock_VoterRegistration_Eligible
+                                  case Mock_VoterRegistration_Eligible
                                   by sorry
                                 qed
                               next
-                                case BallotSubmission_Mock_Voter_Authentication
+                                case Mock_Voter_Authentication
                                 by sorry
                               qed
                             next
-                              case BallotSubmission_Mock_VoterRegistration_Eligible
+                              case Mock_VoterRegistration_Eligible
                               by sorry
                             qed
                           next
-                            case BallotSubmission_Mock_EC_And_Initial_Counters
+                            case Mock_EC_And_Initial_Counters
                             by sorry
                           qed
                         next
-                          case BallotSubmission_Mock_EC_And_Initial_Counters
+                          case Mock_EC_And_Initial_Counters
                           simplify
                           by sorry
                         qed
                       next
-                        case BallotSubmission_Mock_EC_And_Initial_Counters
+                        case Mock_EC_And_Initial_Counters
                         by sorry
                       qed
                     next
-                      case BallotSubmission_Mock_VoterRegistration_Eligible
+                      case Mock_VoterRegistration_Eligible
                       by sorry
                     qed
                   next
-                    case BallotSubmission_Mock_EC_And_Initial_Counters
+                    case Mock_EC_And_Initial_Counters
                     by sorry
                   qed
                 next

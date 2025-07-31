@@ -123,11 +123,11 @@ clean:
 	@rm -rf generated_standalone generated_composed output
 
 # Continuous integration/verification target.
-ci: subprotocols compositions syntax
+ci: clean subprotocols compositions syntax
 
 # Always include the proof scripts for CV
 cv: CV_DEFINES = -DINCLUDE_PROOF_SCRIPTS
-cv: subprotocols proofscript executability safety
+cv: clean subprotocols proofscript executability safety
 
 # List of phony targets
 .PHONY: default help subprotocols compositions syntax executability safety proofscript clean ci cv

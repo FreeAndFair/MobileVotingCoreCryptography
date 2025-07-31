@@ -25,7 +25,13 @@ dnl
 ifdef(<!STANDALONE!>,<!/*
   Ballot Cast Subprotocol
 
-  Explanation goes here.
+  This subprotocol covers ballot casting (the authorization of a voter
+  public key and corresponding finalization of a ballot submitted with
+  that key such that it is counted in the tally). It uses a secure
+  channel abstraction, where adversaries are capable of both intercepting
+  and injecting messages into channels, to model secure connections such
+  as TLS, but also uses explicit digital signatures for content that needs
+  to be posted to the public bulletin board.
 
   @author Daniel M. Zimmerman
   @copyright Free & Fair 2025
@@ -36,47 +42,67 @@ theory ballot_cast
 
 begin
 
+define(<!USE_UNIQUE!>)dnl
+define(<!USE_EUFCMA_SIGNING!>)dnl
+define(<!USE_ABSTRACTED_NAOR_YUNG!>)dnl
+define(<!USE_PSEUDONYM!>)dnl
+define(<!USE_EQUALITY!>)dnl
+define(<!USE_INEQUALITY!>)dnl
 include(common/primitives.m4.inc)
+define(<!USE_SECURE_CHANNELS!>)dnl
+define(<!USE_SECURE_CHANNELS_INJECTION!>)dnl
+define(<!USE_SECURE_CHANNELS_INTERCEPTION!>)dnl
+include(common/channels.m4.inc)
+define(<!USE_NO_BB_ENTRY_WITH_HASH!>)dnl
+include(common/bulletinboard.m4.inc)
+define(<!USE_MOST_RECENT_AUTHORIZATION!>)dnl
+define(<!USE_UNAUTHORIZED!>)dnl
+define(<!USE_SUBMISSION_NOT_ON_BB!>)dnl
+define(<!USE_NO_PREVIOUS_CAST!>)dnl
+define(<!USE_MOST_RECENT_BALLOT!>)dnl
+include(common/ballot_restrictions.m4.inc)
+
 !>)dnl
 dnl If STANDALONE is defined, all mocks are always required
 ifdef(<!STANDALONE!>,<!define(BALLOT_CAST_MOCKS)!>)dnl
 dnl
 ifdef(<!BALLOT_CAST_MOCKS!>,<!
-/*
-  Mocks necessary for running the ballot cast subprotocol without other
-  subprotocols go here. There may end up being multiple such blocks controlled
-  by different macro definitions, depending on what subprotocol combinations
-  need to be generated and what needs to be mocked for each combination.
-*/
-
+include(subprotocols/includes/mock_election_setup.m4.inc)
+include(subprotocols/includes/mock_voter_auth.m4.inc)
+include(subprotocols/includes/mock_ballot_submit.m4.inc)
 !>)dnl
 dnl
-/* Rules for ballot cast subprotocol go here. */
+macros:
+  /*
+    Message types. he ones that include an "ec_hash" will actually use
+    the election configuration, not its hash, because it is public
+    information and Tamarin doesn't care if we hash it or not.
+   */
+  Msg_VA_Cast_Ballot(ec_hash, pseudonym, pk_voter, tracker) = <'VA_Cast_Ballot', ec_hash, pseudonym, pk_voter, tracker>,
+  Msg_DBB_Cast_Confirmation(ec_hash, sub_tracker, cast_tracker) = <'DBB_Cast_Confirmation', ec_hash, sub_tracker, cast_tracker>,
+  Msg_DBB_Cast_Error(ec_hash, error) = <'DBB_Cast_Error', ec_hash, error>,
 
-/*
-  This rule is just to allow CI to pass until we put in real executability
-  lemmas. It establishes a single fact, and that's about it.
- */
-rule BallotCast_Temporary:
-  [] --[ BallotCast_Executed() ]-> []
-
-/*
-  Lemmas for ballot cast subprotocol go here.
-
-  Executability lemmas must start with "Executability" in order to be
-  automatically checked in CV.
- */
-
-/*
-  This lemma is just to allow CV to pass until we put in real
-  executability lemmas.
- */
-lemma Executability_BallotCast:
-  exists-trace
-  "
-    Ex #t. BallotCast_Executed()@t
-  "
+  /*
+    Bulletin board entries. Note that we don't explicitly include the hash
+    of the previous bulletin board entry in these, because it is included
+    automatically by the bulletin board during the entry append process.
+    We also don't include the DBB signature, because we are assuming in
+    Tamarin that only the DBB can append messages to the bulletin board
+    (that is, only DBB actions create bulletin board entries).
+   */
+  BBEntry_Voter_Authorization(ec_hash, timestamp, signed_auth_msg) = <'BBEntry_Voter_Authorization', ec_hash, timestamp, signed_auth_msg>,
+  BBEntry_Ballot_Cast(ec_hash, timestamp, signed_submit_msg, signed_cast_msg) = <'BBEntry_Ballot_Cast', timestamp, signed_submit_msg, signed_cast_msg>
 dnl
+dnl Include the rules.
+dnl
+
+include(subprotocols/includes/ballot_cast_rules.spthy.inc)dnl
+
+dnl
+dnl Include the lemmas.
+dnl
+
+include(subprotocols/includes/ballot_cast_lemmas.spthy.inc)dnl
 ifdef(<!STANDALONE!>,<!
 end
 !>)dnl

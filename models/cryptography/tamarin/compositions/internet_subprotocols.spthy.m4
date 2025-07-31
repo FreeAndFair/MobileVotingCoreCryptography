@@ -44,6 +44,16 @@ define(<!USE_SECURE_CHANNELS!>)dnl
 define(<!USE_SECURE_CHANNELS_INJECTION!>)dnl
 define(<!USE_SECURE_CHANNELS_INTERCEPTION!>)dnl
 include(common/channels.m4.inc)
+define(<USE_NO_BB_ENTRY_FOR_HASH!>)dnl
+include(common/bulletinboard.m4.inc)
+
+/* Voter Authentication */
+
+include(subprotocols/voter_authentication.spthy.m4)
+
+/* Ballot Submission */
+
+include(subprotocols/ballot_submission.spthy.m4)
 
 /* Ballot Cast */
 
@@ -53,12 +63,5 @@ include(subprotocols/ballot_cast.spthy.m4)
 
 include(subprotocols/ballot_check.spthy.m4)
 
-/* Ballot Submission */
-
-include(subprotocols/ballot_submission.spthy.m4)
-
-/* Voter Authentication */
-
-include(subprotocols/voter_authentication.spthy.m4)
 dnl We don't need a newline here, it comes from the included file
 end

@@ -93,21 +93,6 @@ rule BallotSubmission_VA_BallotSubmitResponse_BallotTracker_NoBBEntry [role="VA"
       NoBBEntryWithHash(~bbid, tracker) ]->
     [ VA_State_SubmissionError(~ec, ~va_id) /* UI presents an error */ ]
 
-restriction NoBBEntryWithHash:
-  "
-    All bbid hash #i.
-          NoBBEntryWithHash(bbid, hash)@i
-      ==>
-          not (
-            Ex contents %idx #j.
-            (
-                BB_Trace_Entry(bbid, contents, hash, %idx)@j
-              &
-                #j < #i
-            )
-          )
-  "
-
 /*
   This rule receives a response from the DBB saying that it was unable to
   post a submitted ballot to the bulletin board for some reason. In this
@@ -125,6 +110,15 @@ rule BallotSubmission_VA_BallotSubmitResponse_Error [role="VA"]:
     [ VA_State_SubmissionError(~ec, ~va_id) /* UI presents an error */ ]
 
 /* Digital Ballot Box */
+
+/*
+  This rule initializes the "clock" (really, just a monotonic counter
+  used in posting messages to the bulletin board) for the DBB.
+ */
+rule BallotSubmission_Initialize_DBBTimestamp [role="Mock"]:
+    []
+  --[]->
+    [ DBB_Clock(%1) ]
 
 /*
   This rule receives a submitted ballot from an authorized voter
@@ -149,7 +143,7 @@ rule BallotSubmission_DBB_ReceiveSubmittedBallot [role="DBB"]:
       msg_submit_ballot = Msg_VA_Submit_Ballot(~ec, pseudo, pk_voter, ballot_style, cryptograms)
       signed_msg_submit_ballot = <msg_submit_ballot, sig>
       valid_proof = ny_check(c1, c2, p) in
-    [ !DBB_Voter_Authorized(~ec, pseudo, pk_voter, ballot_style, %idx),
+    [ !DBB_Voter_Authorized(~ec, signed_msg_auth, pseudo, pk_voter, ballot_style, %idx),
       SecureReceive(~cid, ~va_id, <~ec, 'DBB'>, signed_msg_submit_ballot) ]
   --[ DBB_ReceiveSubmittedBallot_Trace(~ec, ~va_id, msg_submit_ballot),
       MostRecentAuthorization(~ec, pseudo, pk_voter, %idx),
@@ -157,29 +151,6 @@ rule BallotSubmission_DBB_ReceiveSubmittedBallot [role="DBB"]:
                         pk_voter, true), /* valid signature */
       Eq(valid_proof, true), /* valid cryptogram proof */ ]->
     [ !DBB_Submitted_Ballot(~ec, ~va_id, ~cid, pseudo, signed_msg_submit_ballot) ]
-
-restriction MostRecentAuthorization:
-  "
-    All ec pseudo pk %idx #i.
-          MostRecentAuthorization(ec, pseudo, pk, %idx)@i
-      ==>
-            Ex bs #j.
-              (
-                  DBB_Voter_Authorized_Trace(ec, pseudo, pk, bs, %idx)@j
-                &
-                  #j < #i
-              )
-          &
-            not (Ex npk bs %nidx #j.
-              (
-                  DBB_Voter_Authorized_Trace(ec, pseudo, npk, bs, %nidx)@j
-                &
-                  #j < #i
-                &
-                  %idx << %nidx
-              )
-            )
-  "
 
 /*
   This rule handles the error case where a submitted ballot fails its
@@ -189,7 +160,7 @@ rule BallotSubmission_DBB_ReceiveSubmittedBallot_FailedSignature [role="DBB"]:
   let msg_error = Msg_DBB_Ballot_Error(~ec, 'failed signature')
       msg_submit_ballot = Msg_VA_Submit_Ballot(~ec, pseudo, pk_voter, ballot_style, cryptograms)
       signed_msg_submit_ballot = <msg_submit_ballot, sig> in
-    [ !DBB_Voter_Authorized(~ec, pseudo, pk_voter, ballot_style, %idx),
+    [ !DBB_Voter_Authorized(~ec, signed_msg_auth, pseudo, pk_voter, ballot_style, %idx),
       SecureReceive(~cid, ~va_id, <~ec, 'DBB'>, signed_msg_submit_ballot) ]
   --[ DBB_ReceiveSubmittedBallot_FailedSignature_Trace(~ec, ~va_id, msg_submit_ballot),
       DBB_Ballot_Error_Trace(~ec, ~va_id),
@@ -207,7 +178,7 @@ rule BallotSubmission_DBB_ReceiveSubmittedBallot_FailedProof [role="DBB"]:
       msg_submit_ballot = Msg_VA_Submit_Ballot(~ec, pseudo, pk_voter, ballot_style, cryptograms)
       signed_msg_submit_ballot = <msg_submit_ballot, sig>
       valid_proof = ny_check(c1, c2, p) in
-    [ !DBB_Voter_Authorized(~ec, pseudo, pk_voter, ballot_style, %idx),
+    [ !DBB_Voter_Authorized(~ec, signed_msg_auth, pseudo, pk_voter, ballot_style, %idx),
       SecureReceive(~cid, ~va_id, <~ec, 'DBB'>, signed_msg_submit_ballot) ]
   --[ DBB_ReceiveSubmittedBallot_FailedProof_Trace(~ec, ~va_id, msg_submit_ballot),
       DBB_Ballot_Error_Trace(~ec, ~va_id),
@@ -228,34 +199,6 @@ rule BallotSubmission_DBB_ReceiveSubmittedBallot_UnauthorizedVoter [role="DBB"]:
       Unauthorized(~ec, pseudo, pk_voter) ]->
     [ SecureSend(~cid, <~ec, 'DBB'>, ~va_id, msg_error) ]
 
-restriction Unauthorized:
-  "
-    All ec pseudo pk #i.
-          Unauthorized(ec, pseudo, pk)@i
-      ==>
-          (
-              /* either no authorization for that public key and pseudonym */
-              not (Ex bs %idx #j.
-                (
-                    DBB_Voter_Authorized_Trace(ec, pseudo, pk, bs, %idx)@j
-                  &
-                    #j < #i
-                )
-              )
-            |
-              /* or that public key isn't the most recent one for that pseudonym */
-              (Ex bs %idx npk nbs %nidx #j #k.
-                  DBB_Voter_Authorized_Trace(ec, pseudo, pk, bs, %idx)@j
-                &
-                  DBB_Voter_Authorized_Trace(ec, pseudo, npk, nbs, %nidx)@k
-                &
-                  #j < #k
-                &
-                  #k < #i
-              )
-          )
-  "
-
 /*
   This rule publishes a successfully submitted ballot to the bulletin
   board. It needs to be a separate rule (as does the one that checks
@@ -274,25 +217,10 @@ rule BallotSubmission_DBB_AppendSubmittedBallot [role="DBB"]:
       !BB_Entry(bbid, e_unused, eh_unused, %idx) ]
   --[ DBB_AppendSubmittedBallot_Trace(~ec, ~va_id, signed_msg_submit_ballot, bbid, %idx),
       Unique(<'DBB_AppendSubmittedBallot', signed_msg_submit_ballot, %idx>),
-      NotOnBB(bbid, signed_msg_submit_ballot) ]->
+      SubmissionNotOnBB(bbid, signed_msg_submit_ballot) ]->
     [ BB_Append_Request(bbid, bb_entry, %idx),
       DBB_Clock(%ts %+ %1),
       DBB_State_ConfirmBallotPosting(~ec, ~va_id, ~cid, pseudo, bb_entry, %idx %+ %1) ]
-
-restriction NotOnBB:
-  "
-    All bbid msg #i.
-          NotOnBB(bbid, msg)@i
-      ==>
-          not (
-            Ex ec %ts eh %idx #j.
-            (
-                BB_Trace_Entry(bbid, <'BBEntry_Ballot_Submission', ec, %ts, msg>, eh, %idx)@j
-              &
-                #j < #i
-            )
-          )
-  "
 
 /*
   This rule waits for a submitted ballot to be successfully posted to
