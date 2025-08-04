@@ -79,7 +79,7 @@ rule Mock_ConfirmBallotPosting [role="Mock"]:
       !BB_Entry(bbid, bb_entry, tracker, %idx) ]
   --[ DBB_ConfirmBallotPosting_Trace(~ec, ~va_id, bb_entry, bbid, %idx),
       VA_BallotTracker_Trace(~ec, ~va_id, pseudo, ~sk_voter, ~bs, ~ballot, cryptograms, ~r, tracker) ]->
-    [ !DBB_Posted_Ballot(pseudo, bb_entry, %idx),
+    [ !DBB_Posted_Ballot(~ec, ~va_id, pseudo, bb_entry, %idx),
       !VA_Submitted_Ballot(~ec, ~va_id, ~ballot, cryptograms, ~r, tracker),
       VA_State_CheckOrCast(~ec, ~va_id, $V, ~ballot, cryptograms, ~r, tracker) ]
 

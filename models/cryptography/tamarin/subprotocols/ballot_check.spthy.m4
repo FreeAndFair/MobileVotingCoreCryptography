@@ -25,7 +25,14 @@ dnl
 ifdef(<!STANDALONE!>,<!/*
   Ballot Check Subprotocol
 
-  Explanation goes here.
+  This subprotocol covers ballot checking (a voter using a second
+  application to ensure that the ballot on the bulletin board
+  actually contains the ballot choices the voter expects it to). It
+  uses a secure channel abstraction, wehre adversaries are capable of
+  both intercepting and injecting messages into channels, to model
+  secure connections such as TLS, but also uses explicit digital
+  signatures for content that needs to be posted to the public
+  bulletin board.
 
   @author Daniel M. Zimmerman
   @copyright Free & Fair 2025
@@ -36,47 +43,49 @@ theory ballot_check
 
 begin
 
+define(<!USE_UNIQUE!>)dnl
+define(<!USE_EUFCMA_SIGNING!>)dnl
+define(<!USE_ABSTRACTED_NAOR_YUNG!>)dnl
+define(<!USE_PSEUDONYM!>)dnl
+define(<!USE_EQUALITY!>)dnl
 include(common/primitives.m4.inc)
+define(<!USE_SECURE_CHANNELS!>)dnl
+define(<!USE_SECURE_CHANNELS_INJECTION!>)dnl
+define(<!USE_SECURE_CHANNELS_INTERCEPTION!>)dnl
+include(common/channels.m4.inc)
+include(common/bulletinboard.m4.inc)
+
 !>)dnl
 dnl If STANDALONE is defined, all mocks are always required
 ifdef(<!STANDALONE!>,<!define(BALLOT_CHECK_MOCKS)!>)dnl
 dnl
 ifdef(<!BALLOT_CHECK_MOCKS!>,<!
-/*
-  Mocks necessary for running the ballot check subprotocol without other
-  subprotocols go here. There may end up being multiple such blocks controlled
-  by different macro definitions, depending on what subprotocol combinations
-  need to be generated and what needs to be mocked for each combination.
-*/
-
+include(subprotocols/includes/mock_election_setup.m4.inc)
+include(subprotocols/includes/mock_voter_auth.m4.inc)
+include(subprotocols/includes/mock_ballot_submit.m4.inc)
 !>)dnl
 dnl
-/* Rules for ballot check subprotocol go here. */
-
-/*
-  This rule is just to allow CI to pass until we put in real executability
-  lemmas. It establishes a single fact, and that's about it.
- */
-rule BallotCheck_Temporary:
-  [] --[ BallotCheck_Executed() ]-> []
-
-/*
-  Lemmas for ballot check subprotocol go here.
-
-  Executability lemmas must start with "Executability" in order to be
-  automatically checked in CV.
- */
-
-/*
-  This lemma is just to allow CV to pass until we put in real
-  executability lemmas.
- */
-lemma Executability_BallotCheck:
-  exists-trace
-  "
-    Ex #t. BallotCheck_Executed()@t
-  "
+macros:
+  /*
+    Message types. The ones that include an "ec_hash" will actually use
+    the election configuration, not its hash, because it is public
+    information and Tamarin doesn't care if we hash it or not.
+   */
+  Msg_BCA_Check_Request(ec_hash, tracker, pk_encrypt, pk_sign) = <'BCA_Check_Request', ec_hash, tracker, pk_encrypt, pk_sign>,
+  Msg_DBB_Check_Request(ec_hash, signed_bca_check_request) = <'DBB_Check_Request', signed_bca_check_request>,
+  Msg_VA_Check_Randomizers(ec_hash, signed_bca_check_request, randomizers, pk_voter) = <'VA_Check_Randomizers', signed_bca_check_request, randomizers, pk_voter>,
+  Msg_DBB_Check_Randomizers(ec_hash, signed_va_randomizers) = <'DBB_Check_Randomizers', ec_hash, signed_va_randomizers>
 dnl
+dnl Include the rules.
+dnl
+
+include(subprotocols/includes/ballot_check_rules.spthy.inc)dnl
+
+dnl
+dnl Include the lemmas.
+dnl
+
+include(subprotocols/includes/ballot_check_lemmas.spthy.inc)dnl
 ifdef(<!STANDALONE!>,<!
 end
 !>)dnl
