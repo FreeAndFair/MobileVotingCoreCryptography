@@ -24,7 +24,7 @@ env:
 jobs:
   test:
     name: Generate and Verify Executability/Safety of Tamarin Models
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-16vcpu-ubuntu-2404 # was ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
