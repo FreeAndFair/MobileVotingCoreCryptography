@@ -63,7 +63,7 @@ forloop(<!TN!>, <!1!>, TRUSTEE_COUNT, <!            sd = 'Trustee<!!>TN<!!>'<!!>
   "
 
 /*
-  This lemma states that no two TAS bulletin board messages have the
+  This lemma states that no two TAS trustee board messages have the
   same index.
  */
 lemma Safety_ElectionKeyGeneration_TAS_BB_No_Duplicate_Indices [reuse]:
@@ -77,7 +77,7 @@ lemma Safety_ElectionKeyGeneration_TAS_BB_No_Duplicate_Indices [reuse]:
   "
 
 /*
-  This lemma states that all BB messages on the TAS bulletin board
+  This lemma states that all BB messages on the TAS trustee board
   have distinct event times.
  */
 lemma Safety_ElectionKeyGeneration_TAS_BB_Distinct_Timestamps [reuse]:
@@ -96,16 +96,16 @@ lemma Safety_ElectionKeyGeneration_TAS_BB_Distinct_Timestamps [reuse]:
 
 /*
   This lemma states that there are no missing indices on the TAS
-  bulletin board; it does this indirectly, by saying that for any
+  trustee board; it does this indirectly, by saying that for any
   pair of messages whose indices differ by more than one, there
   is a message with an index in between.
 
   Tamarin is unable to prove this automatically, despite it being
   obviously true by construction (there is only one rule that adds
-  bulletin board messages for each bulletin board, it always
-  increments the index by exactly one, and there is only ever at
-  most one linear fact instance for each index for each board).
-  It may be proven interactively in the future.
+  trustee board messages for each trustee board, it always increments
+  the index by exactly one, and there is only ever at most one linear
+  fact instance for each index for each board). It may be proven
+  interactively in the future.
  */
 define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/ElectionKeyGeneration_TAS_BB_All_Indices_<!!>TRUSTEE_COUNT<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
 syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
@@ -132,7 +132,7 @@ sinclude(PROOF_SCRIPT)dnl
 
 /*
   This lemma states that all BB messages occur in chronological order on
-  the global bulletin board.
+  the global trustee board.
 
   Tamarin is unable to prove this automatically, despite it being
   obviously true by construction for the same reasons as the previous
@@ -157,7 +157,7 @@ dnl Include the proof script, if one exists.
 sinclude(PROOF_SCRIPT)dnl
 
 /*
-  This lemma states that every entry on the TAS bulletin board, other
+  This lemma states that every entry on the TAS trustee board, other
   than the root message, is from a registered trustee and has a
   valid signature.
  */
@@ -179,7 +179,7 @@ lemma Safety_ElectionKeyGeneration_TAS_BB_Message_Validity [reuse]:
 
 /*
   This lemma states that there is at most one message in each slot
-  from each trustee on the TAS bulletin board, unless one was injected.
+  from each trustee on the TAS trustee board, unless one was injected.
  */
 lemma Safety_ElectionKeyGeneration_TAS_BB_No_Duplicate_Slots [reuse]:
   "
@@ -211,12 +211,12 @@ forloop(<!TN!>, <!1!>, TRUSTEE_COUNT, <!            sd = 'Trustee<!!>TN<!!>'<!!>
   "
 
 /*
-  This lemma states that each trustee's local bulletin board
-  follows the TAS bulletin board; i.e., it has exactly the same
-  sequence of messages up until the trustee bulletin board ends,
-  which may be before the TAS bulletin board ends depending on
-  the legality of the message sequence on the TAS bulletin board
-  and whether the trustee bulletin board has caught up.
+  This lemma states that each trustee's local trustee board
+  follows the TAS trustee board; i.e., it has exactly the same
+  sequence of messages up until the trustee's local board ends,
+  which may be before the TAS trustee board ends depending on
+  the legality of the message sequence on the TAS trustee board
+  and whether the local trustee board has caught up.
  */
 lemma Safety_ElectionKeyGeneration_Trustee_BBs_Follow_TAS [reuse]:
   "
@@ -229,9 +229,9 @@ lemma Safety_ElectionKeyGeneration_Trustee_BBs_Follow_TAS [reuse]:
   "
 
 /*
-  This lemma states that all the trustee local bulletin boards have
-  the same message sequence, as far as they all go (it is effectively
-  another way of stating that all the trustee BBs follow the TAS BB),
+  This lemma states that all the local trustee boards have the same
+  message sequence, as far as they all go (it is effectively another
+  way of stating that all the trustee BBs follow the TAS BB),
   but it may help Tamarin to state it separately.
  */
 lemma Safety_ElectionKeyGeneration_Trustee_BBs_Match [reuse]:
@@ -246,7 +246,7 @@ lemma Safety_ElectionKeyGeneration_Trustee_BBs_Match [reuse]:
 
 /*
   This lemma states that there is at most one message in each slot
-  from each trustee on each trustee's local bulletin board.
+  from each trustee on each trustee's local board.
  */
 lemma Safety_ElectionKeyGeneration_Trustee_BBs_No_Duplicate_Slots [reuse]:
   "
@@ -259,7 +259,7 @@ lemma Safety_ElectionKeyGeneration_Trustee_BBs_No_Duplicate_Slots [reuse]:
   "
 
 /*
-  This lemma states that all BB messages on trustee bulletin boards
+  This lemma states that all BB messages on local trustee boards
   have distinct event times.
  */
 lemma Safety_ElectionKeyGeneration_Trustee_BBs_Distinct_Timestamps [reuse]:
@@ -278,13 +278,13 @@ lemma Safety_ElectionKeyGeneration_Trustee_BBs_Distinct_Timestamps [reuse]:
 
 /*
   This lemma states that there are no missing indices on the trustee
-  bulletin boards; it does this indirectly, by saying that for any
-  pair of messages whose indices differ by more than one, there
-  is a message with an index in between.
+  boards; it does this indirectly, by saying that for and pair of
+  messages whose indices differ by more than one, there is a message
+  with an index in between.
 
   Tamarin is unable to prove this automatically, despite it being
   obviously true by construction (there is only one rule that adds
-  bulletin board messages for each bulletin board, it always
+  trustee board messages for each trustee board, it always
   increments the index by exactly one, and there is only ever at
   most one linear fact instance for each index for each board).
   It may be proven interactively in the future.
@@ -314,7 +314,7 @@ sinclude(PROOF_SCRIPT)dnl
 
 /*
   This lemma states that all BB messages occur in chronological order on
-  all trustee bulletin boards.
+  all local trustee boards.
 
   Tamarin is unable to prove this automatically, despite it being
   obviously true by construction for the same reasons as the previous
@@ -359,12 +359,13 @@ lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_ElectionKeyGener
 dnl Include the proof script, if one exists.
 sinclude(PROOF_SCRIPT)dnl
 
-/* Protocol Executability Lemmas
+/*
+  Protocol Executability Lemmas
 
-   Note that these are verified without reusing any lemmas that Tamarin
-   cannot verify automatically or that do not have proof scripts, so
-   they are all valid despite some of the safety lemmas not having been
-   verified.
+  Note that these are verified without reusing any lemmas that Tamarin
+  cannot verify automatically or that do not have proof scripts, so
+  they are all valid despite some of the safety lemmas not having been
+  verified.
 */
 
 /*

@@ -38,15 +38,20 @@ theory e2eviv_trustee
 
 begin
 
+define(<!USE_UNIQUE!>)dnl
+define(<!USE_EUFCMA_SIGNING!>)dnl
+define(<!USE_EQUALITY!>)dnl
+define(<!USE_INEQUALITY!>)dnl
+define(<!USE_ABSTRACTED_NAOR_YUNG!>)dnl
 include(common/primitives.m4.inc)
 dnl
-dnl Set the number of trustees to 3.
-dnl
-define(TRUSTEE_COUNT, <!3!>)dnl
+dnl We'll use the default number of trustees and default threshold
+dnl (3 and 2, respectively).
 dnl
 dnl Include the macros (both m4 and Tamarin) shared by all the trustee
 dnl subprotocols; note that the path is relative to the Makefile (and thus
 dnl the working directory for m4), _not_ to this file.
+define(<!TRUSTEE_MIXING!>)dnl
 include(subprotocols/includes/trustee_macros.m4.inc)
 dnl
 dnl We also need to include the mock trustee setup.

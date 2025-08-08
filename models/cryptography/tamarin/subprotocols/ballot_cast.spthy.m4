@@ -61,6 +61,7 @@ define(<!USE_SUBMISSION_NOT_ON_BB!>)dnl
 define(<!USE_NO_PREVIOUS_CAST!>)dnl
 define(<!USE_MOST_RECENT_BALLOT!>)dnl
 include(common/ballot_restrictions.m4.inc)
+include(common/trustee_defaults.m4.inc)
 
 !>)dnl
 dnl If STANDALONE is defined, all mocks are always required

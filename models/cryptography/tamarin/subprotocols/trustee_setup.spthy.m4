@@ -56,6 +56,8 @@ define(<!USE_EQUAL!>)dnl
 define(<!USE_UNIQUE!>)dnl
 define(<!USE_EUFCMA_SIGNING!>)dnl
 include(common/primitives.m4.inc)
+include(common/trustee_defaults.m4.inc)
+
 !>)
 dnl
 dnl Include the macros (both m4 and Tamarin) shared by all the trustee

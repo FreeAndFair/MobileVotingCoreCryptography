@@ -55,13 +55,13 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                                    h(<
                                       <'BBEntry_Ballot_Submission', ~ec, %ts,
                                        <'VA_Submit_Ballot', ~ec, pseudonym($V.1), pk(~sk_voter),
-                                        ~bs, ny_encrypt_c1(x, pk(x.1), x.2),
-                                        ny_encrypt_c2(x, pk(x.1), x.2),
-                                        ny_encrypt_p(x, pk(x.1), x.2)>,
+                                        ~bs, ny_encrypt_c1(x, x.1, x.2),
+                                        ny_encrypt_c2(x, x.1, x.2),
+                                        ny_encrypt_p(x, x.1, x.2)>,
                                        sign(<'VA_Submit_Ballot', ~ec, pseudonym($V.1),
-                                             pk(~sk_voter), ~bs, ny_encrypt_c1(x, pk(x.1), x.2),
-                                             ny_encrypt_c2(x, pk(x.1), x.2),
-                                             ny_encrypt_p(x, pk(x.1), x.2)>,
+                                             pk(~sk_voter), ~bs, ny_encrypt_c1(x, x.1, x.2),
+                                             ny_encrypt_c2(x, x.1, x.2),
+                                             ny_encrypt_p(x, x.1, x.2)>,
                                             '1', ~sk_voter)
                                       >,
                                       h(<~ec, ~bbid>)>)
@@ -73,14 +73,14 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                                      h(<
                                         <'BBEntry_Ballot_Submission', ~ec, %ts.1,
                                          <'VA_Submit_Ballot', ~ec, pseudonym($V.3),
-                                          pk(~sk_voter.1), ~bs.1, ny_encrypt_c1(x.3, pk(x.4), x.5),
-                                          ny_encrypt_c2(x.3, pk(x.4), x.5),
-                                          ny_encrypt_p(x.3, pk(x.4), x.5)>,
+                                          pk(~sk_voter.1), ~bs.1, ny_encrypt_c1(x.3, x.4, x.5),
+                                          ny_encrypt_c2(x.3, x.4, x.5),
+                                          ny_encrypt_p(x.3, x.4, x.5)>,
                                          sign(<'VA_Submit_Ballot', ~ec, pseudonym($V.3),
                                                pk(~sk_voter.1), ~bs.1,
-                                               ny_encrypt_c1(x.3, pk(x.4), x.5),
-                                               ny_encrypt_c2(x.3, pk(x.4), x.5),
-                                               ny_encrypt_p(x.3, pk(x.4), x.5)>,
+                                               ny_encrypt_c1(x.3, x.4, x.5),
+                                               ny_encrypt_c2(x.3, x.4, x.5),
+                                               ny_encrypt_p(x.3, x.4, x.5)>,
                                               '1', ~sk_voter.1)
                                         >,
                                         h(<p, ch>)>)
@@ -90,14 +90,14 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                 solve( SecureReceive( ~cid.1, ~va_id.1, <~ec, 'DBB'>,
                                       <
                                        <'VA_Submit_Ballot', ~ec, pseudonym($V.3), pk(~sk_voter.1),
-                                        ~bs.1, ny_encrypt_c1(x.3, pk(x.4), x.5),
-                                        ny_encrypt_c2(x.3, pk(x.4), x.5),
-                                        ny_encrypt_p(x.3, pk(x.4), x.5)>,
+                                        ~bs.1, ny_encrypt_c1(x.3, x.4, x.5),
+                                        ny_encrypt_c2(x.3, x.4, x.5),
+                                        ny_encrypt_p(x.3, x.4, x.5)>,
                                        sign(<'VA_Submit_Ballot', ~ec, pseudonym($V.3),
                                              pk(~sk_voter.1), ~bs.1,
-                                             ny_encrypt_c1(x.3, pk(x.4), x.5),
-                                             ny_encrypt_c2(x.3, pk(x.4), x.5),
-                                             ny_encrypt_p(x.3, pk(x.4), x.5)>,
+                                             ny_encrypt_c1(x.3, x.4, x.5),
+                                             ny_encrypt_c2(x.3, x.4, x.5),
+                                             ny_encrypt_p(x.3, x.4, x.5)>,
                                             '1', ~sk_voter.1)
                                       >
                        ) ▶₁ #vr.15 )
@@ -105,13 +105,13 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                   solve( SecureReceive( ~cid, ~va_id, <~ec, 'DBB'>,
                                         <
                                          <'VA_Submit_Ballot', ~ec, pseudonym($V.1), pk(~sk_voter),
-                                          ~bs, ny_encrypt_c1(x, pk(x.1), x.2),
-                                          ny_encrypt_c2(x, pk(x.1), x.2),
-                                          ny_encrypt_p(x, pk(x.1), x.2)>,
+                                          ~bs, ny_encrypt_c1(x, x.1, x.2),
+                                          ny_encrypt_c2(x, x.1, x.2),
+                                          ny_encrypt_p(x, x.1, x.2)>,
                                          sign(<'VA_Submit_Ballot', ~ec, pseudonym($V.1),
-                                               pk(~sk_voter), ~bs, ny_encrypt_c1(x, pk(x.1), x.2),
-                                               ny_encrypt_c2(x, pk(x.1), x.2),
-                                               ny_encrypt_p(x, pk(x.1), x.2)>,
+                                               pk(~sk_voter), ~bs, ny_encrypt_c1(x, x.1, x.2),
+                                               ny_encrypt_c2(x, x.1, x.2),
+                                               ny_encrypt_p(x, x.1, x.2)>,
                                               '1', ~sk_voter)
                                         >
                          ) ▶₁ #vr.9 )

@@ -9,8 +9,8 @@ solve( SecureReceive( ~cid, <~ec, 'DBB'>, ~bca_id,
                                pk(~sk_bca_sign)>,
                               '1', ~sk_bca_sign)
                         >,
-                        <ny_encrypt_c1(x, pk(x.1), x.2), ny_encrypt_c2(x, pk(x.1), x.2),
-                         ny_encrypt_p(x, pk(x.1), x.2)>,
+                        <ny_encrypt_c1(x, x.1, x.2), ny_encrypt_c2(x, x.1, x.2),
+                         ny_encrypt_p(x, x.1, x.2)>,
                         pk_voter>,
                        sig_randomizers>
        ) ▶₂ #i )
@@ -360,225 +360,38 @@ solve( SecureReceive( ~cid, <~ec, 'DBB'>, ~bca_id,
                                 solve( VoterCount( ~ec, %idx_ev ) ▶₀ #vr.13 )
                                   case Mock_EC_And_Initial_Counters
                                   solve( DBB_Clock( %ts ) ▶₂ #vr.20 )
-                                    case Mock_AppendSubmittedBallot_case_1
-                                    by sorry
-                                  next
-                                    case Mock_AppendSubmittedBallot_case_2
-                                    by sorry
-                                  next
                                     case Mock_DBBTimestamp
                                     solve( BallotStyleCount( ~ec, %idx_bs ) ▶₀ #vr.12 )
                                       case Mock_BallotStyle
                                       solve( BallotStyleCount( ~ec, %i.3 ) ▶₀ #vr.24 )
-                                        case Mock_BallotStyle
+                                        case Mock_EC_And_Initial_Counters
                                         solve( BallotStyleCount( ~ec, %i.2 ) ▶₀ #vr.11 )
                                           case Mock_BallotStyle
                                           solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.21 )
-                                            case Mock_BallotStyle
-                                            by sorry
-                                          next
                                             case Mock_EC_And_Initial_Counters
-                                            solve( BallotStyleCount( ~ec, %i.2 ) ▶₀ #vr.25 )
-                                              case Mock_BallotStyle
-                                              by sorry
-                                            next
+                                            solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.23 )
                                               case Mock_EC_And_Initial_Counters
-                                              solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.24 )
-                                                case Mock_BallotStyle
-                                                solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.25 )
-                                                  case Mock_BallotStyle
-                                                  by sorry
-                                                next
-                                                  case Mock_EC_And_Initial_Counters
-                                                  SOLVED // trace found
-                                                qed
-                                              qed
+                                              SOLVED // trace found
                                             qed
                                           qed
-                                        next
-                                          case Mock_EC_And_Initial_Counters
-                                          simplify
-                                          by contradiction
                                         qed
-                                      next
-                                        case Mock_EC_And_Initial_Counters
-                                        by sorry
                                       qed
-                                    next
-                                      case Mock_EC_And_Initial_Counters
-                                      by sorry
                                     qed
                                   qed
-                                next
-                                  case Mock_VoterRegistration_Eligible
-                                  by sorry
                                 qed
-                              next
-                                case Mock_VoterRegistration_Eligible
-                                by sorry
                               qed
-                            next
-                              case Mock_VoterRegistration_Eligible
-                              by sorry
                             qed
-                          next
-                            case Mock_EC_And_Initial_Counters
-                            by sorry
                           qed
-                        next
-                          case Mock_Voter_Authentication
-                          by sorry
                         qed
                       qed
                     qed
                   qed
-                next
-                  case SecureChannel_Receive_case_2
-                  by sorry
                 qed
-              next
-                case SecureChannel_Receive_case_2
-                by sorry
               qed
-            next
-              case SecureChannel_Receive_case_2
-              by sorry
             qed
-          next
-            case SecureChannel_Receive_case_2
-            by sorry
-          next
-            case SecureChannel_Receive_case_3
-            by sorry
           qed
-        next
-          case SecureChannel_Receive_case_2
-          by sorry
         qed
-      next
-        case SecureChannel_Receive_case_2
-        by sorry
-      next
-        case SecureChannel_Receive_case_3
-        by sorry
-      next
-        case SecureChannel_Receive_case_4
-        by sorry
       qed
     qed
   qed
-next
-  case SecureChannel_Receive_case_02
-  by sorry
-next
-  case SecureChannel_Receive_case_03
-  by sorry
-next
-  case SecureChannel_Receive_case_04
-  by sorry
-next
-  case SecureChannel_Receive_case_05
-  by sorry
-next
-  case SecureChannel_Receive_case_06
-  by sorry
-next
-  case SecureChannel_Receive_case_07
-  by sorry
-next
-  case SecureChannel_Receive_case_08
-  by sorry
-next
-  case SecureChannel_Receive_case_09
-  by sorry
-next
-  case SecureChannel_Receive_case_10
-  by sorry
-next
-  case SecureChannel_Receive_case_11
-  by sorry
-next
-  case SecureChannel_Receive_case_12
-  by sorry
-next
-  case SecureChannel_Receive_case_13
-  by sorry
-next
-  case SecureChannel_Receive_case_14
-  by sorry
-next
-  case SecureChannel_Receive_case_15
-  by sorry
-next
-  case SecureChannel_Receive_case_16
-  by sorry
-next
-  case SecureChannel_Receive_case_17
-  by sorry
-next
-  case SecureChannel_Receive_case_18
-  by sorry
-next
-  case SecureChannel_Receive_case_19
-  by sorry
-next
-  case SecureChannel_Receive_case_20
-  by sorry
-next
-  case SecureChannel_Receive_case_21
-  by sorry
-next
-  case SecureChannel_Receive_case_22
-  by sorry
-next
-  case SecureChannel_Receive_case_23
-  by sorry
-next
-  case SecureChannel_Receive_case_24
-  by sorry
-next
-  case SecureChannel_Receive_case_25
-  by sorry
-next
-  case SecureChannel_Receive_case_26
-  by sorry
-next
-  case SecureChannel_Receive_case_27
-  by sorry
-next
-  case SecureChannel_Receive_case_28
-  by sorry
-next
-  case SecureChannel_Receive_case_29
-  by sorry
-next
-  case SecureChannel_Receive_case_30
-  by sorry
-next
-  case SecureChannel_Receive_case_31
-  by sorry
-next
-  case SecureChannel_Receive_case_32
-  by sorry
-next
-  case SecureChannel_Receive_case_33
-  by sorry
-next
-  case SecureChannel_Receive_case_34
-  by sorry
-next
-  case SecureChannel_Receive_case_35
-  by sorry
-next
-  case SecureChannel_Receive_case_36
-  by sorry
-next
-  case SecureChannel_Receive_case_37
-  by sorry
-next
-  case SecureChannel_Receive_case_38
-  by sorry
-next
-  case SecureChannel_Receive_case_39
-  by sorry
 qed

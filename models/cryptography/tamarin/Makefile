@@ -23,6 +23,12 @@ else
 	M4_DEFINES =
 endif
 
+ifdef M4_DEBUG
+	M4_DEBUG = --debug=V
+else
+	M4_DEBUG =
+endif
+
 # Display a brief help page listing possible commands/targets.
 help:
 	@echo "This Makefile supports the following targets:"
@@ -57,7 +63,7 @@ SUBPROTOCOL_DESTS = $(subst subprotocols/,generated_standalone/,$(SUBPROTOCOL_SO
 generated_standalone/%.spthy: subprotocols/%.spthy.m4
 	$(info [info] generating standalone model for $<...)
 	@mkdir -p generated_standalone
-	@m4 -E -DSTANDALONE $(M4_DEFINES) $(CV_DEFINES) $< > $@
+	@m4 -E -DSTANDALONE $(M4_DEBUG) $(M4_DEFINES) $(CV_DEFINES) $< > $@
 
 subprotocols: $(SUBPROTOCOL_DESTS)
 
@@ -126,8 +132,23 @@ clean:
 ci: clean subprotocols compositions syntax
 
 # Always include the proof scripts for CV
+# To save execution time, we do everything at once here rather than running
+# the individual executability, safety, and proofscript targets; this avoids
+# doing the time-consuming Tamarin precomputations multiple times.
 cv: CV_DEFINES = -DINCLUDE_PROOF_SCRIPTS
-cv: clean subprotocols proofscript executability safety
+cv: clean subprotocols
+	$(info [info] checking proof scripts, executability, and safety of all models...)
+	@mkdir -p output
+	$(foreach SPTHY, $(wildcard generated_standalone/*.spthy generated_composed/*.spthy), \
+		time $(TAMARIN) --prove="Safety*" --prove="Executability*" \
+		--output-dot=output/$(basename $(notdir $(SPTHY))).dot > \
+		output/$(basename $(notdir $(SPTHY))).out \
+		$(SPTHY) || exit 1;)
+	@cat output/*.out | grep ProofScript | grep -v NoProofScript | grep -v verified | grep -v lemma > output/combined-proofscript-results.out || echo "RESULT: all proof scripts verified"
+	@cat output/combined-proofscript-results.out
+	@! [ -s output/combined-proofscript-results.out ]
+	@grep falsified output/*.out || echo "RESULT: no lemmas falsified"
+	@ ! grep -q falsified output/*.out
 
 # List of phony targets
 .PHONY: default help subprotocols compositions syntax executability safety proofscript clean ci cv

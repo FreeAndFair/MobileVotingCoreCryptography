@@ -63,7 +63,14 @@ define(<!USE_UNIQUE!>)dnl
 define(<!USE_EUFCMA_SIGNING!>)dnl
 define(<!USE_EQUALITY!>)dnl
 define(<!USE_INEQUALITY!>)dnl
+define(<!USE_ABSTRACTED_NAOR_YUNG!>)dnl
 include(common/primitives.m4.inc)
+include(common/trustee_defaults.m4.inc)
+
+dnl
+dnl Include the trustee board rules.
+dnl
+include(common/trustee_board.m4.inc)
 !>)
 dnl
 dnl Include the macros (both m4 and Tamarin) shared by all the trustee

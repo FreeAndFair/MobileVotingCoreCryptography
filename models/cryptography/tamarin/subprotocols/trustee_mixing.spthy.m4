@@ -23,9 +23,27 @@ dnl
 ifdef(<!QUOTE_CHANGED!>,<!!>,<!changequote(`<!', `!>')!>)dnl
 dnl
 ifdef(<!STANDALONE!>,<!/*
+include(m4_utils/forloop.m4)dnl
   Trustee Mixing Subprotocol
 
-  Explanation goes here.
+  This protocol implements the mixing of ballots by the trustees
+  before decryption. This is carried out by trustees in K rounds,
+  where K is the number of trustees present (this is assumed to be
+  at least the threshold for decryption, as the decryption subprotocol
+  takes place right after this one). In each round, the trustee that
+  is supposed to shuffle that round takes the previous round's output
+  (or the initial list of cryptograms, for the first round), shuffles
+  it, and posts it for the other trustees to verify. Once all trustees
+  have verified the shuffle, the next round proceeds. At the end,
+  once all trustees have verified the final shuffle, the protocol is
+  complete.
+
+  This subprotocol uses the same trustee bulletin board construction
+  as the election key generation subprotocol. It implements the
+  shuffling and proofs as a very simplified equational theory, and
+  does not actually "shuffle" anything; the shuffle is treated more
+  like an encryption, where if you know the "key" (the shuffle
+  randomness), you can reverse the shuffle.
 
   @author Daniel M. Zimmerman
   @copyright Free & Fair 2025
@@ -36,47 +54,66 @@ theory trustee_mixing
 
 begin
 
+dnl
+dnl We define the specific restrictions we're going to use, so that we don't
+dnl get warnings about restrictions referencing actions that don't exist.
+dnl
+define(<!USE_UNIQUE!>)dnl
+define(<!USE_EUFCMA_SIGNING!>)dnl
+define(<!USE_EQUALITY!>)dnl
+define(<!USE_INEQUALITY!>)dnl
+define(<!USE_ABSTRACTED_NAOR_YUNG!>)dnl
 include(common/primitives.m4.inc)
-!>)dnl
+include(common/trustee_defaults.m4.inc)
+
+dnl
+dnl Include the trustee board rules.
+dnl
+include(common/trustee_board.m4.inc)
+!>)
+dnl
+dnl Include the macros (both m4 and Tamarin) shared by all the trustee
+dnl subprotocols; note that the path is relative to the Makefile (and thus
+dnl the working directory for m4), _not_ to this file.
+
+define(<!TRUSTEE_MIXING!>)dnl
+include(subprotocols/includes/trustee_macros.m4.inc)dnl
+dnl
 dnl If STANDALONE is defined, all mocks are always required
 ifdef(<!STANDALONE!>,<!define(TRUSTEE_MIXING_MOCKS)!>)dnl
 dnl
 ifdef(<!TRUSTEE_MIXING_MOCKS!>,<!
-/*
-  Mocks necessary for running the trustee mixing subprotocol without other
-  subprotocols go here. There may end up being multiple such blocks controlled
-  by different macro definitions, depending on what subprotocol combinations
-  need to be generated and what needs to be mocked for each combination.
-*/
-
+dnl
+dnl
+dnl Include the mock for the trustee setup protocol, so that the trustees
+dnl and their individual keys are all initialized properly and everything
+dnl starts in the correct state.
+dnl
+dnl
+include(subprotocols/includes/mock_trustee_setup.m4.inc)dnl
+include(subprotocols/includes/mock_election_key_generation.m4.inc)dnl
 !>)dnl
 dnl
-/* Rules for trustee mixing subprotocol go here. */
-
-/*
-  This rule is just to allow CI to pass until we put in real executability
-  lemmas. It establishes a single fact, and that's about it.
- */
-rule TrusteeMixing_Temporary:
-  [] --[ TrusteeMixing_Executed() ]-> []
-
-/*
-  Lemmas for trustee mixing subprotocol go here.
-
-  Executability lemmas must start with "Executability" in order to be
-  automatically checked in CV.
- */
-
-/*
-  This lemma is just to allow CV to pass until we put in real
-  executability lemmas.
- */
-lemma Executability_TrusteeMixing:
-  exists-trace
-  "
-    Ex #t. TrusteeMixing_Executed()@t
-  "
+dnl Include the rules for the TAS.
 dnl
+
+include(subprotocols/includes/trustee_mixing_rules_tas.m4.inc)dnl
+dnl
+dnl Include the rules for the trustees.
+dnl
+
+include(subprotocols/includes/trustee_mixing_rules_trustee.m4.inc)dnl
+dnl
+dnl Include the rules that allow an adversary (i.e., a corrupt trustee)
+dnl to attempt to submit trustee messages.
+dnl
+
+include(subprotocols/includes/trustee_mixing_rules_adversary.m4.inc)dnl
+dnl
+dnl Include the lemmas.
+dnl
+
+include(subprotocols/includes/trustee_mixing_lemmas.m4.inc)dnl
 ifdef(<!STANDALONE!>,<!
 end
 !>)dnl
