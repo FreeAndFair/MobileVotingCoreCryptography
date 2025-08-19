@@ -14,7 +14,7 @@ include(common/trustee_defaults.m4.inc)
 dnl The following tuple is used in messages that contain all the trustee names and public keys.
 ifdef(<!TRUSTEE_ID_TUPLE_COMPONENT!>,<!!>,<!define(TRUSTEE_ID_TUPLE_COMPONENT, <!<!<'Trustee$1', id_trustee$1, pk_sign_trustee$1, pk_encrypt_trustee$1>!>!>)!>)dnl
 dnl
-ifdef(<!TRUSTEE_TAMARIN_MACROS!>,<!!>,<!
+ifdef(<!TRUSTEE_TAMARIN_MACROS!>, <!!>, <!
   /*
     All message types contain a tag at the beginning, either a single constant
     (like 'Trustee_ID') or a tuple (like <'Trustee_Pairwise_Share', x>). In the
@@ -44,6 +44,12 @@ macros:
   Msg_Trustee_NY_Cryptograms(h_election, sending_trustee, signing_trustee, ballot_order, ballot_set) = <<'Trustee_NY_Cryptograms', sending_trustee, signing_trustee>, h_election, ballot_order, ballot_set>,
   Msg_Trustee_EG_Cryptograms(h_election, mixing_trustee, signing_trustee, ballot_order, ballot_set, shuffle_proof) = <<'Trustee_EG_Cryptograms', mixing_trustee, signing_trustee>, h_election, ballot_order, ballot_set, shuffle_proof>
 !>, <!!>)dnl
+ifdef(<!TRUSTEE_DECRYPTION!>, <!
+macros:
+  Msg_TAS_Mixed_Cryptograms(h_election, ballot_set) = <'TAS_Mixed_Cryptograms', h_election, ballot_set>,
+  Msg_Trustee_Partial_Decryption(h_election, trustee, partially_decrypted_ballots, partial_decryption_proof) = <'Trustee_Partial_Decryption', h_election, trustee, partially_decrypted_ballots, partial_decryption_proof>,
+  Msg_Trustee_Decrypted_Ballots(h_election, trustee, ballots) = <'Trustee_Decrypted_Ballots', h_election, trustee, ballots>
+!>, <!!>)dnl
 define(TRUSTEE_TAMARIN_MACROS)
-dnl!>)
+!>)dnl
 dnl

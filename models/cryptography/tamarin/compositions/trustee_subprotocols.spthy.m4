@@ -52,6 +52,7 @@ dnl Include the macros (both m4 and Tamarin) shared by all the trustee
 dnl subprotocols; note that the path is relative to the Makefile (and thus
 dnl the working directory for m4), _not_ to this file.
 define(<!TRUSTEE_MIXING!>)dnl
+define(<!TRUSTEE_DECRYPTION!>)dnl
 include(subprotocols/includes/trustee_macros.m4.inc)
 dnl
 dnl We also need to include the mock trustee setup.

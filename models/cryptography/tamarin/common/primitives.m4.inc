@@ -135,17 +135,19 @@ define(<!TRUSTEE_CHECK_VALUES!>, <!forloop(<!TN!>, <!1!>, TRUSTEE_COUNT, <!check
  */
 
 functions:
-  ny_encrypt_c1/3,      /* ciphertext 1 */
-  ny_encrypt_c2/3,      /* ciphertext 2 */
-  ny_encrypt_p/3,       /* proof */
-  ny_decrypt/3,         /* decryption function */
-  ny_partial_decrypt/3, /* partial decryption function */
-  ny_combine/<!!>TRUSTEE_THRESHOLD<!!>,         /* partial decryption combination */
-  ny_check/3,           /* proof check function */
-  pairwise_share/2,     /* trustee share */
-  check_value/1,        /* check value for share */
-  valid_share/2,        /* validity test for share with check value */
-  threshold_pubkey/<!!>TRUSTEE_COUNT<!!>    /* public key for threshold key */
+  ny_encrypt_c1/3,        /* ciphertext 1 */
+  ny_encrypt_c2/3,        /* ciphertext 2 */
+  ny_encrypt_p/3,         /* encryption proof */
+  ny_decrypt/3,           /* decryption function */
+  ny_partial_decrypt/3,   /* partial decryption function */
+  ny_partial_dec_proof/3, /* partial decryption proof */
+  ny_combine/<!!>TRUSTEE_THRESHOLD<!!>,           /* partial decryption combination */
+  ny_check/3,             /* encryption proof check function */
+  ny_pd_check/2,          /* partial decryption proof check function */
+  pairwise_share/2,       /* trustee share */
+  check_value/1,          /* check value for share */
+  valid_share/2,          /* validity test for share with check value */
+  threshold_pubkey/<!!>TRUSTEE_COUNT<!!>      /* public key for threshold key */
 
 equations:
   /* A pairwise share and check value are, together, valid if they
@@ -175,9 +177,13 @@ foreach(<!SUBSEQ!>, VALID_TRUSTEE_SUBSEQUENCES,
     ) = pt,
 !>)dnl
 
-  /* A proof can be verified if it was generated from the same parameters
-      as the ciphertexts. */
-  ny_check(ny_encrypt_c1(pt, k, r), ny_encrypt_c2(pt, k, r), ny_encrypt_p(pt, k, r)) = true
+  /* An encryption proof can be verified if it was generated from the
+     same parameters as the ciphertexts. */
+  ny_check(ny_encrypt_c1(pt, k, r), ny_encrypt_c2(pt, k, r), ny_encrypt_p(pt, k, r)) = true,
+
+  /* A partial decryption proof can be verified if it was generated from
+     the same parameters as the partial decryption. */
+  ny_pd_check(ny_partial_decrypt(c1, c2, ps), ny_partial_dec_proof(c1, c2, ps)) = true
 !>, <!!>)dnl
 dnl
 ifelse(eval(!defined_bool(<!INCLUDED_EQUALITY!>) && defined_bool(<!USE_EQUALITY!>)), eval(1), <!

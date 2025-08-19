@@ -1,4 +1,4 @@
-/* Lemmas for trustee mixing subprotocol. */
+/* Lemmas for trustee decryption subprotocol. */
 
 /* Sources Lemma */
 
@@ -8,71 +8,16 @@
   memory, and it's not clear how well it would scale to higher
   numbers of trustees.
 
-  Tamarin can verify this lemma automatically, but it takes a decent
-  amount of time. If a proof script is available for <!!>TRUSTEE_COUNT<!!> trustees
-  with a threshold of <!!>TRUSTEE_THRESHOLD<!!>, it can be included
-  below.
+  Tamarin can verify this lemma automatically, but it takes a long time
+  (over 6 hours for 3 trustees with a threshold of 2) and results in a
+  very long proof script (over 300000 steps, over 180MB in size) that,
+  even when included, takes considerable time to verify. We are therefore
+  not including the proof script at this time.
  */
-define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/Sources_TrusteeMixing_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
+define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/Sources_TrusteeDecryption_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
 syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
-lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Sources_TrusteeMixing [sources]:
+lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Sources_TrusteeDecryption [sources]:
   "
-      (All a b c d e #i.
-            IN_TRUSTEE_BBENTRY(a, b, c, d, e)@i
-        ==>
-            (Ex #j.
-              (
-                  OUT_TRUSTEE_BBENTRY(a, b, c, d, e)@j
-                &
-                  #j < #i
-              )
-            )
-      )
-    &
-      (All x m #i.
-            IN_SHUFFLE_ORDER_TERM(m, x)@i
-        ==>
-            (
-                (Ex #j.
-                  (
-                      KU(x)@j
-                    &
-                      #j < #i
-                  )
-                )
-              |
-                (Ex #j.
-                  (
-                      OUT_SHUFFLE_ORDER_TERM(m)@j
-                    &
-                      #j < #i
-                  )
-                )
-            )
-      )
-    &
-      (All x m #i.
-            IN_SHUFFLE_PROOF_TERM(m, x)@i
-        ==>
-            (
-                (Ex #j.
-                  (
-                      KU(x)@j
-                    &
-                      #j < #i
-                  )
-                )
-              |
-                (Ex #j.
-                  (
-                      OUT_SHUFFLE_PROOF_TERM(m)@j
-                    &
-                      #j < #i
-                  )
-                )
-            )
-      )
-    &
       (All x m #i.
             IN_BALLOTSET_C1_TERM(m, x)@i
         ==>
@@ -116,31 +61,10 @@ lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Sources_TrusteeM
                 )
             )
       )
-    &
-      (All x m #i.
-            IN_BALLOTSET_P_TERM(m, x)@i
-        ==>
-            (
-                (Ex #j.
-                  (
-                      KU(x)@j
-                    &
-                      #j < #i
-                  )
-                )
-              |
-                (Ex #j.
-                  (
-                      OUT_BALLOTSET_P_TERM(m)@j
-                    &
-                      #j < #i
-                  )
-                )
-            )
-      )
   "
 dnl Include the proof script, if one exists.
 sinclude(PROOF_SCRIPT)dnl
+
 
 /* Protocol Safety Lemmas */
 
@@ -149,7 +73,7 @@ sinclude(PROOF_SCRIPT)dnl
   <!!>TRUSTEE_COUNT<!!> that start with 'Trustee' (this includes
   'Trustee0' for this subprotocol).
  */
-lemma Safety_TrusteeMixing_Valid_Trustee_Names [reuse]:
+lemma Safety_TrusteeDecryption_Valid_Trustee_Names [reuse]:
   "
     All tn pk_sign pk_encrypt #i.
           TAS_Trustee_Trace(tn, pk_sign, pk_encrypt)@i
@@ -163,7 +87,7 @@ forloop(<!TN!>, <!0!>, TRUSTEE_COUNT, <!            tn = 'Trustee<!!>TN<!!>'<!!>
   This lemma states that each trustee name only has one associated
   identity.
  */
-lemma Safety_TrusteeMixing_Only_One_Identity_Per_Trustee [reuse]:
+lemma Safety_TrusteeDecryption_Only_One_Identity_Per_Trustee [reuse]:
   "
     All tr sk1 sk2 pk1 pk2 #i1 #i2.
             TAS_Trustee_Trace(tr, sk1, pk1)@i1
@@ -178,7 +102,7 @@ lemma Safety_TrusteeMixing_Only_One_Identity_Per_Trustee [reuse]:
   setup (it is redundant with a lemma from the election setup protocol
   but is provided here for Tamarin's reuse).
  */
-lemma Safety_TrusteeMixing_UniqueElectionSetup [reuse]:
+lemma Safety_TrusteeDecryption_UniqueElectionSetup [reuse]:
   "
     All tr es1 es2 es3 #i1 #i2 #j.
           TAS_ElectionSetup_Complete_Trace(es1)@i1
@@ -195,7 +119,7 @@ lemma Safety_TrusteeMixing_UniqueElectionSetup [reuse]:
   come from one of the <!!>TRUSTEE_COUNT<!!> trustees (or are injected
   with their signature).
  */
-lemma Safety_TrusteeMixing_TAS_BB_Message_Sources [reuse]:
+lemma Safety_TrusteeDecryption_TAS_BB_Message_Sources [reuse]:
   "
     All sd sl msg sig %idx #i.
             TAS_BBEntry_Trace(sd, sl, msg, sig, %idx)@i
@@ -209,7 +133,7 @@ forloop(<!TN!>, <!0!>, TRUSTEE_COUNT, <!            sd = 'Trustee<!!>TN<!!>'<!!>
   This lemma states that no two TAS trustee board messages have the
   same index.
  */
-lemma Safety_TrusteeMixing_TAS_BB_No_Duplicate_Indices [reuse]:
+lemma Safety_TrusteeDecryption_TAS_BB_No_Duplicate_Indices [reuse]:
   "
     All tr1 tr2 mt1 mt2 msg1 msg2 sig1 sig2 %idx #i1 #i2.
             TAS_BBEntry_Trace(tr1, mt1, msg1, sig1, %idx)@i1
@@ -223,7 +147,7 @@ lemma Safety_TrusteeMixing_TAS_BB_No_Duplicate_Indices [reuse]:
   This lemma states that all BB messages on the TAS trustee board
   have distinct event times.
  */
-lemma Safety_TrusteeMixing_TAS_BB_Distinct_Timestamps [reuse]:
+lemma Safety_TrusteeDecryption_TAS_BB_Distinct_Timestamps [reuse]:
   "
     All sd1 sd2 sl1 sl2 msg1 msg2 sig1 sig2 %idx1 %idx2 #i1 #i2.
             TAS_BBEntry_Trace(sd1, sl1, msg1, sig1, %idx1)@i1
@@ -242,7 +166,7 @@ lemma Safety_TrusteeMixing_TAS_BB_Distinct_Timestamps [reuse]:
   than the root message, is from a registered trustee and has a
   valid signature.
  */
-lemma Safety_TrusteeMixing_TAS_BB_Message_Validity [reuse]:
+lemma Safety_TrusteeDecryption_TAS_BB_Message_Validity [reuse]:
   "
     All tr mt msg sig %idx #i.
             TAS_BBEntry_Trace(tr, mt, msg, sig, %idx)@i
@@ -262,7 +186,7 @@ lemma Safety_TrusteeMixing_TAS_BB_Message_Validity [reuse]:
   This lemma states that there is at most one message in each slot
   from each trustee on the TAS trustee board, unless one was injected.
  */
-lemma Safety_TrusteeMixing_TAS_BB_No_Duplicate_Slots [reuse, hide_lemma=Safety_TrusteeMixing_Valid_Trustee_Names, hide_lemma=Safety_TrusteeMixing_TAS_BB_Message_Sources]:
+lemma Safety_TrusteeDecryption_TAS_BB_No_Duplicate_Slots [reuse]:
   "
     All sd sl msg1 msg2 sig1 sig2 %idx1 %idx2 #i1 #i2.
             TAS_BBEntry_Trace(sd, sl, msg1, sig1, %idx1)@i1
@@ -281,7 +205,7 @@ lemma Safety_TrusteeMixing_TAS_BB_No_Duplicate_Slots [reuse, hide_lemma=Safety_T
   come from one of the <!!>TRUSTEE_COUNT<!!> trustees - including trustee
   0 - or are injected with their signature.
  */
-lemma Safety_TrusteeMixing_Trustee_BBs_Message_Sources [reuse]:
+lemma Safety_TrusteeDecryption_Trustee_BBs_Message_Sources [reuse]:
   "
     All tr sd sl msg sig %idx #i.
             Trustee_BBEntry_Trace(tr, sd, sl, msg, sig, %idx)@i
@@ -299,7 +223,7 @@ forloop(<!TN!>, <!0!>, TRUSTEE_COUNT, <!            sd = 'Trustee<!!>TN<!!>'<!!>
   the legality of the message sequence on the TAS trustee board
   and whether the local trustee board has caught up.
  */
-lemma Safety_TrusteeMixing_Trustee_BBs_Follow_TAS [reuse]:
+lemma Safety_TrusteeDecryption_Trustee_BBs_Follow_TAS [reuse]:
   "
     All tr sd1 sd2 sl1 sl2 msg1 msg2 sig1 sig2 %idx #i1 #i2.
             Trustee_BBEntry_Trace(tr, sd1, sl1, msg1, sig1, %idx)@i1
@@ -315,7 +239,7 @@ lemma Safety_TrusteeMixing_Trustee_BBs_Follow_TAS [reuse]:
   way of stating that all the trustee BBs follow the TAS BB),
   but it may help Tamarin to state it separately.
  */
-lemma Safety_TrusteeMixing_Trustee_BBs_Match [reuse]:
+lemma Safety_TrusteeDecryption_Trustee_BBs_Match [reuse]:
   "
     All tr1 tr2 sd1 sd2 sl1 sl2 msg1 msg2 sig1 sig2 %idx #i1 #i2.
             Trustee_BBEntry_Trace(tr1, sd1, sl1, msg1, sig1, %idx)@i1
@@ -329,7 +253,7 @@ lemma Safety_TrusteeMixing_Trustee_BBs_Match [reuse]:
   This lemma states that there is at most one message in each slot
   from each trustee on each trustee's local board.
  */
-lemma Safety_TrusteeMixing_Trustee_BBs_No_Duplicate_Slots [reuse]:
+lemma Safety_TrusteeDecryption_Trustee_BBs_No_Duplicate_Slots [reuse]:
   "
     All tr sd sl msg1 msg2 sig1 sig2 %idx1 %idx2 #i1 #i2.
             Trustee_BBEntry_Trace(tr, sd, sl, msg1, sig1, %idx1)@i1
@@ -343,7 +267,7 @@ lemma Safety_TrusteeMixing_Trustee_BBs_No_Duplicate_Slots [reuse]:
   This lemma states that all BB messages on local trustee boards
   have distinct event times.
  */
-lemma Safety_TrusteeMixing_Trustee_BBs_Distinct_Timestamps [reuse]:
+lemma Safety_TrusteeDecryption_Trustee_BBs_Distinct_Timestamps [reuse]:
   "
     All tr sd1 sd2 sl1 sl2 msg1 msg2 sig1 sig2 %idx1 %idx2 #i1 #i2.
             Trustee_BBEntry_Trace(tr, sd1, sl1, msg1, sig1, %idx1)@i1
@@ -355,33 +279,6 @@ lemma Safety_TrusteeMixing_Trustee_BBs_Distinct_Timestamps [reuse]:
             #i1 = #i2
       ==>
           F
-  "
-
-/*
-  This lemma states that each trustee shuffles at most once.
- */
-lemma Safety_TrusteeMixing_At_Most_One_Shuffle_Each [reuse]:
-  "
-    All tr so1 bs1 sp1 #i1 so2 bs2 sp2 #i2.
-            Trustee_Shuffle_Trace(tr, so1, bs1, sp1)@i1
-          &
-            Trustee_Shuffle_Trace(tr, so2, bs2, sp2)@i2
-      ==>
-          so1 = so2 & bs1 = bs2 & sp1 = sp2 & #i1 = #i2
-  "
-
-/*
-  This lemma states that each trustee signs at most one shuffle
-  from each other trustee.
- */
-lemma Safety_TrusteeMixing_At_Most_One_Sig_Per_Shuffle [reuse]:
-  "
-    All tr st #i1 #i2.
-            Trustee_Sign_Shuffle_Trace(tr, st)@i1
-          &
-            Trustee_Sign_Shuffle_Trace(tr, st)@i2
-      ==>
-          #i1 = #i2
   "
 
 /*
@@ -397,95 +294,50 @@ lemma Safety_TrusteeMixing_At_Most_One_Sig_Per_Shuffle [reuse]:
   This lemma states that it is possible to reach a state where the
   initial set of ballots has been posted.
  */
-lemma Executability_TrusteeMixing_Initial_Ballots_Posted:
+lemma Executability_TrusteeDecryption_Ballots_Posted:
   exists-trace
   "
-    Ex c #i. TAS_TrusteeMixing_Init_Trace(c)@i
+    Ex c b #i. TAS_TrusteeDecryption_Init_Trace(c, b)@i
   "
-
-/*
-  This lemma states that it is possible to reach a state where the
-  initial set of ballots has been found to have valid proofs by a
-  single trustee.
- */
-define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/TrusteeMixing_Ballot_Proofs_Checked_Valid_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
-syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
-lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_TrusteeMixing_Ballot_Proofs_Checked_Valid:
-  exists-trace
-  "
-    Ex t b #i. Trustee_Check_Encryption_Proofs_Success_Trace(t, b)@i
-  "
-dnl Include the proof script, if one exists.
-sinclude(PROOF_SCRIPT)dnl
-
-/*
-  This lemma states that it is possible to reach a state where the
-  initial set of ballots has been found to have invalid proofs by a
-  single trustee.
- */
-define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/TrusteeMixing_Ballot_Proofs_Checked_Invalid_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
-syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
-lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_TrusteeMixing_Ballot_Proofs_Checked_Invalid:
-  exists-trace
-  "
-    Ex t b #i. Trustee_Check_Encryption_Proofs_Failure_Trace(t, b)@i
-  "
-dnl Include the proof script, if one exists.
-sinclude(PROOF_SCRIPT)dnl
 
 /*
   This lemma states that it is possible to reach a state where a single
-  trustee has shuffled the ballots and at least one other trustee has
-  signed the shuffle. We restrict this to be in the absence of adversary
-  message injection to reduce the search space.
+  trustee has partially decrypted the ballots.
 
   Tamarin can verify this lemma automatically, but it takes a decent
   amount of time. If a proof script is available for <!!>TRUSTEE_COUNT<!!> trustees
   with a threshold of <!!>TRUSTEE_THRESHOLD<!!>, it can be included
   below.
  */
-define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/TrusteeMixing_One_Shuffle_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
+define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/TrusteeDecryption_One_Partial_Decryption_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
 syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
-lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_TrusteeMixing_One_Shuffle:
+lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_TrusteeDecryption_One_Partial_Decryption:
   exists-trace
   "
-      (
-        Ex t1 t2 o s p #i #j.
-        (
-            Trustee_Shuffle_Trace(t1, o, s, p)@i
-          &
-            Trustee_Sign_Shuffle_Trace(t2, t1)@j
-          &
-            not (t1 = t2)
-        )
-      )
-    &
-      not (
-        Ex t m s #i. InjectTrusteeMsg(t, m, s)@i
-      )
+    Ex t pd p #i. Trustee_Partial_Decryption_Trace(t, pd, p)@i
   "
 dnl Include the proof script, if one exists.
 sinclude(PROOF_SCRIPT)dnl
 
 /*
   This lemma states that it is possible to reach a state where a single
-  trustee has declared a shuffle invalid.
+  trustee has declared a partial decryption invalid.
 
   Tamarin can verify this lemma automatically, but it takes a decent
   amount of time. If a proof script is available for <!!>TRUSTEE_COUNT<!!> trustees
   with a threshold of <!!>TRUSTEE_THRESHOLD<!!>, it can be included
   below.
  */
-define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/TrusteeMixing_One_Invalid_Shuffle_Detection_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
+define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/TrusteeDecryption_One_Invalid_Partial_Decryption_Detection_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
 syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
-lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_TrusteeMixing_One_Invalid_Shuffle_Detection:
+lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_TrusteeDecryption_One_Invalid_Partial_Decryption_Detection:
   exists-trace
   "
-    Ex t sh si #i.
+    Ex t pd_t #i.
     (
-        Trustee_Detect_Invalid_Shuffle_Trace(t, sh, si)@i
+        Trustee_Detect_Invalid_Partial_Decryption_Trace(t, pd_t)@i
       &
-        not (t = sh)
+        not (t = pd_t)
     )
   "
 dnl Include the proof script, if one exists.
@@ -493,22 +345,20 @@ sinclude(PROOF_SCRIPT)dnl
 
 /*
   This lemma states that it is possible to reach a state where the
-  trustee mixing subprotocol is complete. We restrict this to be in
-  the absence of adversary message injection to reduce the search
-  space.
+  trustee Decryption subprotocol is complete.
 
   Tamarin can verify this lemma automatically, but it takes a decent
   amount of time. If a proof script is available for <!!>TRUSTEE_COUNT<!!> trustees
   with a threshold of <!!>TRUSTEE_THRESHOLD<!!>, it can be included
   below.
  */
-define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/TrusteeMixing_Complete_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
+define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/TrusteeDecryption_Complete_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
 syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
-lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_TrusteeMixing_Complete:
+lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_TrusteeDecryption_Complete:
   exists-trace
   "
       (
-        Ex b s p #i. TAS_TrusteeMixing_Complete_Trace(b, s, p)@i
+        Ex b #i. TAS_TrusteeDecryption_Complete_Trace(b)@i
       )
     &
       not (
