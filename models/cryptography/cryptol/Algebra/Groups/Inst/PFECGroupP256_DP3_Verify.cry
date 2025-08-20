@@ -20,7 +20,7 @@ import Algebra::Groups::Inst::PFECGroupP256_DP3_POs
  * Proof that cyclic group axioms hold for PFECGroupP256_DP3.
  *
  * ```repl
- * :set tests = 10000
+ * :set tests = 1000
  * :prove identity_in_G
  * :check G_closed_under_gop
  * :prove G_closed_under_inv

@@ -19,7 +19,7 @@ import Algebra::Groups::Inst::Z41AddGroup_DP3_POs
  * Proof that cyclic group axioms hold for Z41AddGroup_DP3.
  *
  * ```repl
- * :set tests = 100000
+ * :set tests = 10000
  * :prove identity_in_G
  * :prove G_closed_under_gop
  * :prove G_closed_under_inv

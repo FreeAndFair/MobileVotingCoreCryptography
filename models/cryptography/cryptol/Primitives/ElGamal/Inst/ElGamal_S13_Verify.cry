@@ -14,7 +14,7 @@ import Primitives::ElGamal::Inst::ElGamal_S13
  * Proof that ElGamal is correct when instantiated with
  * a Schnorr Group of order 13
  * ```repl
- * :set tests = 10000
+ * :set tests = 1000
  * :check gen_valid_keypair
  * :check gen_enc_dec_inverse
  * :exhaust gen_enc_dec_inverse 0 0

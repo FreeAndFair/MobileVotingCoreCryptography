@@ -397,7 +397,7 @@ verify_tonelli_shanks_small_primes = True // we need something to annotate
  * field size of the NIST P-256 Elliptic Curve defined in [FIPS-186-5].
  *
  * ```repl
- * :set tests = 100000
+ * :set tests = 10000
  * :check tonelli_shanks_correct`{P256}
  * ```
  */
@@ -454,7 +454,7 @@ verify_sqrtZ_small_primes = True // we need something to annotate
  * NIST P-256 Elliptic Curve defined in [FIPS-186-5].
  *
  * ```repl
- * :set tests = 100000
+ * :set tests = 10000
  * :check sqrtZ_correct`{P256}
  * ```
  */

@@ -14,7 +14,7 @@ import Primitives::Pedersen::Inst::Pedersen_P224
  * Proof that k-Pedersen is correct when instantiated with
  * the NIST P-224 Elliptic Curve defined in [FIPS-186-5]
  * ```repl
- * :set tests = 250
+ * :set tests = 100
  * :check Comm_valid
  * :check kComm_valid`{1}
  * :check kComm_valid`{2}

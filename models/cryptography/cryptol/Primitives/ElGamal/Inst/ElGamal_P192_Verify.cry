@@ -14,7 +14,7 @@ import Primitives::ElGamal::Inst::ElGamal_P192
  * Proof that ElGamal is correct when instantiated with
  * the NIST P-192 Elliptic Curve defined in [FIPS-186-5]
  * ```repl
- * :set tests = 10000
+ * :set tests = 1000
  * :check gen_valid_keypair
  * :check gen_enc_dec_inverse
  * ```

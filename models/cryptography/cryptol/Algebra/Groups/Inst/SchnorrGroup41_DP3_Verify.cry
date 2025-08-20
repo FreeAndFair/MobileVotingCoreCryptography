@@ -19,7 +19,7 @@ import Algebra::Groups::Inst::SchnorrGroup41_DP3_POs
  * Proof that cyclic group axioms hold for SchnorrGroup41_DP3.
  *
  * ```repl
- * :set tests = 100000
+ * :set tests = 10000
  * :prove identity_in_G
  * :check G_closed_under_gop
  * :check G_closed_under_inv

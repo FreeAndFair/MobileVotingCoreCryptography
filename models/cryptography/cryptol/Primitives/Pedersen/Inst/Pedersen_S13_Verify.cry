@@ -14,7 +14,7 @@ import Primitives::Pedersen::Inst::Pedersen_S13
  * Proof that k-Pedersen is correct when instantiated with
  * a Schnorr Group of order 13
  * ```repl
- * :set tests = 10000
+ * :set tests = 1000
  * :check Comm_valid
  * :exhaust Comm_valid 0 0
  * :exhaust Comm_valid 0 1

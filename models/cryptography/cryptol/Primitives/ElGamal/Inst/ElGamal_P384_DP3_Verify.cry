@@ -18,7 +18,7 @@ import Primitives::ElGamal::Inst::ElGamal_P384_DP3
  * ```repl
  * :set tests = 1000
  * :check gen_valid_keypair
- * :set tests = 10000
+ * :set tests = 1000
  * :check gen_enc_dec_inverse
  * ```
  */

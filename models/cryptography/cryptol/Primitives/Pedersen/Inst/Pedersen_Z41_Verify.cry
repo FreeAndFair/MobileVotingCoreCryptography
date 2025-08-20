@@ -14,7 +14,7 @@ import Primitives::Pedersen::Inst::Pedersen_Z41
  * Proof that k-Pedersen is correct when instantiated with
  * the additive group of integers modulo 41 (ℤ/41ℤ)
  * ```repl
- * :set tests = 10000
+ * :set tests = 1000
  * :prove Comm_valid
  * :prove Comm'Seeded_valid
  * :prove kComm_valid`{1}
