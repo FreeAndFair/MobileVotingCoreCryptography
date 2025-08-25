@@ -1,5 +1,10 @@
 /* Lemmas for ballot check protocol. */
 
+dnl
+dnl We only include the sources lemma in the standalone version, as
+dnl the necessary sources lemma is different for composed versions.
+dnl
+ifdef(<!STANDALONE!>, <!
 /* Sources */
 
 /*
@@ -29,7 +34,7 @@ lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_BallotCheck_Sour
   "
 dnl Include the proof script, if one exists.
 sinclude(PROOF_SCRIPT)dnl
-
+!>, <!!>)
 /* Protocol Safety Lemmas */
 
 /*

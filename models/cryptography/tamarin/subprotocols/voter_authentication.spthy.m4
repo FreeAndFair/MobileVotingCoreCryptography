@@ -44,6 +44,7 @@ begin
 
 define(<!USE_UNIQUE!>)dnl
 define(<!USE_PSEUDONYM!>)dnl
+define(<!USE_EUFCMA_SIGNING!>)dnl
 include(common/primitives.m4.inc)
 define(<!USE_SECURE_CHANNELS!>)dnl
 define(<!USE_SECURE_CHANNELS_INJECTION!>)dnl

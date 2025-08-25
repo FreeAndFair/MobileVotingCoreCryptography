@@ -1,7 +1,12 @@
 /* Lemmas for ballot submission protocol. */
 
+dnl
+dnl We only include the sources lemma in the standalone version, as
+dnl the necessary sources lemma is different for composed versions.
+dnl
+ifdef(<!STANDALONE!>, <!
 /* No Sources Lemma Necessary (Yet) */
-
+!>, <!!>)
 /* Protocol Safety Lemmas */
 
 /* TO DO (time permitting) */

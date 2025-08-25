@@ -11,14 +11,16 @@ rule BallotSubmission_VA_PresentBallot [role="VA"]:
   let pk_voter = pk(~sk_voter)
       cryptograms = <ny_encrypt_c1(~ballot, pk_election, ~r), ny_encrypt_c2(~ballot, pk_election, ~r), ny_encrypt_p(~ballot, pk_election, ~r)>
       msg_submit_ballot = Msg_VA_Submit_Ballot(~ec, pseudo, pk_voter, ballot_style, cryptograms)
-      signed_msg_submit_ballot = <msg_submit_ballot, sign(msg_submit_ballot, '1', ~sk_voter)> in
+      sig_msg_submit_ballot = sign(msg_submit_ballot, '1', ~sk_voter)
+      signed_msg_submit_ballot = <msg_submit_ballot, sig_msg_submit_ballot> in
     [ VA_State_PresentBallot(~ec, ~va_id, $V, ~sk_voter),
       !VA_Eligible_Voter(~ec, ~va_id, pseudo, ~sk_voter, ballot_style),
       !ElectionPublicKey(~ec, pk_election),
       Fr(~r), /* randomizer */
       Fr(~ballot), /* ballot choices */
       Fr(~cid) /* secure channel ID */ ]
-  --[ VA_PresentBallot_Trace(~ec, ~va_id, $V, pseudo, ~sk_voter, ballot_style, ~ballot, cryptograms, ~r) ]->
+  --[ VA_PresentBallot_Trace(~ec, ~va_id, $V, pseudo, ~sk_voter, ballot_style, ~ballot, cryptograms, ~r),
+      OUT_PSEUDO_TERM(sig_msg_submit_ballot) ]->
     [ SecureSend(~cid, ~va_id, <~ec, 'DBB'>, signed_msg_submit_ballot),
       VA_State_BallotSubmitResponse(~ec, ~va_id, ~cid, $V, ~ballot, cryptograms, ~r) ]
 
@@ -40,16 +42,19 @@ rule BallotSubmission_VA_BallotSubmitResponse_BallotTracker_Success [role="VA"]:
   let pk_voter = pk(~sk_voter)
       msg_ballot_tracker = Msg_DBB_Ballot_Tracker(~ec, tracker)
       msg_submit_ballot = Msg_VA_Submit_Ballot(~ec, pseudo, pk_voter, ballot_style, cryptograms)
-      signed_msg_submit_ballot = <msg_submit_ballot, sign(msg_submit_ballot, '1', ~sk_voter)>
+      sig_msg_submit_ballot = sign(msg_submit_ballot, '1', ~sk_voter)
+      signed_msg_submit_ballot = <msg_submit_ballot, sig_msg_submit_ballot>
       ballot_bb_entry = BBEntry_Ballot_Submission(~ec, timestamp, signed_msg_submit_ballot) in
     [ VA_State_BallotSubmitResponse(~ec, ~va_id, ~cid, $V, ~ballot, cryptograms, ~r),
       !VA_Eligible_Voter(~ec, ~va_id, pseudo, ~sk_voter, ballot_style),
       !BB_Root(~ec, ~bbid, ~ec, bb_root_hash),
       !BB_Entry(~bbid, ballot_bb_entry, tracker, %idx),
       SecureReceive(~cid, <~ec, 'DBB'>, ~va_id, msg_ballot_tracker) ]
-  --[ VA_BallotTracker_Trace(~ec, ~va_id, $V, pseudo, ~sk_voter, ballot_style, ~ballot, cryptograms, ~r, tracker) ]->
+  --[ VA_BallotTracker_Trace(~ec, ~va_id, $V, pseudo, ~sk_voter, ballot_style, ~ballot, cryptograms, ~r, tracker),
+      IN_PSEUDO_TERM(sig_msg_submit_ballot, pseudo),
+      OUT_BALLOTCHECK_VA_CHECK(~ec, ~va_id, $V, ~ballot, cryptograms, ~r, tracker) ]->
     [ !VA_Submitted_Ballot(~ec, ~va_id, ~ballot, cryptograms, ~r, tracker),
-      VA_State_CheckOrCast(~ec, ~va_id, ~ballot, cryptograms, ~r, tracker) ]
+      VA_State_CheckOrCast(~ec, ~va_id, $V, ~ballot, cryptograms, ~r, tracker) ]
 
 /*
   This rule receives a response from the DBB saying that a ballot was
@@ -149,7 +154,8 @@ rule BallotSubmission_DBB_ReceiveSubmittedBallot [role="DBB"]:
       MostRecentAuthorization(~ec, pseudo, pk_voter, %idx),
       SignatureVerified(sig, e1_sig(sig), pk(e3_sig(sig)), msg_submit_ballot,
                         pk_voter, true), /* valid signature */
-      Eq(valid_proof, true), /* valid cryptogram proof */ ]->
+      Eq(valid_proof, true), /* valid cryptogram proof */
+      OUT_PSEUDO_TERM(sig) ]->
     [ !DBB_Submitted_Ballot(~ec, ~va_id, ~cid, pseudo, signed_msg_submit_ballot) ]
 
 /*

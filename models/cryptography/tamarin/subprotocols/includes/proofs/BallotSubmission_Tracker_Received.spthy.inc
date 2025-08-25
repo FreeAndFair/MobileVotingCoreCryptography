@@ -85,82 +85,33 @@ solve( !BB_Entry( ~bbid,
                             solve( VoterCount( ~ec, %idx_ev ) ▶₀ #vr.10 )
                               case Mock_EC_And_Initial_Counters
                               solve( BallotStyleCount( ~ec, %idx_bs ) ▶₀ #vr.5 )
-                                case Mock_BallotStyle
-                                by sorry
-                              next
                                 case Mock_EC_And_Initial_Counters
                                 solve( DBB_Clock( %ts ) ▶₁ #vr.6 )
-                                  case BallotSubmission_DBB_AppendSubmittedBallot_case_1
-                                  by sorry
-                                next
-                                  case BallotSubmission_DBB_AppendSubmittedBallot_case_2
-                                  by sorry
-                                next
                                   case BallotSubmission_Initialize_DBBTimestamp
                                   solve( BallotStyleCount( ~ec, %i.2 ) ▶₀ #vr.4 )
                                     case Mock_BallotStyle
                                     solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.13 )
-                                      case Mock_BallotStyle
-                                      by sorry
-                                    next
                                       case Mock_EC_And_Initial_Counters
                                       solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.17 )
-                                        case Mock_BallotStyle
-                                        solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.18 )
-                                          case Mock_BallotStyle
-                                          by sorry
-                                        next
-                                          case Mock_EC_And_Initial_Counters
-                                          by sorry /* removed */
-                                        qed
-                                      next
                                         case Mock_EC_And_Initial_Counters
                                         SOLVED // trace found
                                       qed
                                     qed
-                                  next
-                                    case Mock_EC_And_Initial_Counters
-                                    simplify
-                                    by contradiction /* cyclic */
                                   qed
                                 qed
                               qed
-                            next
-                              case Mock_VoterRegistration_Eligible
-                              by sorry
                             qed
-                          next
-                            case Mock_Voter_Authentication
-                            by sorry
                           qed
-                        next
-                          case SecureChannel_Receive_case_2
-                          by sorry
                         qed
-                      next
-                        case Mock_VoterRegistration_Eligible
-                        by sorry
                       qed
-                    next
-                      case Mock_VoterRegistration_Eligible
-                      by sorry
                     qed
-                  next
-                    case Mock_EC_And_Initial_Counters
-                    by sorry
                   qed
                 qed
               qed
-            next
-              case SecureChannel_Receive_case_2
-              by sorry
             qed
           qed
         qed
       qed
     qed
-  next
-    case case_2
-    by sorry
   qed
 qed

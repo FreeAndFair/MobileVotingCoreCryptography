@@ -66,6 +66,7 @@ rule Mock_Finalize_Election_Setup [role="Mock"]:
       Fr(~sk_eas), /* mock EAS private key */
       Fr(~sk_election) /* mock election private key */ ]
   --[ Unique(<'FinalizeElectionSetup', ~ec>),
+      HonestSignatureKey(pk(~sk_eas)),
       Finalize_Election_Setup_Trace(~ec) ]->
     [ !ElectionConfiguration(~ec),
       !ElectionPublicKey(~ec, pk(~sk_election)),

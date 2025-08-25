@@ -37,179 +37,7 @@ solve( !BB_Entry( ~bbid, sub_bb_entry, sub_tracker, %idx_sub
                           >
            ) ▶₅ #i )
       case SecureChannel_Receive_case_1
-      solve( VA_State_BallotCastResponse( ~ec, ~va_id, ~cid,
-                                          pseudonym($V), ~ballot, cryptograms, ~r,
-                                          h(<
-                                             <'BBEntry_Ballot_Submission', ~ec, %ts_sub,
-                                              <'VA_Submit_Ballot', ~ec, pseudonym($V),
-                                               pk(~sk_voter), ~bs, cryptograms>,
-                                              sign(<'VA_Submit_Ballot', ~ec, pseudonym($V),
-                                                    pk(~sk_voter), ~bs, cryptograms>,
-                                                   '1', ~sk_voter)
-                                             >,
-                                             ch>)
-             ) ▶₀ #i )
-        case BallotCast_VA_Cast
-        solve( BB_Trace_Entry( ~bbid, p.2,
-                               h(<
-                                  <'BBEntry_Voter_Authorization', ~ec, %ts,
-                                   sign(<'EAS_Authorize_Voter', ~ec, pseudonym($V), pk(~sk_voter),
-                                         ~bs>,
-                                        '1', ~sk_eas)
-                                  >,
-                                  h(<~ec, ~bbid.1>)>),
-                               %idx.1
-               ) @ #j.2 )
-          case BulletinBoard_Append
-          solve( BB_Trace_Entry( ~bbid.1,
-                                 <'BBEntry_Ballot_Submission', ~ec, %ts_sub,
-                                  <'VA_Submit_Ballot', ~ec, pseudonym($V), pk(~sk_voter), ~bs,
-                                   ny_encrypt_c1(~ballot, pk(~sk_election), ~r),
-                                   ny_encrypt_c2(~ballot, pk(~sk_election), ~r),
-                                   ny_encrypt_p(~ballot, pk(~sk_election), ~r)>,
-                                  sign(<'VA_Submit_Ballot', ~ec, pseudonym($V), pk(~sk_voter), ~bs,
-                                        ny_encrypt_c1(~ballot, pk(~sk_election), ~r),
-                                        ny_encrypt_c2(~ballot, pk(~sk_election), ~r),
-                                        ny_encrypt_p(~ballot, pk(~sk_election), ~r)>,
-                                       '1', ~sk_voter)
-                                 >,
-                                 h(<
-                                    <'BBEntry_Ballot_Submission', ~ec, %ts_sub,
-                                     <'VA_Submit_Ballot', ~ec, pseudonym($V), pk(~sk_voter), ~bs,
-                                      ny_encrypt_c1(~ballot, pk(~sk_election), ~r),
-                                      ny_encrypt_c2(~ballot, pk(~sk_election), ~r),
-                                      ny_encrypt_p(~ballot, pk(~sk_election), ~r)>,
-                                     sign(<'VA_Submit_Ballot', ~ec, pseudonym($V), pk(~sk_voter),
-                                           ~bs, ny_encrypt_c1(~ballot, pk(~sk_election), ~r),
-                                           ny_encrypt_c2(~ballot, pk(~sk_election), ~r),
-                                           ny_encrypt_p(~ballot, pk(~sk_election), ~r)>,
-                                          '1', ~sk_voter)
-                                    >,
-                                    h(<p, ch>)>),
-                                 (%idx.2%+%1%+%1)
-                 ) @ #vr.20 )
-            case BulletinBoard_Append
-            solve( BB_Trace_Entry( ~bbid.1,
-                                   <'BBEntry_Voter_Authorization', ~ec, %ts,
-                                    sign(<'EAS_Authorize_Voter', ~ec, pseudonym($V), pk(~sk_voter),
-                                          ~bs>,
-                                         '1', ~sk_eas)
-                                   >,
-                                   h(<
-                                      <'BBEntry_Voter_Authorization', ~ec, %ts,
-                                       sign(<'EAS_Authorize_Voter', ~ec, pseudonym($V),
-                                             pk(~sk_voter), ~bs>,
-                                            '1', ~sk_eas)
-                                      >,
-                                      h(<~ec, ~bbid.1>)>),
-                                   (%1%+%1)
-                   ) @ #vr.15 )
-              case BulletinBoard_Append
-              solve( BB_Append_Request( ~bbid,
-                                        <'BBEntry_Ballot_Submission', ~ec, %ts_sub,
-                                         <'VA_Submit_Ballot', ~ec, pseudonym($V), pk(~sk_voter),
-                                          ~bs, ny_encrypt_c1(~ballot, pk(~sk_election), ~r),
-                                          ny_encrypt_c2(~ballot, pk(~sk_election), ~r),
-                                          ny_encrypt_p(~ballot, pk(~sk_election), ~r)>,
-                                         sign(<'VA_Submit_Ballot', ~ec, pseudonym($V),
-                                               pk(~sk_voter), ~bs,
-                                               ny_encrypt_c1(~ballot, pk(~sk_election), ~r),
-                                               ny_encrypt_c2(~ballot, pk(~sk_election), ~r),
-                                               ny_encrypt_p(~ballot, pk(~sk_election), ~r)>,
-                                              '1', ~sk_voter)
-                                        >,
-                                        %idx
-                     )[+] ▶₂ #vr )
-                case Mock_AppendSubmittedBallot
-                solve( BB_Current( ~bbid, c.3,
-                                   h(<
-                                      <'BBEntry_Voter_Authorization', ~ec, %ts,
-                                       sign(<'EAS_Authorize_Voter', ~ec, pseudonym($V),
-                                             pk(~sk_voter), ~bs>,
-                                            '1', ~sk_eas)
-                                      >,
-                                      h(<~ec, ~bbid>)>),
-                                   (%1%+%1)
-                       )[+] ▶₁ #vr.9 )
-                  case BulletinBoard_Append
-                  by solve( BB_Append_Request( ~bbid,
-                                               <'BBEntry_Ballot_Cast', (%ts%+%1),
-                                                <
-                                                 <'VA_Submit_Ballot', ~ec, pseudonym($V),
-                                                  pk(~sk_voter), ~bs,
-                                                  ny_encrypt_c1(~ballot, pk(~sk_election), ~r),
-                                                  ny_encrypt_c2(~ballot, pk(~sk_election), ~r),
-                                                  ny_encrypt_p(~ballot, pk(~sk_election), ~r)>,
-                                                 sign(<'VA_Submit_Ballot', ~ec, pseudonym($V),
-                                                       pk(~sk_voter), ~bs,
-                                                       ny_encrypt_c1(~ballot, pk(~sk_election),
-                                                                     ~r),
-                                                       ny_encrypt_c2(~ballot, pk(~sk_election),
-                                                                     ~r),
-                                                       ny_encrypt_p(~ballot, pk(~sk_election), ~r)>,
-                                                      '1', ~sk_voter)
-                                                >,
-                                                <'VA_Cast_Ballot', ~ec, pseudonym($V),
-                                                 pk(~sk_voter),
-                                                 h(<
-                                                    <'BBEntry_Ballot_Submission', ~ec, %ts_sub,
-                                                     <'VA_Submit_Ballot', ~ec, pseudonym($V),
-                                                      pk(~sk_voter), ~bs,
-                                                      ny_encrypt_c1(~ballot, pk(~sk_election), ~r),
-                                                      ny_encrypt_c2(~ballot, pk(~sk_election), ~r),
-                                                      ny_encrypt_p(~ballot, pk(~sk_election), ~r)>,
-                                                     sign(<'VA_Submit_Ballot', ~ec, pseudonym($V),
-                                                           pk(~sk_voter), ~bs,
-                                                           ny_encrypt_c1(~ballot, pk(~sk_election),
-                                                                         ~r),
-                                                           ny_encrypt_c2(~ballot, pk(~sk_election),
-                                                                         ~r),
-                                                           ny_encrypt_p(~ballot, pk(~sk_election),
-                                                                        ~r)
-                                                          >,
-                                                          '1', ~sk_voter)
-                                                    >,
-                                                    h(<p, ch>)>)
-                                                >,
-                                                sign(<'VA_Cast_Ballot', ~ec, pseudonym($V),
-                                                      pk(~sk_voter),
-                                                      h(<
-                                                         <'BBEntry_Ballot_Submission', ~ec,
-                                                          %ts_sub,
-                                                          <'VA_Submit_Ballot', ~ec, pseudonym($V),
-                                                           pk(~sk_voter), ~bs,
-                                                           ny_encrypt_c1(~ballot, pk(~sk_election),
-                                                                         ~r),
-                                                           ny_encrypt_c2(~ballot, pk(~sk_election),
-                                                                         ~r),
-                                                           ny_encrypt_p(~ballot, pk(~sk_election),
-                                                                        ~r)
-                                                          >,
-                                                          sign(<'VA_Submit_Ballot', ~ec,
-                                                                pseudonym($V), pk(~sk_voter), ~bs,
-                                                                ny_encrypt_c1(~ballot,
-                                                                              pk(~sk_election),
-                                                                              ~r),
-                                                                ny_encrypt_c2(~ballot,
-                                                                              pk(~sk_election),
-                                                                              ~r),
-                                                                ny_encrypt_p(~ballot,
-                                                                             pk(~sk_election), ~r)
-                                                               >,
-                                                               '1', ~sk_voter)
-                                                         >,
-                                                         h(<p, ch>)>)
-                                                     >,
-                                                     '1', ~sk_voter)
-                                               >,
-                                               (%1%+%1)
-                            )[+] ▶₂ #vr.9 )
-                qed
-              qed
-            qed
-          qed
-        qed
-      qed
+      by sorry
     next
       case SecureChannel_Receive_case_2
       solve( (¬(%1 ⊏ %idx))  ∥ (#vr.1 < #j) )
@@ -256,12 +84,16 @@ solve( !BB_Entry( ~bbid, sub_bb_entry, sub_tracker, %idx_sub
                                 case BulletinBoard_Create
                                 solve( BB_Trace_Entry( ~bbid,
                                                        <'BBEntry_Voter_Authorization', ~ec, %ts,
+                                                        <'EAS_Authorize_Voter', ~ec, pseudonym($V),
+                                                         pk(~sk_voter), ~bs>,
                                                         sign(<'EAS_Authorize_Voter', ~ec,
                                                               pseudonym($V), pk(~sk_voter), ~bs>,
                                                              '1', ~sk_eas)
                                                        >,
                                                        h(<
                                                           <'BBEntry_Voter_Authorization', ~ec, %ts,
+                                                           <'EAS_Authorize_Voter', ~ec,
+                                                            pseudonym($V), pk(~sk_voter), ~bs>,
                                                            sign(<'EAS_Authorize_Voter', ~ec,
                                                                  pseudonym($V), pk(~sk_voter), ~bs>,
                                                                 '1', ~sk_eas)
@@ -393,6 +225,8 @@ solve( !BB_Entry( ~bbid, sub_bb_entry, sub_tracker, %idx_sub
                                                            h(<
                                                               <'BBEntry_Voter_Authorization', ~ec,
                                                                %ts,
+                                                               <'EAS_Authorize_Voter', ~ec,
+                                                                pseudonym($V), pk(~sk_voter), ~bs>,
                                                                sign(<'EAS_Authorize_Voter', ~ec,
                                                                      pseudonym($V), pk(~sk_voter),
                                                                      ~bs>,
@@ -587,6 +421,9 @@ solve( !BB_Entry( ~bbid, sub_bb_entry, sub_tracker, %idx_sub
                                                                         <
                                                                          'BBEntry_Voter_Authorization',
                                                                          ~ec, %ts,
+                                                                         <'EAS_Authorize_Voter',
+                                                                          ~ec, pseudonym($V),
+                                                                          pk(~sk_voter), ~bs>,
                                                                          sign(<
                                                                                'EAS_Authorize_Voter',
                                                                                ~ec, pseudonym($V),
@@ -853,13 +690,9 @@ solve( !BB_Entry( ~bbid, sub_bb_entry, sub_tracker, %idx_sub
                                                                     solve( VoterCount( ~ec, %idx_ev
                                                                            ) ▶₀ #vr.16 )
                                                                       case Mock_EC_And_Initial_Counters
-                                                                      solve( DBB_Clock( %ts
-                                                                             ) ▶₂ #vr.12 )
-                                                                        case BallotCast_DBB_AppendCastBallot_case_1
-                                                                        simplify
-                                                                        by sorry
-                                                                      next
-                                                                        case BallotCast_DBB_AppendCastBallot_case_2
+                                                                      solve( DBB_Clock( %ts_sub
+                                                                             ) ▶₂ #vr.17 )
+                                                                        case BallotCast_DBB_AppendCastBallot
                                                                         by sorry
                                                                       next
                                                                         case Mock_AppendSubmittedBallot_case_1
@@ -871,57 +704,57 @@ solve( !BB_Entry( ~bbid, sub_bb_entry, sub_tracker, %idx_sub
                                                                         by sorry
                                                                       next
                                                                         case Mock_DBBTimestamp
-                                                                        solve( DBB_Clock( %ts_sub
-                                                                               ) ▶₂ #vr.17 )
-                                                                          case BallotCast_DBB_AppendCastBallot
-                                                                          by sorry
-                                                                        next
-                                                                          case Mock_AppendSubmittedBallot_case_1
-                                                                          simplify
-                                                                          by sorry
-                                                                        next
-                                                                          case Mock_AppendSubmittedBallot_case_2
-                                                                          simplify
-                                                                          by sorry
-                                                                        next
-                                                                          case Mock_DBBTimestamp
-                                                                          solve( DBB_State_ReceiveAuthorizeVoter( ~ec,
-                                                                                                                  %1
-                                                                                 ) ▶₀ #vr.25 )
-                                                                            case Mock_Finalize_Election_Setup
+                                                                        solve( DBB_State_ReceiveAuthorizeVoter( ~ec,
+                                                                                                                %1
+                                                                               ) ▶₀ #vr.25 )
+                                                                          case Mock_Finalize_Election_Setup
+                                                                          solve( VoterCount( ~ec,
+                                                                                             %i.3
+                                                                                 ) ▶₀ #vr.5 )
+                                                                            case Mock_EC_And_Initial_Counters
                                                                             solve( VoterCount( ~ec,
-                                                                                               %i.3
-                                                                                   ) ▶₀ #vr.5 )
+                                                                                               %idx_ev
+                                                                                   ) ▶₀ #vr.24 )
                                                                               case Mock_EC_And_Initial_Counters
-                                                                              solve( VoterCount( ~ec,
-                                                                                                 %idx_ev
-                                                                                     ) ▶₀ #vr.24 )
-                                                                                case Mock_EC_And_Initial_Counters
+                                                                              solve( BallotStyleCount( ~ec,
+                                                                                                       %i.3
+                                                                                     ) ▶₀ #vr.21 )
+                                                                                case Mock_BallotStyle
                                                                                 solve( BallotStyleCount( ~ec,
-                                                                                                         %i.3
-                                                                                       ) ▶₀ #vr.21 )
+                                                                                                         %i.2
+                                                                                       ) ▶₀ #vr.4 )
                                                                                   case Mock_BallotStyle
                                                                                   solve( BallotStyleCount( ~ec,
-                                                                                                           %i.2
-                                                                                         ) ▶₀ #vr.4 )
+                                                                                                           %i.1
+                                                                                         ) ▶₀ #vr.19 )
                                                                                     case Mock_BallotStyle
+                                                                                    by sorry
+                                                                                  next
+                                                                                    case Mock_EC_And_Initial_Counters
                                                                                     solve( BallotStyleCount( ~ec,
-                                                                                                             %i.1
-                                                                                           ) ▶₀ #vr.19 )
+                                                                                                             %i.2
+                                                                                           ) ▶₀ #vr.24 )
                                                                                       case Mock_BallotStyle
                                                                                       by sorry
                                                                                     next
                                                                                       case Mock_EC_And_Initial_Counters
-                                                                                      solve( BallotStyleCount( ~ec,
-                                                                                                               %i.2
-                                                                                             ) ▶₀ #vr.25 )
-                                                                                        case Mock_BallotStyle
+                                                                                      solve( DBB_Clock( %ts
+                                                                                             ) ▶₂ #vr.10 )
+                                                                                        case BallotCast_DBB_AppendCastBallot
                                                                                         by sorry
                                                                                       next
-                                                                                        case Mock_EC_And_Initial_Counters
+                                                                                        case Mock_AppendSubmittedBallot_case_1
+                                                                                        simplify
+                                                                                        by sorry
+                                                                                      next
+                                                                                        case Mock_AppendSubmittedBallot_case_2
+                                                                                        simplify
+                                                                                        by sorry
+                                                                                      next
+                                                                                        case Mock_DBBTimestamp
                                                                                         solve( BallotStyleCount( ~ec,
                                                                                                                  %i.1
-                                                                                               ) ▶₀ #vr.24 )
+                                                                                               ) ▶₀ #vr.23 )
                                                                                           case Mock_BallotStyle
                                                                                           solve( BallotStyleCount( ~ec,
                                                                                                                    %i.1
@@ -935,24 +768,24 @@ solve( !BB_Entry( ~bbid, sub_bb_entry, sub_tracker, %idx_sub
                                                                                         qed
                                                                                       qed
                                                                                     qed
-                                                                                  next
-                                                                                    case Mock_EC_And_Initial_Counters
-                                                                                    simplify
-                                                                                    by contradiction
-                                                                                       /* cyclic */
                                                                                   qed
                                                                                 next
                                                                                   case Mock_EC_And_Initial_Counters
-                                                                                  by sorry
+                                                                                  simplify
+                                                                                  by contradiction
+                                                                                     /* cyclic */
                                                                                 qed
                                                                               next
-                                                                                case Mock_VoterRegistration_Eligible
+                                                                                case Mock_EC_And_Initial_Counters
                                                                                 by sorry
                                                                               qed
                                                                             next
                                                                               case Mock_VoterRegistration_Eligible
                                                                               by sorry
                                                                             qed
+                                                                          next
+                                                                            case Mock_VoterRegistration_Eligible
+                                                                            by sorry
                                                                           qed
                                                                         qed
                                                                       qed

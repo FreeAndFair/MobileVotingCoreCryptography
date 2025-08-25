@@ -1,5 +1,10 @@
 /* Lemmas for voter authentication protocol. */
 
+dnl
+dnl We only include the sources lemma in the standalone version, as
+dnl the necessary sources lemma is different for composed versions.
+dnl
+ifdef(<!STANDALONE!>, <!
 /* Sources Lemma */
 
 /*
@@ -21,7 +26,7 @@ lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Sources_VoterAut
   "
 dnl Include the proof script, if one exists.
 sinclude(PROOF_SCRIPT)dnl
-
+!>, <!!>)
 /* Protocol Safety Lemmas */
 
 /*
@@ -256,7 +261,7 @@ predicates:
 /*
   This lemma states that it is possible for voting applications to reach
   states where voters have successfully authenticated (eligible and ineligible)
-  and unsuccessfully authenticated for (at least) two distinct voters of each
+  and unsuccessfully authenticated for (at least) one distinct voter of each
   result.
 
   Tamarin should be able to prove this automatically, as with the above lemmas,
@@ -350,7 +355,7 @@ lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_Vo
       &
         AS_ReportAuthenticationResult_Trace(s_si1, 'successful')@i_si1
       &
-        AS_ReportAuthenticationResult_Trace(s_si1, 'successful')@i_si2
+        AS_ReportAuthenticationResult_Trace(s_si2, 'successful')@i_si2
       &
         AS_ReportAuthenticationResult_Trace(s_u1, 'unsuccessful')@i_u1
       &
@@ -366,7 +371,7 @@ lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_Vo
       &
         EAS_ReceiveAuthenticationResult_Trace(s_u1, 'unsuccessful', 'ineligible', 'ineligible')@j_u1
       &
-        EAS_ReceiveAuthenticationResult_Trace(s_u1, 'unsuccessful', 'ineligible', 'ineligible')@j_u2
+        EAS_ReceiveAuthenticationResult_Trace(s_u2, 'unsuccessful', 'ineligible', 'ineligible')@j_u2
       &
         VA_ReceiveAuthenticationResult_Trace(ec, va_id_se1, 'eligible', pseudo1, pk_se1, bs1)@k_se1
       &
@@ -427,7 +432,7 @@ sinclude(PROOF_SCRIPT)dnl
  */
 define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, ifdef(<!STANDALONE!>, <!subprotocols/includes/proofs/VoterAuthentication_DBB_Authorize_Voter.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>), <!/tmp/NOPROOFSCRIPT!>))dnl
 syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
-lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_DBB_Authorize_Voter:
+lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_VoterAuthentication_DBB_Authorize_Voter:
   exists-trace
   "
     Ex ec va_id session_id pseudo pk_voter ballot_style v %idx #i #j #k1 #k2.
@@ -437,7 +442,7 @@ lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_DB
       &
         VA_ReceiveAuthenticationResult_Trace(ec, va_id, 'eligible', pseudo, pk_voter, ballot_style)@k1
       &
-        DBB_ReceiveAuthorizeVoter_Trace(ec, pseudo, pk_voter, ballot_style, %idx)@k2
+        DBB_Voter_Authorized_Trace(ec, pseudo, pk_voter, ballot_style, %idx)@k2
       &
         #i < #j & #j < #k1 & #j < #k2
       &

@@ -46,9 +46,6 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                                     >,
                                     %idx
                  )[+] ▶₂ #vr.13 )
-            case BallotSubmission_DBB_AppendSubmittedBallot_case_1
-            by contradiction /* from formulas */
-          next
             case BallotSubmission_DBB_AppendSubmittedBallot_case_2
             solve( SecureReceive( ~cid, <~ec, 'DBB'>, ~va_id,
                                   <'DBB_Ballot_Tracker', ~ec,
@@ -258,9 +255,6 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                                                         case Mock_EC_And_Initial_Counters
                                                         solve( VoterCount( ~ec, %idx_ev
                                                                ) ▶₀ #vr.11 )
-                                                          case Mock_EC_And_Initial_Counters
-                                                          by contradiction /* from formulas */
-                                                        next
                                                           case Mock_VoterRegistration_Eligible
                                                           solve( BallotStyleCount( ~ec, %idx_bs
                                                                  ) ▶₀ #vr.10 )
@@ -273,20 +267,8 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                                                                 case Mock_EC_And_Initial_Counters
                                                                 solve( DBB_Clock( %ts.1
                                                                        ) ▶₁ #vr.13 )
-                                                                  case BallotSubmission_DBB_AppendSubmittedBallot_case_1
-                                                                  by sorry
-                                                                next
-                                                                  case BallotSubmission_DBB_AppendSubmittedBallot_case_2
-                                                                  by sorry
-                                                                next
                                                                   case BallotSubmission_Initialize_DBBTimestamp
                                                                   solve( DBB_Clock( %ts ) ▶₁ #vr.7 )
-                                                                    case BallotSubmission_DBB_AppendSubmittedBallot_case_1
-                                                                    by sorry
-                                                                  next
-                                                                    case BallotSubmission_DBB_AppendSubmittedBallot_case_2
-                                                                    by sorry
-                                                                  next
                                                                     case BallotSubmission_Initialize_DBBTimestamp
                                                                     solve( VoterCount( ~ec, %i.2
                                                                            ) ▶₀ #vr.4 )
@@ -309,23 +291,14 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                                                                               solve( BallotStyleCount( ~ec,
                                                                                                        %i
                                                                                      ) ▶₀ #vr.26 )
-                                                                                case Mock_BallotStyle
-                                                                                by sorry
-                                                                              next
                                                                                 case Mock_EC_And_Initial_Counters
                                                                                 solve( BallotStyleCount( ~ec,
                                                                                                          %i.2
                                                                                        ) ▶₀ #vr.32 )
-                                                                                  case Mock_BallotStyle
-                                                                                  by sorry
-                                                                                next
                                                                                   case Mock_EC_And_Initial_Counters
                                                                                   solve( BallotStyleCount( ~ec,
                                                                                                            %i.1
                                                                                          ) ▶₀ #vr.31 )
-                                                                                    case Mock_BallotStyle
-                                                                                    by sorry
-                                                                                  next
                                                                                     case Mock_EC_And_Initial_Counters
                                                                                     solve( BallotStyleCount( ~ec,
                                                                                                              %i
@@ -334,9 +307,6 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                                                                                       solve( BallotStyleCount( ~ec,
                                                                                                                %i
                                                                                              ) ▶₀ #vr.30 )
-                                                                                        case Mock_BallotStyle
-                                                                                        by sorry
-                                                                                      next
                                                                                         case Mock_EC_And_Initial_Counters
                                                                                         SOLVED // trace found
                                                                                       qed
@@ -344,109 +314,42 @@ solve( (#i1 < #i2)  ∥ (#i2 < #i1) )
                                                                                   qed
                                                                                 qed
                                                                               qed
-                                                                            next
-                                                                              case Mock_EC_And_Initial_Counters
-                                                                              simplify
-                                                                              by contradiction
-                                                                                 /* cyclic */
                                                                             qed
-                                                                          next
-                                                                            case Mock_EC_And_Initial_Counters
-                                                                            by sorry
                                                                           qed
-                                                                        next
-                                                                          case Mock_EC_And_Initial_Counters
-                                                                          by sorry
                                                                         qed
-                                                                      next
-                                                                        case Mock_VoterRegistration_Eligible
-                                                                        by sorry
                                                                       qed
                                                                     qed
                                                                   qed
                                                                 qed
-                                                              next
-                                                                case Mock_VoterRegistration_Eligible
-                                                                by sorry
                                                               qed
-                                                            next
-                                                              case Mock_EC_And_Initial_Counters
-                                                              simplify
-                                                              by sorry
                                                             qed
-                                                          next
-                                                            case Mock_EC_And_Initial_Counters
-                                                            by sorry
                                                           qed
                                                         qed
-                                                      next
-                                                        case Mock_VoterRegistration_Eligible
-                                                        by sorry
                                                       qed
-                                                    next
-                                                      case Mock_Voter_Authentication
-                                                      by sorry
                                                     qed
                                                   qed
-                                                next
-                                                  case Mock_EC_And_Initial_Counters
-                                                  simplify
-                                                  by sorry
                                                 qed
-                                              next
-                                                case Mock_EC_And_Initial_Counters
-                                                by sorry
                                               qed
-                                            next
-                                              case Mock_VoterRegistration_Eligible
-                                              by sorry
                                             qed
-                                          next
-                                            case Mock_EC_And_Initial_Counters
-                                            by sorry
                                           qed
                                         qed
                                       qed
-                                    next
-                                      case Mock_Voter_Authentication
-                                      by sorry
                                     qed
                                   qed
                                 qed
                               qed
                             qed
                           qed
-                        next
-                          case case_2
-                          by sorry
                         qed
                       qed
                     qed
-                  next
-                    case SecureChannel_Receive_case_2
-                    by sorry
                   qed
-                next
-                  case SecureChannel_Receive_case_2
-                  by sorry
                 qed
-              next
-                case SecureChannel_Receive_case_2
-                by sorry
               qed
-            next
-              case SecureChannel_Receive_case_2
-              by sorry
             qed
           qed
         qed
-      next
-        case BallotSubmission_DBB_AppendSubmittedBallot_case_2
-        by sorry
       qed
     qed
   qed
-next
-  case case_2
-  by sorry
 qed

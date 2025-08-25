@@ -208,14 +208,17 @@ rule VoterAuthentication_EAS_ReceiveAuthenticationComplete [role="EAS"]:
 rule VoterAuthentication_EAS_ReceiveAuthenticationResult_Successful_Eligible [role="EAS"]:
   let msg_auth_result_in = Msg_AS_Authentication_Result(~session_id, $voter_id, 'successful')
       msg_auth_result_out = Msg_EAS_Authentication_Result(~ec, 'eligible', pseudonym($voter_id), pk_voter, ballot_style)
-      msg_authorize_voter = Msg_EAS_Authorize_Voter(~ec, pseudonym($voter_id), pk_voter, ballot_style) in
+      msg_authorize_voter = Msg_EAS_Authorize_Voter(~ec, pseudonym($voter_id), pk_voter, ballot_style)
+      /* this message is signed because it will end up on the public bulletin board */
+      signed_msg_authorize_voter = <msg_authorize_voter, sign(msg_authorize_voter, '1', ~sk_eas)> in
     [ EAS_State_ReceiveAuthenticationResult(~ec, ~cid_as, ~cid_va, ~va_id, pk_voter, ~session_id, ~token),
+      !EASSecretKey(~ec, ~sk_eas),
       !EligibleVoter(~ec, $voter_id, ballot_style, %unused),
       SecureReceive(~cid_as, 'AS', <~ec, 'EAS'>, msg_auth_result_in),
       Fr(~cid_dbb) ]
   --[ EAS_ReceiveAuthenticationResult_Trace(~session_id, $voter_id, pseudonym($voter_id), ballot_style) ]->
     [ SecureSend(~cid_va, <~ec, 'EAS'>, ~va_id, msg_auth_result_out),
-      SecureSend(~cid_dbb, <~ec, 'EAS'>, <~ec, 'DBB'>, msg_authorize_voter) ]
+      SecureSend(~cid_dbb, <~ec, 'EAS'>, <~ec, 'DBB'>, signed_msg_authorize_voter) ]
 
 /*
   This rule receives the authentication result message from the AS for a
@@ -292,11 +295,16 @@ rule VoterAuthentication_EAS_ReceiveAuthenticationResult_Incomplete [role="EAS"]
   authorized public key).
  */
 rule VoterAuthentication_DBB_ReceiveAuthorizeVoter [role="DBB"]:
-  let msg_authorize_voter = Msg_EAS_Authorize_Voter(~ec, pseudo, pk_voter, ballot_style) in
+  let msg_authorize_voter = Msg_EAS_Authorize_Voter(~ec, pseudo, pk_voter, ~bs)
+      signed_msg_authorize_voter = <msg_authorize_voter, sig> in
     [ DBB_State_ReceiveAuthorizeVoter(~ec, %idx),
-      SecureReceive(~cid, <~ec, 'EAS'>, <~ec, 'DBB'>, msg_authorize_voter) ]
-  --[ DBB_ReceiveAuthorizeVoter_Trace(~ec, pseudo, pk_voter, ballot_style, %idx) ]->
-    [ !DBB_Voter_Authorized(~ec, pseudo, pk_voter, ballot_style, %idx),
+      !EASPublicKey(~ec, pk_eas),
+      SecureReceive(~cid, <~ec, 'EAS'>, <~ec, 'DBB'>, signed_msg_authorize_voter) ]
+  --[ DBB_Voter_Authorized_Trace(~ec, pseudo, pk_voter, ~bs, %idx),
+      SignatureVerified(sig, e1_sig(sig), pk(e3_sig(sig)), msg_authorize_voter,
+                        pk_eas, true) /* valid signature */ ]->
+    [ !DBB_Voter_Authorized(~ec, signed_msg_authorize_voter, pseudo, pk_voter, ~bs, %idx),
+      OUT_PSEUDO_TERM(sig),
       DBB_State_ReceiveAuthorizeVoter(~ec, %idx %+ %1) ]
 
 /*
@@ -321,7 +329,8 @@ rule VoterAuthentication_VA_Initialize [role="VA"]:
       Fr(~va_id),
       Fr(~sk_voter),
       Fr(~cid) ]
-  --[ VA_Initialize_Trace(~ec, ~va_id, pk_voter, $V) ]->
+  --[ VA_Initialize_Trace(~ec, ~va_id, pk_voter, $V),
+      HonestSignatureKey(pk(~sk_voter)) ]->
     [ SecureSend(~cid, ~va_id, <~ec, 'EAS'>, msg_request_authentication),
       VA_State_ReceiveAuthenticationSession(~ec, ~va_id, $V, ~sk_voter, ~cid) ]
 
@@ -368,7 +377,8 @@ rule VoterAuthentication_VA_ReceiveAuthenticationResult_Eligible [role="VA"]:
       msg_auth_result = Msg_EAS_Authentication_Result(~ec, 'eligible', pseudo, pk_voter, ballot_style) in
     [ VA_State_ReceiveAuthenticationResult(~ec, ~va_id, $V, ~sk_voter, ~cid, ~token),
       SecureReceive(~cid, <~ec, 'EAS'>, ~va_id, msg_auth_result) ]
-  --[ VA_ReceiveAuthenticationResult_Trace(~ec, ~va_id, 'eligible', pseudo, pk_voter, ballot_style) ]->
+  --[ VA_ReceiveAuthenticationResult_Trace(~ec, ~va_id, 'eligible', pseudo, pk_voter, ballot_style),
+      IN_SECURE_RECEIVE(~cid, <~ec, 'EAS'>, ~va_id, msg_auth_result) ]->
     [ !VA_Eligible_Voter(~ec, ~va_id, pseudo, ~sk_voter, ballot_style),
       VA_State_PresentBallot(~ec, ~va_id, $V, ~sk_voter) ]
 

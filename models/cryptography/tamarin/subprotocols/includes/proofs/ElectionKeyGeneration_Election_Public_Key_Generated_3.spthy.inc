@@ -22,9 +22,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                       aenc(pairwise_share(x, x.1), pk(~sk_encrypt_trustee1))>,
                                      sig_pairwise_share_in1, %idx_pairwise_share_in1
                    ) ▶₀ #i1 )
-              case TrusteeBoard_Trustee_Update_case_1
-              by sorry
-            next
               case TrusteeBoard_Trustee_Update_case_2
               solve( TAS_Trustee_Trace( 'Trustee1', pk(~sk_sign_trustee1),
                                         pk(~sk_encrypt_trustee1)
@@ -44,9 +41,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                              <'Trustee_Check_Value', ~election_setup, cv1>,
                                              sig_check_value1, %idx_check_value1
                            ) ▶₁ #i1 )
-                      case TrusteeBoard_Trustee_Update_case_1
-                      by sorry
-                    next
                       case TrusteeBoard_Trustee_Update_case_2
                       solve( TAS_Trustee_Trace( 'Trustee1', pk(~sk_sign_trustee1),
                                                 pk(~sk_encrypt_trustee1)
@@ -67,9 +61,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                      >,
                                                      sig_pairwise_share_in2, %idx_pairwise_share_in2
                                    ) ▶₂ #i1 )
-                              case TrusteeBoard_Trustee_Update_case_1
-                              by sorry
-                            next
                               case TrusteeBoard_Trustee_Update_case_2
                               solve( TAS_Trustee_Trace( 'Trustee2', pk(~sk_sign_trustee2),
                                                         pk(~sk_encrypt_trustee2)
@@ -82,9 +73,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                             cv2>,
                                                            sig_check_value2, %idx_check_value2
                                          ) ▶₃ #i1 )
-                                    case TrusteeBoard_Trustee_Update_case_1
-                                    by sorry
-                                  next
                                     case TrusteeBoard_Trustee_Update_case_2
                                     solve( TAS_Trustee_Trace( 'Trustee2', pk(~sk_sign_trustee2),
                                                               pk(~sk_encrypt_trustee2)
@@ -103,9 +91,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                  sig_pairwise_share_in3,
                                                                  %idx_pairwise_share_in3
                                                ) ▶₄ #i1 )
-                                          case TrusteeBoard_Trustee_Update_case_1
-                                          by sorry
-                                        next
                                           case TrusteeBoard_Trustee_Update_case_2
                                           solve( TAS_Trustee_Trace( 'Trustee3',
                                                                     pk(~sk_sign_trustee3),
@@ -121,9 +106,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                        sig_check_value3,
                                                                        %idx_check_value3
                                                      ) ▶₅ #i1 )
-                                                case TrusteeBoard_Trustee_Update_case_1
-                                                by sorry
-                                              next
                                                 case TrusteeBoard_Trustee_Update_case_2
                                                 solve( TAS_Trustee_Trace( 'Trustee3',
                                                                           pk(~sk_sign_trustee3),
@@ -146,9 +128,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                              sig_pairwise_share_in1,
                                                                              %idx_pairwise_share_in1.1
                                                            ) ▶₀ #i2 )
-                                                      case TrusteeBoard_Trustee_Update_case_1
-                                                      by sorry
-                                                    next
                                                       case TrusteeBoard_Trustee_Update_case_2
                                                       solve( TAS_Trustee_Trace( 'Trustee1',
                                                                                 pk(~sk_sign_trustee1),
@@ -168,9 +147,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                    sig_check_value1,
                                                                                    %idx_check_value1.1
                                                                  ) ▶₁ #i2 )
-                                                            case TrusteeBoard_Trustee_Update_case_1
-                                                            by sorry
-                                                          next
                                                             case TrusteeBoard_Trustee_Update_case_2
                                                             solve( TAS_Trustee_Trace( 'Trustee1',
                                                                                       pk(~sk_sign_trustee1),
@@ -195,9 +171,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                          sig_pairwise_share_in2,
                                                                                          %idx_pairwise_share_in2.1
                                                                        ) ▶₂ #i2 )
-                                                                  case TrusteeBoard_Trustee_Update_case_1
-                                                                  by sorry
-                                                                next
                                                                   case TrusteeBoard_Trustee_Update_case_2
                                                                   solve( TAS_Trustee_Trace( 'Trustee2',
                                                                                             pk(~sk_sign_trustee2),
@@ -230,9 +203,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                  sig_check_value2,
                                                                                                  %idx_check_value2.1
                                                                                ) ▶₃ #i2 )
-                                                                          case TrusteeBoard_Trustee_Update_case_1
-                                                                          by sorry
-                                                                        next
                                                                           case TrusteeBoard_Trustee_Update_case_2
                                                                           solve( TAS_Trustee_Trace( 'Trustee2',
                                                                                                     pk(~sk_sign_trustee2),
@@ -265,9 +235,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                          sig_pairwise_share_in3,
                                                                                                          %idx_pairwise_share_in3.1
                                                                                        ) ▶₄ #i2 )
-                                                                                  case TrusteeBoard_Trustee_Update_case_1
-                                                                                  by sorry
-                                                                                next
                                                                                   case TrusteeBoard_Trustee_Update_case_2
                                                                                   solve( TAS_Trustee_Trace( 'Trustee3',
                                                                                                             pk(~sk_sign_trustee3),
@@ -287,9 +254,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                sig_check_value3,
                                                                                                                %idx_check_value3.1
                                                                                              ) ▶₅ #i2 )
-                                                                                        case TrusteeBoard_Trustee_Update_case_1
-                                                                                        by sorry
-                                                                                      next
                                                                                         case TrusteeBoard_Trustee_Update_case_2
                                                                                         solve( TAS_Trustee_Trace( 'Trustee3',
                                                                                                                   pk(~sk_sign_trustee3),
@@ -314,9 +278,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                      sig_pairwise_share_in1,
                                                                                                                      %idx_pairwise_share_in1.2
                                                                                                    ) ▶₀ #i3 )
-                                                                                              case TrusteeBoard_Trustee_Update_case_1
-                                                                                              by sorry
-                                                                                            next
                                                                                               case TrusteeBoard_Trustee_Update_case_2
                                                                                               solve( TAS_Trustee_Trace( 'Trustee1',
                                                                                                                         pk(~sk_sign_trustee1),
@@ -336,9 +297,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                            sig_check_value1,
                                                                                                                            %idx_check_value1.1
                                                                                                          ) ▶₁ #i3 )
-                                                                                                    case TrusteeBoard_Trustee_Update_case_1
-                                                                                                    by sorry
-                                                                                                  next
                                                                                                     case TrusteeBoard_Trustee_Update_case_2
                                                                                                     solve( TAS_Trustee_Trace( 'Trustee1',
                                                                                                                               pk(~sk_sign_trustee1),
@@ -363,9 +321,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                  sig_pairwise_share_in2,
                                                                                                                                  %idx_pairwise_share_in2.2
                                                                                                                ) ▶₂ #i3 )
-                                                                                                          case TrusteeBoard_Trustee_Update_case_1
-                                                                                                          by sorry
-                                                                                                        next
                                                                                                           case TrusteeBoard_Trustee_Update_case_2
                                                                                                           solve( TAS_Trustee_Trace( 'Trustee2',
                                                                                                                                     pk(~sk_sign_trustee2),
@@ -385,9 +340,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                        sig_check_value2,
                                                                                                                                        %idx_check_value2.1
                                                                                                                      ) ▶₃ #i3 )
-                                                                                                                case TrusteeBoard_Trustee_Update_case_1
-                                                                                                                by sorry
-                                                                                                              next
                                                                                                                 case TrusteeBoard_Trustee_Update_case_2
                                                                                                                 solve( TAS_Trustee_Trace( 'Trustee2',
                                                                                                                                           pk(~sk_sign_trustee2),
@@ -412,9 +364,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                              sig_pairwise_share_in3,
                                                                                                                                              %idx_pairwise_share_in3.2
                                                                                                                            ) ▶₄ #i3 )
-                                                                                                                      case TrusteeBoard_Trustee_Update_case_1
-                                                                                                                      by sorry
-                                                                                                                    next
                                                                                                                       case TrusteeBoard_Trustee_Update_case_2
                                                                                                                       solve( TAS_Trustee_Trace( 'Trustee3',
                                                                                                                                                 pk(~sk_sign_trustee3),
@@ -447,9 +396,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                      sig_check_value3,
                                                                                                                                                      %idx_check_value3.1
                                                                                                                                    ) ▶₅ #i3 )
-                                                                                                                              case TrusteeBoard_Trustee_Update_case_1
-                                                                                                                              by sorry
-                                                                                                                            next
                                                                                                                               case TrusteeBoard_Trustee_Update_case_2
                                                                                                                               solve( TAS_Trustee_Trace( 'Trustee3',
                                                                                                                                                         pk(~sk_sign_trustee3),
@@ -470,18 +416,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                     solve( Trustee_State_ReceiveBBMessage( 'Trustee1',
                                                                                                                                                                            %idx_check_value1
                                                                                                                                            ) ▶₀ #vr.2 )
-                                                                                                                                      case ElectionKeyGeneration_TAS_Init
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_01
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_02
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_03
-                                                                                                                                      by sorry
-                                                                                                                                    next
                                                                                                                                       case TrusteeBoard_Trustee_Update_case_04
                                                                                                                                       solve( TAS_Trustee_Trace( 'Trustee1',
                                                                                                                                                                 pk(~sk_sign_trustee1),
@@ -494,18 +428,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                           solve( Trustee_State_ReceiveBBMessage( 'Trustee1',
                                                                                                                                                                                  %idx_pairwise_share_in1
                                                                                                                                                  ) ▶₀ #vr )
-                                                                                                                                            case ElectionKeyGeneration_TAS_Init
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_01
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_02
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_03
-                                                                                                                                            by sorry
-                                                                                                                                          next
                                                                                                                                             case TrusteeBoard_Trustee_Update_case_04
                                                                                                                                             solve( TAS_Trustee_Trace( 'Trustee2',
                                                                                                                                                                       pk(~sk_sign_trustee2),
@@ -518,18 +440,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                 solve( Trustee_State_ReceiveBBMessage( 'Trustee1',
                                                                                                                                                                                        %idx_pairwise_share_in2
                                                                                                                                                        ) ▶₀ #vr.4 )
-                                                                                                                                                  case ElectionKeyGeneration_TAS_Init
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_01
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_02
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_03
-                                                                                                                                                  by sorry
-                                                                                                                                                next
                                                                                                                                                   case TrusteeBoard_Trustee_Update_case_04
                                                                                                                                                   solve( TAS_Trustee_Trace( 'Trustee3',
                                                                                                                                                                             pk(~sk_sign_trustee3),
@@ -542,18 +452,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                       solve( Trustee_State_ReceiveBBMessage( 'Trustee1',
                                                                                                                                                                                              %idx_check_value2
                                                                                                                                                              ) ▶₀ #vr.6 )
-                                                                                                                                                        case ElectionKeyGeneration_TAS_Init
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_01
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_02
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_03
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
                                                                                                                                                         case TrusteeBoard_Trustee_Update_case_04
                                                                                                                                                         solve( TAS_Trustee_Trace( 'Trustee1',
                                                                                                                                                                                   pk(~sk_sign_trustee1),
@@ -579,18 +477,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                               solve( Trustee_State_ReceiveBBMessage( 'Trustee1',
                                                                                                                                                                                                      %idx_pairwise_share_in3
                                                                                                                                                                      ) ▶₀ #vr.8 )
-                                                                                                                                                                case ElectionKeyGeneration_TAS_Init
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_01
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_02
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_03
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
                                                                                                                                                                 case TrusteeBoard_Trustee_Update_case_04
                                                                                                                                                                 solve( TAS_Trustee_Trace( 'Trustee2',
                                                                                                                                                                                           pk(~sk_sign_trustee2),
@@ -603,18 +489,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                                     solve( Trustee_State_ReceiveBBMessage( 'Trustee1',
                                                                                                                                                                                                            %idx_check_value3
                                                                                                                                                                            ) ▶₀ #vr.10 )
-                                                                                                                                                                      case ElectionKeyGeneration_TAS_Init
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_01
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_02
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_03
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
                                                                                                                                                                       case TrusteeBoard_Trustee_Update_case_04
                                                                                                                                                                       solve( TAS_Trustee_Trace( 'Trustee3',
                                                                                                                                                                                                 pk(~sk_sign_trustee3),
@@ -627,18 +501,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                                           solve( Trustee_State_ReceiveBBMessage( 'Trustee2',
                                                                                                                                                                                                                  %idx_pairwise_share_in1
                                                                                                                                                                                  ) ▶₀ #vr.12 )
-                                                                                                                                                                            case ElectionKeyGeneration_TAS_Init
-                                                                                                                                                                            by sorry
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_01
-                                                                                                                                                                            by sorry
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_02
-                                                                                                                                                                            by sorry
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_03
-                                                                                                                                                                            by sorry
-                                                                                                                                                                          next
                                                                                                                                                                             case TrusteeBoard_Trustee_Update_case_04
                                                                                                                                                                             solve( TAS_Trustee_Trace( 'Trustee1',
                                                                                                                                                                                                       pk(~sk_sign_trustee1),
@@ -669,18 +531,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                                                       solve( Trustee_State_ReceiveBBMessage( 'Trustee2',
                                                                                                                                                                                                                              %idx_pairwise_share_in2
                                                                                                                                                                                              ) ▶₀ #vr.15 )
-                                                                                                                                                                                        case ElectionKeyGeneration_TAS_Init
-                                                                                                                                                                                        by sorry
-                                                                                                                                                                                      next
-                                                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_01
-                                                                                                                                                                                        by sorry
-                                                                                                                                                                                      next
-                                                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_02
-                                                                                                                                                                                        by sorry
-                                                                                                                                                                                      next
-                                                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_03
-                                                                                                                                                                                        by sorry
-                                                                                                                                                                                      next
                                                                                                                                                                                         case TrusteeBoard_Trustee_Update_case_04
                                                                                                                                                                                         solve( TAS_Trustee_Trace( 'Trustee2',
                                                                                                                                                                                                                   pk(~sk_sign_trustee2),
@@ -722,18 +572,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                                                                     solve( Trustee_State_ReceiveBBMessage( 'Trustee2',
                                                                                                                                                                                                                                            %idx_pairwise_share_in3
                                                                                                                                                                                                            ) ▶₀ #vr.18 )
-                                                                                                                                                                                                      case ElectionKeyGeneration_TAS_Init
-                                                                                                                                                                                                      by sorry
-                                                                                                                                                                                                    next
-                                                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_1
-                                                                                                                                                                                                      by sorry
-                                                                                                                                                                                                    next
-                                                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_2
-                                                                                                                                                                                                      by sorry
-                                                                                                                                                                                                    next
-                                                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_3
-                                                                                                                                                                                                      by sorry
-                                                                                                                                                                                                    next
                                                                                                                                                                                                       case TrusteeBoard_Trustee_Update_case_4
                                                                                                                                                                                                       solve( TAS_Trustee_Trace( 'Trustee3',
                                                                                                                                                                                                                                 pk(~sk_sign_trustee3),
@@ -762,18 +600,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                                                                                 solve( Trustee_State_ReceiveBBMessage( 'Trustee3',
                                                                                                                                                                                                                                                        %idx_pairwise_share_in1
                                                                                                                                                                                                                        ) ▶₀ #vr.21 )
-                                                                                                                                                                                                                  case ElectionKeyGeneration_TAS_Init
-                                                                                                                                                                                                                  by sorry
-                                                                                                                                                                                                                next
-                                                                                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_1
-                                                                                                                                                                                                                  by sorry
-                                                                                                                                                                                                                next
-                                                                                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_2
-                                                                                                                                                                                                                  by sorry
-                                                                                                                                                                                                                next
-                                                                                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_3
-                                                                                                                                                                                                                  by sorry
-                                                                                                                                                                                                                next
                                                                                                                                                                                                                   case TrusteeBoard_Trustee_Update_case_4
                                                                                                                                                                                                                   solve( TAS_Trustee_Trace( 'Trustee1',
                                                                                                                                                                                                                                             pk(~sk_sign_trustee1),
@@ -805,18 +631,6 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                                                                                             solve( Trustee_State_ReceiveBBMessage( 'Trustee3',
                                                                                                                                                                                                                                                                    %idx_pairwise_share_in2
                                                                                                                                                                                                                                    ) ▶₀ #vr.24 )
-                                                                                                                                                                                                                              case ElectionKeyGeneration_TAS_Init
-                                                                                                                                                                                                                              by sorry
-                                                                                                                                                                                                                            next
-                                                                                                                                                                                                                              case TrusteeBoard_Trustee_Update_case_1
-                                                                                                                                                                                                                              by sorry
-                                                                                                                                                                                                                            next
-                                                                                                                                                                                                                              case TrusteeBoard_Trustee_Update_case_2
-                                                                                                                                                                                                                              by sorry
-                                                                                                                                                                                                                            next
-                                                                                                                                                                                                                              case TrusteeBoard_Trustee_Update_case_3
-                                                                                                                                                                                                                              by sorry
-                                                                                                                                                                                                                            next
                                                                                                                                                                                                                               case TrusteeBoard_Trustee_Update_case_4
                                                                                                                                                                                                                               solve( TAS_Trustee_Trace( 'Trustee3',
                                                                                                                                                                                                                                                         pk(~sk_sign_trustee3),
@@ -1549,90 +1363,24 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                                                                                                               qed
                                                                                                                                                                                                                                             qed
                                                                                                                                                                                                                                           qed
-                                                                                                                                                                                                                                        next
-                                                                                                                                                                                                                                          case TrusteeBoard_Trustee_Update_case_1
-                                                                                                                                                                                                                                          by sorry
-                                                                                                                                                                                                                                        next
-                                                                                                                                                                                                                                          case TrusteeBoard_Trustee_Update_case_2
-                                                                                                                                                                                                                                          by sorry
-                                                                                                                                                                                                                                        next
-                                                                                                                                                                                                                                          case TrusteeBoard_Trustee_Update_case_3
-                                                                                                                                                                                                                                          by sorry
-                                                                                                                                                                                                                                        next
-                                                                                                                                                                                                                                          case TrusteeBoard_Trustee_Update_case_4
-                                                                                                                                                                                                                                          by sorry
-                                                                                                                                                                                                                                        next
-                                                                                                                                                                                                                                          case TrusteeBoard_Trustee_Update_case_5
-                                                                                                                                                                                                                                          by sorry
-                                                                                                                                                                                                                                        next
-                                                                                                                                                                                                                                          case TrusteeBoard_Trustee_Update_case_6
-                                                                                                                                                                                                                                          by contradiction
-                                                                                                                                                                                                                                             /*
-                                                                                                                                                                                                                                             cyclic
-                                                                                                                                                                                                                                             */
                                                                                                                                                                                                                                         qed
                                                                                                                                                                                                                                       qed
                                                                                                                                                                                                                                     qed
                                                                                                                                                                                                                                   qed
                                                                                                                                                                                                                                 qed
                                                                                                                                                                                                                               qed
-                                                                                                                                                                                                                            next
-                                                                                                                                                                                                                              case TrusteeBoard_Trustee_Update_case_5
-                                                                                                                                                                                                                              by sorry
-                                                                                                                                                                                                                            next
-                                                                                                                                                                                                                              case TrusteeBoard_Trustee_Update_case_6
-                                                                                                                                                                                                                              by sorry
-                                                                                                                                                                                                                            next
-                                                                                                                                                                                                                              case TrusteeBoard_Trustee_Update_case_7
-                                                                                                                                                                                                                              by contradiction
-                                                                                                                                                                                                                                 /*
-                                                                                                                                                                                                                                 cyclic
-                                                                                                                                                                                                                                 */
                                                                                                                                                                                                                             qed
                                                                                                                                                                                                                           qed
                                                                                                                                                                                                                         qed
                                                                                                                                                                                                                       qed
                                                                                                                                                                                                                     qed
                                                                                                                                                                                                                   qed
-                                                                                                                                                                                                                next
-                                                                                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_5
-                                                                                                                                                                                                                  by sorry
-                                                                                                                                                                                                                next
-                                                                                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_6
-                                                                                                                                                                                                                  by sorry
-                                                                                                                                                                                                                next
-                                                                                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_7
-                                                                                                                                                                                                                  by sorry
-                                                                                                                                                                                                                next
-                                                                                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_8
-                                                                                                                                                                                                                  by contradiction
-                                                                                                                                                                                                                     /*
-                                                                                                                                                                                                                     cyclic
-                                                                                                                                                                                                                     */
                                                                                                                                                                                                                 qed
                                                                                                                                                                                                               qed
                                                                                                                                                                                                             qed
                                                                                                                                                                                                           qed
                                                                                                                                                                                                         qed
                                                                                                                                                                                                       qed
-                                                                                                                                                                                                    next
-                                                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_5
-                                                                                                                                                                                                      by sorry
-                                                                                                                                                                                                    next
-                                                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_6
-                                                                                                                                                                                                      by sorry
-                                                                                                                                                                                                    next
-                                                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_7
-                                                                                                                                                                                                      by sorry
-                                                                                                                                                                                                    next
-                                                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_8
-                                                                                                                                                                                                      by contradiction
-                                                                                                                                                                                                         /*
-                                                                                                                                                                                                         cyclic
-                                                                                                                                                                                                         */
-                                                                                                                                                                                                    next
-                                                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_9
-                                                                                                                                                                                                      by sorry
                                                                                                                                                                                                     qed
                                                                                                                                                                                                   qed
                                                                                                                                                                                                 qed
@@ -1640,283 +1388,31 @@ solve( !Trustee_ElectionSetup( 'Trustee1', election_setup
                                                                                                                                                                                             qed
                                                                                                                                                                                           qed
                                                                                                                                                                                         qed
-                                                                                                                                                                                      next
-                                                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_05
-                                                                                                                                                                                        by sorry
-                                                                                                                                                                                      next
-                                                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_06
-                                                                                                                                                                                        by sorry
-                                                                                                                                                                                      next
-                                                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_07
-                                                                                                                                                                                        by sorry
-                                                                                                                                                                                      next
-                                                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_08
-                                                                                                                                                                                        by sorry
-                                                                                                                                                                                      next
-                                                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_09
-                                                                                                                                                                                        by contradiction
-                                                                                                                                                                                           /*
-                                                                                                                                                                                           cyclic
-                                                                                                                                                                                           */
-                                                                                                                                                                                      next
-                                                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_10
-                                                                                                                                                                                        by sorry
                                                                                                                                                                                       qed
                                                                                                                                                                                     qed
                                                                                                                                                                                   qed
                                                                                                                                                                                 qed
                                                                                                                                                                               qed
                                                                                                                                                                             qed
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_05
-                                                                                                                                                                            by sorry
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_06
-                                                                                                                                                                            by sorry
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_07
-                                                                                                                                                                            by sorry
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_08
-                                                                                                                                                                            by sorry
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_09
-                                                                                                                                                                            by sorry
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_10
-                                                                                                                                                                            by contradiction
-                                                                                                                                                                               /*
-                                                                                                                                                                               cyclic
-                                                                                                                                                                               */
-                                                                                                                                                                          next
-                                                                                                                                                                            case TrusteeBoard_Trustee_Update_case_11
-                                                                                                                                                                            by sorry
                                                                                                                                                                           qed
                                                                                                                                                                         qed
                                                                                                                                                                       qed
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_05
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_06
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_07
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_08
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_09
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_10
-                                                                                                                                                                      by contradiction
-                                                                                                                                                                         /*
-                                                                                                                                                                         cyclic
-                                                                                                                                                                         */
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_11
-                                                                                                                                                                      by sorry
-                                                                                                                                                                    next
-                                                                                                                                                                      case TrusteeBoard_Trustee_Update_case_12
-                                                                                                                                                                      by sorry
                                                                                                                                                                     qed
                                                                                                                                                                   qed
                                                                                                                                                                 qed
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_05
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_06
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_07
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_08
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_09
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_10
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_11
-                                                                                                                                                                by contradiction
-                                                                                                                                                                   /*
-                                                                                                                                                                   cyclic
-                                                                                                                                                                   */
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_12
-                                                                                                                                                                by sorry
-                                                                                                                                                              next
-                                                                                                                                                                case TrusteeBoard_Trustee_Update_case_13
-                                                                                                                                                                by sorry
                                                                                                                                                               qed
                                                                                                                                                             qed
                                                                                                                                                           qed
                                                                                                                                                         qed
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_05
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_06
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_07
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_08
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_09
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_10
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_11
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_12
-                                                                                                                                                        by contradiction
-                                                                                                                                                           /*
-                                                                                                                                                           cyclic
-                                                                                                                                                           */
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_13
-                                                                                                                                                        by sorry
-                                                                                                                                                      next
-                                                                                                                                                        case TrusteeBoard_Trustee_Update_case_14
-                                                                                                                                                        by sorry
                                                                                                                                                       qed
                                                                                                                                                     qed
                                                                                                                                                   qed
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_05
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_06
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_07
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_08
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_09
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_10
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_11
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_12
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_13
-                                                                                                                                                  by contradiction
-                                                                                                                                                     /*
-                                                                                                                                                     cyclic
-                                                                                                                                                     */
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_14
-                                                                                                                                                  by sorry
-                                                                                                                                                next
-                                                                                                                                                  case TrusteeBoard_Trustee_Update_case_15
-                                                                                                                                                  by sorry
                                                                                                                                                 qed
                                                                                                                                               qed
                                                                                                                                             qed
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_05
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_06
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_07
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_08
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_09
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_10
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_11
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_12
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_13
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_14
-                                                                                                                                            by contradiction
-                                                                                                                                               /*
-                                                                                                                                               cyclic
-                                                                                                                                               */
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_15
-                                                                                                                                            by sorry
-                                                                                                                                          next
-                                                                                                                                            case TrusteeBoard_Trustee_Update_case_16
-                                                                                                                                            by sorry
                                                                                                                                           qed
                                                                                                                                         qed
                                                                                                                                       qed
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_05
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_06
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_07
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_08
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_09
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_10
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_11
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_12
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_13
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_14
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_15
-                                                                                                                                      by contradiction
-                                                                                                                                         /*
-                                                                                                                                         cyclic
-                                                                                                                                         */
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_16
-                                                                                                                                      by sorry
-                                                                                                                                    next
-                                                                                                                                      case TrusteeBoard_Trustee_Update_case_17
-                                                                                                                                      by sorry
                                                                                                                                     qed
                                                                                                                                   qed
                                                                                                                                 qed

@@ -253,7 +253,8 @@ rule BallotCast_DBB_ReceiveCastBallot [role="DBB"]:
       /* we don't verify the signature of the submitted ballot because
          it's already on the bulletin board, but we do check that it has
          the same public key */
-      Eq(pk_voter_cast, pk_voter_submit) ]->
+      Eq(pk_voter_cast, pk_voter_submit),
+      OUT_PSEUDO_TERM(sig_cast) ]->
     [ !DBB_Cast_Ballot(~ec, ~va_id, ~cid, pseudo, pk_voter_cast, tracker, signed_msg_submit, signed_msg_cast) ]
 
 /*
@@ -367,7 +368,7 @@ rule BallotCast_DBB_AppendCastBallot [role="DBB"]:
       !BB_Entry(~bbid, e_unused, eh_unused, %idx) ]
   --[ DBB_AppendCastBallot_Trace(~ec, ~va_id, signed_msg_auth, signed_msg_submit, signed_msg_cast, ~bbid, %idx),
       Unique(<'DBB_AppendCastBallot', signed_msg_auth, signed_msg_submit, signed_msg_cast, %idx>),
-      AuthorizationNotOnB(~bbid, signed_msg_auth),
+      AuthorizationNotOnBB(~bbid, signed_msg_auth),
       CastNotOnBB(~bbid, signed_msg_submit, signed_msg_cast) ]->
     [ BB_Append_Request(~bbid, bb_entry_auth, %idx),
       BB_Append_Request(~bbid, bb_entry_cast, %idx %+ %1),

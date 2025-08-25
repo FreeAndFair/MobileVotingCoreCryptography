@@ -27,7 +27,7 @@ rule Mock_Voter_Authentication [role="Mock"]:
   let pk_voter = pk(~sk_voter)
       pseudo = pseudonym($V)
       msg_auth = Msg_EAS_Authorize_Voter(~ec, pseudo, pk_voter, ~bs)
-      signed_msg_auth = sign(msg_auth, '1', ~sk_eas) in
+      signed_msg_auth = <msg_auth, sign(msg_auth, '1', ~sk_eas)> in
     [ DBB_State_ReceiveAuthorizeVoter(~ec, %i),
       !BallotStyle(~ec, ~bs, %idx_bs),
       !EligibleVoter(~ec, $V, ~bs, %idx_ev),

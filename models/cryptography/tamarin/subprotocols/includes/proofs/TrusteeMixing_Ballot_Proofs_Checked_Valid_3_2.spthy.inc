@@ -5,12 +5,6 @@ solve( !Trustee_BBEntry( t, 'Trustee0',
                           ny_encrypt_c2(b, k, r), ny_encrypt_p(b, k, r)>,
                          sig_initial_ballots, %idx_initial_ballots
        ) ▶₁ #i )
-  case TrusteeBoard_Trustee_Update_case_1
-  by sorry
-next
-  case TrusteeBoard_Trustee_Update_case_2
-  by sorry
-next
   case TrusteeBoard_Trustee_Update_case_3
   solve( (¬('Trustee0' = t))  ∥
          (∃ #j.
@@ -54,36 +48,6 @@ next
               solve( Trustee_State_ReceiveBBMessage( 'Trustee1',
                                                      %idx_initial_ballots
                      ) ▶₀ #vr )
-                case TrusteeBoard_Trustee_Update_case_01
-                by sorry
-              next
-                case TrusteeBoard_Trustee_Update_case_02
-                by sorry
-              next
-                case TrusteeBoard_Trustee_Update_case_03
-                by sorry
-              next
-                case TrusteeBoard_Trustee_Update_case_04
-                by sorry
-              next
-                case TrusteeBoard_Trustee_Update_case_05
-                by contradiction /* cyclic */
-              next
-                case TrusteeBoard_Trustee_Update_case_06
-                by sorry
-              next
-                case TrusteeBoard_Trustee_Update_case_07
-                by sorry
-              next
-                case TrusteeBoard_Trustee_Update_case_08
-                by sorry
-              next
-                case TrusteeBoard_Trustee_Update_case_09
-                by sorry
-              next
-                case TrusteeBoard_Trustee_Update_case_10
-                by sorry
-              next
                 case TrusteeMixing_TAS_Init
                 solve( TAS_State_ReceiveTrusteeMessage( %1 ) ▶₀ #vr.1 )
                   case TrusteeMixing_TAS_Init
@@ -94,12 +58,6 @@ next
           qed
         qed
       qed
-    next
-      case TrusteeMixing_TAS_Init_case_2
-      by sorry
     qed
-  next
-    case case_2
-    by sorry
   qed
 qed

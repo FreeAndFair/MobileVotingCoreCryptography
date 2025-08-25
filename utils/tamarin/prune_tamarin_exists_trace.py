@@ -33,7 +33,7 @@ from typing import List, Literal, Optional, Dict
 
 # Tamarin keywords that indicate the beginnings of proof blocks,
 # and a function to find them in lines.
-Head = Literal["simplify", "solve", "case", "qed", "next", "other"]
+Head = Literal["solve", "case", "qed", "next", "other"]
 
 # Determine the Tamarin keyword on a frame boundary.
 def head_of(line: str) -> Head:
@@ -60,7 +60,6 @@ def is_success(line: str, success_res: List[re.Pattern]) -> bool:
 # Data structures for tracking proof frames, cases, etc.
 @dataclass
 class Frame:
-    kind: Literal["simplify", "solve"]
     open_idx: int
     close_idx: Optional[int] = None
     keep: bool = False
@@ -82,7 +81,7 @@ class ParseResult:
 def parse(lines: List[str], success_res: List[re.Pattern], first_success_only: bool) -> ParseResult:
     """
     Semantics:
-      - 'simplify' and 'solve(' open frames (pushed on frame_stack).
+      - 'solve(' opens a frame (pushed on frame_stack).
       - 'case' pushes a case marker (separate stack).
       - 'next' pops one case marker.
       - 'qed' pops exactly one frame (solve or simplify); if a solve closes, all
@@ -96,9 +95,9 @@ def parse(lines: List[str], success_res: List[re.Pattern], first_success_only: b
     all_cases: Dict[int, CaseInfo] = {}
     first_success_seen = False
 
-    def push_frame(kind: Literal["simplify", "solve"], i: int):
+    def push_frame(i: int):
         parent = frame_stack[-1] if frame_stack else None
-        fr = Frame(kind=kind, open_idx=i, parent=parent, case_depth_start=len(case_stack))
+        fr = Frame(open_idx=i, parent=parent, case_depth_start=len(case_stack))
         (parent.children if parent else roots).append(fr)
         frame_stack.append(fr)
 
@@ -112,10 +111,8 @@ def parse(lines: List[str], success_res: List[re.Pattern], first_success_only: b
             first_success_seen = True
 
         h = head_of(ln)
-        if h == "simplify":
-            push_frame("simplify", i)
-        elif h == "solve":
-            push_frame("solve", i)
+        if h == "solve":
+            push_frame(i)
         elif h == "case":
             cs = CaseInfo(open_idx=i, keep=False)
             case_stack.append(cs)
@@ -124,9 +121,8 @@ def parse(lines: List[str], success_res: List[re.Pattern], first_success_only: b
             if frame_stack:
                 fr = frame_stack.pop()
                 fr.close_idx = i
-                if fr.kind == "solve":
-                    while len(case_stack) > fr.case_depth_start:
-                        case_stack.pop()
+                while len(case_stack) > fr.case_depth_start:
+                    case_stack.pop()
         elif h == "next":
             if case_stack:
                 case_stack.pop()
@@ -155,6 +151,8 @@ def emit(lines: List[str], parsed: ParseResult) -> List[str]:
     frame_stack: List[Frame] = []
     case_stack: List[CaseInfo] = []
 
+    at_beginning = True
+    last_output_qed = False
     for i, ln in enumerate(lines):
         h = head_of(ln)
 
@@ -172,16 +170,21 @@ def emit(lines: List[str], parsed: ParseResult) -> List[str]:
         # Compute context flags.
         top = frame_stack[-1] if frame_stack else None
         on_kept_path = bool(top and has_kept_desc(top))
-        in_kept_solve = any(f.kind == "solve" and has_kept_desc(f) for f in frame_stack)
+        in_kept_solve = any(has_kept_desc(f) for f in frame_stack)
         all_cases_kept = all(c.keep for c in case_stack)
 
         # Determine output.
         if h == "next":
             pass  # Never output "next".
+        elif h == "simplify":
+            # output "simplify" if it's at the beginning or on the kept path,
+            # but never right after "qed"
+            if (not last_output_qed) and (on_kept_path or at_beginning):
+                out.append(ln)
         elif h == "case":
             if on_kept_path and case_keep_map.get(i, False):
                 out.append(ln)
-        elif h in ("simplify","solve"):
+        elif h == "solve":
             if on_kept_path:
                 out.append(ln)
         elif h == "qed":
@@ -189,16 +192,18 @@ def emit(lines: List[str], parsed: ParseResult) -> List[str]:
             closing = frame_stack[-1] if frame_stack else None
             if closing and has_kept_desc(closing):
                 out.append(ln)
+                last_output_qed = True
             # Pop the frame and clear cases if a solve closes.
             if frame_stack:
                 fr = frame_stack.pop()
-                if fr.kind == "solve":
-                    while case_stack and len(case_stack) > fr.case_depth_start:
-                        case_stack.pop()
+                while case_stack and len(case_stack) > fr.case_depth_start:
+                    case_stack.pop()
             continue
         else:
             if in_kept_solve and all_cases_kept:
                 out.append(ln)
+
+        at_beginning = False
 
     return out
 

@@ -54,4 +54,21 @@ next
     case SecureChannel_Receive_case_2
     by contradiction /* from formulas */
   qed
+next
+  case VoterAuthentication_VA_ReceiveAuthenticationResult_Eligible
+  solve( VA_State_ReceiveAuthenticationResult( ~ec, ~va_id, $V,
+                                               ~sk_voter, ~cid, ~token
+         ) ▶₀ #i )
+    case VoterAuthentication_VA_ReceiveAuthenticationComplete
+    solve( SecureReceive( ~cid, <~ec, 'EAS'>, ~va_id,
+                          <'EAS_Authentication_Result', 'eligible', ~ec, pseudo,
+                           pk(~sk_voter), ballot_style>
+           ) ▶₁ #i )
+      case SecureChannel_Receive_case_1
+      by contradiction /* from formulas */
+    next
+      case SecureChannel_Receive_case_2
+      by contradiction /* from formulas */
+    qed
+  qed
 qed

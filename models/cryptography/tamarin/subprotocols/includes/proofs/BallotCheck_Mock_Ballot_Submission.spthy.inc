@@ -18,9 +18,6 @@ solve( VA_State_PresentBallot( ~ec, ~va_id, $V, ~sk_voter ) ▶₀ #i )
             solve( VoterCount( ~ec, %idx_ev ) ▶₀ #vr.2 )
               case Mock_EC_And_Initial_Counters
               solve( BallotStyleCount( ~ec, %idx_bs_unused ) ▶₀ #vr.4 )
-                case Mock_BallotStyle
-                by sorry
-              next
                 case Mock_EC_And_Initial_Counters
                 solve( VoterCount( ~ec, %idx_ev_unused ) ▶₀ #vr.5 )
                   case Mock_EC_And_Initial_Counters
@@ -31,46 +28,19 @@ solve( VA_State_PresentBallot( ~ec, ~va_id, $V, ~sk_voter ) ▶₀ #i )
                       solve( DBB_State_ReceiveAuthorizeVoter( ~ec, %i.1 ) ▶₀ #vr.6 )
                         case Mock_Finalize_Election_Setup
                         solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.6 )
-                          case Mock_BallotStyle
-                          by sorry
-                        next
                           case Mock_EC_And_Initial_Counters
                           solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.7 )
-                            case Mock_BallotStyle
-                            by sorry
-                          next
                             case Mock_EC_And_Initial_Counters
                             SOLVED // trace found
                           qed
                         qed
-                      next
-                        case Mock_Voter_Authentication
-                        by sorry
                       qed
-                    next
-                      case Mock_VoterRegistration_Eligible
-                      by sorry
                     qed
-                  next
-                    case Mock_EC_And_Initial_Counters
-                    by sorry
                   qed
-                next
-                  case Mock_VoterRegistration_Eligible
-                  by sorry
                 qed
               qed
-            next
-              case Mock_VoterRegistration_Eligible
-              by sorry
             qed
-          next
-            case Mock_EC_And_Initial_Counters
-            by sorry
           qed
-        next
-          case Mock_Voter_Authentication
-          by sorry
         qed
       qed
     qed

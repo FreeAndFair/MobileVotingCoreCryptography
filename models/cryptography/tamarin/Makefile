@@ -146,8 +146,8 @@ cv: clean subprotocols
 		$(SPTHY) || exit 1;)
 	@cat output/*.out | grep ProofScript | grep -v NoProofScript | grep -v verified | grep -v lemma > output/combined-proofscript-results.out || echo "RESULT: all proof scripts verified"
 	@cat output/combined-proofscript-results.out
-	@! [ -s output/combined-proofscript-results.out ]
 	@grep falsified output/*.out || echo "RESULT: no lemmas falsified"
+	@! [ -s output/combined-proofscript-results.out ]
 	@ ! grep -q falsified output/*.out
 
 # List of phony targets

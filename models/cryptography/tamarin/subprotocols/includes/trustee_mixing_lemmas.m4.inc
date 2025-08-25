@@ -13,7 +13,7 @@
   with a threshold of <!!>TRUSTEE_THRESHOLD<!!>, it can be included
   below.
  */
-define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/Sources_TrusteeMixing_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
+define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, ifdef(<!STANDALONE!>, <!subprotocols/includes/proofs/Sources_TrusteeMixing_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>), <!/tmp/NOPROOFSCRIPT!>))dnl
 syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
 lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Sources_TrusteeMixing [sources]:
   "

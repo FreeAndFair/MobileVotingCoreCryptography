@@ -17,7 +17,8 @@ rule BallotCheck_VA_Check [role="VA"]:
   let pk_voter = pk(~sk_voter) in
     [ VA_State_CheckOrCast(~ec, ~va_id, $V, ~ballot, cryptograms, ~r, tracker),
       !VA_Eligible_Voter(~ec, ~va_id, pseudo, ~sk_voter, ~bs_unused) ]
-  --[ VA_CheckBallot_Trace(~ec, ~va_id, pseudo, ~ballot, cryptograms, ~r, tracker) ]->
+  --[ VA_CheckBallot_Trace(~ec, ~va_id, pseudo, ~ballot, cryptograms, ~r, tracker),
+      IN_BALLOTCHECK_VA_CHECK(~ec, ~va_id, $V, ~ballot, cryptograms, ~r, tracker) ]->
     [ BCA_State_InitiateBallotCheck(~ec, tracker),
       VA_State_RequestRandomizers(~ec, ~va_id, $V, pseudo, ~ballot, cryptograms, ~r, tracker) ]
 
@@ -58,7 +59,8 @@ rule BallotCheck_VA_RequestRandomizers [role="VA"]:
   --[ VA_RequestRandomizers_Trace(~ec, ~va_id, pseudo, ~ballot, cryptograms, ~r, tracker, pk_bca_encrypt),
       SignatureVerified(sig_bca_req, e1_sig(sig_bca_req), pk(e3_sig(sig_bca_req)), msg_bca_req,
                         pk_bca_sign, true), /* valid signature */
-      IN_SECURE_RECEIVE(~cid, <~ec, 'DBB'>, ~va_id, msg_dbb_req) ]->
+      IN_SECURE_RECEIVE(~cid, <~ec, 'DBB'>, ~va_id, msg_dbb_req),
+      OUT_PSEUDO_TERM(sig_bca_req) ]->
     [ SecureSend(~cid, ~va_id, <~ec, 'DBB'>, <msg_randomizers, sign(msg_randomizers, '1', ~sk_voter)>),
       !VA_SentRandomizers(~ec, ~va_id, pseudo, ~ballot, cryptograms, ~r, tracker, pk_bca_encrypt),
       VA_State_AwaitCheckResult(~ec, ~va_id, $V, pseudo, ~ballot, cryptograms, ~r, tracker, pk_bca_encrypt) ]
@@ -74,7 +76,8 @@ rule BallotCheck_VA_RequestRandomizers [role="VA"]:
 rule BallotCheck_VA_CheckResult_OK [role="VA"]:
     [ VA_State_AwaitCheckResult(~ec, ~va_id, $V, pseudo, ~ballot, cryptograms, ~r, tracker, pk_bca_encrypt),
       !VA_Eligible_Voter(~ec, ~va_id, pseudo, ~sk_voter, ~ballot_style) ]
-  --[ VA_CheckResult_OK_Trace(~ec, ~va_id, pseudo, ~ballot, cryptograms, ~r, tracker, pk_bca_encrypt) ]->
+  --[ VA_CheckResult_OK_Trace(~ec, ~va_id, pseudo, ~ballot, cryptograms, ~r, tracker, pk_bca_encrypt),
+      OUT_BALLOTCHECK_VA_CHECK(~ec, ~va_id, $V, ~ballot, cryptograms, ~r, tracker) ]->
     [ VA_State_CheckOrCast(~ec, ~va_id, $V, ~ballot, cryptograms, ~r, tracker) ]
 
 /*
@@ -124,7 +127,8 @@ rule BallotCheck_DBB_ReceiveCheckRequest [role="DBB"]:
   --[ DBB_ReceiveCheckRequest_Trace(~ec, ~va_id, ~bca_id, msg_bca_req),
       SignatureVerified(sig_bca_req, e1_sig(sig_bca_req), pk(e3_sig(sig_bca_req)), msg_bca_req,
                         pk_bca_sign, true), /* valid signature */
-      IN_SECURE_RECEIVE(~cid_bca, ~bca_id, <~ec, 'DBB'>, signed_msg_bca_req) ]->
+      IN_SECURE_RECEIVE(~cid_bca, ~bca_id, <~ec, 'DBB'>, signed_msg_bca_req),
+      OUT_PSEUDO_TERM(sig_bca_req) ]->
     [ SecureSend(~cid_va, <~ec, 'DBB'>, ~va_id, msg_dbb_req),
       !DBB_Randomizers_Requested(~ec, ~va_id, ~bca_id, tracker),
       DBB_State_ForwardRandomizers(~ec, ~va_id, ~cid_va, ~bca_id, ~cid_bca, signed_msg_bca_req) ]
@@ -154,7 +158,8 @@ rule BallotCheck_DBB_ForwardRandomizers [role="DBB"]:
       SignatureVerified(sig_randomizers, e1_sig(sig_randomizers),
                         pk(e3_sig(sig_randomizers)), msg_randomizers,
                         pk_voter, true), /* valid signature */
-      IN_SECURE_RECEIVE(~cid_va, ~va_id, <~ec, 'DBB'>, signed_msg_randomizers) ]->
+      IN_SECURE_RECEIVE(~cid_va, ~va_id, <~ec, 'DBB'>, signed_msg_randomizers),
+      OUT_PSEUDO_TERM(sig_randomizers) ]->
     [ !DBB_Randomizers_Forwarded(~ec, ~va_id, ~bca_id, tracker, msg_randomizers),
       SecureSend(~cid_bca, <~ec, 'DBB'>, ~bca_id, msg_dbb_randomizers) ]
 

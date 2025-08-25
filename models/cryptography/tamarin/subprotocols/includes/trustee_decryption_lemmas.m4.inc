@@ -14,7 +14,7 @@
   even when included, takes considerable time to verify. We are therefore
   not including the proof script at this time.
  */
-define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, <!subprotocols/includes/proofs/Sources_TrusteeDecryption_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>))dnl
+define(<!PROOF_SCRIPT!>, ifdef(<!INCLUDE_PROOF_SCRIPTS!>, ifdef(<!STANDALONE!>, <!subprotocols/includes/proofs/Sources_TrusteeDecryption_<!!>TRUSTEE_COUNT<!!>_<!!>TRUSTEE_THRESHOLD<!!>.spthy.inc!>, <!/tmp/NOPROOFSCRIPT!>), <!/tmp/NOPROOFSCRIPT!>))dnl
 syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
 lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Sources_TrusteeDecryption [sources]:
   "

@@ -1,7 +1,12 @@
 /* Lemmas for ballot cast protocol. */
 
+dnl
+dnl We only include the sources lemma in the standalone version, as
+dnl the necessary sources lemma is different for composed versions.
+dnl
+ifdef(<!STANDALONE!>, <!
 /* No Sources Lemma Necessary (Yet) */
-
+!>, <!!>)
 /* Protocol Safety Lemmas */
 
 /*
@@ -82,8 +87,8 @@ syscmd(cat PROOF_SCRIPT > /dev/null 2>&1)dnl
 lemma ifelse(sysval, <!0!>, <!ProofScript!>, <!NoProofScript!>)_Executability_BallotCast_Cast_Requested:
   exists-trace
   "
-    Ex ec va_id pseudo sk_voter bs ballot cryptograms r tracker #i #j.
-        VA_BallotTracker_Trace(ec, va_id, pseudo, sk_voter, bs, ballot, cryptograms, r, tracker)@i
+    Ex ec va_id V pseudo sk_voter bs ballot cryptograms r tracker #i #j.
+        VA_BallotTracker_Trace(ec, va_id, V, pseudo, sk_voter, bs, ballot, cryptograms, r, tracker)@i
       &
         VA_CastBallot_Trace(ec, va_id, pseudo, ballot, cryptograms, r, tracker)@j
   "
@@ -146,7 +151,7 @@ sinclude(PROOF_SCRIPT)dnl
 
 /*
   This lemma states that it is possible for more than one VA to receive
-  a cast confirmatin from the DBB, for different voters in the same election.
+  a cast confirmation from the DBB, for different voters in the same election.
 
   This lemma is straightforward to prove interactively, but Tamarin has
   trouble doing it automatically, so a proof script is available.

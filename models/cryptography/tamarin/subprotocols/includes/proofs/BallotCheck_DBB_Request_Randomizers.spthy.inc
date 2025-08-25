@@ -94,76 +94,29 @@ solve( SecureReceive( ~cid_bca, ~bca_id, <~ec, 'DBB'>,
                                 solve( BallotStyleCount( ~ec, %i.3 ) ▶₀ #vr.13 )
                                   case Mock_BallotStyle
                                   solve( BallotStyleCount( ~ec, %i.2 ) ▶₀ #vr.16 )
-                                    case Mock_BallotStyle
-                                    by sorry
-                                  next
                                     case Mock_EC_And_Initial_Counters
                                     solve( BallotStyleCount( ~ec, %i.2 ) ▶₀ #vr.18 )
                                       case Mock_BallotStyle
                                       solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.17 )
-                                        case Mock_BallotStyle
-                                        by sorry
-                                      next
                                         case Mock_EC_And_Initial_Counters
                                         solve( BallotStyleCount( ~ec, %i.1 ) ▶₀ #vr.17 )
-                                          case Mock_BallotStyle
-                                          by sorry
-                                        next
                                           case Mock_EC_And_Initial_Counters
                                           solve( DBB_Clock( %ts ) ▶₂ #vr.8 )
-                                            case Mock_AppendSubmittedBallot_case_1
-                                            by sorry
-                                          next
-                                            case Mock_AppendSubmittedBallot_case_2
-                                            by sorry
-                                          next
                                             case Mock_DBBTimestamp
                                             SOLVED // trace found
                                           qed
                                         qed
                                       qed
-                                    next
-                                      case Mock_EC_And_Initial_Counters
-                                      simplify
-                                      by contradiction
                                     qed
                                   qed
-                                next
-                                  case Mock_EC_And_Initial_Counters
-                                  simplify
-                                  by contradiction
                                 qed
-                              next
-                                case Mock_EC_And_Initial_Counters
-                                by sorry
                               qed
-                            next
-                              case Mock_VoterRegistration_Eligible
-                              by sorry
                             qed
-                          next
-                            case Mock_Voter_Authentication
-                            by sorry
                           qed
-                        next
-                          case Mock_VoterRegistration_Eligible
-                          by sorry
                         qed
-                      next
-                        case Mock_EC_And_Initial_Counters
-                        by sorry
                       qed
-                    next
-                      case Mock_VoterRegistration_Eligible
-                      by sorry
                     qed
-                  next
-                    case Mock_EC_And_Initial_Counters
-                    by sorry
                   qed
-                next
-                  case Mock_Voter_Authentication
-                  by sorry
                 qed
               qed
             qed
@@ -172,13 +125,4 @@ solve( SecureReceive( ~cid_bca, ~bca_id, <~ec, 'DBB'>,
       qed
     qed
   qed
-next
-  case SecureChannel_Receive_case_2
-  by sorry
-next
-  case SecureChannel_Receive_case_3
-  by sorry
-next
-  case SecureChannel_Receive_case_4
-  by sorry
 qed
