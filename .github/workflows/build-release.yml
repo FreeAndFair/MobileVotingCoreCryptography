@@ -16,6 +16,7 @@ on:
     paths:
       - 'models/threat-model/**'
       - 'docs/papers/refinements_among_high_level_models/**'
+      - 'docs/faq/**'
 
   workflow_dispatch:
 
@@ -48,6 +49,11 @@ jobs:
           cd docs/papers/refinements_among_high_level_models
           latexmk --pdf refinements_paper.tex
 
+      - name: Render FAQ
+        run: |
+          cd docs/faq
+          latexmk --pdf faq.tex
+
       - name: Release Generated Files
         uses: FreeAndFair/action-gh-create-release@v5.0.1
         with:
@@ -60,3 +66,4 @@ jobs:
           files: |
             models/threat-model/threat-model.pdf
             docs/papers/refinements_among_high_level_models/refinements_paper.pdf
+            docs/faq/faq.pdf

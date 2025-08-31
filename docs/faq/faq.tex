@@ -1,0 +1,146 @@
+%! program = pdflatexmk
+
+% Mobile Voting Core Cryptography FAQ
+% Copyright (C) 2025 Free & Fair
+
+\documentclass[12pt,letter]{article}
+
+%%% PACKAGES
+\usepackage[in]{fullpage}
+\usepackage{tabularray}
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\setlength {\marginparwidth}{2cm}
+\usepackage{todonotes}
+\usepackage{enumitem}
+\hypersetup{linkcolor=blue,citecolor=blue,filecolor=black,urlcolor=blue}
+\parindent 0pt
+\textheight 9in
+\topmargin 0in
+\setlength{\parskip}{10pt plus 1pt minus 1pt}
+
+\usepackage{tocloft}
+\setlength\cftparskip{2pt}
+
+% format FAQ date in British English, but without the ordinal suffix
+\usepackage[en-GB]{datetime2}
+\DTMlangsetup[en-GB]{ord=omit}
+
+\renewcommand{\subsectionautorefname}{section}
+\renewcommand{\subsubsectionautorefname}{section}
+
+% by default, don't put headings on tables
+\DefTblrTemplate{firsthead, middlehead,lasthead}{default}{}
+
+\pagestyle{empty}
+
+%%% BEGIN DOCUMENT
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Mobile Voting Core Cryptography FAQ}}
+\end{center}
+\vspace{-6pt}
+
+\textit{Free \& Fair} \hspace{\fill} \textit{\DTMtoday}
+
+\vspace{-12pt}
+
+\rule{\textwidth}{1pt}
+
+The concept of mobile voting naturally raises many questions, both about the idea itself and about the role of our mobile voting core cryptographic library in the implementation of any publicly-available mobile voting system. This document contains our answers to questions we have been asked, and will be updated with future questions and answers as they arise.
+
+% Q & A go here, we can format them in a consistent manner later on
+
+\section{General Project Questions}
+
+\begin{itemize}
+
+    \item \emph{Q:} Where should I start reading?
+
+    \emph{A:} It's best to start at the project page on our website and go from there. \\
+    \href{https://freeandfair.us/mobile-voting-core-cryptography/}{https://freeandfair.us/mobile-voting-core-cryptography/}
+
+    \item \emph{Q:} Is there more information coming out soon?
+
+    \emph{A:} Every time we merge new content into the \texttt{main} branch of the project it is mirrored to GitHub.  So, while we have a few active branches of work (e.g., on mechanizing the protocol in Tamarin) that will not be public until they are merged into \texttt{main}, the vast majority of the work is public already, and it will all be public when it is complete.
+
+    \item \emph{Q:} Is most or all of the technology developed by the Danish company Assembly Voting gone? Are you making something different?
+
+    \emph{A:} Yes, all of Assembly Voting's work is gone.  We analyzed their cryptographic protocol and implementation and our report summarizing that analysis is available here: (URL goes here)
+
+    When this project started we had originally thought that portions of that protocol might be reusable, but as we performed a more detailed security analysis of the protocol we found so many flaws that it became clear we had to start from scratch.
+
+    \item \emph{Q:} Will white hat hackers be given legal protection and a reasonable lead time prior to the system being used in any election?  If so, will there be any publication, NDA, or other constraints on what the hackers may say/write?
+
+    \emph{A:} We are only developing the core cryptographic library, and we cannot speak for system implementations; however, we welcome security analysis of both the cryptographic protocol and (when available) its implementation. The project repository contains \href{https://github.com/FreeAndFair/MobileVotingCoreCryptography/blob/main/SECURITY.md}{instructions for reporting security issues} that follow standard \href{https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure}{coordinated vulnerability disclosure (CVD)} guidelines. Other than requesting that they follow CVD guidelines, we will not place any restrictions on what anybody can write or say.
+
+\end{itemize}
+
+
+\section{Cryptography}
+
+\begin{itemize}
+
+    \item \emph{Q:} Are you using a mixnet?
+
+    \emph{A:} We are using a mixnet in the first version, because that's the most straightforward way to produce CVRs that can be used to generate normal paper ballots. The election officials (EOs) Tusk has been working extensively with want the back end of the system to either be a human-centric remarking workflow exactly like they use today, or to produce PDFs of normal paper ballots that are readable by their existing scanners.  Note that we are only implementing the cryptographic protocol, not this back end, in our current work.
+
+    \item \emph{Q:} Do you support homomorphic tallying?
+
+    \emph{A:} While a homomorphic tally is possible for our protocol, and is a variant we have examined closely, we are not implementing it at this time.  Such a back end has an entirely different workflow for EOs---one that they are not familiar or comfortable with as of now, as we understand it. It also presents issues with respect to certain ballot features, such as write-in candidates.
+
+    \item \emph{Q:} Do you use a Benaloh-like challenge as a part of the voter's user experience as seen in the original AV protocol?
+
+    \emph{A:} As you will see in our analysis of the original protocol, the AV Benaloh-like challenge had fundamental security flaws, which perhaps contributed to the positive outcomes in their usability studies.  We have had to think hard about the voter experience in order to obtain a user experience that fulfills E2E-V requirements and yet is usable by all voters.
+
+\end{itemize}
+
+\section{Election Officials}
+
+\begin{itemize}
+
+    \item \emph{Q:} Aren't there real concerns about the security (the ordinary kind) of the IT systems to facilitate elections, and the feasibility of ordinary EOs doing the key management and key usage?
+
+    \emph{A:} While key management is a necessary part of most systems that perform cryptography, we hold low concern about EOs ability to generate, manage, and use keys in our system.  The protocol itself identifies key management problems and threats as a part of its overall CONOPS and threat model, as mistakes and adversaries focused on key material are important. However, given modern key generation and management systems that are now widely deployed in public, including key managers in OSs, browsers, and password managers, as well as more esoteric, secure, and somewhat less user-friendly devices like Yubikeys and Google Titan keys, we are in a much better place today than we were just a few years ago.
+
+    \item \emph{Q:} I liked (in theory) the basic idea of a digital process very similar to the paper absentee ballot process: the ballot is cloaked and accompanied by an affidavit; and it is the EO's responsibility to decide (based on the affidavit and other stuff) whether each ballot is admissible, and only if so is the cloaked ballot queued up for counting. I don't know whether the digital version of that approach (including the same literal affidavit document as in paper AB) can be done in the scheme you're using, but I am curious if it is a goal, and if so whether it can be achieved using SW that is usable by ordinary EOs, and deployed on IT systems that can be protected by EO IT staff and systems.
+
+    \emph{A:} The goal is indeed to support that kind of workflow as a part of our protocol.  It is what EOs want, and they are the domain experts.  Thus, in our protocol the authentication of voters is delegated to a black box component with a generic interface, set of behaviors, and risk characterization.
+
+\end{itemize}
+
+\section{Security}
+
+\begin{itemize}
+
+    \item \emph{Q:} How will the voter be authenticated?
+
+    \emph{A:} Authentication is a ``black box'' in our protocol, meaning that system implementers and EOs must decide upon appropriate authentication processes/providers for their individual implementations and applications. We expect that identity verification systems like \href{https://clearme.com/}{CLEAR} will be used for this purpose, though other approaches (e.g., a digital equivalent to the signed affidavits that accompany mail-in ballots today) can be implemented as well.
+
+    \item \emph{Q:} How will the system defend against distributed denial of service (DDoS) attacks?
+
+    \emph{A:} We are only developing the core cryptographic library, and we cannot speak for system implementations; however, we expect that system implementers will use industry-standard methods for defending Internet-facing systems against DDoS attacks (i.e., \href{https://cloudflare.com/}{Cloudflare} and similar services).
+
+    \item \emph{Q:} How can underfunded and under-resourced local election officials protect their systems from attacks, both external and from insiders? What about ransomware?
+
+    \emph{A:} As \href{https://github.com/FreeAndFair/MobileVotingCoreCryptography/releases/download/latest/threat-model.pdf}{our threat model} states, we are explicitly not addressing these sorts of system security issues as part of this project; these will need to be addressed by system implementers. However, we have designed the cryptographic protocol such that (1) voter privacy cannot be compromised without using private key material belonging to a sufficiently large number of election trustees, and (2) ballots cannot be changed in undetectable ways after being submitted by voters.
+
+\end{itemize}
+
+\section{Usability}
+
+\begin{itemize}
+
+    \item \emph{Q:} One issue with E2E-V is that it's not easy for non-technical people to understand why is works. How do you propose to address the trust issue?
+
+    \emph{A:} We have attempted to make the protocol's implementation of end-to-end verifiability straightforward; however, work will clearly need to be done to present it to voters in an approachable, understandable way. This will involve user interface design work for any voting and ballot check applications that implement the protocol, as well as other explanatory resources (documents, presentations, etc.).
+
+\end{itemize}
+
+\end{document}
