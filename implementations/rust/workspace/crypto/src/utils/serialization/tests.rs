@@ -13,10 +13,10 @@ mod tests {
     use crate::context::P256Ctx as PCtx;
     use crate::context::RistrettoCtx as RCtx;
     use crate::cryptosystem::elgamal::{Ciphertext, KeyPair};
+    use crate::utils::serialization::LargeVector;
     use crate::utils::serialization::fixed::{FDeserializable, FSerializable};
     use crate::utils::serialization::variable::LENGTH_BYTES;
     use crate::utils::serialization::variable::{VDeserializable, VSerializable};
-    use crate::utils::serialization::LargeVector;
     use vser_derive::VSerializable as VSer;
 
     #[test]

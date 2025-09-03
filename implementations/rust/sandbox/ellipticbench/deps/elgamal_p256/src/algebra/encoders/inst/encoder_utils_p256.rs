@@ -39,9 +39,10 @@ Encode : [247] -> Cryptol::Option
 ```
 */
 pub fn encode(
-  x: cry_rts::DWordRef<'_>,
-) -> crate::cryptol::OptionInstTy<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point> {
-  crate::algebra::encoders::inst::encoder_p256::encode(x)
+    x: cry_rts::DWordRef<'_>,
+) -> crate::cryptol::OptionInstTy<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>
+{
+    crate::algebra::encoders::inst::encoder_p256::encode(x)
 }
 
 /**
@@ -57,12 +58,12 @@ Strict'Encode : [247] -> Algebra::Groups::Inst::PFECGroupP256::import_at__32::Po
 ```
 */
 pub fn strictqx_1_encode(
-  x: cry_rts::DWordRef<'_>,
+    x: cry_rts::DWordRef<'_>,
 ) -> crate::algebra::groups::inst::pfec_group_p256::Inimportat32point {
-  match encode(x) {
-    crate::cryptol::OptionInstTy::None() => todo!("error"),
-    crate::cryptol::OptionInstTy::Some(y) => y,
-  }
+    match encode(x) {
+        crate::cryptol::OptionInstTy::None() => todo!("error"),
+        crate::cryptol::OptionInstTy::Some(y) => y,
+    }
 }
 
 /**
@@ -79,9 +80,9 @@ Decode : Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point -> Cryptol::
 ```
 */
 pub fn decode(
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> crate::cryptol::OptionInstTy<cry_rts::DWord> {
-  crate::algebra::encoders::inst::encoder_p256::decode(x)
+    crate::algebra::encoders::inst::encoder_p256::decode(x)
 }
 
 /**
@@ -96,10 +97,10 @@ Strict'Decode : Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point -> [2
 ```
 */
 pub fn strictqx_1_decode(
-  y: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    y: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> cry_rts::DWord {
-  match decode(y) {
-    crate::cryptol::OptionInstTy::None() => todo!("error"),
-    crate::cryptol::OptionInstTy::Some(x) => x,
-  }
+    match decode(y) {
+        crate::cryptol::OptionInstTy::None() => todo!("error"),
+        crate::cryptol::OptionInstTy::Some(x) => x,
+    }
 }

@@ -11,8 +11,8 @@ use crate::traits::groups::GroupScalar;
 use crate::utils::error::Error as CryptoError;
 use crate::utils::rng;
 use curve25519_dalek::scalar::Scalar as DalekScalar;
-use sha3::digest::typenum::U64;
 use sha3::digest::Digest;
+use sha3::digest::typenum::U64;
 
 /**
  * A [`GroupScalar`] implementation for the [Ristretto](https://docs.rs/curve25519-dalek/latest/curve25519_dalek/ristretto/index.html) group.

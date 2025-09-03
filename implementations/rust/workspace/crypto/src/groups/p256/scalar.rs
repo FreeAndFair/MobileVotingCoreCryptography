@@ -11,9 +11,9 @@ use crate::traits::groups::GroupScalar;
 use crate::utils::error::Error as CryptoError;
 use crate::utils::rng;
 use core::fmt::Debug;
-use p256::elliptic_curve::Field;
 use p256::Scalar;
 use p256::Scalar as P256CrateScalar;
+use p256::elliptic_curve::Field;
 use std::ops::Neg;
 
 /**

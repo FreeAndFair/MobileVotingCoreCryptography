@@ -19,7 +19,7 @@ use crate::zkp::{
     schnorr::SchnorrProof,
     shuffle::{Responses, ShuffleCommitments, ShuffleProof},
 };
-use serde::{self, de::Error, Deserializer, Serializer};
+use serde::{self, Deserializer, Serializer, de::Error};
 
 /// Implement serde serialization for [variable][`crate::utils::serialization::variable`] length serializable types
 macro_rules! implement_serde_v {

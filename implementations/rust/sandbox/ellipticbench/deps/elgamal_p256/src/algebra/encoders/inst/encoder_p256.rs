@@ -35,9 +35,9 @@ enc : [247] -> Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point
 ```
 */
 pub fn enc(
-  x: cry_rts::DWordRef<'_>,
+    x: cry_rts::DWordRef<'_>,
 ) -> crate::algebra::groups::inst::pfec_group_p256::Inimportat32point {
-  crate::algebra::groups::inst::pfec_group_p256::enc(x)
+    crate::algebra::groups::inst::pfec_group_p256::enc(x)
 }
 
 /**
@@ -53,10 +53,12 @@ Encode : [247] -> Cryptol::Option
 ```
 */
 pub fn encode(
-  m: cry_rts::DWordRef<'_>,
-) -> crate::cryptol::OptionInstTy<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point> {
-  crate::cryptol::_some_con_inst_ty::<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>(enc(m)
-    .as_arg())
+    m: cry_rts::DWordRef<'_>,
+) -> crate::cryptol::OptionInstTy<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>
+{
+    crate::cryptol::_some_con_inst_ty::<
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    >(enc(m).as_arg())
 }
 
 /**
@@ -69,10 +71,8 @@ elements.
 G : Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point -> Bit
 ```
 */
-pub fn g(
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-) -> bool {
-  crate::algebra::groups::inst::pfec_group_p256::g_1(x)
+pub fn g(x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point) -> bool {
+    crate::algebra::groups::inst::pfec_group_p256::g_1(x)
 }
 
 /**
@@ -88,10 +88,8 @@ is considered to be undefined.
 dec : Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point -> [247]
 ```
 */
-pub fn dec(
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-) -> cry_rts::DWord {
-  crate::algebra::groups::inst::pfec_group_p256::dec(x)
+pub fn dec(x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point) -> cry_rts::DWord {
+    crate::algebra::groups::inst::pfec_group_p256::dec(x)
 }
 
 /**
@@ -103,13 +101,19 @@ Decode : Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point -> Cryptol::
 ```
 */
 pub fn decode(
-  c: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    c: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> crate::cryptol::OptionInstTy<cry_rts::DWord> {
-  if crate::algebra::set::op_2208_inst_ty::<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>(
-    c,
-    &<cry_rts::Fn1<cry_rts::O<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>, _>>::new(move |x| g(x
-      .as_arg())),
-  ) {
-    crate::cryptol::_some_con_inst_ty::<cry_rts::DWord>(dec(c).as_arg())
-  } else { crate::cryptol::_none_con_inst_ty::<cry_rts::DWord>() }
+    if crate::algebra::set::op_2208_inst_ty::<
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    >(
+        c,
+        &<cry_rts::Fn1<
+            cry_rts::O<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>,
+            _,
+        >>::new(move |x| g(x.as_arg())),
+    ) {
+        crate::cryptol::_some_con_inst_ty::<cry_rts::DWord>(dec(c).as_arg())
+    } else {
+        crate::cryptol::_none_con_inst_ty::<cry_rts::DWord>()
+    }
 }

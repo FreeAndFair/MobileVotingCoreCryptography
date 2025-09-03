@@ -12,9 +12,9 @@ use crate::traits::groups::GroupElement;
 use crate::utils::error::Error as CryptoError;
 use crate::utils::rng;
 use core::fmt::Debug;
+use p256::elliptic_curve::Group;
 use p256::elliptic_curve::sec1::{FromEncodedPoint, ToEncodedPoint};
 use p256::elliptic_curve::subtle::CtOption;
-use p256::elliptic_curve::Group;
 use p256::{EncodedPoint, ProjectivePoint};
 
 /**

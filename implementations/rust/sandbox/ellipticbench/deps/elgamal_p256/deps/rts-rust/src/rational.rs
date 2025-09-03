@@ -1,6 +1,6 @@
+use crate::RefType;
 use crate::display::Base;
 use crate::traits::*;
-use crate::RefType;
 use core::cmp::Ordering;
 use num::Integer;
 use num::Signed;
@@ -16,7 +16,7 @@ use proptest::prelude::*;
 RefType!(num::BigRational);
 
 impl Zero for num::BigRational {
-    fn zero(_ : ()) -> Self {
+    fn zero(_: ()) -> Self {
         <Self as num::Zero>::zero()
     }
 }
@@ -42,10 +42,18 @@ impl FLiteral for num::BigRational {
 }
 
 impl Ring for num::BigRational {
-    fn negate(x: &Self)        -> Self { -x }
-    fn add(x: &Self, y: &Self) -> Self { x + y }
-    fn mul(x: &Self, y: &Self) -> Self { x * y }
-    fn sub(x: &Self, y: &Self) -> Self { x - y }
+    fn negate(x: &Self) -> Self {
+        -x
+    }
+    fn add(x: &Self, y: &Self) -> Self {
+        x + y
+    }
+    fn mul(x: &Self, y: &Self) -> Self {
+        x * y
+    }
+    fn sub(x: &Self, y: &Self) -> Self {
+        x - y
+    }
 
     fn exp_usize(x: &Self, y: usize) -> Self {
         <Self as Pow<usize>>::pow(x.clone(), y)
@@ -71,14 +79,24 @@ impl Field for num::BigRational {
 }
 
 impl Eq for num::BigRational {
-    fn eq(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool { x == y }
+    fn eq(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool {
+        x == y
+    }
 }
 
 impl Cmp for num::BigRational {
-    fn lt(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool { x < y }
-    fn gt(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool { x > y }
-    fn le(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool { x <= y }
-    fn ge(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool { x >= y }
+    fn lt(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool {
+        x < y
+    }
+    fn gt(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool {
+        x > y
+    }
+    fn le(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool {
+        x <= y
+    }
+    fn ge(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool {
+        x >= y
+    }
 }
 
 impl Round for num::BigRational {
@@ -105,41 +123,46 @@ impl Round for num::BigRational {
         let one: num::BigInt = 1u64.into();
         let point_five: num::BigRational = Self::from_float(0.5).unwrap();
 
-        let x: num::BigInt =
-            if r.clone() < Self::from_integer(0u64.into()) {
-                -one
-            } else {
-                one
-            };
+        let x: num::BigInt = if r.clone() < Self::from_integer(0u64.into()) {
+            -one
+        } else {
+            one
+        };
 
         match f.abs().cmp(&point_five) {
             Ordering::Less => n,
-            Ordering::Equal => if n.is_even() { n } else { n + x }
+            Ordering::Equal => {
+                if n.is_even() {
+                    n
+                } else {
+                    n + x
+                }
+            }
             Ordering::Greater => n + x,
         }
     }
 }
 
-crate::default_base!(10,num::BigRational);
+crate::default_base!(10, num::BigRational);
 
 // BigRational already has impls for Binary et al., but these impls format
 // BigRationals as `1/2`. The Cryptol REPL, on the other hand, formats them as
 // `(ratio 1 2)`. To achieve formatting closer to what the Cryptol REPL uses, we
 // define Base impls that avoid calling BigRational's impls for Binary et al.
 
-impl<const UPPER:bool> Base<2, UPPER> for num::BigRational {
+impl<const UPPER: bool> Base<2, UPPER> for num::BigRational {
     fn format(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         write!(fmt, "(ratio {:b} {:b})", self.numer(), self.denom())
     }
 }
 
-impl<const UPPER:bool> Base<8, UPPER> for num::BigRational {
+impl<const UPPER: bool> Base<8, UPPER> for num::BigRational {
     fn format(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         write!(fmt, "(ratio {:o} {:o})", self.numer(), self.denom())
     }
 }
 
-impl<const UPPER:bool> Base<10, UPPER> for num::BigRational {
+impl<const UPPER: bool> Base<10, UPPER> for num::BigRational {
     fn format(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         write!(fmt, "(ratio {} {})", self.numer(), self.denom())
     }
@@ -166,10 +189,10 @@ pub fn ratio(numer: &num::BigInt, denom: &num::BigInt) -> num::BigRational {
 #[cfg(feature = "proptest_strategies")]
 pub fn any_rational() -> impl Strategy<Value = num::BigRational> {
     any_integer().prop_flat_map(|numer| {
-        any_integer().prop_filter("The denominator must be non-zero",
-                                  |denom| *denom != num::zero::<num::BigInt>())
-                     .prop_map(move |denom| {
-            num::BigRational::new(numer.clone(), denom)
-        })
+        any_integer()
+            .prop_filter("The denominator must be non-zero", |denom| {
+                *denom != num::zero::<num::BigInt>()
+            })
+            .prop_map(move |denom| num::BigRational::new(numer.clone(), denom))
     })
 }

@@ -7,6 +7,7 @@
  * @version 0.1
  */
 
+use crate::Error;
 use crate::context::Context;
 use crate::cryptosystem::elgamal::{self, Ciphertext};
 use crate::traits::groups::CryptoGroup;
@@ -18,7 +19,6 @@ use crate::traits::groups::ReplGroupOps;
 use crate::traits::groups::ReplScalarOps;
 use crate::utils::hash;
 use crate::utils::serialization::VSerializable;
-use crate::Error;
 
 use rand::Rng;
 use sha3::Digest;
@@ -135,7 +135,9 @@ impl<C: Context, const W: usize> Shuffler<C, W> {
     /// not match the ciphertexts length, which should be impossible.
     ///
     /// Returns the shuffled ciphertexts of width `W` and the proof of shuffle.
-    #[crate::warning("The following function is not optimized. Parallelize with rayon. Error handling wrt generators length is suboptimal")]
+    #[crate::warning(
+        "The following function is not optimized. Parallelize with rayon. Error handling wrt generators length is suboptimal"
+    )]
     #[allow(clippy::many_single_char_names)]
     #[allow(clippy::similar_names)]
     #[allow(clippy::too_many_lines)]
@@ -360,7 +362,9 @@ impl<C: Context, const W: usize> Shuffler<C, W> {
     /// - `MismatchedShuffleLength` if there is a length mismatch between proof commitments and ciphertexts
     ///
     /// Returns `true` if the proof is valid, `false` otherwise.
-    #[crate::warning("The following function is not optimized. Parallelize with rayon. Error handling wrt generators length is suboptimal")]
+    #[crate::warning(
+        "The following function is not optimized. Parallelize with rayon. Error handling wrt generators length is suboptimal"
+    )]
     #[allow(clippy::similar_names)]
     pub fn verify(
         &self,
@@ -609,7 +613,9 @@ impl<C: Context, const W: usize> Shuffler<C, W> {
     }
 
     /// Domain separation tags for the v-challenge input
-    #[crate::warning("Challenge inputs are incomplete. Also add generators, pedersen commitments, pk, and ciphertexts")]
+    #[crate::warning(
+        "Challenge inputs are incomplete. Also add generators, pedersen commitments, pk, and ciphertexts"
+    )]
     const DS_TAGS_CHALLENGE_V: [&[u8]; 8] = [
         b"pk",
         b"big_b_n",
@@ -866,7 +872,7 @@ impl Permutation {
     /// Shuffles the given integers in place using the Fisher-Yates algorithm.
     fn shuffle<C: Context>(data: &mut [usize], rng: &mut C::Rng) {
         for i in (1..data.len()).rev() {
-            let j = rng.gen_range(0..=i);
+            let j = rng.r#gen_range(0..=i);
             data.swap(i, j);
         }
     }

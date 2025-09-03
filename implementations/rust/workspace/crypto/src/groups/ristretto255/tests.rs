@@ -19,7 +19,7 @@ use crate::utils::serialization::{VDeserializable, VSerializable};
 #[test]
 fn test_ristretto_scalar_from_u32() {
     use rand::Rng;
-    let u: u32 = Ctx::get_rng().gen();
+    let u: u32 = Ctx::get_rng().r#gen();
 
     let _scalar: RistrettoScalar = u.into();
     let one: RistrettoScalar = 1u32.into();

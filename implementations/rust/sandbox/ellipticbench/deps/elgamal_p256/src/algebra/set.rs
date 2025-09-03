@@ -15,12 +15,9 @@ Set Membership
 ∈ : {a} a -> (a -> Bit) -> Bit
 ```
 */
-pub fn op_2208_inst_ty<A>(
-  x: A::Arg<'_>,
-  s: &cry_rts::Fn1<cry_rts::O<A>, bool>,
-) -> bool
+pub fn op_2208_inst_ty<A>(x: A::Arg<'_>, s: &cry_rts::Fn1<cry_rts::O<A>, bool>) -> bool
 where
-  A: cry_rts::Type,
+    A: cry_rts::Type,
 {
-  (s)(x.clone_arg())
+    (s)(x.clone_arg())
 }

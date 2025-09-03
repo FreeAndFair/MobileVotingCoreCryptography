@@ -21,7 +21,9 @@ use crate::utils::rng::CRng;
  * This trait defines the types and methods required for a digital signature
  * scheme, such as [`Ed25519`].
  */
-#[crate::warning("There is no explicit handling of contexts here, they must be provided by the caller as part of the message")]
+#[crate::warning(
+    "There is no explicit handling of contexts here, they must be provided by the caller as part of the message"
+)]
 pub trait SignatureScheme<R: CRng> {
     /// The signer type, a private key used for signing.
     type Signer;

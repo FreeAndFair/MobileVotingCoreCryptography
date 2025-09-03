@@ -13,9 +13,9 @@ use crate::traits::groups::CryptoGroup;
 use crate::traits::groups::GroupElement;
 use crate::traits::groups::GroupScalar;
 
-use p256::elliptic_curve::hash2curve::{ExpandMsgXmd, GroupDigest};
 use p256::NistP256;
 use p256::ProjectivePoint;
+use p256::elliptic_curve::hash2curve::{ExpandMsgXmd, GroupDigest};
 
 use crate::utils::error::Error;
 use crate::utils::hash;

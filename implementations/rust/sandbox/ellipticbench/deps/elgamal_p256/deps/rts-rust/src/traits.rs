@@ -1,46 +1,43 @@
 use crate::type_traits::*;
 
 pub trait Zero: Type {
-
-  /// The value tha acts like 0.
-  fn zero(n : Self::Length) -> Self;
+    /// The value tha acts like 0.
+    fn zero(n: Self::Length) -> Self;
 }
 
 // We reuse Rust's Eq and Ord for equality
 
 pub trait Logic: Zero {
-  fn complement(x: Self::Arg<'_>) -> Self;
-  fn xor(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
-  fn and(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
-  fn or (x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
+    fn complement(x: Self::Arg<'_>) -> Self;
+    fn xor(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
+    fn and(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
+    fn or(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
 }
 
-
 pub trait Ring: Zero {
+    /// Negate a value
+    fn negate(x: Self::Arg<'_>) -> Self;
 
-  /// Negate a value
-  fn negate(x: Self::Arg<'_>) -> Self;
+    /// x * y
+    fn mul(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
 
-  /// x * y
-  fn mul(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
+    /// x - y
+    fn sub(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
 
-  /// x - y
-  fn sub(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
+    /// x + y
+    fn add(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
 
-  /// x + y
-  fn add(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
+    /// Convert an integer to a value of the given type.
+    /// Produces a result even if the type does not fit
+    /// (e.g., wrap around for bit types)
+    fn from_integer(n: Self::Length, x: &num::BigInt) -> Self;
 
-  /// Convert an integer to a value of the given type.
-  /// Produces a result even if the type does not fit
-  /// (e.g., wrap around for bit types)
-  fn from_integer(n: Self::Length, x: &num::BigInt) -> Self;
+    /// Raise `x` to the `y` power, where `y` is small enough to fit into a
+    /// `usize`.
+    fn exp_usize(x: Self::Arg<'_>, y: usize) -> Self;
 
-  /// Raise `x` to the `y` power, where `y` is small enough to fit into a
-  /// `usize`.
-  fn exp_usize(x: Self::Arg<'_>, y: usize) -> Self;
-
-  /// Raise `x` to the `y` power, where `y` can be a large number.
-  fn exp_uint(x: Self::Arg<'_>, y: &num::BigUint) -> Self;
+    /// Raise `x` to the `y` power, where `y` can be a large number.
+    fn exp_uint(x: Self::Arg<'_>, y: &num::BigUint) -> Self;
 }
 
 /// Raise `x` to the `y` power. It is an error to raise a value to a negative
@@ -48,38 +45,35 @@ pub trait Ring: Zero {
 pub fn exp<T: Ring, I: Integral>(x: T::Arg<'_>, y: I::Arg<'_>) -> T {
     match <I as Integral>::to_usize_maybe(y) {
         Some(y) => <T as Ring>::exp_usize(x, y),
-        None =>
-            match <I as Integral>::to_integer(y).to_biguint() {
-                Some(y) => <T as Ring>::exp_uint(x, &y),
-                None => panic!("exp: negative exponent"),
-            }
+        None => match <I as Integral>::to_integer(y).to_biguint() {
+            Some(y) => <T as Ring>::exp_uint(x, &y),
+            None => panic!("exp: negative exponent"),
+        },
     }
 }
 
-
 pub trait Integral: Ring {
+    /// Convert a value to a `usize`. If the value cannot fit in a `usize`, the
+    /// behavior of this function is unspecified.
+    ///
+    /// This is not a standard Cryptol primitive, but we use it
+    /// in places where `Integral` is used for indexing into things.
+    fn to_usize(x: Self::Arg<'_>) -> usize;
 
-  /// Convert a value to a `usize`. If the value cannot fit in a `usize`, the
-  /// behavior of this function is unspecified.
-  ///
-  /// This is not a standard Cryptol primitive, but we use it
-  /// in places where `Integral` is used for indexing into things.
-  fn to_usize(x: Self::Arg<'_>) -> usize;
+    /// A variant of [`to_usize`] that returns a [`Some`] value if the argument
+    /// can fit in a `usize` and `None` otherwise. It is recommended that
+    /// implementations of this method be marked with `#[inline(always)]` to make
+    /// it more likely that the intermediate `Option` value can be optimized away.
+    fn to_usize_maybe(x: Self::Arg<'_>) -> Option<usize>;
 
-  /// A variant of [`to_usize`] that returns a [`Some`] value if the argument
-  /// can fit in a `usize` and `None` otherwise. It is recommended that
-  /// implementations of this method be marked with `#[inline(always)]` to make
-  /// it more likely that the intermediate `Option` value can be optimized away.
-  fn to_usize_maybe(x: Self::Arg<'_>) -> Option<usize>;
+    /// Convert something to an integer.
+    fn to_integer(x: Self::Arg<'_>) -> num::BigInt;
 
-  /// Convert something to an integer.
-  fn to_integer(x: Self::Arg<'_>) -> num::BigInt;
+    /// Integral division
+    fn div(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
 
-  /// Integral division
-  fn div(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
-
-  /// Modulo
-  fn modulo(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
+    /// Modulo
+    fn modulo(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
 }
 
 pub trait Field: Ring {
@@ -92,7 +86,6 @@ pub trait Field: Ring {
     /// Dividing by 0 will raise an error.
     fn field_div(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self;
 }
-
 
 pub trait Eq: Type {
     /// x == y
@@ -122,7 +115,6 @@ pub trait SignedCmp: Cmp {
     /// x <$ y
     fn signed_lt(x: Self::Arg<'_>, y: Self::Arg<'_>) -> bool;
 }
-
 
 pub trait Round: Cmp + Field {
     /// Ceiling function.
@@ -157,22 +149,25 @@ pub trait Round: Cmp + Field {
     fn round_to_even(x: Self::Arg<'_>) -> num::BigInt;
 }
 
-
 pub trait Literal: Type {
-  fn number_usize(n: Self::Length, x: usize) -> Self;
-  fn number_uint(n: Self::Length, x: &num::BigUint) -> Self;
+    fn number_usize(n: Self::Length, x: usize) -> Self;
+    fn number_uint(n: Self::Length, x: &num::BigUint) -> Self;
 }
 
-pub trait LiteralNumber<T> : Literal {
-  fn number(n: Self::Length, x:T) -> Self;
+pub trait LiteralNumber<T>: Literal {
+    fn number(n: Self::Length, x: T) -> Self;
 }
 
-impl<T : Literal> LiteralNumber<usize> for T {
-  fn number(n: Self::Length, x:usize) -> Self { Self::number_usize(n,x) }
+impl<T: Literal> LiteralNumber<usize> for T {
+    fn number(n: Self::Length, x: usize) -> Self {
+        Self::number_usize(n, x)
+    }
 }
 
-impl<T : Literal> LiteralNumber<&num::BigUint> for T {
-  fn number(n: Self::Length, x:&num::BigUint) -> Self { Self::number_uint(n,x) }
+impl<T: Literal> LiteralNumber<&num::BigUint> for T {
+    fn number(n: Self::Length, x: &num::BigUint) -> Self {
+        Self::number_uint(n, x)
+    }
 }
 
 pub trait FLiteral: Type {

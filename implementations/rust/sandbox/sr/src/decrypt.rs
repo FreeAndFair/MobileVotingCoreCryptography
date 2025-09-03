@@ -6,7 +6,6 @@
  * @version 0.1
  */
 
-
 pub(crate) mod infer {
 
     ascent::ascent_source! { decrypt_infer:

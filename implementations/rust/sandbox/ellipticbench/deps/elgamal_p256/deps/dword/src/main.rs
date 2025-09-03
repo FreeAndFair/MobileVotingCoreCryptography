@@ -1,4 +1,3 @@
 use dword::*;
 
-pub fn main() {
-}
+pub fn main() {}

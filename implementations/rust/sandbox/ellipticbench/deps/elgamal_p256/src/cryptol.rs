@@ -19,8 +19,8 @@ enum Cryptol::Option a
 */
 #[derive(Clone)]
 pub enum OptionInstTy<A> {
-  None(),
-  Some(A),
+    None(),
+    Some(A),
 }
 
 cry_rts::RefType! { OptionInstTy<A>, A }
@@ -38,9 +38,9 @@ enum Cryptol::Option a
 */
 pub fn _none_con_inst_ty<A>() -> OptionInstTy<A>
 where
-  A: cry_rts::Type,
+    A: cry_rts::Type,
 {
-  OptionInstTy::None()
+    OptionInstTy::None()
 }
 
 /**
@@ -56,9 +56,9 @@ enum Cryptol::Option a
 */
 pub fn _some_con_inst_ty<A>(anon: A::Arg<'_>) -> OptionInstTy<A>
 where
-  A: cry_rts::Type,
+    A: cry_rts::Type,
 {
-  OptionInstTy::Some(anon.clone_arg())
+    OptionInstTy::Some(anon.clone_arg())
 }
 
 /**
@@ -68,24 +68,20 @@ Map a function over a sequence.
 map : {n, a, b} (a -> b) -> [n]a -> [n]b
 ```
 */
-pub fn map_inst_sz_val_val<A, B>(
-  n: usize,
-  f: &cry_rts::Fn1<cry_rts::O<A>, B>,
-  xs: &[A],
-) -> Vec<B>
+pub fn map_inst_sz_val_val<A, B>(n: usize, f: &cry_rts::Fn1<cry_rts::O<A>, B>, xs: &[A]) -> Vec<B>
 where
-  A: cry_rts::Type,
-  B: cry_rts::Type,
+    A: cry_rts::Type,
+    B: cry_rts::Type,
 {
-  cry_rts::stream!(
-    forall = [
-      SI1: [ cry_rts::Stream<A> ], A: [ cry_rts::Type ], B: [ cry_rts::Type ]
-    ], element = B, capture = [
-      f: cry_rts::Fn1<cry_rts::O<A>, B> = f.clone(), anon: SI1 = xs
-        .clone_arg()
-        .into_iter()
-    ], step = |this|{ let x = this.anon.next()?; (this.f)(x) }
-  )
+    cry_rts::stream!(
+      forall = [
+        SI1: [ cry_rts::Stream<A> ], A: [ cry_rts::Type ], B: [ cry_rts::Type ]
+      ], element = B, capture = [
+        f: cry_rts::Fn1<cry_rts::O<A>, B> = f.clone(), anon: SI1 = xs
+          .clone_arg()
+          .into_iter()
+      ], step = |this|{ let x = this.anon.next()?; (this.f)(x) }
+    )
     .to_vec()
 }
 
@@ -99,7 +95,7 @@ not evaluated.
 ```
 */
 pub fn op_eq_eq_gt(a: bool, b: bool) -> bool {
-  if a { b } else { true }
+    if a { b } else { true }
 }
 
 /**
@@ -112,7 +108,7 @@ Additional constraints:
 ```
 */
 pub fn tail_inst_sz_bit(n: usize, xs: cry_rts::DWordRef<'_>) -> cry_rts::DWord {
-  xs.skip(1usize)
+    xs.skip(1usize)
 }
 
 /**
@@ -125,7 +121,7 @@ is not evaluated.
 ```
 */
 pub fn op_bslash_fslash(x: bool, y: bool) -> bool {
-  if x { true } else { y }
+    if x { true } else { y }
 }
 
 /**
@@ -136,25 +132,25 @@ map : {n, a} (a -> Bit) -> [n]a -> [n]
 ```
 */
 pub fn map_inst_sz_val_bit<A>(
-  n: usize,
-  f: &cry_rts::Fn1<cry_rts::O<A>, bool>,
-  xs: &[A],
+    n: usize,
+    f: &cry_rts::Fn1<cry_rts::O<A>, bool>,
+    xs: &[A],
 ) -> cry_rts::DWord
 where
-  A: cry_rts::Type,
+    A: cry_rts::Type,
 {
-  cry_rts::DWord::from_stream_msb(
-    n,
-    cry_rts::stream!(
-      forall = [
-        SI1: [ cry_rts::Stream<A> ], A: [ cry_rts::Type ]
-      ], element = bool, capture = [
-        f: cry_rts::Fn1<cry_rts::O<A>, bool> = f.clone(), anon: SI1 = xs
-          .clone_arg()
-          .into_iter()
-      ], step = |this|{ let x = this.anon.next()?; (this.f)(x) }
-    ),
-  )
+    cry_rts::DWord::from_stream_msb(
+        n,
+        cry_rts::stream!(
+          forall = [
+            SI1: [ cry_rts::Stream<A> ], A: [ cry_rts::Type ]
+          ], element = bool, capture = [
+            f: cry_rts::Fn1<cry_rts::O<A>, bool> = f.clone(), anon: SI1 = xs
+              .clone_arg()
+              .into_iter()
+          ], step = |this|{ let x = this.anon.next()?; (this.f)(x) }
+        ),
+    )
 }
 
 /**
@@ -164,29 +160,28 @@ Disjunction after applying a predicate to all elements.
 any : {n, a} (a -> Bit) -> [n]a -> Bit
 ```
 */
-pub fn any_inst_sz_val<A>(
-  n: usize,
-  f: &cry_rts::Fn1<cry_rts::O<A>, bool>,
-  xs: &[A],
-) -> bool
+pub fn any_inst_sz_val<A>(n: usize, f: &cry_rts::Fn1<cry_rts::O<A>, bool>, xs: &[A]) -> bool
 where
-  A: cry_rts::Type,
+    A: cry_rts::Type,
 {
-  map_inst_sz_val_bit::<A>(
-    n,
-    &<cry_rts::Fn1<cry_rts::O<A>, _>>::new({
-      let f = f.clone();
-      move |x| { let f = &f; (f)(x) }
-    }),
-    xs,
-  )
+    map_inst_sz_val_bit::<A>(
+        n,
+        &<cry_rts::Fn1<cry_rts::O<A>, _>>::new({
+            let f = f.clone();
+            move |x| {
+                let f = &f;
+                (f)(x)
+            }
+        }),
+        xs,
+    )
     .into_iter_bits_msb()
     .fold(
-      false,
-      (&<cry_rts::Fn2<cry_rts::O<bool>, cry_rts::O<bool>, _>>::new(move |x, x_1| if x {
-        true
-      } else { x_1 }))
-        .to_fun(),
+        false,
+        (&<cry_rts::Fn2<cry_rts::O<bool>, cry_rts::O<bool>, _>>::new(
+            move |x, x_1| if x { true } else { x_1 },
+        ))
+            .to_fun(),
     )
 }
 
@@ -200,7 +195,7 @@ is not evaluated.
 ```
 */
 pub fn op_fslash_bslash(x: bool, y: bool) -> bool {
-  if x { y } else { false }
+    if x { y } else { false }
 }
 
 /**
@@ -210,28 +205,27 @@ Conjunction after applying a predicate to all elements.
 all : {n, a} (a -> Bit) -> [n]a -> Bit
 ```
 */
-pub fn all_inst_sz_val<A>(
-  n: usize,
-  f: &cry_rts::Fn1<cry_rts::O<A>, bool>,
-  xs: &[A],
-) -> bool
+pub fn all_inst_sz_val<A>(n: usize, f: &cry_rts::Fn1<cry_rts::O<A>, bool>, xs: &[A]) -> bool
 where
-  A: cry_rts::Type,
+    A: cry_rts::Type,
 {
-  map_inst_sz_val_bit::<A>(
-    n,
-    &<cry_rts::Fn1<cry_rts::O<A>, _>>::new({
-      let f = f.clone();
-      move |x| { let f = &f; (f)(x) }
-    }),
-    xs,
-  )
+    map_inst_sz_val_bit::<A>(
+        n,
+        &<cry_rts::Fn1<cry_rts::O<A>, _>>::new({
+            let f = f.clone();
+            move |x| {
+                let f = &f;
+                (f)(x)
+            }
+        }),
+        xs,
+    )
     .into_iter_bits_msb()
     .fold(
-      true,
-      (&<cry_rts::Fn2<cry_rts::O<bool>, cry_rts::O<bool>, _>>::new(move |x, x_1| if x {
-        x_1
-      } else { false }))
-        .to_fun(),
+        true,
+        (&<cry_rts::Fn2<cry_rts::O<bool>, cry_rts::O<bool>, _>>::new(
+            move |x, x_1| if x { x_1 } else { false },
+        ))
+            .to_fun(),
     )
 }

@@ -10,6 +10,7 @@
 #![allow(clippy::type_complexity)]
 use std::array;
 
+use crate::Error;
 use crate::context::Context;
 use crate::cryptosystem::elgamal::PublicKey;
 use crate::cryptosystem::elgamal::{Ciphertext, KeyPair};
@@ -18,7 +19,6 @@ use crate::traits::groups::DistGroupOps;
 use crate::traits::groups::GroupElement;
 use crate::traits::groups::GroupScalar;
 use crate::zkp::dlogeq::DlogEqProof;
-use crate::Error;
 use vser_derive::VSerializable;
 
 /**
@@ -394,11 +394,10 @@ impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
             exp.into()
         });
         let big_a_n_j = checking_values.exp(&exponents);
-        let rhs = big_a_n_j
-            .iter()
-            .fold(C::Element::one(), |acc, next| acc.mul(next));
 
-        rhs
+        big_a_n_j
+            .iter()
+            .fold(C::Element::one(), |acc, next| acc.mul(next))
     }
 
     /// Verifies a single share for a `Recipient` at `position`.

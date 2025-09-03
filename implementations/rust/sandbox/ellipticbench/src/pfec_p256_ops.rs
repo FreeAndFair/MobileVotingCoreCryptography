@@ -120,16 +120,14 @@ fn generate_random_bigint_up_to(bits: u64) -> BigInt {
 #[cfg(test)]
 mod tests {
 
-    use p256::{
-        elliptic_curve::{
-            bigint::Encoding, sec1::ToEncodedPoint,
-        }, EncodedPoint, U256, ProjectivePoint
-    };
     use super::*;
+    use p256::{
+        EncodedPoint, ProjectivePoint, U256,
+        elliptic_curve::{bigint::Encoding, sec1::ToEncodedPoint},
+    };
 
     #[test]
     fn test_pfec_g_scalar_mult() {
-
         const NUM_ITERATIONS: u32 = 100;
         let mut rng = rand::thread_rng();
 
@@ -142,7 +140,6 @@ mod tests {
         );
 
         for _i in 0..NUM_ITERATIONS {
-
             let p256_random_scalar = random_scalar(&mut rng);
             let pfec_random_scalar = random_pfec_scalar(&p256_random_scalar);
 

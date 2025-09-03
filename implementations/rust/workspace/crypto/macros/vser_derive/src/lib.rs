@@ -7,11 +7,11 @@
  * @version 0.1
  */
 
-use proc_macro::TokenStream;
 use proc_macro::Span;
+use proc_macro::TokenStream;
 use quote::quote;
 
-use syn::{parse_macro_input, DeriveInput};
+use syn::{DeriveInput, parse_macro_input};
 
 /// Derives the `VSerializable` trait for structs.
 ///
@@ -36,7 +36,6 @@ use syn::{parse_macro_input, DeriveInput};
 /// ```
 #[proc_macro_derive(VSerializable)]
 pub fn vser_derive(input: TokenStream) -> TokenStream {
-
     let ast = parse_macro_input!(input as DeriveInput);
 
     impl_exact(&ast)
@@ -60,14 +59,21 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
             match &s.fields {
                 syn::Fields::Named(fields) => {
                     field_tys = fields.named.iter().map(|field| &field.ty).collect();
-                    let field_names = fields.named.iter().map(|field| field.ident.as_ref().unwrap());
+                    let field_names = fields
+                        .named
+                        .iter()
+                        .map(|field| field.ident.as_ref().unwrap());
 
                     // For `as_tuple`: access members by name (`&self.x`, `&self.y`)
                     as_tuple_members = quote! { #( &self.#field_names, )* };
 
                     // For `from_tuple`: construct with named fields (`Self { x: t_0, y: t_1 }`)
-                    let field_names = fields.named.iter().map(|field| field.ident.as_ref().unwrap());
-                    let tuple_vars = (0..field_tys.len()).map(|i| syn::Ident::new(&format!("t_{}", i), Span::call_site().into()));
+                    let field_names = fields
+                        .named
+                        .iter()
+                        .map(|field| field.ident.as_ref().unwrap());
+                    let tuple_vars = (0..field_tys.len())
+                        .map(|i| syn::Ident::new(&format!("t_{}", i), Span::call_site().into()));
                     from_tuple_constructor = quote! { { #( #field_names: #tuple_vars, )* } };
                 }
                 syn::Fields::Unnamed(fields) => {
@@ -78,7 +84,8 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
                     as_tuple_members = quote! { #( &self.#field_indices, )* };
 
                     // For `from_tuple`: construct as a tuple struct (`Self(t_0, t_1)`)
-                    let tuple_vars = (0..field_tys.len()).map(|i| syn::Ident::new(&format!("t_{}", i), Span::call_site().into()));
+                    let tuple_vars = (0..field_tys.len())
+                        .map(|i| syn::Ident::new(&format!("t_{}", i), Span::call_site().into()));
                     from_tuple_constructor = quote! { ( #( #tuple_vars, )* ) };
                 }
                 // Also handle unit structs gracefully, which have no fields.
@@ -90,12 +97,17 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
             }
         }
         // Keep the panic for enums and unions which are not supported.
-        _ => return quote! { compile_error!("VSerializable can only be derived for structs."); }.into(),
+        _ => {
+            return quote! { compile_error!("VSerializable can only be derived for structs."); }
+                .into();
+        }
     };
 
     // This destructuring logic is now common and depends only on the number of fields.
     let field_count = field_tys.len();
-    let tuple_vars = (0..field_count).map(|i| syn::Ident::new(&format!("t_{}", i), Span::call_site().into())).collect::<Vec<_>>();
+    let tuple_vars = (0..field_count)
+        .map(|i| syn::Ident::new(&format!("t_{}", i), Span::call_site().into()))
+        .collect::<Vec<_>>();
 
     // Only generate destructuring if there are fields to destructure.
     let tuple_destructuring = if field_count > 0 {

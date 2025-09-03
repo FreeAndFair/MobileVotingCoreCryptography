@@ -1,7 +1,7 @@
-use std::{marker::PhantomData, ops::Deref};
 use std::sync::Arc;
+use std::{marker::PhantomData, ops::Deref};
 
-use crate::{type_traits::*, Ring, Zero};
+use crate::{Ring, Zero, type_traits::*};
 
 // Helper for generating anonymous functions that ignore their arguments in function_wrapper
 macro_rules! underscore {
@@ -10,24 +10,21 @@ macro_rules! underscore {
     };
 }
 
-
 // The follow 2 types specify the calling conventions for lambdas
 pub struct O<T>(PhantomData<T>); // Indicates that argument is passed as owned
 pub struct B<T>(PhantomData<T>); // Indicates that argument is passed as borrowed (i.e., via Arg)
 
 pub trait FnArg: 'static {
-  type FnArg<'a>: Clone;
+    type FnArg<'a>: Clone;
 }
 
 impl<T: Type> FnArg for O<T> {
-  type FnArg<'a> = T;
+    type FnArg<'a> = T;
 }
 
 impl<T: Type> FnArg for B<T> {
-  type FnArg<'a> = T::Arg<'a>;
+    type FnArg<'a> = T::Arg<'a>;
 }
-
-
 
 macro_rules! function_wrapper {
     ($Wrap:ident ($($x:ident : $T:ident $a:lifetime),*)) => {
@@ -148,23 +145,72 @@ function_wrapper!(Fn14(x1: T1 'a1, x2: T2 'a2, x3: T3 'a3, x4: T4 'a4, x5: T5 'a
 function_wrapper!(Fn15(x1: T1 'a1, x2: T2 'a2, x3: T3 'a3, x4: T4 'a4, x5: T5 'a5, x6: T6 'a6, x7: T7 'a7, x8: T8 'a8, x9: T9 'a9, x10: T10 'a10, x11: T11 'a11, x12: T12 'a12, x13: T13 'a13, x14: T14 'a14, x15: T15 'a15));
 
 #[macro_export]
-macro_rules! PickFn  {
-    ($r:ty) => { $crate::Fn0::<$r> };
-    ($a1:ty, $r:ty) => { $crate::Fn1::<$a1,$r> };
-    ($a1:ty, $a2:ty, $r:ty) => { $crate::Fn2::<$a1,$a2,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $r:ty) => { $crate::Fn3::<$a1,$a2,$a3,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $r:ty) => { $crate::Fn4::<$a1,$a2,$a3,$a4,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $r:ty) => { $crate::Fn5::<$a1,$a2,$a3,$a4,$a5,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $r:ty) => { $crate::Fn6::<$a1,$a2,$a3,$a4,$a5,$a6,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $r:ty) => { $crate::Fn7::<$a1,$a2,$a3,$a4,$a5,$a6,$a7,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $r:ty) => { $crate::Fn8::<$a1,$a2,$a3,$a4,$a5,$a6,$a7,$a8,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $r:ty) => { $crate::Fn9::<$a1,$a2,$a3,$a4,$a5,$a6,$a7,$a8,$a9,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $r:ty) => { $crate::Fn10::<$a1,$a2,$a3,$a4,$a5,$a6,$a7,$a8,$a9,$a10,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $r:ty) => { $crate::Fn11::<$a1,$a2,$a3,$a4,$a5,$a6,$a7,$a8,$a9,$a10,$a11,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $a12:ty, $r:ty) => { $crate::Fn12::<$a1,$a2,$a3,$a4,$a5,$a6,$a7,$a8,$a9,$a10,$a11,$a12,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $a12:ty, $a13:ty, $r:ty) => { $crate::Fn13::<$a1,$a2,$a3,$a4,$a5,$a6,$a7,$a8,$a9,$a10,$a11,$a12,$a13,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $a12:ty, $a13:ty, $a14:ty, $r:ty) => { $crate::Fn14::<$a1,$a2,$a3,$a4,$a5,$a6,$a7,a8,$a9,$a10,$a11,$a12,$a13,$a14,$r> };
-    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $a12:ty, $a13:ty, $a14:ty, $a15:ty, $r:ty) => { $crate::Fn15::<$a1,$a2,$a3,$a4,$a5,$a6,$a7,a8,$a9,$a10,$a11,$a12,$a13,$a14,$a15,$r> };
+macro_rules! PickFn {
+    ($r:ty) => {
+        $crate::Fn0::<$r>
+    };
+    ($a1:ty, $r:ty) => {
+        $crate::Fn1::<$a1, $r>
+    };
+    ($a1:ty, $a2:ty, $r:ty) => {
+        $crate::Fn2::<$a1, $a2, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $r:ty) => {
+        $crate::Fn3::<$a1, $a2, $a3, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $r:ty) => {
+        $crate::Fn4::<$a1, $a2, $a3, $a4, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $r:ty) => {
+        $crate::Fn5::<$a1, $a2, $a3, $a4, $a5, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $r:ty) => {
+        $crate::Fn6::<$a1, $a2, $a3, $a4, $a5, $a6, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $r:ty) => {
+        $crate::Fn7::<$a1, $a2, $a3, $a4, $a5, $a6, $a7, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $r:ty) => {
+        $crate::Fn8::<$a1, $a2, $a3, $a4, $a5, $a6, $a7, $a8, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $r:ty) => {
+        $crate::Fn9::<$a1, $a2, $a3, $a4, $a5, $a6, $a7, $a8, $a9, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $r:ty) => {
+        $crate::Fn10::<$a1, $a2, $a3, $a4, $a5, $a6, $a7, $a8, $a9, $a10, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $r:ty) => {
+        $crate::Fn11::<$a1, $a2, $a3, $a4, $a5, $a6, $a7, $a8, $a9, $a10, $a11, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $a12:ty, $r:ty) => {
+        $crate::Fn12::<$a1, $a2, $a3, $a4, $a5, $a6, $a7, $a8, $a9, $a10, $a11, $a12, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $a12:ty, $a13:ty, $r:ty) => {
+        $crate::Fn13::<$a1, $a2, $a3, $a4, $a5, $a6, $a7, $a8, $a9, $a10, $a11, $a12, $a13, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $a12:ty, $a13:ty, $a14:ty, $r:ty) => {
+        $crate::Fn14::<$a1, $a2, $a3, $a4, $a5, $a6, $a7, a8, $a9, $a10, $a11, $a12, $a13, $a14, $r>
+    };
+    ($a1:ty, $a2:ty, $a3:ty, $a4:ty, $a5:ty, $a6:ty, $a7:ty, $a8:ty, $a9:ty, $a10:ty, $a11:ty, $a12:ty, $a13:ty, $a14:ty, $a15:ty, $r:ty) => {
+        $crate::Fn15::<
+            $a1,
+            $a2,
+            $a3,
+            $a4,
+            $a5,
+            $a6,
+            $a7,
+            a8,
+            $a9,
+            $a10,
+            $a11,
+            $a12,
+            $a13,
+            $a14,
+            $a15,
+            $r,
+        >
+    };
 }
 
 #[macro_export]
@@ -277,13 +323,10 @@ macro_rules! macro_map_worker {
 ///  where isLast = reverse (zipWith const (True : repeat False) xs)
 #[macro_export]
 macro_rules! macro_map {
-  ($f:path, $globals:tt, $locals:tt, $xs:tt) => {
-    $crate::macro_map_worker!($f,$globals,$locals,[],$xs)
-  }
+    ($f:path, $globals:tt, $locals:tt, $xs:tt) => {
+        $crate::macro_map_worker!($f, $globals, $locals, [], $xs)
+    };
 }
-
-
-
 
 #[macro_export]
 /// Declare a group of local mutually recursive functions.
@@ -317,13 +360,9 @@ macro_rules! rec {
     }
 }
 
-
-
-
-
 #[cfg(test)]
 mod test {
-    use crate::{type_traits::*, Cmp, Fn1, Fn2, Integral, Ring, O, B};
+    use crate::{B, Cmp, Fn1, Fn2, Integral, O, Ring, type_traits::*};
     use num::BigInt;
 
     // Show that we can have an array of closures that can be called using
@@ -367,9 +406,8 @@ mod test {
 
     #[test]
     fn test_add() {
-        let f =
-            Fn1::<O<BigInt>,BigInt>::new(|x| Ring::mul(x.as_arg(), BigInt::from(2).as_arg()));
-        let g = <Fn1<O<BigInt>,BigInt> as Ring>::add(f.as_arg(), f.as_arg());
+        let f = Fn1::<O<BigInt>, BigInt>::new(|x| Ring::mul(x.as_arg(), BigInt::from(2).as_arg()));
+        let g = <Fn1<O<BigInt>, BigInt> as Ring>::add(f.as_arg(), f.as_arg());
         assert_eq!(g(BigInt::from(7)), BigInt::from(28));
     }
 }

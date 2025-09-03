@@ -1,6 +1,5 @@
 use crate::type_traits::*;
 
-
 #[macro_export]
 #[allow(bad_style)]
 macro_rules! stream {
@@ -196,14 +195,11 @@ macro_rules! stream {
   };
 }
 
-
-
 /* -----------------------------------------------------------------------------
 Repeat
 ----------------------------------------------------------------------------- */
 
 impl<T: Type> Stream<T> for std::iter::Repeat<T> {}
-
 
 /* -----------------------------------------------------------------------------
 IntoIter
@@ -214,90 +210,95 @@ impl<T: Type> Stream<T> for std::vec::IntoIter<T> {}
 /* -----------------------------------------------------------------------------
 Chain
 ----------------------------------------------------------------------------- */
-impl<T, I, J> Stream<T> for std::iter::Chain<I,J>
-  where
+impl<T, I, J> Stream<T> for std::iter::Chain<I, J>
+where
     T: Type,
-    I: Send + Sync + Clone + 'static + Iterator<Item=T>,
-    J: Send + Sync + Clone + 'static + Iterator<Item=T>
-    {}
+    I: Send + Sync + Clone + 'static + Iterator<Item = T>,
+    J: Send + Sync + Clone + 'static + Iterator<Item = T>,
+{
+}
 
 /* -----------------------------------------------------------------------------
 Once
 ----------------------------------------------------------------------------- */
-impl<T> Stream<T> for std::iter::Once<T>
-where
-  T: Type,
-  {}
+impl<T> Stream<T> for std::iter::Once<T> where T: Type {}
 
 /* -----------------------------------------------------------------------------
 Map
 ----------------------------------------------------------------------------- */
-impl<T, I, F> Stream<T> for std::iter::Map<I,F>
-  where
-  T: Type,
-  I: Send + Sync + Clone + Iterator + 'static,
-  F: Send + Sync + Clone + 'static + FnMut(<I as Iterator>::Item) -> T,
-  {}
+impl<T, I, F> Stream<T> for std::iter::Map<I, F>
+where
+    T: Type,
+    I: Send + Sync + Clone + Iterator + 'static,
+    F: Send + Sync + Clone + 'static + FnMut(<I as Iterator>::Item) -> T,
+{
+}
 
 // -----------------------------------------------------------------------------
 // Take
 // -----------------------------------------------------------------------------
 
-impl <T,I> Stream<T> for std::iter::Take<I>
-  where T: Type, I: Send + Sync + Clone + 'static + Iterator<Item=T>
-  {}
+impl<T, I> Stream<T> for std::iter::Take<I>
+where
+    T: Type,
+    I: Send + Sync + Clone + 'static + Iterator<Item = T>,
+{
+}
 
 // -----------------------------------------------------------------------------
 // Skip
 // -----------------------------------------------------------------------------
 
-impl <T,I> Stream<T> for std::iter::Skip<I>
-  where T: Type, I: Send + Sync + Clone + 'static + Iterator<Item=T>
-  {}
+impl<T, I> Stream<T> for std::iter::Skip<I>
+where
+    T: Type,
+    I: Send + Sync + Clone + 'static + Iterator<Item = T>,
+{
+}
 
 /* -----------------------------------------------------------------------------
 Zip
 ----------------------------------------------------------------------------- */
 
-impl<I,J> Stream<(<I as Iterator>::Item,<J as Iterator>::Item)>
-  for std::iter::Zip<I,J>
-  where
-  <I as Iterator>::Item : Type,
-  <J as Iterator>::Item : Type,
-  I: Send + Sync + Clone + 'static + Iterator,
-  J: Send + Sync + Clone + 'static + Iterator
-  {}
+impl<I, J> Stream<(<I as Iterator>::Item, <J as Iterator>::Item)> for std::iter::Zip<I, J>
+where
+    <I as Iterator>::Item: Type,
+    <J as Iterator>::Item: Type,
+    I: Send + Sync + Clone + 'static + Iterator,
+    J: Send + Sync + Clone + 'static + Iterator,
+{
+}
 
 /* -----------------------------------------------------------------------------
 FlatMap
 ----------------------------------------------------------------------------- */
 
-
-impl<I, U, F> Stream<<U as Iterator>::Item> for std::iter::FlatMap<I,U,F>
-  where
-  I: Send + Sync + Clone + Iterator + 'static,
-  U: Send + Sync + Clone + Iterator + 'static,
-  <U as Iterator>::Item: Type,
-  F: Send + Sync + Clone + 'static + FnMut(<I as Iterator>::Item) -> U,
-  {}
-
-  impl<T, F> Stream<T> for std::iter::FromFn<F>
-  where
-  T: Type,
-  F: Send + Sync + Clone + 'static + FnMut() -> Option<T>,
-  {}
-
-pub
-fn cry_flat_map<A,B,F,I,J>(f: F, xs: I) -> impl Stream<B>
-  where
-  A: Type,
-  B: Type,
-  F: Fn(A) -> J,
-  F: Send + Sync + Clone + 'static,
-  I: Stream<A>,
-  J: Stream<B>,
+impl<I, U, F> Stream<<U as Iterator>::Item> for std::iter::FlatMap<I, U, F>
+where
+    I: Send + Sync + Clone + Iterator + 'static,
+    U: Send + Sync + Clone + Iterator + 'static,
+    <U as Iterator>::Item: Type,
+    F: Send + Sync + Clone + 'static + FnMut(<I as Iterator>::Item) -> U,
 {
-  xs.flat_map(move |v| { f(v) })
+}
+
+impl<T, F> Stream<T> for std::iter::FromFn<F>
+where
+    T: Type,
+    F: Send + Sync + Clone + 'static + FnMut() -> Option<T>,
+{
+}
+
+pub fn cry_flat_map<A, B, F, I, J>(f: F, xs: I) -> impl Stream<B>
+where
+    A: Type,
+    B: Type,
+    F: Fn(A) -> J,
+    F: Send + Sync + Clone + 'static,
+    I: Stream<A>,
+    J: Stream<B>,
+{
+    xs.flat_map(move |v| f(v))
 }
 
 /* -----------------------------------------------------------------------------
@@ -313,7 +314,11 @@ impl<T: Type> Stream<T> for std::iter::Empty<T> {}
 Scanl
 ----------------------------------------------------------------------------- */
 
-pub fn cry_scanl<A, B, Bs>(f: crate::Fn2<crate::O<A>, crate::O<B>, A>, a: A, bs: Bs) -> impl Stream<A>
+pub fn cry_scanl<A, B, Bs>(
+    f: crate::Fn2<crate::O<A>, crate::O<B>, A>,
+    a: A,
+    bs: Bs,
+) -> impl Stream<A>
 where
     A: Type,
     B: Type,

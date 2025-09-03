@@ -97,8 +97,10 @@ impl<C: Context, const W: usize, const T: usize, const P: usize> Harness<C, W, T
             <[C::Element; W]>::random(&mut C::get_rng()),
         ];
         let ny_pk = NYPublicKey::from_elgamal(&pk, C::generator());
-        let encrypted: Vec<NYCiphertext<C, W>> =
-            messages.iter().map(|m| ny_pk.encrypt(m, &[]).unwrap()).collect();
+        let encrypted: Vec<NYCiphertext<C, W>> = messages
+            .iter()
+            .map(|m| ny_pk.encrypt(m, &[]).unwrap())
+            .collect();
 
         let trustees = array::from_fn(|i| i + 1);
         bb.add_ballots(messages, encrypted, trustees);

@@ -18,7 +18,7 @@ use crate::utils::serialization::{VDeserializable, VSerializable};
 #[test]
 fn test_p256_scalar_from_u32() {
     use rand::Rng;
-    let u: u32 = Ctx::get_rng().gen();
+    let u: u32 = Ctx::get_rng().r#gen();
 
     let _scalar: P256Scalar = u.into();
     let one: P256Scalar = 1u32.into();

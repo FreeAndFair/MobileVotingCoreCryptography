@@ -12,8 +12,8 @@
 extern crate test;
 
 use std::array;
-use test::black_box;
 use test::Bencher;
+use test::black_box;
 
 use crypto::context::Context;
 // use crypto::context::P256Ctx as PCtx;

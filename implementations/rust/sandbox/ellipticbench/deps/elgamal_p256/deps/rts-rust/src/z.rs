@@ -32,12 +32,16 @@ impl Z {
     /// Check that two [`Z`] values have the same [`modulus`]. If this is not
     /// the case, panic. This checks invariant (3) above.
     fn assert_equal_moduli(z1: &Z, z2: &Z) {
-        assert!(z1.modulus == z2.modulus,
-                "Mismatched moduli in Z operation
+        assert!(
+            z1.modulus == z2.modulus,
+            "Mismatched moduli in Z operation
                  First  operand is {:?} : Z {:?}
                  Second operand is {:?} : Z {:?}",
-                z1.remainder, z1.modulus,
-                z2.remainder, z2.modulus);
+            z1.remainder,
+            z1.modulus,
+            z2.remainder,
+            z2.modulus
+        );
     }
 
     /// Raise the [`Z`] value to the given power. This leverages
@@ -59,8 +63,10 @@ impl Z {
     /// Construct a [`Z`] value from a remainder and a modulus.
     fn from_rem_mod(remainder: num::BigInt, modulus: num::BigUint) -> Z {
         // Check invariant (2) above
-        assert!(modulus >= num::traits::One::one(),
-                "Modulus value cannot be 0");
+        assert!(
+            modulus >= num::traits::One::one(),
+            "Modulus value cannot be 0"
+        );
         Z {
             // Ensure invariant (1) above
             remainder: remainder.rem_euclid(&modulus.to_bigint().unwrap()),
@@ -138,10 +144,10 @@ impl fmt::Debug for Z {
 }
 
 crate::derive_display!(Z);
-crate::default_base!(10,Z);
+crate::default_base!(10, Z);
 
 impl Zero for Z {
-    fn zero(n : num::BigUint) -> Self {
+    fn zero(n: num::BigUint) -> Self {
         Self::from_rem_mod(num::traits::Zero::zero(), n)
     }
 }
@@ -171,7 +177,7 @@ impl Logic for Z {
         x.with_rem(x.remainder.clone() & y.remainder.clone())
     }
 
-    fn or (x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self {
+    fn or(x: Self::Arg<'_>, y: Self::Arg<'_>) -> Self {
         Self::assert_equal_moduli(x, y);
         x.with_rem(x.remainder.clone() | y.remainder.clone())
     }
@@ -228,7 +234,7 @@ impl Ring for Z {
             Err(_) => {
                 let y_int: &num::BigInt = &y.into();
                 x.pow(y_int)
-            },
+            }
         }
     }
 

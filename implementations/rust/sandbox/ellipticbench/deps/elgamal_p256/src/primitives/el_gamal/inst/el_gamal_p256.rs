@@ -47,19 +47,15 @@ exp : {a}
 ```
 */
 pub fn exp_inst_val<A>(
-  a_len: A::Length,
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  x_1: A::Arg<'_>,
+    a_len: A::Length,
+    x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x_1: A::Arg<'_>,
 ) -> crate::algebra::groups::inst::pfec_group_p256::Inimportat32point
 where
-  A: cry_rts::Type,
-  A: cry_rts::Integral,
+    A: cry_rts::Type,
+    A: cry_rts::Integral,
 {
-  crate::algebra::groups::inst::pfec_group_p256::exp_inst_val::<A>(
-    a_len.clone(),
-    x,
-    x_1,
-  )
+    crate::algebra::groups::inst::pfec_group_p256::exp_inst_val::<A>(a_len.clone(), x, x_1)
 }
 
 /**
@@ -70,15 +66,15 @@ where
 ```
 */
 pub fn op_hat_hat_inst_val<T>(
-  t_len: T::Length,
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  x_1: T::Arg<'_>,
+    t_len: T::Length,
+    x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x_1: T::Arg<'_>,
 ) -> crate::algebra::groups::inst::pfec_group_p256::Inimportat32point
 where
-  T: cry_rts::Type,
-  T: cry_rts::Integral,
+    T: cry_rts::Type,
+    T: cry_rts::Integral,
 {
-  exp_inst_val::<T>(t_len.clone(), x, x_1)
+    exp_inst_val::<T>(t_len.clone(), x, x_1)
 }
 
 cry_rts::Global! {
@@ -107,15 +103,17 @@ Gen : Integer -> {pk : (Algebra::Groups::Inst::PFECGroupP256::import_at__32::Poi
  sk : Integer}
 ```
 */
-pub fn gen(x: &num::BigInt) -> (
-  (
-    crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-    crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  ),
-  num::BigInt,
+pub fn r#gen(
+    x: &num::BigInt,
+) -> (
+    (
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    ),
+    num::BigInt,
 ) {
-  let y = op_hat_hat_inst_val::<num::BigInt>((), (&*g).as_arg(), x);
-  (((&*g).as_arg().clone_arg(), y), x.clone_arg())
+    let y = op_hat_hat_inst_val::<num::BigInt>((), (&*g).as_arg(), x);
+    (((&*g).as_arg().clone_arg(), y), x.clone_arg())
 }
 
 /**
@@ -131,10 +129,10 @@ gop : Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point -> Algebra::Gro
 ```
 */
 pub fn gop(
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  x_1: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x_1: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> crate::algebra::groups::inst::pfec_group_p256::Inimportat32point {
-  crate::algebra::groups::inst::pfec_group_p256::gop(x, x_1)
+    crate::algebra::groups::inst::pfec_group_p256::gop(x, x_1)
 }
 
 /**
@@ -143,10 +141,10 @@ pub fn gop(
 ```
 */
 pub fn op_star(
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  x_1: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x_1: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> crate::algebra::groups::inst::pfec_group_p256::Inimportat32point {
-  gop(x, x_1)
+    gop(x, x_1)
 }
 
 /**
@@ -165,9 +163,9 @@ inv : Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point -> Algebra::Gro
 ```
 */
 pub fn inv(
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> crate::algebra::groups::inst::pfec_group_p256::Inimportat32point {
-  crate::algebra::groups::inst::pfec_group_p256::inv(x)
+    crate::algebra::groups::inst::pfec_group_p256::inv(x)
 }
 
 /**
@@ -179,19 +177,18 @@ Dec : Integer -> (Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point,
 ```
 */
 pub fn dec(
-  sk: &num::BigInt,
-  __p1: &(
-    crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-    crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  ),
+    sk: &num::BigInt,
+    __p1: &(
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    ),
 ) -> crate::algebra::groups::inst::pfec_group_p256::Inimportat32point {
-  let v = __p1.1.as_arg().clone_arg();
-  let u = __p1.0.as_arg().clone_arg();
-  op_star(
-    op_hat_hat_inst_val::<num::BigInt>((), inv(u.as_arg()).as_arg(), sk)
-      .as_arg(),
-    v.as_arg(),
-  )
+    let v = __p1.1.as_arg().clone_arg();
+    let u = __p1.0.as_arg().clone_arg();
+    op_star(
+        op_hat_hat_inst_val::<num::BigInt>((), inv(u.as_arg()).as_arg(), sk).as_arg(),
+        v.as_arg(),
+    )
 }
 
 /**
@@ -204,23 +201,26 @@ Enc : (Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point,
 ```
 */
 pub fn enc(
-  pk: &(
-    crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-    crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  ),
-  m: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  r: &num::BigInt,
+    pk: &(
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    ),
+    m: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    r: &num::BigInt,
 ) -> (
-  crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) {
-  let __p0 = pk.clone_arg();
-  let gqx_1 = __p0.as_arg().0.as_arg().clone_arg();
-  let y = __p0.as_arg().1.as_arg().clone_arg();
-  (
-    op_hat_hat_inst_val::<num::BigInt>((), gqx_1.as_arg(), r),
-    op_star(op_hat_hat_inst_val::<num::BigInt>((), y.as_arg(), r).as_arg(), m),
-  )
+    let __p0 = pk.clone_arg();
+    let gqx_1 = __p0.as_arg().0.as_arg().clone_arg();
+    let y = __p0.as_arg().1.as_arg().clone_arg();
+    (
+        op_hat_hat_inst_val::<num::BigInt>((), gqx_1.as_arg(), r),
+        op_star(
+            op_hat_hat_inst_val::<num::BigInt>((), y.as_arg(), r).as_arg(),
+            m,
+        ),
+    )
 }
 
 /**
@@ -234,12 +234,15 @@ gen_enc_dec : Integer -> Integer -> Algebra::Groups::Inst::PFECGroupP256::import
 ```
 */
 pub fn gen_enc_dec(
-  r0: &num::BigInt,
-  r1: &num::BigInt,
-  m: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    r0: &num::BigInt,
+    r1: &num::BigInt,
+    m: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> crate::algebra::groups::inst::pfec_group_p256::Inimportat32point {
-  let kp = gen(r0);
-  dec(kp.as_arg().1.as_arg(), enc(kp.as_arg().0.as_arg(), m, r1).as_arg())
+    let kp = r#gen(r0);
+    dec(
+        kp.as_arg().1.as_arg(),
+        enc(kp.as_arg().0.as_arg(), m, r1).as_arg(),
+    )
 }
 
 /**
@@ -252,10 +255,8 @@ elements.
 G : Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point -> Bit
 ```
 */
-pub fn g_1(
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-) -> bool {
-  crate::algebra::groups::inst::pfec_group_p256::g_1(x)
+pub fn g_1(x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point) -> bool {
+    crate::algebra::groups::inst::pfec_group_p256::g_1(x)
 }
 
 /**
@@ -270,10 +271,10 @@ T'eq : Algebra::Groups::Inst::PFECGroupP256::import_at__32::Point -> Algebra::Gr
 ```
 */
 pub fn tqx_1_eq(
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  x_1: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x_1: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> bool {
-  crate::algebra::groups::inst::pfec_group_p256::tqx_1_eq(x, x_1)
+    crate::algebra::groups::inst::pfec_group_p256::tqx_1_eq(x, x_1)
 }
 
 /**
@@ -288,10 +289,10 @@ presentation of ElGamal, i.e., in the EVS draft.
 ```
 */
 pub fn op_2261(
-  x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-  x_1: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    x_1: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> bool {
-  tqx_1_eq(x, x_1)
+    tqx_1_eq(x, x_1)
 }
 
 /**
@@ -304,84 +305,68 @@ is_valid_KeyPair : {pk : (Algebra::Groups::Inst::PFECGroupP256::import_at__32::P
 ```
 */
 pub fn is_valid_key_pair(
-  kp: &(
-    (
-      crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
-      crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    kp: &(
+        (
+            crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+            crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+        ),
+        num::BigInt,
     ),
-    num::BigInt,
-  ),
 ) -> bool {
-  let pk = kp.0.as_arg().clone_arg();
-  let sk = kp.1.as_arg().clone_arg();
-  if crate::algebra::set::op_2208_inst_ty::<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>(
-    pk.as_arg().0.as_arg(),
-    &<cry_rts::Fn1<cry_rts::O<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>, _>>::new(move |x| g_1(x
-      .as_arg())),
-  ) {
-    if crate::algebra::set::op_2208_inst_ty::<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>(
-      pk.as_arg().1.as_arg(),
-      &<cry_rts::Fn1<cry_rts::O<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>, _>>::new(move |x| g_1(x
-        .as_arg())),
+    let pk = kp.0.as_arg().clone_arg();
+    let sk = kp.1.as_arg().clone_arg();
+    if crate::algebra::set::op_2208_inst_ty::<
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    >(
+        pk.as_arg().0.as_arg(),
+        &<cry_rts::Fn1<
+            cry_rts::O<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>,
+            _,
+        >>::new(move |x| g_1(x.as_arg())),
     ) {
-      if op_2261(
-        pk.as_arg().1.as_arg(),
-        op_hat_hat_inst_val::<num::BigInt>(
-          (),
-          pk.as_arg().0.as_arg(),
-          sk.as_arg(),
-        )
-          .as_arg(),
-      ) {
-        if <num::BigInt as cry_rts::Cmp>::gt(
-          sk.as_arg(),
-          <num::BigInt>::number((), 0usize).as_arg(),
+        if crate::algebra::set::op_2208_inst_ty::<
+            crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+        >(
+            pk.as_arg().1.as_arg(),
+            &<cry_rts::Fn1<
+                cry_rts::O<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>,
+                _,
+            >>::new(move |x| g_1(x.as_arg())),
         ) {
-          <num::BigInt as cry_rts::Cmp>::lt(
-            sk.as_arg(),
-            <num::BigInt>::number(
-              (),
-              &num::BigUint::from_bytes_le(&[
-                81u8,
-                37u8,
-                99u8,
-                252u8,
-                194u8,
-                202u8,
-                185u8,
-                243u8,
-                132u8,
-                158u8,
-                23u8,
-                167u8,
-                173u8,
-                250u8,
-                230u8,
-                188u8,
-                255u8,
-                255u8,
-                255u8,
-                255u8,
-                255u8,
-                255u8,
-                255u8,
-                255u8,
-                0u8,
-                0u8,
-                0u8,
-                0u8,
-                255u8,
-                255u8,
-                255u8,
-                255u8,
-              ]),
-            )
-              .as_arg(),
-          )
-        } else { false }
-      } else { false }
-    } else { false }
-  } else { false }
+            if op_2261(
+                pk.as_arg().1.as_arg(),
+                op_hat_hat_inst_val::<num::BigInt>((), pk.as_arg().0.as_arg(), sk.as_arg())
+                    .as_arg(),
+            ) {
+                if <num::BigInt as cry_rts::Cmp>::gt(
+                    sk.as_arg(),
+                    <num::BigInt>::number((), 0usize).as_arg(),
+                ) {
+                    <num::BigInt as cry_rts::Cmp>::lt(
+                        sk.as_arg(),
+                        <num::BigInt>::number(
+                            (),
+                            &num::BigUint::from_bytes_le(&[
+                                81u8, 37u8, 99u8, 252u8, 194u8, 202u8, 185u8, 243u8, 132u8, 158u8,
+                                23u8, 167u8, 173u8, 250u8, 230u8, 188u8, 255u8, 255u8, 255u8,
+                                255u8, 255u8, 255u8, 255u8, 255u8, 0u8, 0u8, 0u8, 0u8, 255u8,
+                                255u8, 255u8, 255u8,
+                            ]),
+                        )
+                        .as_arg(),
+                    )
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    } else {
+        false
+    }
 }
 
 /**
@@ -395,52 +380,26 @@ gen_valid_keypair : Integer -> Bit
 ```
 */
 pub fn gen_valid_keypair(r0: &num::BigInt) -> bool {
-  if if <num::BigInt as cry_rts::Cmp>::gt(
-    r0,
-    <num::BigInt>::number((), 0usize).as_arg(),
-  ) {
-    <num::BigInt as cry_rts::Cmp>::lt(
-      r0,
-      <num::BigInt>::number(
-        (),
-        &num::BigUint::from_bytes_le(&[
-          81u8,
-          37u8,
-          99u8,
-          252u8,
-          194u8,
-          202u8,
-          185u8,
-          243u8,
-          132u8,
-          158u8,
-          23u8,
-          167u8,
-          173u8,
-          250u8,
-          230u8,
-          188u8,
-          255u8,
-          255u8,
-          255u8,
-          255u8,
-          255u8,
-          255u8,
-          255u8,
-          255u8,
-          0u8,
-          0u8,
-          0u8,
-          0u8,
-          255u8,
-          255u8,
-          255u8,
-          255u8,
-        ]),
-      )
-        .as_arg(),
-    )
-  } else { false } { is_valid_key_pair(gen(r0).as_arg()) } else { true }
+    if if <num::BigInt as cry_rts::Cmp>::gt(r0, <num::BigInt>::number((), 0usize).as_arg()) {
+        <num::BigInt as cry_rts::Cmp>::lt(
+            r0,
+            <num::BigInt>::number(
+                (),
+                &num::BigUint::from_bytes_le(&[
+                    81u8, 37u8, 99u8, 252u8, 194u8, 202u8, 185u8, 243u8, 132u8, 158u8, 23u8, 167u8,
+                    173u8, 250u8, 230u8, 188u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8,
+                    255u8, 0u8, 0u8, 0u8, 0u8, 255u8, 255u8, 255u8, 255u8,
+                ]),
+            )
+            .as_arg(),
+        )
+    } else {
+        false
+    } {
+        is_valid_key_pair(r#gen(r0).as_arg())
+    } else {
+        true
+    }
 }
 
 /**
@@ -459,26 +418,34 @@ gen_enc_dec_inverse : Integer -> Integer -> Algebra::Groups::Inst::PFECGroupP256
 ```
 */
 pub fn gen_enc_dec_inverse(
-  r0: &num::BigInt,
-  r1: &num::BigInt,
-  m: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    r0: &num::BigInt,
+    r1: &num::BigInt,
+    m: &crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
 ) -> bool {
-  if crate::algebra::set::op_2208_inst_ty::<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>(
-    m,
-    &<cry_rts::Fn1<cry_rts::O<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>, _>>::new(move |x| g_1(x
-      .as_arg())),
-  ) { op_2261(gen_enc_dec(r0, r1, m).as_arg(), m) } else { true }
+    if crate::algebra::set::op_2208_inst_ty::<
+        crate::algebra::groups::inst::pfec_group_p256::Inimportat32point,
+    >(
+        m,
+        &<cry_rts::Fn1<
+            cry_rts::O<crate::algebra::groups::inst::pfec_group_p256::Inimportat32point>,
+            _,
+        >>::new(move |x| g_1(x.as_arg())),
+    ) {
+        op_2261(gen_enc_dec(r0, r1, m).as_arg(), m)
+    } else {
+        true
+    }
 }
 
 #[cfg(test)]
 mod proptests {
-  use super::*;
+    use super::*;
 
-  use proptest::prelude::*;
+    use proptest::prelude::*;
 
-  proptest! {
-    #[ test ]fn prop_gen_valid_keypair(r0 in cry_rts::any_integer()) {
-      prop_assert!(gen_valid_keypair(r0.as_arg()))
+    proptest! {
+      #[ test ]fn prop_gen_valid_keypair(r0 in cry_rts::any_integer()) {
+        prop_assert!(gen_valid_keypair(r0.as_arg()))
+      }
     }
-  }
 }

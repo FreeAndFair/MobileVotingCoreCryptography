@@ -20,7 +20,7 @@ use crate::utils::hash::Hasher;
 use crate::utils::rng;
 
 use curve25519_dalek::ristretto::CompressedRistretto;
-use curve25519_dalek::{constants as dalek_constants, RistrettoPoint};
+use curve25519_dalek::{RistrettoPoint, constants as dalek_constants};
 use sha3::Digest;
 
 use rayon::prelude::*;
