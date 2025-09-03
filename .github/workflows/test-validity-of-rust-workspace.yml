@@ -1,0 +1,69 @@
+# .github/workflows/test-validity-of-rust-workspace.yml
+# Author: Daniel M. Zimmerman
+# Created: 2025-09-03
+# Modified: 2025-09-03
+
+name: Test Validity of Rust Workspace
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - 'implementations/rust/workspace/**'
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+env:
+  RUST_MANIFEST_PATH: implementations/rust/workspace/Cargo.toml
+
+jobs:
+  test:
+    name: Run Rust Lints and Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Switch to Nightly Rust
+        run: |
+          rustup toolchain install nightly
+          rustup default nightly
+          rustup component add rustfmt clippy
+          rustup --version
+
+      - name: Set up Cargo Cache
+        uses: actions/cache@v3
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Install Cargo Check Tools
+        run: |
+          cargo install --locked cargo-deny || true
+
+      - name: Lint the Rust Workspace
+        run: |
+          cargo fmt --check --all --manifest-path $RUST_MANIFEST_PATH
+          cargo check --manifest-path $RUST_MANIFEST_PATH
+          cargo clippy --manifest-path $RUST_MANIFEST_PATH
+
+      - name: Check the Rust Workspace
+        run:
+          # Note that we don't check licenses with cargo-deny yet.
+          # We also don't have any other "checks" here (cargo outdated,
+          # cargo udeps, cargo audit, cargo pants, et al.) yet, because
+          # we haven't decided exactly what set of checks we want.
+          cargo deny --workspace --manifest-path $RUST_MANIFEST_PATH check bans advisories sources
+
+      - name: Build and Test the Rust Workspace
+        run: |
+          cargo build --manifest-path $RUST_MANIFEST_PATH
+          cargo test --manifest-path $RUST_MANIFEST_PATH

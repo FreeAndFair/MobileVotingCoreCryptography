@@ -1,7 +1,7 @@
-# .github/workflows/run-makefile-for-clafer-model.yml
+# .github/workflows/run-precommit-hooks.yml
 # Author: Daniel M. Zimmerman
 # Created: 2025-02-24
-# Modified: 2025-02-24
+# Modified: 2025-09-03
 
 name: Run pre-commit Hooks
 
@@ -18,6 +18,18 @@ jobs:
     name: Run pre-commit Hooks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-      - uses: pre-commit/action@v3.0.1
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Switch to Nightly Rust
+        run: |
+          rustup toolchain install nightly
+          rustup default nightly
+          rustup component add rustfmt clippy
+          rustup --version
+
+      - name: Set Up Python
+        uses: actions/setup-python@v3
+
+      - name: Run Pre-Commit Hooks
+        uses: pre-commit/action@v3.0.1
