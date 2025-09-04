@@ -73,7 +73,7 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
                         .iter()
                         .map(|field| field.ident.as_ref().unwrap());
                     let tuple_vars = (0..field_tys.len())
-                        .map(|i| syn::Ident::new(&format!("t_{}", i), Span::call_site().into()));
+                        .map(|i| syn::Ident::new(&format!("t_{i}"), Span::call_site().into()));
                     from_tuple_constructor = quote! { { #( #field_names: #tuple_vars, )* } };
                 }
                 syn::Fields::Unnamed(fields) => {
@@ -85,7 +85,7 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
 
                     // For `from_tuple`: construct as a tuple struct (`Self(t_0, t_1)`)
                     let tuple_vars = (0..field_tys.len())
-                        .map(|i| syn::Ident::new(&format!("t_{}", i), Span::call_site().into()));
+                        .map(|i| syn::Ident::new(&format!("t_{i}"), Span::call_site().into()));
                     from_tuple_constructor = quote! { ( #( #tuple_vars, )* ) };
                 }
                 // Also handle unit structs gracefully, which have no fields.
@@ -106,7 +106,7 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
     // This destructuring logic is now common and depends only on the number of fields.
     let field_count = field_tys.len();
     let tuple_vars = (0..field_count)
-        .map(|i| syn::Ident::new(&format!("t_{}", i), Span::call_site().into()))
+        .map(|i| syn::Ident::new(&format!("t_{i}"), Span::call_site().into()))
         .collect::<Vec<_>>();
 
     // Only generate destructuring if there are fields to destructure.
