@@ -1,1 +1,0 @@
-../../models/threat-model/db/read_database.py

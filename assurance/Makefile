@@ -8,7 +8,7 @@
 DB_DIR :=           ../models/threat-model/db
 SKELETON_DIR :=     ./advocate-project
 PARSE_CMD :=        ${DB_DIR}/parse.py
-GEN_SKELETON_CMD := scripts/generate_advocate_skeleton.py
+GEN_SKELETON_CMD := PYTHONPATH="${PYTHONPATH}:${DB_DIR}" scripts/generate_advocate_skeleton.py
 DATABASE :=         db.sqlite3
 THREAT_YAML :=      ${DB_DIR}/tm.yaml
 
