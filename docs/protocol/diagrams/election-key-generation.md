@@ -1,10 +1,13 @@
 # Election Key Generation Subprotocol Sequence Diagram
 
+We list the Trustee Board as a separate protocol actor here, even though it is maintained by the Trustee Administration Server, to show what gets posted to the board and what information the Trustee Adminstration Server reads from the board at the end of the protocol (to add to the election configuration).
+
 ``` mermaid
 sequenceDiagram
     participant T1 as Trustee 1 (uses Trustee App)
     participant T2 as Trustee 2 (uses Trustee App)
     participant Tn as Trustee n (uses Trustee App)
+    participant TB as Trustee Board
     participant TAS as Trustee Administration Server
 
     %% Air-Gapped Network Box (as defined in overview)
@@ -12,89 +15,113 @@ sequenceDiagram
         participant T1
         participant T2
         participant Tn
+        participant TB
         participant TAS
     end
 
-    Note over T1, Tn: Assumes pre-agreed ElGamal parameters (p, g). <br/> Trustees interact via their dedicated Trustee Applications (on offline devices).
+    %% Trustee Board is always "active"
+    activate TB
 
-    %% == Phase 1: Share Generation and Commitment ==
+    %% == Phase 1: Private and Pairwise Share Generation ==
     activate T1
     T1->>T1: Generate private share x1
-    T1->>T1: Calculate public share y1 = g^x1 mod p
-    T1->>T1: Generate ZKP P1 for x1 (Proof of knowledge)
-    T1->>TAS: Submit Public Share & Proof (y1, P1)
+    T1->>T1: Calculate public check values cv1_1 .. cv1_n
+    T1->>T1: Calculate pairwise shares ps1_1 .. ps1_n
+    T1->>TB: Post pairwise shares and public check values
     deactivate T1
-    activate TAS # Activate TAS to receive/collect shares
 
     activate T2
     T2->>T2: Generate private share x2
-    T2->>T2: Calculate public share y2 = g^x2 mod p
-    T2->>T2: Generate ZKP P2 for x2
-    T2->>TAS: Submit Public Share & Proof (y2, P2)
+    T2->>T2: Calculate public check values cv2_1 .. cv2_n
+    T2->>T2: Calculate pairwise shares ps2_1 .. ps2_n
+    T2->>TB: Post pairwise shares and public check values
     deactivate T2
-    %% TAS remains active collecting shares
 
-    Note over T2, Tn: Steps repeated for T3...Tn-1 (Generation & Submission)
+    Note over T2, Tn: Steps repeated for T3 .. Tn-1
 
     activate Tn
     Tn->>Tn: Generate private share xn
-    Tn->>Tn: Calculate public share yn = g^xn mod p
-    Tn->>Tn: Generate ZKP Pn for xn
-    Tn->>TAS: Submit Public Share & Proof (yn, Pn)
+    Tn->>Tn: Calculate public check values cvn_1 .. cvn_n
+    Tn->>Tn: Calculate pairwise shares psn_1 .. psn_n
+    Tn->>TB: Post pairwise shares and public check values
     deactivate Tn
-    %% TAS has now collected all shares
 
-    %% == Phase 2: Share Distribution ==
-    Note over TAS: Distributes all collected shares/proofs [(y1,P1)...(yn,Pn)] to all Trustees
-    TAS-->>T1: Distribute All Shares & Proofs
-    activate T1 # Activate T1 upon receiving broadcast
-    TAS-->>T2: Distribute All Shares & Proofs
-    activate T2 # Activate T2 upon receiving broadcast
+    %% == Phase 2: Election Public Key Generation ==
+    Note over TB: All shares and check values are mirrored to the trustees' local boards
+    TB->>T1: All shares and check values
+    activate T1 # Activate T1 when it has all shares and check values
+    TB->>T2: All shares and check values
+    activate T2 # Activate T2 when it has all shares and check values
 
-    Note over TAS, Tn: Broadcast continues for T3...Tn-1
+    Note over TB, Tn: Mirroring also occurs for T3 .. Tn-1
 
-    TAS-->>Tn: Distribute All Shares & Proofs
-    activate Tn # Activate Tn upon receiving broadcast
-    deactivate TAS # TAS finishes distribution phase
+    TB->>Tn: All shares and check values
+    activate Tn # Activate Tn when it has all shares and check values
 
-    %% == Phase 3: Verification, Key Computation & Storage ==
     %% T1 processes
-    T1->>T1: Verify all proofs P1...Pn
-    Note right of T1: On failure: Abort/Handle Exception
-    T1->>T1: Calculate Joint Election Public Key y = y1 * y2 * ... * yn mod p
-    T1->>T1: Securely store private share x1 on Trustee Storage (e.g., encrypted USB)
-    %% T1 remains active to confirm key
+    T1->>T1: Verify check values cv*_1 against pairwise shares ps*_1
+    Note right of T2: On failure: abort protocol
+    T1->>T1: Calculate election public key from check values
+    T1->>T1: Securely store private share x1, all public check values,<br/>and all pairwise shares ps*_1 on Trustee Storage<br/>(e.g., encrypted USB)
+    T1->>TB: Post calculated election public key
+    %% T1 awaits posting of all generated election public keys
 
     %% T2 processes
-    T2->>T2: Verify all proofs P1...Pn
-    Note right of T2: On failure: Abort/Handle Exception
-    T2->>T2: Calculate Joint Election Public Key y = y1 * y2 * ... * yn mod p
-    T2->>T2: Securely store private share x2 on Trustee Storage
-    %% T2 remains active to confirm key
+    T2->>T2: Verify check values cv*_2 against pairwise shares ps*_2
+    Note right of T2: On failure: abort protocol
+    T2->>T2: Calculate election public key from check values
+    T2->>T2: Securely store private share x2, all public check values,<br/>and all pairwise shares ps*_2 on Trustee Storage<br/>(e.g., encrypted USB)
+    T2->>TB: Post calculated election public key
+    %% T2 awaits posting of all generated election public keys
 
-    Note over T2, Tn: Verification, Key Computation & Local Storage repeated for T3...Tn-1
+    Note over T2, Tn: Steps repeated for T3 .. Tn-1
 
     %% Tn processes
-    Tn->>Tn: Verify all proofs P1...Pn
-    Note right of Tn: On failure: Abort/Handle Exception
-    Tn->>Tn: Calculate Joint Election Public Key y = y1 * y2 * ... * yn mod p
-    Tn->>Tn: Securely store private share xn on Trustee Storage
-    %% Tn remains active to confirm key
+    Tn->>Tn: Verify check values cv*_n against pairwise shares ps*_n
+    Note right of Tn: On failure: abort protocol
+    Tn->>Tn: Calculate election public key from check values
+    Tn->>Tn: Securely store private share xn, all public check values,<br/>and all pairwise shares ps*_n on Trustee Storage<br/>(e.g., encrypted USB)
+    Tn->>TB: Post calculated election public key
+    %% Tn awaits posting of all generated election public keys
 
     %% == Phase 4: Final Key Confirmation (within Air-Gap) ==
+
+    Note over TB: All calculated public keys are mirrored to the trustees' local boards
+    TB-->>T1: All calculated public keys
+    activate T1 # Activate T1 when it has all calculated public keys
+    TB-->>T2: All calculated public keys
+    activate T2 # Activate T2 when it has all calculated public keys
+
+    Note over TB, Tn: Mirroring also occurs for T3 .. Tn-1
+
     activate TAS # Activate TAS to receive final key confirmations
-    T1->>TAS: Confirm Computed Public Key (y)
+    TB-->>TAS: All calculated public keys
+
+    TB-->>Tn: All calculated public keys
+    activate Tn # Activate Tn when it has all calculated public keys
+
+    T1->>T1: Check that all calculated public keys are identical
+    Note right of T1: On failure: abort protocol
+
+    T2->>T2: Check that all calculated public keys are identical
+    Note right of T2: On failure: abort protocol
+
+    Tn->>Tn: Check that all calculated public keys are identical
+    Note right of Tn: On failure: abort protocol
+
+    TAS->>TAS: Check that all calculated public keys are identical
+    Note right of TAS: On failure: abort protocol
+
     deactivate T1 # T1 processing complete for DKG
 
-    T2->>TAS: Confirm Computed Public Key (y)
     deactivate T2 # T2 processing complete for DKG
 
-    Note over T2, Tn: Final key confirmation repeated for T3...Tn-1
-
-    Tn->>TAS: Confirm Computed Public Key (y)
     deactivate Tn # Tn processing complete for DKG
 
-    Note over T1, Tn: All trustees confirmed computation of the same Election Public Key 'y'. <br/> Each Trustee 'Ti' has stored their private share 'xi' locally on secure Trustee Storage.
-    Note right of TAS: TAS now holds the final Election Public Key 'y', ready for secure export from the air-gap (via Election Admin using physical media).
-    deactivate TAS # TAS processing complete for DKG subprotocol
+    deactivate TB
+    deactivate TAS
+
+    Note over T1, Tn: All trustees computed the same election public key y.<br/>Each Trustee Ti has stored their private share xi, their pairwise shares ps*_i, and all public check values locally on secure Trustee Storage
+
+    Note over TAS: TAS now holds the computed election public key y,<br/>ready for secure export from the air-gap<br/>(via Election Administrator Storage)
 ```

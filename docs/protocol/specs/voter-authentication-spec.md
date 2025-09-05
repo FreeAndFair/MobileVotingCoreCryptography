@@ -3,6 +3,7 @@
 ## Phase 1 Initiation
 
 ### Initial Request Message
+
 sender
 : Voting Application (VA)
 
@@ -13,6 +14,7 @@ purpose
 : This message registers the voter's intent to authenticate and associates a freshly generated key-pair with this authentication session.
 
 ***structure***
+
 ```rust
 struct AuthReqMsg {
   election_hash : String, // Hash of the unique election configuration item.
@@ -25,9 +27,11 @@ channel properties
 : The `election_hash` included in this message serves to prevent replaying of old messages from a different election in the context of this election.
 
 ### Initial Request Checks
+
 1. The `election_hash` is the hash of the election configuration item for the current election.
 
 ### Initiate Authentication Request Message
+
 sender
 : Election Administration Server (EAS)
 
@@ -38,18 +42,21 @@ purpose
 : This message creates the verification session with the third-party authentication session using the credentials of the election administration server.
 
 ***structure***
+
 ```json
 {
     "project_id": "string", // An identifier specific to the voting system infrastructure used by the third-party authentication service to determine the verification flow for the authentication sessions we create.
     "api_key": "string" // The third-party authentication service API key specific to the EAS.
 }
 ```
+
 Note: This structure is specified in JSON reflecting the JSON API of our candidate vendor.
 
 channel properties
 : The assumptions for this channel is the security of TLS for connecting to and using the API provided by the authentication service.
 
 ### Token Return Message
+
 sender
 : Authentication Service (AS)
 
@@ -60,21 +67,25 @@ purpose
 : This message returns a token which can be given to the user wishing to authenticate with the authentication service and a session id retained by the server who initiated the request. The session id is later used to query the authentication service for the results of the authentication attempt.
 
 ***structure***
+
 ```json
 {
     "token": "string", // Token to be used by the client to start an authentication session.
     "session_id": "string" // A session identifier to be used by the server to request authentication session information tied to the associated token.
 }
 ```
+
 Note: This structure is specified in JSON reflecting the JSON API of our candidate vendor.
 
 channel properties
 : The assumptions for this channel is the security of TLS for connecting to and using the API provided by the authentication service.
 
 ### Session Information Storage
+
 The EAS stores the token, session ID, and public key in its database.
 
 ***structure***
+
 ```rust
 // This is data that is written to storage not sent as a message
 struct AuthSessionRecord {
@@ -86,6 +97,7 @@ struct AuthSessionRecord {
 ```
 
 ### Voter Token Return Message
+
 sender
 : Election Administration Server (EAS)
 
@@ -96,6 +108,7 @@ purpose
 : This message communicates the token used to begin an authentication session with the authentication service. The message also confirms which public key the election administration server has associated with this authentication session.
 
 ***structure***
+
 ```rust
 struct HandTokenMsg {
   election_hash : String, // Hash of the unique election configuration item.
@@ -109,6 +122,7 @@ channel properties
 : The `signature` is intended to provide *integrity* and *authenticity* over the token and the public key the election administration server has associated it with. Notably, confidentiality is not intended for this channel as the token can only be used to being an authentication session which confidential authentication information is needed to proceed with.
 
 ### Voter Token Return Checks
+
 1. The `election_hash` is the hash of the election configuration item for the current election.
 2. The `voter_public_key` is the voting application's public key.
 3. The `signature` is a valid signature over the message contents signed by the election administration server signing key.
@@ -117,10 +131,10 @@ channel properties
 
 The VA and the AS directly send message back and forth according to the AS protocol. The end result of which is the AS will store the authentication data of the voter using the VA and notify the VA when the authentication process is complete.
 
-
 ## Phase 3 Validation of Authentication
 
 ### Validation Request Message
+
 sender
 : Voting Application (VA)
 
@@ -131,6 +145,7 @@ purpose
 : This message notifies the election administration server that the third-party authentication step has been completed and the voter is requesting the election administration server connect to the authentication service directly to query the results of the authentication session.
 
 ***structure***
+
 ```rust
 struct AuthFinishMsg {
   election_hash : String, // Hash of the unique election configuration item.
@@ -144,15 +159,18 @@ channel properties
 : The `signature` intends to provide *integrity* and *authenticity* over the contents of the message. As the message only contains publicly known data there isn't a need for confidentiality.
 
 ### Validation Request Checks
+
 1. The `election_hash` is the hash of the election configuration item for the current election.
 2. The `token` matches one `AuthSessionRecord.token`.
 3. The `public_key` matches the `AuthSessionRecord.public_key` from check #2.
 4. The `signature` is a valid signature over the message contents signed by the `public_key`.
 
 ### Validation Request Processing
+
 The EAS retrieves the session ID from storage using the public key which signed the begin validation message. If a session ID is found the *Request Session Data Message* is sent otherwise the *No Session Found Message* is sent.
 
 ### Authentication Service Query Message
+
 sender
 : Election Administration Server (EAS)
 
@@ -163,18 +181,21 @@ purpose
 : This message requests the authentication data associated with the session ID.
 
 ***structure***
+
 ```json
 {
     "session_id": "string", // The session ID retrieved from EAS storage based on the public key used to sign the Validation Request Message.
     "api_key": "string" // The third-party authentication service API key specific to the EAS.
 }
 ```
+
 Note: This structure is specified in JSON reflecting the JSON API of our candidate vendor.
 
 channel properties
 : The assumptions for this channel is the security of TLS for connecting to and using the API provided by the authentication service.
 
 ### Authentication Service Report Message
+
 sender
 : Authentication Service (AS)
 
@@ -185,6 +206,7 @@ purpose
 : This message returns the result of the authentication session from the *Authentication Service Query Message* and the information used in the authentication decision. If the authentication was successful, the authentication service sends its ground truth data concerning the authenticated person.
 
 ***structure***
+
 ```json
 {
   "id": "string",
@@ -379,19 +401,21 @@ purpose
   "custom_fields": {}
 }
 ```
+
 Note: This structure is specified in JSON reflecting the JSON API of our candidate vendor.
 
 channel properties
 : The assumptions for this channel is the security of TLS for connecting to and using the API provided by the authentication service.
 
-
 ## Phase 4 Voter Authorization
 
 ### Authorization Checks
+
 1. Biographical information from the *Authentication Service Report Message* match a registered voter in the voter registration database.
 2. The `token` in the *Authentication Service Report Message* matches one `AuthSessionRecord.token`.
 
 ### Authorize Voter Message
+
 sender
 : Election Administration Server (EAS)
 
@@ -402,6 +426,7 @@ purpose
 : This message is sent from the election administration server to the digital ballot box  authorizing the acceptance of ballot submission and ballot casting messages signed by the `voter_public_key` representing votes from the voter with pseudonym `voter_pseudonym`. This authorization will be stored in a table in the digital ballot box keyed by `voter_pseudonym`.
 
 ***structure***
+
 ```rust
 struct AuthVoterMsg {
   election_hash : String, // Hash of the unique election configuration item.
@@ -416,6 +441,7 @@ channel properties
 : The signature by the Election Administration Server is intended to provide *integrity* over the contents of the message and *authentication* for the digital ballot box.
 
 ### Authorize Voter Checks
+
 1. The `election_hash` is the hash of the election configuration item for the current election.
 2. The `voter_pseudonym` is present and a well formed identifier.
 3. The `voter_public_key` is present and a well formed public key from a supported cryptosystem.
@@ -423,6 +449,7 @@ channel properties
 5. The `signature` is a valid signature over the message contents signed by the election administration server signing key.
 
 ### Confirm Authorization Message
+
 sender
 : Election Administration Server (EAS)
 
@@ -433,6 +460,7 @@ purpose
 : This message copies the message authorizing the public key for voting and sends it to the voter confirming they are authorized to vote. This message also informs the voter of their officially registered ballot style.
 
 ***structure***
+
 ```rust
 struct ConfirmAuthorizationMessage {
     election_hash : String, // Hash of the unique election configuration item.
@@ -448,6 +476,7 @@ channel properties
 : The signature by the Election Administration Server is intended to provide *integrity* over the contents of the message and *authentication* for the voting application.
 
 ### Confirm Authorization Checks
+
 1. The `election_hash` is the hash of the election configuration item for the current election.
 2. The `voter_pseudonym` is present and a well formed identifier.
 3. The `voter_public_key` is the voting application's public key.
@@ -455,6 +484,7 @@ channel properties
 5. The `signature` is a valid signature over the message contents signed by the election administration server signing key.
 
 ## Voting Application Process Diagram
+
 ```mermaid
     stateDiagram-v2
       auth_req : Send **Initial Request Message**
@@ -499,6 +529,7 @@ channel properties
 ```
 
 ## Election Administration Server Process Diagram
+
 ```mermaid
     stateDiagram-v2
       auth_req : Receive **Initial Request Message**

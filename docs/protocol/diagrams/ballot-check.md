@@ -1,4 +1,5 @@
 # Ballot Check Subprotocol Sequence Diagram
+
 ```mermaid
 sequenceDiagram
         participant Voter

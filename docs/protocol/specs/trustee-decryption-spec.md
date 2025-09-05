@@ -1,226 +1,218 @@
 # Trustee Decryption Subprotocol
-This subprotocol specifies the interactions between the trustees and the trustee administration server that transform the, already mixed, list of ciphertexts into a list of plaintexts, to be tallied.
 
+This subprotocol specifies the interactions between the trustees and the trustee administration server (TAS) that transform the (already mixed) list of ballot ciphertexts into a list of plaintexts to be tallied.
 
-## Phase 1: Partial Decryptions
+## Trustee Protocol Communication
 
-### Request Partial Decryption Message
+As with the election key generation and trustee mixing protocols, the TAS performs minimal computation in this protocol. It performs three main functions: providing a "trustee board" on which the trustees can post protocol messages; validating the final round of messages posted by the trustees at the end of the subprotocol before printing them or writing them to a storage device for later printing by the election administrator; and (if necessary) posting an initial message to the trustee board containing the set of encrypted ballots that needs to be decrypted.
+
+More information on the trustee board mechanism is avaiable in the [election key protocol specification](./election-key-gen-spec.md).
+
+We assume that this subprotocol starts in one of two ways: (1) trustee computation picks up where the trustee mixing subprotocol left off, with the same trustee board, such that the messages from the final round of the trustee mixing subprotocol are already on the board; or (2) the TAS initializes the trustee board to contain either all, or only the last round of, the mixing subprotocol messages. In either event, the trustees start from `K` **ElGamal Cryptograms Message**s with the same `original_message_source` (the trustee that shuffled last), identical aside from signatures and signing trustee public keys. For efficiency, if the mixing and decryption subprotocols take place at different times or in different places, an implementation might choose to coalesce these `K` messages into a single message similar to the **Initial Cryptograms Message** in the trustee mixing subprotocol, but containing all the trustee public keys and signatures for the final mix. We do not describe the format of such a coalesced message here.
+
+In this subprotocol, the trustees need to wait for messages from all participating trustees before proceeding. This implies that the trustees know the entire set of participating trustees, and that the set of participating trustees cannot change _during_ the protocol execution without causing the protocol to fail. The set of participating trustees is provided to all the participating trustees either out of band, or as part of an initial protocol message posted by the TAS.
+
+## Phase 1: Post Partial Decryptions
+
+In this phase, all participating trustees perform their own partial decryptions of the mixed ballot cryptograms and post their results to the trustee board. They perform the same message checks on the initial **ElGamal Cryptograms Message**s that they would perform to conclude a round of the trustee mixing subprotocol. These checks can be skipped if the same set of participating trustees executes this subprotocol immediately after the trustee mixing subprotocol, because they will have already performed it; however, if the set of participating trustees is different, they should perform the checks again.
+
+### ElGamal (EG) Cryptograms Message
 
 sender
-: Trustee Administration Sever (TAS)
+: All Participating Trustees from Mixing Subprotocol, or TAS
 
 recipient
-: Trustee
+: All Participating Trustees
+
+board slot
+: (`message_type`, `source_trustee`, `public_key`)
 
 purpose
-: Transmit a the list of un-decrypted ballot ciphertexts to each trustee so that an initial decryption can be performed.
+: Post a initial shuffled list of ElGamal cryptograms and corresponding shuffle proofs (from the mixing subprotocol).
 
-***structure***
+_**structure**_
+
 ```rust
-  struct RequestPartialDecryptionMessage {
-    election_hash : String,
-    cryptogram_list : List<Cryptogram>.
-    signature : String,
-  }
+struct EGCryptogramsMessage {
+  message_type : enum,
+  election_hash : String,
+  original_message_source : String,
+  cryptograms : List<EGCryptogram>,
+  shuffle_proofs: List<ShuffleProof>,
+  public_key : String,
+  signature : String
+}
 ```
-- `election_hash`: Hash of the unique election configuration item.
-- `cryptogram_list`: The list of all ballot cryptograms accepted by the digital ballot box.
-- `signature`: Signature by the Trustee Administration Server's signing key over the contents of this message minus the signature itself.
+
+- `message_type`: The type of this message ("ElGamal cryptograms").
+- `election_hash`: The hash of the unique election configuration item.
+- `original_message_source` : The public signing key of the trustee that performed the shuffle to generate the list of cryptograms and shuffle proofs in this message; that is, the protocol actor that first sent the lists of cryptograms and shuffle proofs in this message.
+- `cryptograms`: The list of shuffled cryptograms.
+- `shuffle_proofs` : The shuffle proofs corresponding to the `cryptograms` list.
+- `public_key` : The public key of the trustee signing this message.
+- `signature`: A digital signature created with the signing key corresponding to `public_key` over the contents of this message minus the signature itself.
 
 channel properties
-: The `signature` by the Trustee Administration Server is intended to provide authenticity and integrity over the list of cryptograms.
+: The `signature` is intended to provide authenticity and integrity over the message contents.
 
+### ElGamal Cryptograms Message Checks
 
-### Request Partial Decryption Message Checks
 1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `cryptogram_list` contains only valid ballot constructions of the ballot styles in this election.
-3. The `signature` is a valid signature matching the public signing key of the Trustee Administration Server.
+2. The `original_message_source` is a valid trustee for this election.
+3. The `cryptograms` list contains a list of cryptograms valid for this election.
+4. The `cryptograms` list is identical to the `cryptograms` list in every other `EGCryptogramMessage` with the same `original_message_source`.
+5. The `shuffle_proofs` list contains valid shuffle proofs for the `cryptograms` list.
+6. The `public_key` is a valid signing key for a trustee in this election.
+7. The `signature` is a valid signature matching the `public_key` over the contents of this message minus the signature itself.
 
+### Partial Decryption Message
 
-### Submit Partial Decryption Message
 sender
-: Trustee
+: Participating Trustee
 
 recipient
-: Trustee Administration Server (TAS)
+: All Participating Trustees
+
+board slot
+: (`message_type`, `public_key`)
 
 purpose
-: Give the trustee administration server a list of partial decryptions along with a list of proofs of correct partial decryption.
+: Post the trustee's partial decryptions so that the other trustees can validate them.
 
-***structure***
+_**structure**_
+
 ```rust
-struct SubmitPartialDecryptionMessage {
+struct PartialDecryptionMessage {
+  message_type : enum,
   election_hash : String,
-  partial_decryption_list : List<PartialDecryption>.
+  partial_decryptions : List<PartialDecryption>,
   public_key : String,
-  signature : String,
+  signature : String
 }
 
 struct PartialDecryption {
   decrypted_component : String,
-  proof : String,
+  proof : String
 }
 ```
-- `election_hash`: Hash of the unique election configuration item.
-- `partial_decryption_list`: List of the partial decryptions generated by applying this Trustee's key share to the ciphertext and associated proofs.
-- `public_key`: Public signature key belonging to this Trustee.
-- `signature`: A digital signature created by the the Trustee's signature key over the contents of this message minus the signature itself.
+
+- `message_type`: The type of this message ("partial decryptions").
+- `election_hash`: The hash of the unique election configuration item.
+- `partial_decryptions` : The list of partial decryptions (and their proofs) generated by the trustee.
+- `public_key` : The public key of the trustee signing this message.
+- `signature`: A digital signature created with the signing key corresponding to `public_key` over the contents of this message minus the signature itself.
 
 channel properties
-: The `signature` intends to provide authenticity and integrity over the contents of this message namely the list of partial decryptions.
+: The `signature` is intended to provide authenticity and integrity over the message contents.
 
+### Partial Decryption Message Checks
 
-### Submit Partial Decryption Message Checks
 1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `partial_decryption_list` contains a well formed partial decryption for each ciphertext in the list of cryptograms being decrypted.
-3. The `public_key` is a valid signature key for a Trustee in this election.
-4. The `signature` is a valid signature matching the `public_key` over the contents of this message minus the signature itself.
+2. The `partial_decryptions` list contains a well formed partial decryption for each ciphertext in the list of cryptograms being decrypted, and each partial decryption proof verifies correctly.
+3. The `public_key` is a valid signing key for a trustee participating in this subprotocol.
+4. The `signature` is a valid signature matching the public signing key of the Trustee Administration Server.
 
-Note: The Trustee Administration Server could check the correct construction of the `PartialDecryption`s and the validity of their associated proofs. However, this responsibility is *intentionally* left to the other Trustees participating in the distributed decryption process.
+## Phase 2: Partial Decryption Verification and Combination
 
-## Phase 2: Verification of Partial Decryptions
+In this phase, each trustee waits for all participating trustees to post partial decryption messages, and performs the `PartialDecryptionsMessage` checks on all of them. If all these checks succeed, the trustee combines the partial decryptions and posts them to the trustee board.
 
-### Request Verification of Partial Decryption Message
+At the end of a successful phase 2, there are `K` messages with identical content (aside from signing trustee key and signature) on the trustee board containing the decrypted list of cryptograms. When this occurs, and the messages pass all the checks listed below, the decryption subprotocol is complete. If the messages do not pass the checks, or do not have identical content, the decryption subprotocol fails. This validation of the decrypted ballots does not result in any protocol messages, as the success or failure of the protocol is self-evident from whether the lists of decrypted ballots in the `DecryptedBallotMessage`s are identical; it does, however, allow trustees to report that failure if the TAS does not detect it.
+
+### Decrypted Ballots Message
+
 sender
-: Trustee Administration Sever (TAS)
+: Participating Trustee
 
 recipient
-: Trustee
+: All Participating Trustees
+
+board slot
+: (`message_type`, `public_key`)
 
 purpose
-: Transmit the list of lists of partial decryptions and list of lists of proof of correct partial decryptions to each trustee for verification.
+: Post the trustee's partial decryptions so that the other trustees can validate them.
 
-***structure***
 ```rust
-struct RequestVerificationOfPartialDecryptionMessage {
+struct DecryptedBallotsMessage {
+  message_type : enum,
   election_hash : String,
-  partial_decryption_message_list : List<SubmitPartialDecryptionMessage>,
-  signature : String,
-}
-```
-- `election_hash`: Hash of the unique election configuration item.
-- `partial_decryption_message_list`: List of all partial decryption messages the Trustee Administration Server has received.
-- `signature`: Signature by the Trustee Administration Server's signing key over the contents of this message minus the signature itself.
-
-channel properties
-: The `signature` by the Trustee Administration Server is intended to provide authenticity and integrity over the list of partial decryption messages.
-
-
-### Request Verification Of Partial Decryption Message Checks
-
-#### Message Checks
-1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `partial_decryption_message_list` contains only valid partial decryption messages; from at least a threshold number of distinct Trustees.
-3. Each `partial_decryption_list` within each `SubmitPartialDecryptionMessage` contains a well formed partial decryption for each ciphertext in the list of cryptograms being decrypted.
-3. The `signature` is a valid signature matching the public signing key of the Trustee Administration Server.
-
-#### Partial Decryption Checks
-1. The `decrypted_component` is a valid partial decryption of the corresponding ciphertext.
-2. The `proof` verifies correctly demonstrating the secret share for the trustee who generated the partial decryption was used in creating the decrypted_component.
-
-
-### Submit Verification of Partial Decryption Message
-sender
-: Trustee
-
-recipient
-: Trustee Administration Server (TAS)
-
-purpose
-: Give the trustee administration server an attestation that this trustee asserts that they have successfully computed checks on all partial decryptions and proofs of correctness.
-
-***structure***
-```rust
-struct SubmitVerificationOfPartialDecryptionMessage {
-  election_hash : String,
-  ballot_plaintext_list : List<String>,
+  decrypted_ballots : List<Ballot>,
   public_key : String,
-  signature : String,
+  signature : String
 }
 ```
-- `election_hash`: Hash of the unique election configuration item.
-- `ballot_plaintext_list`: List of the decrypted ciphertexts using the combination of a threshold or greater number of partial decryption components.
-- `public_key`: Public signature key belonging to this Trustee.
-- `signature`: A digital signature created by the the Trustee's signature key over the contents of this message minus the signature itself.
+
+- `message_type`: The type of this message ("decrypted ballots").
+- `election_hash`: The hash of the unique election configuration item.
+- `decrypted_ballots` : The list of decrypted ballots generated by the trustee.
+- `public_key` : The public key of the trustee signing this message.
+- `signature`: A digital signature created with the signing key corresponding to `public_key` over the contents of this message minus the signature itself.
 
 channel properties
-: The `signature` intends to provide authenticity and integrity over the contents of this message namely the list of decrypted plaintexts.
+: The `signature` is intended to provide authenticity and integrity over the message contents.
 
+### Decrypted Ballots Message Checks
 
-### Submit Verification of Partial Decryption Message Checks
 1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `ballot_plaintext_list` contains a list of plaintexts corresponding to the initial list of ballot cryptograms the protocol was initiated with. Each plaintext ballots has the same ballot style as its corresponding cryptogram.
-3. The `public_key` is a valid signature key for a Trustee in this election.
-4. The `signature` is a valid signature matching the `public_key` over the contents of this message minus the signature itself.
+2. The `decrypted_ballots` list contains a plaintext ballot corresponding to the initial list of ballot cryptograms (from the initial `ElGamalCryptogramsMessage`), and each plaintext ballot has the same ballot style as its corresponding cryptogram.
+3. The `decrypted_ballots` list is identical to the `decrypted_ballots` list in every other `DecryptedBallotsMessage`.
+4. The `public_key` is a valid signing key for a trustee participating in this subprotocol.
+5. The `signature` is a valid signature matching the `public_key` over the contents of this message minus the signature itself.
 
+## Protocol Diagrams
 
-## Phase 3: Completion
-
-### Signed Plaintexts Received Event
-Once the trustee administration server receives a threshold number of Submit Verification of Partial Decryption Messages attesting to a common list of decrypted plaintext ballots, the protocol is now complete and the ballots can be tallied electronically or they can be printed and tallied with optical scanners, but this falls outside the scope of the protocol.
+Note that, in these diagrams, a trustee "awaits" a message by waiting until the specified message appears on its local copy of the trustee board. Any "await" state can cause the protocol to fail if the message does not arrive within some reasonable amount of time, but these timeouts are not explicitly listed in the state diagram.
 
 ## Trustee Process Diagram
+
 ```mermaid
     stateDiagram-v2
-      rec_partial : Receive **Request Partial Decryption Message**
-      sub_partial : Send **Submit Partial Decryption Message**
-      rec_verif : Receive **Request Verification of Partial Decryption Message**
-      sub_verif : Send **Submit Verification of Partial Decryption Message**
+      await_init : Await **El-Gamal Cryptograms Message**
+      check_init : Check Message Contents and Shuffle Proofs
+      post_partial_decryptions : Generate Partial Decryptions and Post **Partial Decryption Message**
+      await_partial_decryptions: Await all **Partial Decryption Message**s
+      check_partial_decryptions: Check the Partial Decryptions
+      combine_partial_decryptions: Combine the Partial Decryptions and Post **Decrypted Ballots Message**
+      await_decrypted_ballots : Await all **Decrypted Ballots Message**s
+      check_decrypted_ballots : Check the Decrypted Ballots
 
-      complete : **Success** Ballot Cryptograms Decrypted
-      error : **Failure** Protocol Aborted with Error Message
+      complete : **Success** - Ballot Cryptograms Decrypted
+      error : **Failure** - Protocol Aborted with Error Message
 
-      [*] --> rec_partial
+      [*] --> await_init
 
-      rec_partial --> sub_partial
-      rec_partial --> error : Timeout Exceeded Error
-      rec_partial --> error : Invalid Signature Error
-      rec_partial --> error : Invalid Cryptogram Error
-
-      sub_partial --> rec_verif
-      sub_partial --> error : Partial Decryption Computation Failure
-
-      rec_verif --> sub_verif
-      rec_verif --> error : Timeout Exceeded Error
-      rec_verif --> error : Invalid Signature Error
-      rec_verif --> error : Invalid Cryptogram Error
-      rec_verif --> error : Partial Decryption Incorrect Error
-      rec_verif --> error : Zero Knowledge Proof Invalid Error
-
-      sub_verif --> complete
+      await_init --> check_init
+      check_init --> error : Invalid Shuffled Cryptograms Message
+      check_init --> post_partial_decryptions
+      post_partial_decryptions --> await_partial_decryptions
+      await_partial_decryptions --> check_partial_decryptions
+      check_partial_decryptions --> error : Invalid Partial Decryptions
+      check_partial_decryptions --> combine_partial_decryptions : Valid Partial Decryptions
+      combine_partial_decryptions --> await_decrypted_ballots
+      await_decrypted_ballots --> check_decrypted_ballots
+      check_decrypted_ballots --> error : Invalid Decrypted Ballots
+      check_decrypted_ballots --> complete : Valid Decrypted Ballots
 
       complete --> [*]
       error --> [*]
 ```
 
 ## Trustee Administration Server Process Diagram
+
 ```mermaid
     stateDiagram-v2
-      rec_partial : Send **Request Partial Decryption Message**
-      sub_partial : Receive **Submit Partial Decryption Message**
-      rec_verif : Send **Request Verification of Partial Decryption Message**
-      sub_verif : Receive **Submit Verification of Partial Decryption Message**
+      post_init : Post Initial **ElGamal Cryptograms Message** (if necessary)
+      await_decryption : Await Final Round **Decrypted Ballots Message**s
+      check_messages: Check Message Contents
 
-      complete : **Success** Ballot Cryptograms Decrypted
+      complete : **Success** - Ballot Cryptograms Decrypted
       error : **Failure** Protocol Aborted with Error Message
 
-      [*] --> rec_partial
-
-      rec_partial --> sub_partial
-
-      sub_partial --> rec_verif
-      sub_partial --> error : Invalid Signature Error
-      sub_partial --> error : Timeout Exceeded Error
-      sub_partial --> error : Invalid Partial Decryption Error
-      sub_partial --> error : Invalid Cryptogram Error
-
-      rec_verif --> sub_verif
-
-      sub_verif --> error : Invalid Signature Error
-      sub_verif --> error : Timeout Exceeded Error
-      sub_verif --> error : Incorrect Hash Error
-
-      sub_verif --> complete
+      [*] --> post_init
+      post_init --> await_decryption
+      await_decryption --> check_messages
+      check_messages --> complete : Messages Valid
+      check_messages --> error : Messages Invalid
 
       complete --> [*]
       error --> [*]

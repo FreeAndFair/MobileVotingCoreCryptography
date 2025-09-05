@@ -1,84 +1,100 @@
-# Trustee Ballot Decryption Subprotocol Sequence Diagram
-```mermaid
+# Election Key Generation Subprotocol Sequence Diagram
+
+We list the Trustee Board as a separate protocol actor here, even though it is maintained by the Trustee Administration Server, to show what gets posted to the board and what information the Trustee Adminstration Server reads from the board at the end of the protocol (to add to the election configuration).
+
+``` mermaid
 sequenceDiagram
-    %% Define Participants within the Air-Gapped Network
+    participant T1 as Trustee 1 (uses Trustee App)
+    participant T2 as Trustee 2 (uses Trustee App)
+    participant Tn as Trustee n (uses Trustee App)
+    participant TB as Trustee Board
+    participant TAS as Trustee Administration Server
+    participant BP as Ballot Printer
+
+    %% Air-Gapped Network Box (as defined in overview)
     box rgb(227, 243, 255) Air-Gapped Network Boundary
-        participant TAS as Trustee Administration Server (Air-Gapped)
-        participant T1 as Trustee 1 (uses Trustee App)
-        participant T2 as Trustee 2 (uses Trustee App)
-        participant Tn as Trustee n (uses Trustee App)
-        participant BP as Ballot Printer (Air-Gapped)
-    end %% Air-Gapped Network Boundary
-
-    activate TAS
-    Note over TAS: Decryption starts. Input: Final Mixed Ballot List Ln.
-
-    %% == Phase 1: Request Partial Decryption Shares for the List ==
-    Note over TAS: Requesting partial decryptions for the entire list Ln
-    TAS->>T1: Request Partial Decryptions (List Ln)
-    activate T1
-    TAS->>T2: Request Partial Decryptions (List Ln)
-    activate T2
-    TAS->>Tn: Request Partial Decryptions (List Ln)
-    activate Tn
-
-    %% == Phase 2: Compute & Submit Partial Decryption Shares for the List ==
-    T1->>T1: Compute Partial Decryption Shares + ZKPs (for all ballots in Ln)
-    T1->>TAS: Submit Shares + ZKPs (Batch for Ln)
-    deactivate T1
-
-    T2->>T2: Compute Partial Decryption Shares + ZKPs (for all ballots in Ln)
-    T2->>TAS: Submit Shares + ZKPs (Batch for Ln)
-    deactivate T2
-
-    Tn->>Tn: Compute Partial Decryption Shares + ZKPs (for all ballots in Ln)
-    Tn->>TAS: Submit Shares + ZKPs (Batch for Ln)
-    deactivate Tn
-    Note over TAS: Collecting batches of shares and proofs for list Ln
-
-    %% == Phase 3: Verify Submitted Shares (Server & Peer) for the List ==
-    Note over TAS: TAS verifies all incoming ZKPs for correctness (batch verification).
-    TAS->>TAS: Verify all submitted ZKPs (Batch for Ln)
-
-    Note over TAS: Distributing all received shares/proofs for peer verification.
-    TAS-->>T1: Distribute All Received Shares/Proofs (Batch for Ln)
-    activate T1
-    TAS-->>T2: Distribute All Received Shares/Proofs (Batch for Ln)
-    activate T2
-    TAS-->>Tn: Distribute All Received Shares/Proofs (Batch for Ln)
-    activate Tn
-
-    T1->>T1: Verify all peer shares/proofs (Batch for Ln)
-    Note right of T1: On failure: Report Disputes for specific ballots
-    T1-->>TAS: Verification Results (Batch for Ln) (Success/Disputes)
-    deactivate T1
-
-    T2->>T2: Verify all peer shares/proofs (Batch for Ln)
-    Note right of T2: On failure: Report Disputes for specific ballots
-    T2-->>TAS: Verification Results (Batch for Ln) (Success/Disputes)
-    deactivate T2
-
-    Tn->>Tn: Verify all peer shares/proofs (Batch for Ln)
-    Note right of Tn: On failure: Report Disputes for specific ballots
-    Tn-->>TAS: Verification Results (Batch for Ln) (Success/Disputes)
-    deactivate Tn
-    Note over TAS: Collecting batch verification results for list Ln.
-
-    %% == Phase 4: Combine Shares & Reconstruct Plaintexts for the List ==
-    Note over TAS: Checking threshold 't' of verified shares for *each ballot* in Ln based on batch results.
-    TAS->>TAS: Combine verified shares for each valid ballot in Ln
-    Note over TAS: Reconstructs List of Cast Digital Ballot Plaintexts P(Ln) <br/> (May contain markers for ballots failing verification/threshold)
-
-    %% == Phase 5: Print Ballots from the List ==
-    opt Successfully Decrypted Plaintexts Exist in P(Ln)
-        TAS->>BP: Send List of Plaintexts P(Ln) to print queue
-        activate BP
-        BP->>BP: Print physical ballots sequentially from list P(Ln)
-        Note over BP: Output: Set of Printable Cast Ballots (Paper)
-        BP-->>TAS: Ack/Status (Batch Print Job Complete/Failed)
-        deactivate BP
+        participant T1
+        participant T2
+        participant Tn
+        participant TB
+        participant TAS
+        participant BP
     end
 
-    Note over TAS: Decryption Subprotocol Complete. Physical Ballots Printed.
+    %% Trustee Board is always "active"
+
+    note over TB: Trustee Board contains sufficient messages<br/>from the mixing subprotocol for trustees<br/>to check and use the final mix
+
+    activate TB
+
+    %% == Phase 1: Post Partial Decryptions ==
+    Note over TB, Tn: Post Partial Decryptions
+    Note over TB: All messages are mirrored<br/>to trustees' local boards
+    TB->>T1: ElGamal Cryptograms Lists (Final Round)
+    activate T1
+    TB->>T2: ElGamal Cryptograms Lists (Final Round)
+    activate T2
+    Note over TB: Mirroring also occurs for T3 .. Tn-1
+    TB->>Tn: ElGamal Cryptograms Lists (Final Round)
+    activate Tn
+
+    T1->>T1: Check that all ElGamal Cryptograms Lists<br/>are identical
+    T1->>T1: Compute partial decryptions and their proofs
+    T1->>TB: Post partial decryptions and their proofs
+    deactivate T1
+
+    T2->>T2: Check that all ElGamal Cryptograms Lists<br/>are identical
+    T2->>T2: Compute partial decryptions and their proofs
+    T2->>TB: Post partial decryptions and their proofs
+    deactivate T2
+
+    Note over T2, Tn: Steps repeated for T3 .. Tn-1
+
+    Tn->>Tn: Check that all ElGamal Cryptograms Lists<br/>are identical
+    Tn->>Tn: Compute partial decryptions and their proofs
+    Tn->>TB: Post partial decryptions and their proofs
+    deactivate Tn
+
+    %% == Phase 2: Check Partial Decryptions, Post Decryptions ==
+    TB->>T1: All partial decryption/proof messages
+    activate T1 # Activate T1 when it has all shares and check values
+    TB->>T2: All partial decryption/proof messages
+    activate T2 # Activate T2 when it has all shares and check values
+
+    Note over TB, Tn: Mirroring also occurs for T3 .. Tn-1
+
+    TB->>Tn: All partial decryption/proof messages
+    activate Tn # Activate Tn when it has all shares and check values
+
+    T1->>T1: Check the partial decryption proofs
+    T1->>T1: Combine the partial decryptions
+    T1->>TB: Post decrypted ballot plaintext list
+    deactivate T1
+
+    T2->>T2: Check the partial decryption proofs
+    T2->>T2: Combine the partial decryptions
+    T2->>TB: Post decrypted ballot plaintext list
+    deactivate T2
+
+    Note over T2, Tn: Steps repeated for T3 .. Tn-1
+
+    Tn->>Tn: Check the partial decryption proofs
+    Tn->>Tn: Combine the partial decryptions
+    Tn->>TB: Post decrypted ballot plaintext list
+    deactivate Tn
+
+    %% == Phase 3: Print Ballots ==
+
+    TB->>TAS: Decrypted ballot plaintext lists<br/>(from all trustees)
+    deactivate TB
+    activate TAS
+
+    TAS->>TAS: Check that all trustees' decrypted ballot<br/>plaintext lists are identical, and<br/>no errors were reported
+    TAS->>BP: Send ballot plaintext list to print queue
+    activate BP
+    BP->>BP: Print physical ballots sequentially from list
+    Note over BP: Output: Set of Marked Ballots (Paper)
+    BP->>TAS: Ack/Status (Batch Print Job Complete/Failed)
     deactivate TAS
+    deactivate BP
 ```

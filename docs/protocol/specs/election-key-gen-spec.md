@@ -1,375 +1,227 @@
 # Election Key Generation Subprotocol
-This subprotocol defines the interactions between the trustees and the trustee administration server to accomplish the distributed generation of a public key with each trustee holding a private key share. When ballots are later encrypted they are encrypted using this election public key.
 
-## Phase 1: Collect Public Shares and Proofs
+This subprotocol defines the interactions between the trustees and the trustee administration server (TAS) to accomplish the distributed generation of a public key with each trustee holding a private key share. When ballots are later encrypted they are encrypted using this election public key.
 
-### Public Share Submission Message
+## Trustee Protocol Communication
+
+In this trustee protocol (and all subsequent ones) the TAS performs minimal computation, and exists primarily to provide a "trustee board" on which the trustees can post protocol messages. The trustee board is similar to a public bulletin board, but the messages are not stored in a chain-like structure; instead, there is a fixed set of "message slots" (or "message identifiers"), each of which is used at a specific point in the protocol, and each of which (in a successful run of the protocol) can only be used once. The messages on the trustee board are stored in chronological order based on when the TAS receives them. Each trustee `t` maintains its own local copy of the trustee board by asking the TAS for all the messages later than the last message `t` has seen, whenever `t` has no messages to process in its current state. In this way every local copy of the trustee board necessarily _follows_ the board stored in the TAS; the TAS board is a sequence of messages `S`, and every local trustee board is a monotonically nondecreasing prefix of `S`.
+
+All protocol messages are signed with trustee keys, and the trustee public keys are known a priori to all trustees and to the TAS at the beginning of this protocol (becuase of prior trustee setup). The TAS ensures that only messages signed by trustees that it knows to be part of the protocol are posted to the trustee board, but does _not_ do any checking of message contents or message slots (note that this is an optimization; we could delegate all the signature checking to the trustees in an implementation, but then the trustee board would be subject to containing trivially invalid messages). It is therefore possible for a message slot to be used more than once on the TAS board, but this is easily detected by honest trustees: if an honest trustee ever receives a message for a slot that is already filled, it stops execution and declares that the protocol has failed. It does the same if it ever receives a messsage signed with its own private key that it did not previously send, indicating a key compromise.
+
+This trustee board update method assumes that the TAS maintains a consistent trustee board, honestly posts messages that are signed by trustees, and honestly updates all the trustees upon request. If it doesn't, its corruption is either (1) detectable by at least one honest trustee that receives data it does not expect at some stage of the protocol, or (2) detectable because the protocol fails to complete when a trustee does not receive some protocol message that was posted by another trustee. Trustee board corruption that is not detectable in one of these two ways has no effect on the outcome of the protocol.
+
+An implementation could eliminate these assumptions on the TAS by making the trustees use some peer-to-peer consensus mechanism to synchronize their local boards (with or without any central TAS board). However, the TAS is also the entry point that provides all election data, including the election setup, ballot cryptograms, etc., to the trustee protocols; if it is corrupted in a way such that it does not properly maintain the trustee board, it also can't be trusted to honestly provide the other information.
+
+In the following protocol phase descriptions, all messages are posted to the trustee board. In the message descriptions, **recipient** means "the trustee that is supposed to read and act upon the message", not "the trustee that receives the message" (all trustees eventually receive all posted messages on their local copies of the trustee board), and **board slot** means "the message fields that determine the trustee board slot filled by the message." All integrity checks described for the messages are performed by the trustees; additionally, the TAS performs the public signing key and signature checks to prevent unsigned or badly signed messages from being posted to the trustee board.
+
+In addition to the explicit integrity checks listed with each message type, each trustee continuously (i.e., every time it receives a trustee board update) checks that no trustee board slot contains more than one message. If this check or any explicit message integrity check ever fails, the trustee _immediately_ stops participating in the subprotocol and raises an alarm (out of band) to the other trustees and the election authority that something has gone wrong and must be resolved manually before the subprotocol can be re-attempted.
+
+## Phase 1: Trustees Post Public Check Values and Encrypted Private Shares
+
+In this phase of the subprotocol, each trustee posts `N + 1` messages to the bulletin board, where `N` is the total number of trustees. One of these messages is the trustee's vector of public check values, and the other `N` are the pairwise secret shares it creates for all the trustees (including itself). The public check values are used both to check the validity of the private shares and to generate the election public key.
+
+Note that an implementation of the protocol might choose to combine these `N + 1` messages into a single message containing a vector of public check values and a vector of encrypted pairwise shares; this simplifies the messaging (by reducing the number of messages) at the cost of increasing the complexity of message encoding/decoding. This choice does not affect the behavior of the protocol, aside from making the combined message from each trustee take a single board slot instead of the `N + 1` board slots taken by the individual public check value and pairwise share messages.
+
+### Public Check Value
+
 sender
 : Trustee
 
 recipient
-: Trustee Administration Server (TAS)
+: All Trustees
+
+board slot
+: (`message_type`, `public_key`)
 
 purpose
-: Transmit a single trustee's public share and proof of knowledge of the corresponding private share to the Trustee Administration Server.
+: Post a single trustee's public check value.
 
-***structure***
+_**structure**_
+
 ```rust
-struct PublicShareSubmissionMessage {
+struct PublicCheckValueMessage {
+  message_type : enum,
   election_hash : String,
-  public_share : String,
-  proof_of_knowledge : String,
+  check_values : [String, N],
   public_key : String,
   signature : String,
 }
 ```
-- `election_hash`: Hash of the unique election configuration item.
-- `public_share`: The public share generated by the trustee.
-- `proof_of_knowledge`: The proof of knowledge demonstrating the trustee has knowledge of the private share associated with the public share included in this message.
-- `public_key`: Public signing key associated with this trustee.
+
+- `message_type` : The type of this message ("public check value").
+- `election_hash`: The hash of the unique election configuration item.
+- `check_values`: The `N` public check values computed by the trustee.
+- `public_key`: The public signing key associated with this trustee.
 - `signature`: A digital signature created by the trustee's signing key over the contents of this message.
 
 channel properties
-: The `signature` is intended to provide integrity and authenticity over the contents of the message namely the public share and proof of knowledge.
+: The `signature` is intended to provide integrity and authenticity over the public check value.
 
+#### Public Check Value Integrity Checks
 
-### Public Share Submission Message Checks
 1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The fields `public_share` and `proof_of_knowledge` are present and of a valid format.
-3. The `public_key` is a valid signature key for a Trustee in this election.
+2. The `check_values` are valid with respect to the pairwise share (from a different message, see below) generated by the sending trustee for the checking trustee.
+3. The `public_key` is a valid signing key for a trustee in this election.
 4. The `signature` is a valid signature matching the `public_key` over the contents of this message minus the signature itself.
 
-Note: The Trustee Administration Server could check the correct construction of the `public_share` and the validity of the `proof_of_knowledge`. However, this responsibility is *intentionally* left to the other Trustees participating in the distributed key generation process.
+### Pairwise Share Message
 
-
-## Phase 2: Distribute Collected Shares and Proofs
-
-### Public Shares Request Message
 sender
 : Trustee
 
 recipient
-: Trustee Administration Server (TAS)
+: Trustee with Public Encryption Key `recipient_public_key`
+
+board slot
+: (`message_type`, `public_key`, `recipient_public_key`)
 
 purpose
-: Request all **Public Share Submission Message**s the trustee administration server has received so far.
+: Post a trustee's secret share computed for a specific recipient trustee.
 
-***structure***
+_**structure**_
+
 ```rust
-struct PublicSharesRequestMessage {
+struct PairwiseShareMessage {
+  message_type : enum,
   election_hash : String,
+  pairwise_share : String,
+  recipient_public_key : String,
   public_key : String,
+  signature : String
 }
 ```
-- `election_hash`: Hash of the unique election configuration item.
-- `public_key`: Public signing key associated with this trustee.
+
+- `message_type` : The type of this message ("pairwise share").
+- `election_hash`: The hash of the unique election configuration item.
+- `pairwise_share`: The pairwise share computed by the trustee, encrypted to the `recipient_public_key`.
+- `recipient_public_key`: The public encryption key associated with the intended recipient trustee.
+- `public_key`: The public signing key associated with this trustee.
+- `signature`: A digital signature created by the trustee's signing key over the contents of this message.
 
 channel properties
-: There are no special properties assumed of this channel. This message is merely pinging the server to request data.
+: The encryption of the `pairwise_share` and the `signature` are intended to provide integrity, authenticity, and confidentiality over the `pairwise_share`. The `signature` is also intended to provide integrity and authenticity over the remainder of the message.
 
+#### Pairwise Share Integrity Checks
 
-### Public Shares Request Message Checks
 1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `public_key` is a valid signature key for a Trustee in this election.
-
-
-### Public Shares Distribution Message
-sender
-: Trustee Administration Server (TAS)
-
-recipient
-: Trustee
-
-purpose
-: Transmit all **Public Share Submission Message**s the trustee administration server has received so far in response to a **Public Shares Request Message**.
-
-***structure***
-```rust
-struct PublicSharesDistributionMessage {
-  election_hash : String,
-  share_list : List<PublicShareSubmissionMessage>,
-  signature : String,
-}
-```
-- `election_hash`: Hash of the unique election configuration item.
-- `share_list`: List of all Public Share Submission Messages received so far.
-- `signature`: Signature by the Trustee Administration Server's signing key.
-
-channel properties
-: The `signature` by the Trustee Administration Server is intended to provide authenticity and integrity over the list of **Public Share Submission Messages**.
-
-
-### Public Shares Distribution Message Checks
-
-#### Message Checks
-1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `signature` is a valid signature matching the public signing key of the Trustee Administration Server.
-
-#### Public Share Checks
-For each PublicShareSubmissionMessage in the `share_list` the following checks are performed:
-1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `public_share` is a valid public share for the asymmetric encryption scheme.
-3. The `proof_of_knowledge` verifies correctly given the public share in this message.
-4. The `public_key` is a valid signature key for a Trustee in this election.
+2. The `pairwise_share` is valid with respect to the public check values (from a different message, see above) generated by the sending trustee.
+3. The `recipient_public_key` is a valid encryption key for a trustee in this election.
+4. The `public_key` is a valid signing key for a trustee in this election.
 5. The `signature` is a valid signature matching the `public_key` over the contents of this message minus the signature itself.
-6. This Trustee has not seen a different `public_share` signed by this `public_key` before.
 
+## Phase 2: Post the Election Public Key
 
-### All Public Shares Received Event
-Once a trustee has received all other Trustee's public shares from the Trustee Administration Server and all shares are valid this event occurs and the Trustee is ready to proceed to the next phase.
+In this phase of the subprotocol, each trustee independently computes the election public key from the public check values and posts it to the trustee board. If the subprotocol is successful, this results in `N` identical (aside from their signatures/sender keys) election public key messages on the board.
 
+Note that the trustees can not successfully carry out this phase if any integrity check from the previous phase failed, because any trustee observing a failed integrity check immediately aborts the subprotocol (as described previously).
 
-## Phase 3: Pairwise Secret Sharing
+### Election Public Key Message
 
-### Pairwise Shares Submission Message
 sender
 : Trustee
 
 recipient
-: Trustee Administration Server (TAS)
+: All Trustees
+
+board slot
+: (`message_type`, `public_key`)
 
 purpose
-: Transfer all encrypted pairwise secret shares to the Trustee Administration Server for distribution to the other trustees.
+: Publish the election public key computed by the trustee (for comparison with the election public keys computed by the other trustees).
 
-***structure***
+_**structure**_
+
 ```rust
-struct PairwiseSharesSubmissionMessage {
-  election_hash : String,
-  pairwise_shares : List<PairwiseShare>,
-  sender_public_key : String,
-  signature : String,
-}
-
-struct PairwiseShare {
-  election_hash : String,
-  recipient_public_key : String,
-  ciphertext : String,
-  proof_of_knowledge : String,
-  sender_public_key : String,
-  signature : String,
-}
-```
-**PairwiseSharesSubmissionMessage**
-- `election_hash`: Hash of the unique election configuration item.
-- `pairwise_shares`: List of pairwise shares for the Trustee Administration Server to distribute.
-- `sender_public_key`: Public signature key of the Trustee sending this message.
-- `signature`: A digital signature created by the sending trustee's signing key over the contents of this message.
-
-**PairwiseShare**
-- `election_hash`: Hash of the unique election configuration item.
-- `recipient_public_key`: Public signature key of the intended recipient of the pairwise share.
-- `ciphertext`: Ciphertext containing the pairwise share of the key encrypted with the public encryption key of the recipient Trustee.
-- `proof_of_knowledge`: Proof of knowledge associated with the ciphertext of the pairwise share.
-- `sender_public_key`: Public signature key of the Trustee sending this message.
-- `signature`: A digital signature created by the sending trustee's signing key over the contents of this share.
-
-channel properties
-: The `signature` of the `PairwiseSharesSubmissionMessage` intends to provide authenticity and integrity over the message contents ensuring the trustee administration server knows who submitted this list and that the list is unmodified. The `signature` in the `PairwiseShare` intends to provide authenticity and integrity over the ciphertext containing the pairwise share and its associated proof.
-
-
-### Pairwise Shares Submission Message Checks
-
-#### Message Checks
-1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The fields `pairwise_shares` are present and of a valid format.
-3. The `sender_public_key` is a valid signature key for a Trustee in this election.
-4. The `signature` is a valid signature matching the `sender_public_key` over the contents of this message minus the signature itself.
-
-#### Pairwise Share Checks
-1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `recipient_public_key` is a valid signature key for a Trustee in this election and is distinct from the `sender_public_key`.
-3. A correctly formatted `ciphertext` is present.
-4. A correctly formatted `proof_of_knowledge` is present.
-5. The `sender_public_key` of the `PairwiseShare` matches the `sender_public_key` of the parent `PairwiseSharesSubmissionMessage`.
-6. The `signature` is a valid signature matching the `sender_public_key` over the contents of the pairwise share minus the signature itself.
-7. The list of pairwise shares contains one unique entry for each Trustee other than the Trustee which sent this message.
-
-Note: The Trustee Administration Server could check the correct construction of the `pairwise_shares` and the validity of their associated proofs of knowledge. However, this responsibility is *intentionally* left to the other Trustees participating in the distributed key generation process.
-
-
-### Pairwise Shares Request Message
-sender
-: Trustee
-
-recipient
-: Trustee Administration Server (TAS)
-
-purpose
-: Request all **PairwiseShares** the trustee administration server has received so far where this Trustee is the intended recipient.
-
-***structure***
-```rust
-struct PairwiseSharesRequestMessage {
-  election_hash : String,
-  public_key : String,
-}
-```
-- `election_hash`: Hash of the unique election configuration item.
-- `public_key`: Public signature key of the Trustee sending this message.
-
-channel properties
-: There are no special properties assumed of this channel. This message is merely pinging the server to request data.
-
-
-### Pairwise Shares Request Message Checks
-1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `public_key` is a valid signature key for a Trustee in this election.
-
-
-### Pairwise Shares Distribution Message
-sender
-: Trustee Administration Server (TAS)
-
-recipient
-: Trustee
-
-purpose
-: Transmit all **PairwiseShares** the trustee administration server has received so far where the intended recipient matches the sender of the **Public Shares Request Message** which triggered this action.
-
-***structure***
-```rust
-struct PairwiseSharesDistributionMessage {
-  election_hash : String,
-  recipient_public_key : String,
-  pairwise_shares : List<PairwiseShare>,
-  signature : String,
-}
-```
-- `election_hash`: Hash of the unique election configuration item.
-- `recipient_public_key`: Public signature key of the intended recipient of the list of pairwise shares.
-- `pairwise_shares`: List of pairwise shares.
-- `signature`: A digital signature created by the Trustee Administration Server's signing key over the contents of this message.
-
-channel properties
-: The `signature` intends to provide authenticity and integrity over the contents of this message namely the list of pairwise shares.
-
-
-### Pairwise Shares Distribution Message Checks
-
-#### Message Checks
-1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `recipient_public_key` is the public signing key of this Trustee.
-3. The `pairwise_shares` list is present and of a valid format.
-4. The `signature` is a valid signature matching the public signing key of the Trustee Administration Server over the contents of this message minus the signature itself.
-
-#### Pairwise Share Checks
-1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `recipient_public_key` is the public signing key of this Trustee.
-3. The `ciphertext` is able to be decrypted by this Trustee's private encryption key and the plaintext contains a well formed pairwise key share.
-4. The `proof_of_knowledge` is valid and verifies correctly.
-5. The `sender_public_key` a valid signature key for a Trustee in this election.
-6. The `signature` is a valid signature matching the `sender_public_key` over the contents of the pairwise share minus the signature itself.
-7. There are no duplicate `sender_public_key` fields in the list of Pairwise Shares.
-
-
-## Phase 4: Election Public Key Confirmation
-
-### Election Key Confirmation Message
-sender
-: Trustee
-
-recipient
-: Trustee Administration Server (TAS)
-
-purpose
-: An endorsement by each trustee of the public election key preventing an attack where some trustees are given a second false set of shares while the real election key is created without them. This would still be detectable but requiring matching signatures from all trustees side steps this problem.
-
-***structure***
-```rust
-struct ElectionKeyConfirmationMessage {
+struct ElectionPublicKeyMessage {
   election_hash : String,
   election_public_key : String,
-  public_key : String,
-  signature : String,
+  public_key: String,
+  signature: String
 }
 ```
-- `election_hash`: Hash of the unique election configuration item.
-- `election_public_key`: The election public key created by this distributed key generation process.
-- `public_key`: The public signature key of the Trustee endorsing this election key.
-- `signature`: A digital signature created by the signing key of the Trustee endorsing this election key over the contents of this message.
+
+- `election_hash`: The hash of the unique election configuration item.
+- `election_public_key`: The election public key computed by this trustee.
+- `public_key`: The public signing key associated with this trustee.
+- `signature` : A digital signature created by the trustee's signing key over the contents of this message.
 
 channel properties
-: The `signature` intends to provide authenticity and integrity over the implied endorsement of the `election_public_key` included in this message.
+: The `signature` is intended to provide integrity and authenticity over the election public key.
 
+### Election Public Key Message Checks
 
-### Election Key Confirmation Checks
 1. The `election_hash` is the hash of the election configuration item for the current election.
-2. The `election_public_key` matches the same in field in all other Trustee's `ElectionKeyConfirmationMessages`.
-3. The `public_key` is a valid signature key for a Trustee in this election.
-4. The `signature` is a valid signature matching the `public_key` over the contents of this message minus the signature itself.
+2. The `election_public_key` is identical to the `election_public_key`s posted by all the other trustees (this includes the trustee performing the message check) in their election public key messages.
+3. The `public_key` is a valid signing key for a trustee in this election.
 
+## Termination
 
-### All Election Key Confirmations Received Event
-The trustee administration server continues to listen for a **Election Key Confirmation Message** until the trustee administration server has collected one such message for each trustee. Once it has done so, this event occurs and the protocol is completed.
-
+The subprotocol successfully terminates when one **Election Public Key Message** has posted by each trustee and all those messages contain identical election public keys. At that point, the trustees have all agreed upon the election public key, and the trustee administration server can add it to the election configuration that gets posted to the public bulletin board.
 
 ## Process Diagrams
 
 ### Trustee Process Diagram
+
 ```mermaid
     stateDiagram-v2
-        submit : Send **Public Share Submission Message**
-        get_set : Receive **Public Shares Distribution Message**
+        post_shares : Post **Public Check Value Message** and _N_ **Pairwise Share Message**s
+        check_shares : Perform _N_ **Public Check Value Message** and _N_ **Pairwise Share Message** Validation Checks
 
-        check_proofs : Perform **Proof of Knowledge Validation Checks**
-        state proof_check_outcome <<choice>>
-        missing_proof : Missing Proof Error
-        incorrect_proof : Incorrect Proof Error
+        state check_shares_outcome <<choice>>
+        bad_check_value : Invalid Check Value Error
+        pairwise_share_decryption_error : Pairwise Share Decryption Error
 
-        compute_key : Perform **Joint Election Key Calculation**
+        compute_election_key : Compute Election Public Key
         state key_computation_outcome <<choice>>
-        key_computation_fail : Key Computation Fail Error
+        key_computation_fail : Key Computation Failure
 
-        confirmKey : Send **Election Key Confirmation Message**
+        post_election_key : Post **Election Public Key Message**
+        check_election_key : Compare Keys in _N_ **Election Public Key Message**s
 
-        close_with_success : Protocol Run is Successful and Complete
-        close_with_error : Protocol Run Aborted Due to Error
+        state key_check_outcome <<choice>>
+        close_with_success : **Success** Protocol Run is Complete
+        close_with_error : **Failure** Protocol Run Aborted Due to Error
 
-        [*] --> submit
-        submit --> get_set
-        get_set --> check_proofs
+        [*] --> post_shares
+        post_shares --> check_shares
+        check_shares --> check_shares_outcome
+        check_shares_outcome --> bad_check_value : Check Value Doesn't Match Pairwise Share
+        check_shares_outcome --> pairwise_share_decryption_error : Cannot Decrypt Pairwise Share
+        bad_check_value --> close_with_error
+        pairwise_share_decryption_error --> close_with_error
+        check_shares --> compute_election_key : Check Value Matches Pairwise Share
 
-        check_proofs --> proof_check_outcome
-        proof_check_outcome --> compute_key : All Proofs Present and Correct
-        proof_check_outcome --> missing_proof : One or More Proofs of Knowledge are Missing.
-        missing_proof --> close_with_error
-        proof_check_outcome --> incorrect_proof : One or More Proofs of Knowledge are Incorrect.
-        incorrect_proof --> close_with_error
-
-        compute_key --> key_computation_outcome
-        key_computation_outcome --> confirmKey : Election Key Computation is Successful
-        key_computation_outcome --> key_computation_fail : Unable to Compute Election Key With Given Shares
+        compute_election_key --> key_computation_outcome
+        key_computation_outcome --> key_computation_fail : Cannot Compute Election Key from Check Values
         key_computation_fail --> close_with_error
+        key_computation_outcome --> post_election_key : Successfully Computed Election Public Key
+        post_election_key --> check_election_key
 
-        confirmKey --> close_with_success
+        check_election_key --> key_check_outcome
+        key_check_outcome --> close_with_error : Computed Election Keys Are Not Identical
+        key_check_outcome --> close_with_success : Computed Election Keys Are Identical
 
         close_with_success --> [*]
         close_with_error --> [*]
 ```
 
 ### Trustee Administration Server Process Diagram
+
+Note that this does not include the the process diagram for the TAS updating trustees with the latest trustee board messages, or accepting messages for posting. The mechanism for that is implementation-dependent and different implementations may exhibit different communication patterns for trustee board updates.
+
 ```mermaid
     stateDiagram-v2
-      receive_shares : Receive **Public Share Submission Message**
-      distribute_shares : Send **Public Shares Distribution Message** to Each Trustee
-      receive_confirm : Receive **Election Key Confirmation Message**
+      await_election_public_key : Await Posting of _N_ **Election Public Key Message**s
+      state check_key <<choice>>
       complete : **Success** Election Key Established
       error : **Failure** Protocol Aborted with Error Message
 
 
-      [*] --> receive_shares
-
-      receive_shares --> receive_shares : If the TAS has not received a **Public Share Submission Message** from each Trustee.
-      receive_shares --> distribute_shares : If the TAS has received a **Public Share Submission Message** from each Trustee.
-      receive_shares --> error : Timeout Exceeded Error
-
-      distribute_shares --> receive_confirm
-      receive_confirm --> receive_confirm : If the TAS has not received a **Election Key Confirmation Message** from each Trustee.
-      receive_confirm --> complete : If the TAS has received a **Election Key Confirmation Message** from each Trustee.
-      receive_confirm --> error : Timeout Exceeded Error
+      [*] --> await_election_public_key
+      await_election_public_key --> check_key
+      check_key --> complete : All _N_ Posted Election Public Keys are Identical
+      check_key --> error : All _N_ Posted Election Public Keys are Not Identical
 
       complete --> [*]
       error --> [*]
-
-
 ```

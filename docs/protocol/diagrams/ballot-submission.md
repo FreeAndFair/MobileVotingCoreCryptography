@@ -1,4 +1,5 @@
 # Ballot Submission Subprotocol Sequence Diagram
+
 ```mermaid
 sequenceDiagram
     box rgb(255, 235, 204) Internet  / Election Admin Network
