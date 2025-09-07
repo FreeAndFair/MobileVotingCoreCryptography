@@ -75,9 +75,11 @@ impl<T: GroupElement, const N: usize> DistGroupOps<T> for [T; N] {
     fn dist_mul(&self, other: &T) -> Self::Result {
         std::array::from_fn(|i| self[i].mul(other))
     }
+
     fn dist_exp(&self, other: &T::Scalar) -> Self::Result {
         std::array::from_fn(|i| self[i].exp(other))
     }
+
     fn dist_equals(&self, other: &T) -> bool {
         for item in self {
             if !item.equals(other) {

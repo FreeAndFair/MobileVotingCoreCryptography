@@ -21,7 +21,7 @@ pub trait Hasher: Digest + FixedOutput {
 }
 
 /**
- * Implements the hashing group dependency with `Sha3_512`.
+ * Implement the hashing group dependency with `Sha3_512`.
  */
 impl Hasher for Sha3_512 {
     fn hasher() -> Self {
@@ -30,7 +30,7 @@ impl Hasher for Sha3_512 {
 }
 
 /**
- * Implements the hashing group dependency with `Sha3_256`.
+ * Implement the hashing group dependency with `Sha3_256`.
  */
 impl Hasher for Sha3_256 {
     fn hasher() -> Self {
@@ -40,10 +40,11 @@ impl Hasher for Sha3_256 {
 
 /// Hashing to 512 bits provided by sha3
 pub type Hasher512 = Sha3_512;
+
 /// Hashing to 256 bits provided by sha3
 pub type Hasher256 = Sha3_256;
 
-/// Updates the hasher with the given data slices and their corresponding tags.
+/// Update the hasher with the given data slices and their corresponding tags.
 ///
 /// This function is used to derive challenges via random oracles.
 pub fn update_hasher(hasher: &mut impl Digest, data_slices: &[&[u8]], ds_tags: &[&[u8]]) {

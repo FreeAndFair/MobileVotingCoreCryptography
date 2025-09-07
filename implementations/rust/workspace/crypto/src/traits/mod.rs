@@ -1,5 +1,5 @@
 /*!
- * All traits related to the notion of a cryprographic group
+ * Abstractions for curve arithmetic, groups, elements and scalars.
  *
  * @author David Ruescas (david@sequentech.io)\
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)\

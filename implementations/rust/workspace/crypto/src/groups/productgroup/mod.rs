@@ -9,8 +9,10 @@
 
 /// Product group for elements
 pub mod element;
+
 /// Product group for scalars
 pub mod scalar;
 
 #[cfg(test)]
+#[cfg_attr(coverage_nightly, coverage(off))]
 mod tests;

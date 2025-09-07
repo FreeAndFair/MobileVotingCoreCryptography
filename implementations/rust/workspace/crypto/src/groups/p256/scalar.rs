@@ -1,5 +1,5 @@
 /*
- * GroupScalar implementations for p256 group
+ * GroupScalar implementations for P-256 group
  *
  * @author David Ruescas (david@sequentech.io)\
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)\

@@ -23,7 +23,8 @@
 //! a Naor-Yung key pair is obtained by augmenting an `ElGamal` key pair with
 //! an additional public key for which the secret is never computed. This additional
 //! public key is derived from publicly available information, through a hash
-//! function, see [`KeyPair::generate`][`crate::cryptosystem::naoryung::KeyPair::generate`] and [`KeyPair::new`][`crate::cryptosystem::naoryung::KeyPair::new`].
+//! function, see [`KeyPair::generate`][`crate::cryptosystem::naoryung::KeyPair::generate`]
+//! and [`KeyPair::new`][`crate::cryptosystem::naoryung::KeyPair::new`].
 //!
 //! Naor-Yung ciphertexts are validated by checking their associated proofs, after
 //! which they yield plain `ElGamal` ciphertexts, see [`PublicKey::strip`][`crate::cryptosystem::naoryung::PublicKey::strip`].
@@ -63,5 +64,6 @@
 
 /// `ElGamal` cryptosystem.
 pub mod elgamal;
+
 /// Naor-Yung cryptosystem.
 pub mod naoryung;

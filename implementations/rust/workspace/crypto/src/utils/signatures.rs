@@ -7,12 +7,30 @@
  * @version 0.1
  */
 
+//! Digital signature utilities and [context][`crate::context::Context`] dependency.
+//!
+//! # Examples
+//! ```
+//! use crypto::context::Context;
+//! use crypto::context::RistrettoCtx as RCtx;
+//! use crypto::utils::signatures::{SignatureScheme, Signer, Verifier};
+//!
+//! let sk = RCtx::gen_signing_key();
+//! let vk = sk.verifying_key();
+//!
+//! let message: &[u8] = b"message";
+//! let signature = sk.sign(message);
+//!
+//! let vk = sk.verifying_key();
+//! let ok = vk.verify(message, &signature);
+//! assert!(ok.is_ok());
+//! ```
+
 use std::marker::PhantomData;
 
-use ed25519::signature::{Signer, Verifier};
+pub use ed25519::signature::{Error, Signer, Verifier};
 use ed25519_dalek::ed25519;
 
-use crate::utils::error::Error;
 use crate::utils::rng::CRng;
 
 /**
@@ -24,41 +42,19 @@ use crate::utils::rng::CRng;
 #[crate::warning(
     "There is no explicit handling of contexts here, they must be provided by the caller as part of the message"
 )]
+
 pub trait SignatureScheme<R: CRng> {
     /// The signer type, a private key used for signing.
-    type Signer;
+    type Signer: Signer<Self::Signature>;
     /// The verifier type, a public key used to verify signatures.
-    type Verifier;
+    type Verifier: Verifier<Self::Signature>;
     /// The signature type, a digital signature on some data.
     type Signature;
 
     /// Generates a new private signing key.
     ///
     /// The corresponding public verification key can be obtained with `signing_key.verifying_key()`.
-    fn generate(rng: &mut R) -> Self::Signer;
-    /// Signs a message with the given signer.
-    ///
-    /// # Parameters
-    ///
-    /// - `message`: The message to sign. (SIG CONTEXT)
-    /// - `sk`: The private signing key used to sign the message.
-    fn sign(message: &[u8], sk: &Self::Signer) -> Self::Signature;
-    /// Verifies a signature on a message with the given verifier.
-    ///
-    /// # Parameters
-    ///
-    /// - `message`: The message which was signed. (SIG CONTEXT)
-    /// - `signature`: The signature to verify.
-    /// - `vk`: The public verification key used to verify the signature.
-    ///
-    /// # Errors
-    ///
-    /// - `SignatureError` if the signature is invalid.
-    fn verify(
-        message: &[u8],
-        signature: &Self::Signature,
-        vk: &Self::Verifier,
-    ) -> Result<(), Error>;
+    fn gen_signing_key(rng: &mut R) -> Self::Signer;
 }
 
 /**
@@ -70,19 +66,16 @@ pub trait SignatureScheme<R: CRng> {
  * ```
  * use crypto::context::Context;
  * use crypto::context::RistrettoCtx as RCtx;
- * use crypto::utils::signatures::SignatureScheme;
+ * use crypto::utils::signatures::{SignatureScheme, Signer, Verifier};
  *
- * type Sig = <RCtx as crypto::context::Context>::SignatureScheme;
- *
- * let mut csprng = RCtx::get_rng();
- * let sk = Sig::generate(&mut csprng);
+ * let sk = RCtx::gen_signing_key();
+ * let vk = sk.verifying_key();
  *
  * let message: &[u8] = b"message";
- * let signature = Sig::sign(message, &sk);
+ * let signature = sk.sign(message);
  *
  * let vk = sk.verifying_key();
- * let ok = Sig::verify(message, &signature, &vk);
- *
+ * let ok = vk.verify(message, &signature);
  * assert!(ok.is_ok());
  * ```
  */
@@ -92,57 +85,32 @@ impl<R: CRng> SignatureScheme<R> for Ed25519<R> {
     type Verifier = ed25519_dalek::VerifyingKey;
     type Signature = ed25519_dalek::Signature;
 
-    fn generate(rng: &mut R) -> ed25519_dalek::SigningKey {
+    fn gen_signing_key(rng: &mut R) -> ed25519_dalek::SigningKey {
         Self::Signer::generate(rng)
-    }
-    fn sign(msg: &[u8], sk: &ed25519_dalek::SigningKey) -> ed25519_dalek::Signature {
-        sk.sign(msg)
-    }
-    fn verify(
-        msg: &[u8],
-        signature: &ed25519_dalek::Signature,
-        vk: &ed25519_dalek::VerifyingKey,
-    ) -> Result<(), Error> {
-        vk.verify(msg, signature)?;
-
-        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rand::rngs::OsRng;
-
-    #[test]
-    fn test_signatures_dalek() {
-        type Sig = Ed25519<OsRng>;
-
-        let mut csprng = OsRng;
-        let sk = Sig::generate(&mut csprng);
-
-        let message: &[u8] = b"message";
-        let signature = <Sig as SignatureScheme<OsRng>>::sign(message, &sk);
-
-        let vk = sk.verifying_key();
-        let ok = <Sig as SignatureScheme<OsRng>>::verify(message, &signature, &vk);
-
-        assert!(ok.is_ok());
-    }
+    use rand::RngCore;
 
     #[test]
     fn test_signatures_context() {
         use crate::context::Context;
+        use crate::context::RistrettoCtx;
 
-        let mut csprng = OsRng;
-        type Sig = <crate::context::RistrettoCtx as Context>::SignatureScheme;
-        let sk = Sig::generate(&mut csprng);
-
-        let message: &[u8] = b"message";
-        let signature = Sig::sign(message, &sk);
-
+        let sk = RistrettoCtx::gen_signing_key();
         let vk = sk.verifying_key();
-        let ok = Sig::verify(message, &signature, &vk);
+
+        let mut csprng = RistrettoCtx::get_rng();
+        let message: &[u8] = &csprng.next_u64().to_be_bytes();
+        let signature = sk.sign(message);
+        let ok = vk.verify(message, &signature);
+        assert!(ok.is_ok());
+
+        let signature = sk.sign(&[]);
+        let ok = vk.verify(&[], &signature);
 
         assert!(ok.is_ok());
     }

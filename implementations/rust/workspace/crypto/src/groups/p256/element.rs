@@ -1,5 +1,5 @@
 /*
- * GroupElement implementations for p256 group
+ * GroupElement implementations for P-256 group
  *
  * @author David Ruescas (david@sequentech.io)\
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)\
@@ -38,6 +38,7 @@ impl GroupElement for P256Element {
     fn one() -> Self {
         P256Element(ProjectivePoint::IDENTITY)
     }
+
     fn random<R: rng::CRng>(rng: &mut R) -> Self {
         P256Element::new(ProjectivePoint::random(rng))
     }
@@ -105,10 +106,12 @@ impl VDeserializable for P256Element {
 }
 
 use crate::utils::serialization::{FDeserializable, FSerializable};
+
 impl FSerializable for P256Element {
     fn size_bytes() -> usize {
         33
     }
+
     fn ser_into(&self, buffer: &mut Vec<u8>) {
         let point = self.0.to_affine().to_encoded_point(true);
         let bytes = point.as_bytes();
@@ -119,6 +122,7 @@ impl FSerializable for P256Element {
         }
     }
 }
+
 impl FDeserializable for P256Element {
     fn deser_f(buffer: &[u8]) -> Result<Self, CryptoError> {
         Self::deser(buffer)

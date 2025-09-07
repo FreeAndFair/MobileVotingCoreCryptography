@@ -18,9 +18,11 @@ impl<T: GroupScalar, const N: usize> GroupScalar for [T; N] {
     fn zero() -> Self {
         array::from_fn(|_| T::zero())
     }
+
     fn one() -> Self {
         array::from_fn(|_| T::one())
     }
+
     fn random<R: rng::CRng>(rng: &mut R) -> Self {
         array::from_fn(|_| T::random(rng))
     }
@@ -28,20 +30,25 @@ impl<T: GroupScalar, const N: usize> GroupScalar for [T; N] {
     fn add(&self, other: &Self) -> Self {
         array::from_fn(|i| self[i].add(&other[i]))
     }
+
     fn sub(&self, other: &Self) -> Self {
         array::from_fn(|i| self[i].sub(&other[i]))
     }
+
     fn mul(&self, other: &Self) -> Self {
         array::from_fn(|i| self[i].mul(&other[i]))
     }
+
     fn neg(&self) -> Self {
         array::from_fn(|i| self[i].neg())
     }
+
     fn inv(&self) -> Option<Self> {
         let ret: Option<Vec<T>> = self.iter().map(GroupScalar::inv).collect();
 
         ret.map(|v| v.try_into().expect("v.len() == N"))
     }
+
     fn equals(&self, other: &Self) -> bool {
         for i in 0..self.len() {
             if self[i] != other[i] {
@@ -83,9 +90,11 @@ impl<T: GroupScalar, const N: usize> DistScalarOps<T> for [T; N] {
     fn dist_add(&self, other: &T) -> Self {
         std::array::from_fn(|i| self[i].add(other))
     }
+
     fn dist_sub(&self, other: &T) -> Self {
         std::array::from_fn(|i| self[i].sub(other))
     }
+
     fn dist_mul(&self, other: &T) -> Self {
         std::array::from_fn(|i| self[i].mul(other))
     }

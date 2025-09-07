@@ -7,17 +7,31 @@
  * @version 0.1
  */
 
+//! LargeVector benchmark
+//!
+//! This benchmark measures the performance of [`LargeVector`][`crypto::utils::serialization::variable::LargeVector`]
+//! serialization under two implementations
+//!
+//! 1) This library's custom serialization
+//!
+//! 2) [Serde](https://docs.rs/serde/latest/serde/) serialization paired with [bincode](https://docs.rs/bincode/latest/bincode/)
+//!
+//! The benchmark will print timings for serialization functions. There are
+//! also manual printouts of serialized byte sizes, for comparison.
+//!
+//! This benchmark can be run with
+//!
+//! `cargo bench large_vector -- --nocapture`
 #![feature(test)]
 
 extern crate test;
 use test::Bencher;
 
-use crypto::context::Context;
-use crypto::context::RistrettoCtx as RCtx;
-// use crypto::context::P256Ctx2 as PCtx;
 use bincode;
 use bincode::config;
 use bincode::serde::encode_to_vec;
+use crypto::context::Context;
+use crypto::context::RistrettoCtx as RCtx;
 use crypto::cryptosystem::elgamal::Ciphertext;
 use crypto::utils::serialization::LargeVector;
 use crypto::utils::serialization::{FSerializable, VSerializable};
@@ -34,21 +48,26 @@ impl serde::Serialize for Element {
     }
 }
 
+/// The serde analog of an ElGamal ciphertext
 #[derive(Serialize)]
 struct EG {
     gr: Element,
     mhr: Element,
 }
+/// The serde analog of a group element
 struct Element(RistrettoPoint);
 
+/// The serde analog of `LargeVector`
 #[derive(Serialize)]
 struct SerdeVector(Vec<EG>);
 
+/// Serialize the vector using serde + bincode.
 fn lvserde(lv: &SerdeVector) {
     let config = config::standard();
     let _bytes = encode_to_vec(&lv, config).unwrap();
 }
 
+/// Serialize the [`LargeVector`] using our custom serialization.
 fn lvser<Ctx: Context>(lv: &LargeVector<Ciphertext<Ctx, 1>>)
 where
     Ctx::Element: FSerializable,
@@ -56,6 +75,9 @@ where
     let _bytes = lv.ser();
 }
 
+/// Custom serialization benchmark.
+///
+/// Includes printout of resulting byte vector size.
 #[bench]
 fn bench_large_vector(b: &mut Bencher) {
     let mut lv = LargeVector(vec![]);
@@ -75,6 +97,9 @@ fn bench_large_vector(b: &mut Bencher) {
     b.iter(|| lvser::<RCtx>(&lv));
 }
 
+/// Serde + bincode serialization benchmark.
+///
+/// Includes printout of resulting byte vector size.
 #[bench]
 fn bench_large_vector_serde_bincode(b: &mut Bencher) {
     let mut lv = SerdeVector(vec![]);

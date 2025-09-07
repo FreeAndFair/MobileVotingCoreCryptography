@@ -1,6 +1,4 @@
-# LibraryName development
-
-Core cryptography library for the Tusk mobile voting project.
+# VoteSecure Core Cryptographic Library Development
 
 ## ⚠️ Requirements
 
@@ -90,10 +88,16 @@ Run the analysis:
 cargo deny check
 ```
 
-# Automatic code formatting
+### Automatic code formatting
 
 ```bash
 cargo fmt
+```
+
+### Manually run pre-commit hooks
+
+```bash
+pre-commit run --all-files
 ```
 
 ### Show custom warnings
@@ -106,7 +110,3 @@ cargo build --features=custom-warnings
 ```
 
 Custom warnings are implemented in ```macros/custom_warning_macro```.
-
-### Implementation status
-
-Tracked by <https://github.com/FreeAndFair/TuskMobileVoting/issues/274>

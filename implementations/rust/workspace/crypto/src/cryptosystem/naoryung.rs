@@ -23,7 +23,7 @@ use vser_derive::VSerializable;
  *
  * This struct represents a key pair in the Naor-Yung encryption scheme,
  * including the secret scalar value and the two public group elements.
- * The secret key `w` for `pk_a = pk_b^w` is never computed, instead the
+ * The secret key `w` for `pk_a = pk_b^w` is never computed; instead, the
  * value `pk_a` is derived from a random oracle, `pk_a = H(context)`.
  *
  * In the Naor-Yung encryption scheme, ciphertexts include a proof of
@@ -62,7 +62,7 @@ pub struct KeyPair<C: Context> {
 }
 
 impl<C: Context> KeyPair<C> {
-    /// Constructs a new key pair from an `ElGamal` key pair and a public key element
+    /// Construct a new key pair from an `ElGamal` key pair and a public key element.
     ///
     /// Use this function to create a key pair from an existing `ElGamal` key pair
     /// and public value.
@@ -74,9 +74,9 @@ impl<C: Context> KeyPair<C> {
         KeyPair { sk_b, pkey }
     }
 
-    /// Augments an `ElGamal` key pair into a `Naor-Yung` key pair
+    /// Augment an `ElGamal` key pair into a `Naor-Yung` key pair.
     ///
-    /// Use this function to create a key pair from an existing `ElGamal` key pair,
+    /// Use this function to create a key pair from an existing `ElGamal` key pair;
     /// the value `pk_a` is derived from a random oracle, `pk_a = H(context)`.
     ///
     /// # Parameters
@@ -100,7 +100,7 @@ impl<C: Context> KeyPair<C> {
         Ok(KeyPair { sk_b, pkey })
     }
 
-    /// Constructs a new key pair generating fresh key material
+    /// Construct a new key pair generating fresh key material.
     ///
     /// The value `pk_a` is derived from a random oracle, `pk_a = H(context)`.
     ///
@@ -169,6 +169,7 @@ impl<C: Context> KeyPair<C> {
     ) -> Result<Ciphertext<C, W>, Error> {
         self.pkey.encrypt_with_r(message, r, context)
     }
+
     /// Encrypt the given message with this key pair.
     ///
     /// This function also computes the proof of well-formedness. The input message
@@ -313,7 +314,7 @@ impl<C: Context> KeyPair<C> {
             Ok(decrypted_element)
         } else {
             Err(Error::NaorYungStripError(
-                "Proof failed to validate for naor yung ciphertext".into(),
+                "Proof failed to validate for Naor-Yung ciphertext".into(),
             ))
         }
     }
@@ -533,7 +534,7 @@ impl<C: Context> PublicKey<C> {
             Ok(elgamal::Ciphertext::<C, W>::new(c.u_b, c.v_b))
         } else {
             Err(Error::NaorYungStripError(
-                "Proof failed to validate for naor yung ciphertext".into(),
+                "Proof failed to validate for Naor-Yung ciphertext".into(),
             ))
         }
     }

@@ -1,21 +1,21 @@
-# `LibraryName`
+# VoteSecure Core Cryptographic Library
 
-Cryptography library for the Mobile Voting Core Cryptography project.
+Cryptographic primitives required for implementation of the VoteSecure protocol.
 
 ## Overview
 
-Contains the primitives necessary to implement an voting end-to-end verifiable e-voting protocol.
+This library contains the primitives necessary to implement an end-to-end verifiable Internet voting protocol:
 
 - Curve arithmetic abstractions for groups and product groups
 - Curve arithmetic implementations (eg [curve25519](https://github.com/dalek-cryptography/curve25519-dalek/tree/main/curve25519-dalek), [p-256](https://github.com/RustCrypto/elliptic-curves/tree/master/p256))
 - ElGamal and Naor-Yung cryptosystems
 - Distributed key generation and decryption
-- Zero knowledge proofs
-- Miscellaneous utilities (eg digital signatures, hashing and serialization)
+- Zero-knowledge proofs
+- Miscellaneous utilities (e.g., digital signatures, hashing, and serialization)
 
 ## Usage
 
-For example, to generate a keypair, encrypt an elgamal ciphertext of width 3, and decrypt it:
+For example, to generate a keypair, encrypt an ElGamal ciphertext of width 3, and then decrypt it:
 
 ```rust,ignore
 use std::array;

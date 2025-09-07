@@ -22,8 +22,8 @@ use vser_derive::VSerializable;
  *   In the messaging layer, private shares should be encrypted with the recipient's
  *   public key.
  *
- * In the Joint-Feldman DKG, the dealer generates a random polynomial `f` of degree `T - 1`
- * and distributes `P` shares of its secret, `f(0)`, to all participants,
+ * In the Joint-Feldman DKG, the dealer generates a random polynomial `f` of degree
+ * `T - 1` and distributes `P` shares of its secret, `f(0)`, to all participants,
  * including itself. The dealer also publishes `T` checking values that allow the
  * participants to verify their shares.
  *
@@ -103,6 +103,7 @@ pub struct Dealer<C: Context, const T: usize, const P: usize> {
     /// The polynomial used by this dealer to share their secret.
     pub(crate) polynomial: Polynomial<C, T>,
 }
+
 impl<C: Context, const T: usize, const P: usize> Dealer<C, T, P> {
     /// compile-time checks for dealer const parameters
     const CHECK: () = {
@@ -112,7 +113,7 @@ impl<C: Context, const T: usize, const P: usize> Dealer<C, T, P> {
         assert!(T > 0);
     };
 
-    /// Constructs a new [`Dealer`] by randomly generating a `T - 1` degree polynomial.
+    /// Construct a new [`Dealer`] by randomly generating a `T - 1` degree polynomial.
     ///
     /// At least `T` of the `P` participants will be needed to decrypt ciphertexts
     /// encrypted with the joint public key.
@@ -125,7 +126,7 @@ impl<C: Context, const T: usize, const P: usize> Dealer<C, T, P> {
         Self { polynomial }
     }
 
-    /// Computes the `P` shares distributed by this dealer, and its `T` checking values.
+    /// Compute the `P` shares distributed by this dealer, and its `T` checking values.
     ///
     /// Returns a [`DealerShares`] instance containing the shares and checking values.
     pub fn get_verifiable_shares(&self) -> DealerShares<C, T, P> {
@@ -134,7 +135,7 @@ impl<C: Context, const T: usize, const P: usize> Dealer<C, T, P> {
         DealerShares::new(shares, self.get_checking_values())
     }
 
-    /// Computes the `P` shares distributed by this dealer.
+    /// Compute the `P` shares distributed by this dealer.
     ///
     /// Each share is computed as `f(i)` for `i = 1, ..., P`.
     /// Use [`Self::get_verifiable_shares`] to obtain the shares [along
@@ -149,7 +150,7 @@ impl<C: Context, const T: usize, const P: usize> Dealer<C, T, P> {
         })
     }
 
-    /// Computes the `T` checking values for this dealer's polynomial.
+    /// Compute the `T` checking values for this dealer's polynomial.
     ///
     /// Each checking value is computed as `g^polynomial_coefficient`.
     /// Use [`Self::get_verifiable_shares`] to obtain the shares [along
@@ -171,7 +172,7 @@ impl<C: Context, const T: usize, const P: usize> Dealer<C, T, P> {
 pub struct Polynomial<C: Context, const T: usize>(pub(crate) [C::Scalar; T]);
 
 impl<C: Context, const T: usize> Polynomial<C, T> {
-    /// Generates a random polynomial of degree `T - 1` with `T` coefficients.
+    /// Generate a random polynomial of degree `T - 1` with `T` coefficients.
     ///
     /// Returns a new [`Polynomial`] instance, with inner type `[C::Scalar; T]`.
     #[must_use]
@@ -181,7 +182,7 @@ impl<C: Context, const T: usize> Polynomial<C, T> {
         Self(coefficients)
     }
 
-    /// Evaluates the polynomial at a given point `x`.
+    /// Evaluate the polynomial at a given point `x`.
     ///
     /// Returns the scalar `k`, where `k = f(x)`.
     pub fn eval(&self, x: &C::Scalar) -> C::Scalar {
@@ -229,8 +230,9 @@ pub struct DealerShares<C: Context, const T: usize, const P: usize> {
     /// The checking values for the dealer's shares.
     pub checking_values: [C::Element; T],
 }
+
 impl<C: Context, const T: usize, const P: usize> DealerShares<C, T, P> {
-    /// Constructs a new [`DealerShares`] instance from the given values.
+    /// Construct a new [`DealerShares`] instance from the given values.
     ///
     /// The standard way to compute the shares distributed by a [`Dealer`] is
     /// through the [`Dealer::get_verifiable_shares`] method.
@@ -240,7 +242,8 @@ impl<C: Context, const T: usize, const P: usize> DealerShares<C, T, P> {
             checking_values,
         }
     }
-    /// Returns the shares for the requested recipient as specified by the given [`ParticipantPosition`].
+
+    /// Return the shares for the requested recipient as specified by the given [`ParticipantPosition`].
     ///
     /// This method will select the shares assigned to the required recipient from the set
     /// of all shares computed by the [`Dealer`].
@@ -291,8 +294,9 @@ pub struct VerifiableShare<C: Context, const T: usize> {
     /// the checking values for the dealer's shares
     pub checking_values: [C::Element; T],
 }
+
 impl<C: Context, const T: usize> VerifiableShare<C, T> {
-    /// Constructs a new [`VerifiableShare`] from the given values.
+    /// Construct a new [`VerifiableShare`] from the given values.
     ///
     /// The standard way to obtain verifiable shares for some recipient `P` is through
     /// the [`Dealer::get_verifiable_shares`] method combined with the [`DealerShares::for_recipient`]

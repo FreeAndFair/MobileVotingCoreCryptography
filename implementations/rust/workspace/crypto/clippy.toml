@@ -1,1 +1,1 @@
-doc-valid-idents = ["ElGamal", ".."]
+doc-valid-idents = ["VoteSecure", "ElGamal", ".."]

@@ -38,23 +38,28 @@ use std::fmt::Debug;
 pub trait CryptoGroup {
     /// The element type for this group
     type Element: GroupElement<Scalar = Self::Scalar>;
+
     /// The scalar type for this group
     type Scalar: GroupScalar;
+
     /// The hashing function used for hash to curve and hash to scalar
     type Hasher: hash::Hasher;
+
     /// The type from which values are encoded into the `Message` type (WIP)
     type Plaintext;
+
     /// The type on which encryption operates to yield ciphertexts (WIP)
     type Message;
 
     /// The default generator
     fn generator() -> Self::Element;
+
     /// Exponentiation with the default generator as a base
     ///
     /// In some implementations this operations is accelerated by precomputed tables.
     fn g_exp(scalar: &Self::Scalar) -> Self::Element;
 
-    /// Hashes bytes into a `Scalar`.
+    /// Hash bytes into a `Scalar`.
     ///
     /// The returning Scalar is uniformly distributed for uniformly distributed input.
     ///
@@ -63,7 +68,8 @@ pub trait CryptoGroup {
     /// - `HashToScalarError` if using `P256Group` and `NistP256::hash_to_scalar` returns error
     #[crate::warning("Verify the claim of uniformity is correct for implementations")]
     fn hash_to_scalar(input_slices: &[&[u8]], ds_tags: &[&[u8]]) -> Result<Self::Scalar, Error>;
-    /// Hashes bytes into an `Element`.
+
+    /// Hash bytes into an `Element`.
     ///
     /// The returning Scalar is uniformly distributed for uniformly distributed input.
     ///
@@ -75,10 +81,11 @@ pub trait CryptoGroup {
 
     /// Returns a random `Element`
     fn random_element<R: rng::CRng>(rng: &mut R) -> Self::Element;
+
     /// Returns a random `Scalar`
     fn random_scalar<R: rng::CRng>(rng: &mut R) -> Self::Scalar;
 
-    /// Encodes a type 'Plaintext' into a type 'Message' (WIP)
+    /// Encode a type 'Plaintext' into a type 'Message' (WIP).
     ///
     /// # Errors
     ///
@@ -86,7 +93,9 @@ pub trait CryptoGroup {
     /// - undefined if using `P256Group`
     #[crate::warning("# Errors for this function are incompletely specified")]
     fn encode(p: &Self::Plaintext) -> Result<Self::Message, Error>;
-    /// Decodes a type 'Plaintext' from a type 'Message' (WIP)
+
+    /// Decode a type 'Plaintext' from a type 'Message' (WIP).
+    ///
     /// # Errors
     ///
     /// - undefined if using `P256Group`
@@ -94,6 +103,7 @@ pub trait CryptoGroup {
     fn decode(p: &Self::Message) -> Result<Self::Plaintext, Error>;
 
     /// Returns `count` independent generators of the group
+    ///
     /// # Errors
     ///
     /// - `HashToElementError` if using `P256Group` and `NistP256::hash_from_bytes` returns error
@@ -345,10 +355,13 @@ pub trait DistScalarOps<Rhs: GroupScalar>: GroupScalar {
 
     /// Distributed addition
     fn dist_add(&self, other: &Rhs) -> Self::Output;
+
     /// Distributed subtraction
     fn dist_sub(&self, other: &Rhs) -> Self::Output;
+
     /// Distributed multiplication
     fn dist_mul(&self, other: &Rhs) -> Self::Output;
+
     /// Distributed equality
     ///
     /// Returns `true` only if _all_ comparisons return `true`
@@ -368,10 +381,13 @@ pub trait ReplScalarOps<Rhs: GroupScalar>: GroupScalar {
 
     /// Replicated addition
     fn repl_add(&self, other: &Rhs) -> Self::Output;
+
     /// Replicated subtraction
     fn repl_sub(&self, other: &Rhs) -> Self::Output;
+
     /// Replicated multiplication
     fn repl_mul(&self, other: &Rhs) -> Self::Output;
+
     /// Returns `true` only if _all_ comparisons return `true`
     fn repl_equals(&self, other: &Rhs) -> bool;
 }

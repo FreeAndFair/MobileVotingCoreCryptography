@@ -21,7 +21,7 @@ use crate::zkp::{
 };
 use serde::{self, Deserializer, Serializer, de::Error};
 
-/// Implement serde serialization for [variable][`crate::utils::serialization::variable`] length serializable types
+/// Implement serde serialization for [variable][`crate::utils::serialization::variable`] length serializable types.
 macro_rules! implement_serde_v {
     ($type:ty $(, const $param:ident : usize)* $(, $lifetime:lifetime)?) => {
         impl<'de, C: Context $(, const $param: usize)*> serde::Deserialize<'de> for $type {
@@ -45,7 +45,7 @@ macro_rules! implement_serde_v {
     };
 }
 
-/// Implement serde serialization for [fixed][`crate::utils::serialization::fixed`] length serializable types
+/// Implement serde serialization for [fixed][`crate::utils::serialization::fixed`] length serializable types.
 macro_rules! implement_serde_f {
     ($type:ty $(, const $param:ident : usize)* $(, $lifetime:lifetime)?) => {
         impl<'de, C: Context $(, const $param: usize)*> serde::Deserialize<'de> for $type {

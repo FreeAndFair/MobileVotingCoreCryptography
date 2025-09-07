@@ -1,5 +1,5 @@
 /*
- * p256 module tests
+ * P-256 module tests
  *
  * @author David Ruescas (david@sequentech.io)\
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)\

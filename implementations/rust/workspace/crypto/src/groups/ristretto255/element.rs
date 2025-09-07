@@ -45,29 +45,34 @@ impl GroupElement for RistrettoElement {
     fn one() -> Self {
         RistrettoElement(RistrettoPoint::identity())
     }
+
     #[inline]
     fn random<R: rng::CRng>(rng: &mut R) -> Self {
         let ret = RistrettoPoint::random(rng);
         RistrettoElement(ret)
     }
+
     #[inline]
     fn mul(&self, other: &Self) -> Self {
         // curve arithmetic
         #[allow(clippy::arithmetic_side_effects)]
         RistrettoElement(self.0 + other.0)
     }
+
     #[inline]
     fn inv(&self) -> Self {
         // curve arithmetic
         #[allow(clippy::arithmetic_side_effects)]
         RistrettoElement(-self.0)
     }
+
     #[inline]
     fn exp(&self, scalar: &Self::Scalar) -> Self {
         // curve arithmetic
         #[allow(clippy::arithmetic_side_effects)]
         RistrettoElement(self.0 * scalar.0)
     }
+
     #[inline]
     fn equals(&self, other: &Self) -> bool {
         self.0 == other.0
@@ -79,6 +84,7 @@ impl PartialEq for RistrettoElement {
         self.equals(other)
     }
 }
+
 impl Eq for RistrettoElement {}
 
 use crate::utils::serialization::{VDeserializable, VSerializable};
@@ -105,6 +111,7 @@ impl VDeserializable for RistrettoElement {
 }
 
 use crate::utils::serialization::{FDeserializable, FSerializable};
+
 impl FSerializable for RistrettoElement {
     fn size_bytes() -> usize {
         32
@@ -115,6 +122,7 @@ impl FSerializable for RistrettoElement {
         buffer.extend_from_slice(bytes);
     }
 }
+
 impl FDeserializable for RistrettoElement {
     fn deser_f(buffer: &[u8]) -> Result<Self, CryptoError> {
         Self::deser(buffer)

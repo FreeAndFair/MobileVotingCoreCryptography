@@ -173,7 +173,8 @@ impl<C: Context, const W: usize> DlogEqProof<C, W> {
         b"big_a_1",
         b"dlogeq_proof_context",
     ];
-    /// Computes the challenge input for the discrete logarithm equality proof
+
+    /// Compute the challenge input for the discrete logarithm equality proof.
     ///
     /// # Params
     ///

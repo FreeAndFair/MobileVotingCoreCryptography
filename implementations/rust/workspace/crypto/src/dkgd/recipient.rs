@@ -10,7 +10,6 @@
 #![allow(clippy::type_complexity)]
 use std::array;
 
-use crate::Error;
 use crate::context::Context;
 use crate::cryptosystem::elgamal::PublicKey;
 use crate::cryptosystem::elgamal::{Ciphertext, KeyPair};
@@ -18,6 +17,7 @@ use crate::dkgd::dealer::VerifiableShare;
 use crate::traits::groups::DistGroupOps;
 use crate::traits::groups::GroupElement;
 use crate::traits::groups::GroupScalar;
+use crate::utils::error::Error;
 use crate::zkp::dlogeq::DlogEqProof;
 use vser_derive::VSerializable;
 
@@ -115,6 +115,7 @@ pub struct Recipient<C: Context, const T: usize, const P: usize> {
     /// This recipient's share of the secret key, used to partially decrypt ciphertexts
     sk: C::Scalar,
 }
+
 impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
     /// compile-time checks for recipient const parameters
     const CHECK: () = {
@@ -124,7 +125,7 @@ impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
         assert!(T > 0);
     };
 
-    /// Constructs a `Recipient` with the given values.
+    /// Construct a `Recipient` with the given values.
     ///
     /// The standard way to create a `Recipient` is through the
     /// [`from_shares`][`Self::from_shares`] function, passing in this recipient's
@@ -151,7 +152,7 @@ impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
         &self.verification_key
     }
 
-    /// Constructs a `Recipient` from its shares.
+    /// Construct a `Recipient` from its shares.
     ///
     /// The supplied shares will be verified by this function, using
     /// the [dealer's][`crate::dkgd::dealer::Dealer`] checking values.
@@ -207,7 +208,7 @@ impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
         Ok((recipient, joint_pk_ret))
     }
 
-    /// Verifies the given shares for a `Recipient` at `position`.
+    /// Verify the given shares for a `Recipient` at `position`.
     ///
     /// The supplied shares will be verified by this function, using
     /// the [dealer's][`crate::dkgd::dealer::Dealer`] checking values.
@@ -244,12 +245,12 @@ impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
         Ok((joint_pk, verification_key, sk))
     }
 
-    /// Computes the verification key for a `Recipient` at `position`.
+    /// Compute the verification key for a `Recipient` at `position`.
     ///
     /// # Parameters
     ///
     /// - `position`: the position of the recipient
-    /// - `all_checking_values`: an array of checking values provided by each `P` dealers, in any dealer order
+    /// - `all_checking_values`: an array of checking values provided by each of `P` dealers, in any dealer order
     ///
     /// Allows computing a verification key without constructing a `Recipient`,
     /// using the checking values for all dealers.
@@ -267,11 +268,11 @@ impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
         verification_key
     }
 
-    /// Computes the joint public key.
+    /// Compute the joint public key.
     ///
     /// # Parameters
     ///
-    /// - `all_checking_values`: an array of checking values provided by each `P` dealers, in any dealer order
+    /// - `all_checking_values`: an array of checking values provided by each of `P` dealers, in any dealer order
     ///
     /// Allows computing the joint public key without constructing a `Recipient`,
     /// using the checking values for all dealers.
@@ -285,7 +286,7 @@ impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
         DkgPublicKey::from_public_key(&inner)
     }
 
-    /// Computes this recipient's partial decryptions for the given ciphertexts.
+    /// Compute this recipient's partial decryptions for the given ciphertexts.
     ///
     /// At least `T` partial decryptions are needed to decrypt ciphertexts encrypted with the
     /// DKG's joint public key. Partial decryptions can be combined to compute the plaintext using the
@@ -376,7 +377,7 @@ impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
         ret
     }
 
-    /// Computes a factor of the verification key for a `Recipient` at `position`.
+    /// Compute a factor of the verification key for a `Recipient` at `position`.
     ///
     /// # Parameters
     ///
@@ -400,10 +401,10 @@ impl<C: Context, const T: usize, const P: usize> Recipient<C, T, P> {
             .fold(C::Element::one(), |acc, next| acc.mul(next))
     }
 
-    /// Verifies a single share for a `Recipient` at `position`.
+    /// Verify a single share for a `Recipient` at `position`.
     ///
-    /// Returns a tuple with the public key factor, verification key factor, and secret key summand
-    /// if the share is valid.
+    /// Returns a tuple with the public key factor, verification key factor,
+    /// and secret key summand if the share is valid.
     ///
     /// # Parameters
     ///
@@ -452,6 +453,7 @@ pub struct DecryptionFactor<C: Context, const P: usize, const W: usize> {
     /// The position of the participant who computed this partial decryption
     pub(crate) source: ParticipantPosition<P>,
 }
+
 impl<C: Context, const P: usize, const W: usize> DecryptionFactor<C, P, W> {
     /// Constructs a new [`DecryptionFactor`] from the given values.
     ///
@@ -482,6 +484,7 @@ pub struct DkgPublicKey<C: Context, const T: usize> {
     /// the underlying `ElGamal` public key
     pub inner: PublicKey<C>,
 }
+
 impl<C: Context, const T: usize> DkgPublicKey<C, T> {
     /// Constructs a new [`DkgPublicKey`] from the given `ElGamal` public key.
     pub fn from_public_key(public_key: &PublicKey<C>) -> Self {
@@ -542,12 +545,13 @@ impl<C: Context, const W: usize, const T: usize> DkgCiphertext<C, W, T> {
 /**
  * A participant's position in the DKG protocol.
  *
- * Participants of the DKG protocol play both the role of [Dealer][`crate::dkgd::dealer::Dealer`] and [Recipient][`Recipient`].
- * Each participant is assigned a 1-based index, the first participant is assigned
- * position 1, and so on up to participant `P`.
+ * Participants of the DKG protocol play both the role of [Dealer][`crate::dkgd::dealer::Dealer`]
+ * and [Recipient][`Recipient`]. Each participant is assigned a 1-based index;
+ * the first participant is assigned position 1, and so on up to participant `P`.
  */
 #[derive(Clone, Debug, VSerializable, PartialEq)]
 pub struct ParticipantPosition<const P: usize>(pub u32);
+
 impl<const P: usize> ParticipantPosition<P> {
     /// Creates a new [`ParticipantPosition`] with the given 1-based index
     /// as a u32.
@@ -584,13 +588,13 @@ impl<const P: usize> ParticipantPosition<P> {
     }
 }
 
-/// Combines the decryption factors, and applies them to the ciphertext
+/// Combine the decryption factors and apply them to the ciphertext
 /// to yield the plaintext.
 ///
 /// # Parameters
 ///
-/// - `ciphertexts`: the ciphertexts to decrypt, marked with matching `T` parameter
-/// - `dfactors`: the decryption factors (partial decryptions) for `T` participants
+/// - `ciphertexts`: the ciphertexts to decrypt, marked with matching `T` parameters
+/// - `dfactors`: the decryption factors (partial decryptions) for the `T` participants
 /// - `verification_keys`: the verification keys for the `T` participants
 /// - `context`: proof context label (ZKP CONTEXT)
 ///
@@ -656,15 +660,15 @@ pub fn combine<C: Context, const T: usize, const P: usize, const W: usize>(
 }
 
 #[crate::warning("Rustdoc needs a reference to lagrange coeff. calculation")]
-/// Computes the Lagrange coefficient for the given participant.
+/// Compute the Lagrange coefficient for the given participant.
 ///
 /// # Parameters
 ///
 /// - `position`: the participant for whom to compute the Lagrange coefficient
 /// - `present`: the set of participants currently present (those selected for decryption), in any order
 ///
-/// For participant j, in a set of participants K, the Lagrange coefficient
-/// is computed as
+/// For participant j in a set of participants K, the Lagrange coefficient
+/// is computed as:
 ///
 /// `lambda_j` = \prod_{j \neq K} \frac{k}{k - j}
 pub(crate) fn lagrange<C: Context, const T: usize, const P: usize>(

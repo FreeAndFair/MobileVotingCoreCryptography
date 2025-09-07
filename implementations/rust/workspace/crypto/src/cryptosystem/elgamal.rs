@@ -38,6 +38,7 @@ use vser_derive::VSerializable;
  * assert_eq!(message, decrypted);
  * ```
  */
+
 #[derive(Debug, PartialEq, VSerializable)]
 pub struct KeyPair<C: Context> {
     /// the private key as a raw group scalar
@@ -45,8 +46,9 @@ pub struct KeyPair<C: Context> {
     /// the public key
     pub pkey: PublicKey<C>,
 }
+
 impl<C: Context> KeyPair<C> {
-    /// Constructs a new key pair with the given secret and public values
+    /// Construct a new key pair with the given secret and public values.
     ///
     /// Use this function to create a key pair from existing secret and public keys.
     /// Use [`KeyPair::generate`] to instead generate a fresh key pair.
@@ -57,7 +59,7 @@ impl<C: Context> KeyPair<C> {
 }
 
 impl<C: Context> KeyPair<C> {
-    /// Constructs a new key pair generating fresh key material
+    /// Construct a new key pair, generating fresh key material.
     ///
     /// Use this function to generate a fresh key pair.
     /// Use [`KeyPair::new`] to instead create a key pair from existing secret and public keys.
@@ -168,13 +170,14 @@ pub struct PublicKey<C: Context> {
     pub y: C::Element,
 }
 impl<C: Context> PublicKey<C> {
-    /// Constructs a new public key with the given public value.
+    /// Construct a new public key with the given public value.
     ///
     /// Use this function to create a public key from existing public value.
     /// Use [`KeyPair::generate`] to instead generate a fresh key pair, including a public key.
     pub fn new(y: C::Element) -> Self {
         Self { y }
     }
+
     /// Encrypt the given message with this public key and the given randomness.
     ///
     /// The message can have arbitrary width `W`.
@@ -292,6 +295,7 @@ impl<C: Context, const W: usize> Ciphertext<C, W> {
     pub fn new(u: [C::Element; W], v: [C::Element; W]) -> Self {
         Ciphertext([u, v])
     }
+
     /// Re-encrypt the ciphertext using a new randomness value `r_n` and a public key `pk`.
     ///
     /// # Examples
@@ -318,14 +322,17 @@ impl<C: Context, const W: usize> Ciphertext<C, W> {
 
         Self(re_encrypted)
     }
+
     /// Obtain a reference to the first element of the ciphertext, `u`.
     pub fn u(&self) -> &[C::Element; W] {
         &self.0[0]
     }
+
     /// Obtain a reference to the second element of the ciphertext, `v`.
     pub fn v(&self) -> &[C::Element; W] {
         &self.0[1]
     }
+
     /// Apply the given function to each element of the ciphertext.
     ///
     /// Returns the values as raw arrays. Consumes this value.
@@ -336,6 +343,7 @@ impl<C: Context, const W: usize> Ciphertext<C, W> {
     {
         self.0.map(f)
     }
+
     /// Apply the given function to each element of the ciphertext.
     ///
     /// Returns the values as raw arrays.
@@ -452,7 +460,6 @@ mod tests {
         assert_eq!(message, decrypted_message);
 
         // decrypt with r * r2
-
         let one = [Ctx::Element::one(), Ctx::Element::one()];
         // g^r, pk^r
         let one_c = keypair.encrypt_with_r(&one, &r);

@@ -1,5 +1,5 @@
 /*
- * CryptoGroup implementations for the p256 group
+ * CryptoGroup implementations for the P-256 group
  *
  * @author David Ruescas (david@sequentech.io)\
  * @author Frank Zeyda (frank.zeyda@freeandfair.us)\
@@ -78,6 +78,7 @@ impl CryptoGroup for P256Group {
     fn encode(_p: &Self::Plaintext) -> Result<Self::Message, Error> {
         todo!()
     }
+
     /// # Errors
     ///
     /// todo!()

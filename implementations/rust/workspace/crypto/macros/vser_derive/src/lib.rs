@@ -96,7 +96,7 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
                 }
             }
         }
-        // Keep the panic for enums and unions which are not supported.
+        // Keep the panic for enums and unions, which are not supported.
         _ => {
             return quote! { compile_error!("VSerializable can only be derived for structs."); }
                 .into();

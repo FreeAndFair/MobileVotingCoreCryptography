@@ -90,7 +90,7 @@ impl<C: Context, const W: usize> PlEqProof<C, W> {
         PlEqProof { big_a, k }
     }
 
-    /// Prove equality of plaintexts for a Naor-Yung ciphertext
+    /// Prove equality of plaintexts for a Naor-Yung ciphertext.
     ///
     /// # Parameters
     ///
@@ -136,7 +136,7 @@ impl<C: Context, const W: usize> PlEqProof<C, W> {
         Ok(PlEqProof::new(big_a, k))
     }
 
-    /// Verify this Schnorr proof of knowledge
+    /// Verify this Schnorr proof of knowledge.
     ///
     /// - `y`: The Naor-Yung public key `y`
     /// - `z`: The Naor-Yung public key `z`
@@ -186,7 +186,7 @@ impl<C: Context, const W: usize> PlEqProof<C, W> {
         b"pleq_context",
     ];
 
-    /// Computes the challenge input for the plaintext equality proof
+    /// Computes the challenge input for the plaintext equality proof.
     ///
     /// # Params
     ///

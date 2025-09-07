@@ -44,6 +44,7 @@ use crate::utils::serialization::{FDeserializable, FSerializable};
 // Ensures that usize can fit in LengthU, for LengthU = 64
 #[cfg(any(target_pointer_width = "64", target_pointer_width = "32"))]
 pub type LengthU = u64;
+
 /// Number of bytes prepended to specify length of serialized data
 pub const LENGTH_BYTES: usize = size_of::<LengthU>();
 
@@ -87,7 +88,7 @@ pub trait TFTuple: Sized {
 }
 
 impl<T: VSerializable> VSerializable for Vec<T> {
-    /// Serialize a vector of variable length serializable types
+    /// Serialize a vector of variable length serializable types.
     ///
     /// A vector of `N` values of type `T` is serialized as `N` consecutive
     /// byte sequences (in the same order), each of of the form
@@ -120,7 +121,7 @@ impl<T: VSerializable> VSerializable for Vec<T> {
 }
 
 impl<T: VDeserializable> VDeserializable for Vec<T> {
-    /// Deserialize a vector of variable length serializable types
+    /// Deserialize a vector of variable length serializable types.
     ///
     /// See [`Vec::<T>::ser()`]
     ///
@@ -146,7 +147,7 @@ impl<T: VDeserializable> VDeserializable for Vec<T> {
     }
 }
 
-/// Serialize an array of variable length serializable types
+/// Serialize an array of variable length serializable types.
 ///
 /// An array of `N` values of type `T` is serialized as `N` consecutive
 /// byte sequences (in the same order), each of the form
@@ -180,7 +181,7 @@ impl<T: VSerializable, const N: usize> VSerializable for [T; N] {
     }
 }
 
-/// Deserialize an array of variable length serializable types
+/// Deserialize an array of variable length serializable types.
 ///
 /// See [`<[T; N]>::ser()`]
 ///
@@ -223,7 +224,7 @@ impl<T: VDeserializable, const N: usize> VDeserializable for [T; N] {
 }
 
 /**
- * Vector specialized for serializing a large number of fixed size objects.
+ * Vector specialized for serializing a large number of fixed size objects
  *
  * A `LargeVector` contains a variable number of fixed length elements of type `T`, and
  * therefore implements [`VSerializable`]. However, because each element is of fixed
@@ -270,6 +271,7 @@ impl<T: VDeserializable, const N: usize> VDeserializable for [T; N] {
  */
 #[derive(Debug, PartialEq)]
 pub struct LargeVector<T: FSerializable>(pub Vec<T>);
+
 impl<T: FSerializable> LargeVector<T> {
     /// Push a new value into the underlying vector
     pub fn push(&mut self, item: T) {
@@ -286,6 +288,7 @@ impl<T: FSerializable> LargeVector<T> {
         self.0.is_empty()
     }
 }
+
 impl<T: FSerializable> std::ops::Index<usize> for LargeVector<T> {
     type Output = T;
 
@@ -295,10 +298,11 @@ impl<T: FSerializable> std::ops::Index<usize> for LargeVector<T> {
 }
 
 use rayon::prelude::*;
+
 /// Size of `LargeVector` serialization chunks
 const LARGEVECTOR_CHUNK_SIZE: usize = 256;
 
-/// Serialize this `LargeVector` into a byte vector
+/// Serialize this `LargeVector` into a byte vector.
 ///
 /// For a `LargeVector` with `N` elements of type `T`, the
 /// number of serialized bytes is
@@ -337,7 +341,7 @@ impl<T: FSerializable + Sync> VSerializable for LargeVector<T> {
     }
 }
 
-/// Deserialize this `LargeVector` from a byte vector
+/// Deserialize this `LargeVector` from a byte vector.
 ///
 /// # Errors
 ///
@@ -456,7 +460,7 @@ impl<A: VDeserializable, B: VDeserializable> VDeserializable for (A, B) {
 }
 
 /**
- * Generates [`VSerializable`] and [`VDeserializable`] implementations for the given tuple.
+ * Generate [`VSerializable`] and [`VDeserializable`] implementations for the given tuple.
  *
  * The tuple element types must already implement [`VSerializable`] and [`VDeserializable`].
  * In combination with [`TFTuple`], these macros allow deriving serialization implementations
@@ -543,7 +547,7 @@ macro_rules! generate_tuple_impl {
 }
 
 /**
- * Generates [`VSerializable`] and [`VDeserializable`] implementations for a fixed set of tuple types.
+ * Generate [`VSerializable`] and [`VDeserializable`] implementations for a fixed set of tuple types.
  *
  * Calls the [`generate_tuple_impl`] macro for tuples of arity up to 7. Add additional
  * calls as needed for newly defined structs.
@@ -567,6 +571,7 @@ impl_vser_for_tuples!();
 
 /// Marker trait for types implementing `VSerializable` and `VDeserializable`
 pub trait VSer: VSerializable + VDeserializable {}
+
 impl<T: VSerializable + VDeserializable> VSer for T {}
 
 /// Implements [`VSerializable`] for u32

@@ -4,7 +4,7 @@ This repository contains the Rust workspace for the project.
 
 ## Packages
 
-The following packages are present:
+The workspace contains the following packages:
 
 - crypto
 
@@ -24,7 +24,7 @@ To build all packages in the workspace, navigate to the root of the repository a
 cargo build
 ```
 
-To build a specific package, you can use:
+To build a specific package, you can use its name. For example:
 
 ```Bash
 cargo build -p crypto

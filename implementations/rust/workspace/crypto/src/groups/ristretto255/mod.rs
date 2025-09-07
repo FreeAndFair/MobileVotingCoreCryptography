@@ -13,10 +13,13 @@ pub use scalar::RistrettoScalar;
 
 /// Ristretto implementation of [`GroupElement`](crate::traits::groups::GroupElement)
 pub mod element;
+
 /// Ristretto implementation of [`CryptoGroup`](crate::traits::groups::CryptoGroup)
 pub mod group;
+
 /// Ristretto implementation of [`GroupScalar`](crate::traits::groups::GroupScalar)
 pub mod scalar;
 
 #[cfg(test)]
+#[cfg_attr(coverage_nightly, coverage(off))]
 mod tests;

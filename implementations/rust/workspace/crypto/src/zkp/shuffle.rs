@@ -7,7 +7,6 @@
  * @version 0.1
  */
 
-use crate::Error;
 use crate::context::Context;
 use crate::cryptosystem::elgamal::{self, Ciphertext};
 use crate::traits::groups::CryptoGroup;
@@ -17,6 +16,7 @@ use crate::traits::groups::GroupElement;
 use crate::traits::groups::GroupScalar;
 use crate::traits::groups::ReplGroupOps;
 use crate::traits::groups::ReplScalarOps;
+use crate::utils::error::Error;
 use crate::utils::hash;
 use crate::utils::serialization::VSerializable;
 
@@ -97,7 +97,7 @@ impl<C: Context, const W: usize> Shuffler<C, W> {
         Self { h_generators, pk }
     }
 
-    /// Generate random exponents for ciphertext re-encryption
+    /// Generate random exponents for ciphertext re-encryption.
     ///
     /// Returns a tuple of form (commitment exponents, re-encryption exponents)
     pub(crate) fn gen_private_exponents(size: usize) -> (Vec<C::Scalar>, Vec<[C::Scalar; W]>) {
@@ -114,7 +114,7 @@ impl<C: Context, const W: usize> Shuffler<C, W> {
             .collect()
     }
 
-    /// Shuffles the input ciphertexts and computes a corresponding proof
+    /// Shuffle the input ciphertexts and computes a corresponding proof.
     ///
     /// The input ciphertexts are re-encrypted with random (private) exponents, and permuted
     /// with a random (private) permutation. A corresponding proof of shuffle is computed.
@@ -345,7 +345,7 @@ impl<C: Context, const W: usize> Shuffler<C, W> {
         Ok((permuted_ciphertexts, proof))
     }
 
-    /// Verifies the given proof of shuffle with respect to the original and shuffled ciphertexts.
+    /// Verify the given proof of shuffle with respect to the original and shuffled ciphertexts.
     ///
     /// # Parameters
     ///
@@ -515,7 +515,7 @@ impl<C: Context, const W: usize> Shuffler<C, W> {
         Ok(ret)
     }
 
-    /// Re-encrypts and permutes the input ciphertexts with the given permutation data.
+    /// Re-encrypt and permute the input ciphertexts with the given permutation data.
     ///
     /// See `EVS`: Protocol 12.3, Satisfying clause
     ///
@@ -571,7 +571,7 @@ impl<C: Context, const W: usize> Shuffler<C, W> {
         b"shuffle_proof_challenge_e_context",
     ];
 
-    /// Computes the e-challenge input for the proof of shuffle
+    /// Compute the e-challenge input for the proof of shuffle.
     ///
     /// See `EVS`: Protocol 12.3, Step 1
     ///
@@ -627,7 +627,7 @@ impl<C: Context, const W: usize> Shuffler<C, W> {
         b"shuffle_challenge_input_v_context",
     ];
 
-    /// Computes the v-challenge input for the proof of shuffle
+    /// Compute the v-challenge input for the proof of shuffle.
     ///
     /// See `EVS`: Protocol 12.3, Step 3
     ///
@@ -675,8 +675,9 @@ pub(crate) struct PermutationData<C: Context, const W: usize> {
     /// Permuted ciphertexts, public
     permuted_ciphertexts: Vec<Ciphertext<C, W>>,
 }
+
 impl<C: Context, const W: usize> PermutationData<C, W> {
-    /// Constructs a new `PermutationData` instance with given values.
+    /// Construct a new `PermutationData` instance with given values.
     ///
     /// This structure is returned by the [`Shuffler::apply_permutation`] function.
     pub fn new(
@@ -712,8 +713,9 @@ pub struct ShuffleProof<C: Context, const W: usize> {
     /// Challenge responses
     pub responses: Responses<C, W>,
 }
+
 impl<C: Context, const W: usize> ShuffleProof<C, W> {
-    /// Constructs a `ShuffleProof` with the given values
+    /// Construct a `ShuffleProof` with the given values.
     ///
     /// The standard way to obtain a `ShuffleProof` is through the [`Shuffler::shuffle`] function.
     pub fn new(commitments: ShuffleCommitments<C, W>, responses: Responses<C, W>) -> Self {
@@ -724,7 +726,7 @@ impl<C: Context, const W: usize> ShuffleProof<C, W> {
     }
 }
 
-/// Commitments for the shuffle proof.
+/// Commitments for the shuffle proof
 ///
 /// Includes bridging commitments, proof commitments and
 /// pedersen commitments.
@@ -732,21 +734,28 @@ impl<C: Context, const W: usize> ShuffleProof<C, W> {
 pub struct ShuffleCommitments<C: Context, const W: usize> {
     /// Bridging commitments
     big_b_n: Vec<C::Element>,
+
     /// Proof commitment `big_a_prime`
     big_a_prime: C::Element,
+
     /// Proof commitment `big_b_prime_n`
     big_b_prime_n: Vec<C::Element>,
+
     /// Proof commitment `big_c_prime`
     big_c_prime: C::Element,
+
     /// Proof commitment `big_d_prime`
     big_d_prime: C::Element,
+
     /// Proof commitments `big_f_prime`
     big_f_prime: Ciphertext<C, W>,
+
     /// Pedersen commitments
     u_n: Vec<C::Element>,
 }
+
 impl<C: Context, const W: usize> ShuffleCommitments<C, W> {
-    /// Constructs a new `ShuffleCommitments` instance with given values.
+    /// Construct a new `ShuffleCommitments` instance with given values.
     #[allow(clippy::similar_names)]
     pub fn new(
         big_b_n: Vec<C::Element>,
@@ -770,25 +779,31 @@ impl<C: Context, const W: usize> ShuffleCommitments<C, W> {
 }
 
 /**
- * Responses to the challenge in the shuffle proof.
+ * Responses to the challenge in the shuffle proof
  */
 #[derive(Debug, VSer, PartialEq, Clone)]
 pub struct Responses<C: Context, const W: usize> {
     /// Response `k_a`
     pub k_a: C::Scalar,
+
     /// Responses `k_b_n`
     pub k_b_n: Vec<C::Scalar>,
+
     /// Response `k_c`
     pub k_c: C::Scalar,
+
     /// Response `k_d`
     pub k_d: C::Scalar,
+
     /// Responses `k_e_n`
     pub k_e_n: Vec<C::Scalar>,
+
     /// Responses `k_f`
     pub k_f: [C::Scalar; W],
 }
+
 impl<C: Context, const W: usize> Responses<C, W> {
-    /// Constructs a new `Responses` instance with given values.
+    /// Construct a new `Responses` instance with given values.
     #[allow(clippy::similar_names)]
     pub fn new(
         k_a: C::Scalar,
@@ -810,7 +825,7 @@ impl<C: Context, const W: usize> Responses<C, W> {
 }
 
 /**
- * A permutation and its inverse in vector form.
+ * A permutation and its inverse in vector form
  *
  * The vector values corresponds to values in [one-line
  * notation](https://en.wikipedia.org/wiki/Permutation#One-line_notation).
@@ -837,11 +852,13 @@ impl<C: Context, const W: usize> Responses<C, W> {
 pub struct Permutation {
     /// The permutation vector.
     pub permutation: Vec<usize>,
+
     /// The inverse permutation vector.
     pub inverse: Vec<usize>,
 }
+
 impl Permutation {
-    /// Generates a random permutation and its inverse
+    /// Generate a random permutation and its inverse.
     ///
     /// This function uses the [`SliceRandom`](https://rust-random.github.io/rand/rand/seq/trait.SliceRandom.html#tymethod.shuffle) trait generate the permutation, according
     /// to which
@@ -869,7 +886,7 @@ impl Permutation {
         }
     }
 
-    /// Shuffles the given integers in place using the Fisher-Yates algorithm.
+    /// Shuffle the given integers in place using the Fisher-Yates algorithm.
     fn shuffle<C: Context>(data: &mut [usize], rng: &mut C::Rng) {
         for i in (1..data.len()).rev() {
             let j = rng.r#gen_range(0..=i);
@@ -877,20 +894,20 @@ impl Permutation {
         }
     }
 
-    /// The length of the permutation and inverse permutation.
+    /// The length of the permutation and inverse permutation
     #[must_use]
     pub fn len(&self) -> usize {
         // does not matter which field we choose, they are of equal size
         self.permutation.len()
     }
 
-    /// Checks if this is the empty permutation
+    /// Check if this is the empty permutation.
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.permutation.is_empty()
     }
 
-    /// Applies the permutation to the given slice.
+    /// Apply the permutation to the given slice.
     ///
     /// # Errors
     ///
@@ -918,7 +935,7 @@ impl Permutation {
         Ok(permuted)
     }
 
-    /// Applies the inverse permutation to the given slice.
+    /// Apply the inverse permutation to the given slice.
     ///
     /// # Errors
     ///
@@ -947,7 +964,6 @@ impl Permutation {
     }
 }
 
-#[crate::warning("Missing tests for serialization of shuffle data")]
 #[cfg(test)]
 mod tests {
     use std::array;

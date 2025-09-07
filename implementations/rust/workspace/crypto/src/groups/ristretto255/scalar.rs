@@ -34,39 +34,46 @@ impl GroupScalar for RistrettoScalar {
     fn zero() -> Self {
         RistrettoScalar(DalekScalar::ZERO)
     }
+
     #[inline]
     fn one() -> Self {
         RistrettoScalar(DalekScalar::ONE)
     }
+
     #[inline]
     fn random<R: rng::CRng>(rng: &mut R) -> Self {
         let ret = DalekScalar::random(rng);
         RistrettoScalar(ret)
     }
+
     #[inline]
     fn add(&self, other: &Self) -> Self {
         // curve arithmetic
         #[allow(clippy::arithmetic_side_effects)]
         RistrettoScalar(self.0 + other.0)
     }
+
     #[inline]
     fn sub(&self, other: &Self) -> Self {
         // curve arithmetic
         #[allow(clippy::arithmetic_side_effects)]
         RistrettoScalar(self.0 - other.0)
     }
+
     #[inline]
     fn mul(&self, other: &Self) -> Self {
         // curve arithmetic
         #[allow(clippy::arithmetic_side_effects)]
         RistrettoScalar(self.0 * other.0)
     }
+
     #[inline]
     fn neg(&self) -> Self {
         // curve arithmetic
         #[allow(clippy::arithmetic_side_effects)]
         RistrettoScalar(-self.0)
     }
+
     #[inline]
     fn inv(&self) -> Option<Self> {
         if self.0 == DalekScalar::ZERO {
@@ -75,6 +82,7 @@ impl GroupScalar for RistrettoScalar {
             Some(RistrettoScalar(self.0.invert()))
         }
     }
+
     #[inline]
     fn equals(&self, other: &Self) -> bool {
         self.0 == other.0
@@ -94,6 +102,7 @@ impl PartialEq for RistrettoScalar {
         GroupScalar::equals(self, other)
     }
 }
+
 impl Eq for RistrettoScalar {}
 
 use crate::utils::serialization::{VDeserializable, VSerializable};
@@ -120,6 +129,7 @@ impl VDeserializable for RistrettoScalar {
 }
 
 use crate::utils::serialization::{FDeserializable, FSerializable};
+
 impl FSerializable for RistrettoScalar {
     fn size_bytes() -> usize {
         32
@@ -129,6 +139,7 @@ impl FSerializable for RistrettoScalar {
         buffer.extend_from_slice(bytes);
     }
 }
+
 impl FDeserializable for RistrettoScalar {
     fn deser_f(buffer: &[u8]) -> Result<Self, CryptoError> {
         Self::deser(buffer)

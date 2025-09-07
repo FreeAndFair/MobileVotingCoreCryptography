@@ -56,8 +56,10 @@
 
 /// Group over curve P-256, backed by the [p256](https://github.com/RustCrypto/elliptic-curves/tree/master/p256) crate
 pub mod p256;
+
 /// Generic product groups for elements and scalars
 pub mod productgroup;
+
 /// Group over the Ristretto group, backed by the [curve25519-dalek](https://github.com/dalek-cryptography/curve25519-dalek) crate
 pub mod ristretto255;
 

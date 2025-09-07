@@ -13,6 +13,7 @@ use rand::rngs::OsRng;
  * Marker trait to require a cryptographically secure random number generator.
  */
 pub trait CRng: rand::RngCore + rand::CryptoRng {}
+
 /**
  * `OsRng` is a cryptographically secure random number generator.
  */
@@ -27,6 +28,7 @@ pub trait Rng: CRng {
     /// Returns an rng instance.
     fn rng() -> Self;
 }
+
 /**
  * Implements the random number generation [context][`crate::context::Context`] dependency with [`OsRng`].
  */
