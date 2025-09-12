@@ -402,6 +402,24 @@ impl VDeserializable for u32 {
     }
 }
 
+/// Implements [`VSerializable`] for u64
+impl VSerializable for u64 {
+    fn ser(&self) -> Vec<u8> {
+        self.to_be_bytes().to_vec()
+    }
+}
+
+/// Implements [`VSerializable`] for u64
+impl VDeserializable for u64 {
+    fn deser(buffer: &[u8]) -> Result<u64, Error> {
+        let bytes: [u8; 8] = buffer.try_into()?;
+
+        let value = u64::from_be_bytes(bytes);
+
+        Ok(value)
+    }
+}
+
 /// Special case implementation of `VSerializable` for 1-tuple
 impl<A: VSerializable> VSerializable for (A,) {
     fn ser(&self) -> Vec<u8> {

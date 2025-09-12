@@ -29,9 +29,13 @@
 use std::marker::PhantomData;
 
 pub use ed25519::signature::{Error, Signer, Verifier};
-use ed25519_dalek::ed25519;
+use ed25519_dalek::{Signature, SigningKey, VerifyingKey, ed25519};
 
-use crate::utils::rng::CRng;
+use crate::utils::Error as CryptoError;
+use crate::utils::{
+    rng::CRng,
+    serialization::{FDeserializable, FSer, FSerializable, VDeserializable, VSer, VSerializable},
+};
 
 /**
  * A digital signature scheme.
@@ -45,11 +49,11 @@ use crate::utils::rng::CRng;
 
 pub trait SignatureScheme<R: CRng> {
     /// The signer type, a private key used for signing.
-    type Signer: Signer<Self::Signature>;
+    type Signer: Signer<Self::Signature> + FSer + VSer;
     /// The verifier type, a public key used to verify signatures.
-    type Verifier: Verifier<Self::Signature>;
+    type Verifier: Verifier<Self::Signature> + FSer + VSer;
     /// The signature type, a digital signature on some data.
-    type Signature;
+    type Signature: FSer + VSer;
 
     /// Generates a new private signing key.
     ///
@@ -90,6 +94,102 @@ impl<R: CRng> SignatureScheme<R> for Ed25519<R> {
     }
 }
 
+impl FSerializable for SigningKey {
+    fn ser_into(&self, buffer: &mut Vec<u8>) {
+        let bytes = self.as_bytes();
+        buffer.extend_from_slice(bytes);
+    }
+    fn size_bytes() -> usize {
+        ed25519_dalek::SECRET_KEY_LENGTH
+    }
+}
+impl FDeserializable for SigningKey {
+    fn deser_f(bytes: &[u8]) -> Result<Self, CryptoError> {
+        let bytes: [u8; 32] = bytes.try_into()?;
+        let ret = SigningKey::from_bytes(&bytes);
+
+        Ok(ret)
+    }
+}
+
+impl FSerializable for VerifyingKey {
+    fn ser_into(&self, buffer: &mut Vec<u8>) {
+        let bytes = self.as_bytes();
+        buffer.extend_from_slice(bytes);
+    }
+    fn size_bytes() -> usize {
+        ed25519_dalek::PUBLIC_KEY_LENGTH
+    }
+}
+impl FDeserializable for VerifyingKey {
+    fn deser_f(bytes: &[u8]) -> Result<Self, CryptoError> {
+        let bytes: [u8; 32] = bytes.try_into()?;
+        let ret = VerifyingKey::from_bytes(&bytes)?;
+
+        Ok(ret)
+    }
+}
+
+impl FSerializable for Signature {
+    fn ser_into(&self, buffer: &mut Vec<u8>) {
+        let bytes = self.to_bytes();
+        buffer.extend_from_slice(&bytes);
+    }
+    fn size_bytes() -> usize {
+        ed25519_dalek::SIGNATURE_LENGTH
+    }
+}
+impl FDeserializable for Signature {
+    fn deser_f(bytes: &[u8]) -> Result<Self, CryptoError> {
+        let bytes: [u8; 64] = bytes.try_into()?;
+        let ret = Signature::from_bytes(&bytes);
+
+        Ok(ret)
+    }
+}
+
+impl VSerializable for SigningKey {
+    fn ser(&self) -> Vec<u8> {
+        self.to_bytes().to_vec()
+    }
+}
+impl VDeserializable for SigningKey {
+    fn deser(bytes: &[u8]) -> Result<Self, CryptoError> {
+        let bytes: [u8; 32] = bytes.try_into()?;
+        let ret = SigningKey::from_bytes(&bytes);
+
+        Ok(ret)
+    }
+}
+
+impl VSerializable for VerifyingKey {
+    fn ser(&self) -> Vec<u8> {
+        self.to_bytes().to_vec()
+    }
+}
+impl VDeserializable for VerifyingKey {
+    fn deser(bytes: &[u8]) -> Result<Self, CryptoError> {
+        let bytes: [u8; 32] = bytes.try_into()?;
+        let ret = VerifyingKey::from_bytes(&bytes)?;
+
+        Ok(ret)
+    }
+}
+
+impl VSerializable for Signature {
+    fn ser(&self) -> Vec<u8> {
+        self.to_bytes().to_vec()
+    }
+}
+impl VDeserializable for Signature {
+    fn deser(bytes: &[u8]) -> Result<Self, CryptoError> {
+        let bytes: [u8; 64] = bytes.try_into()?;
+        let ret = Signature::from_bytes(&bytes);
+
+        Ok(ret)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -106,6 +206,35 @@ mod tests {
         let mut csprng = RistrettoCtx::get_rng();
         let message: &[u8] = &csprng.next_u64().to_be_bytes();
         let signature = sk.sign(message);
+        let ok = vk.verify(message, &signature);
+        assert!(ok.is_ok());
+
+        let signature = sk.sign(&[]);
+        let ok = vk.verify(&[], &signature);
+
+        assert!(ok.is_ok());
+    }
+
+    #[test]
+    fn test_signatures_serialization() {
+        use crate::context::Context;
+        use crate::context::RistrettoCtx;
+
+        let sk = RistrettoCtx::gen_signing_key();
+        let vk = sk.verifying_key();
+
+        let mut csprng = RistrettoCtx::get_rng();
+        let message: &[u8] = &csprng.next_u64().to_be_bytes();
+        let signature = sk.sign(message);
+
+        let sk_bytes = sk.ser();
+        let vk_bytes = vk.ser();
+        let sig_bytes = signature.ser();
+
+        let sk = SigningKey::deser(&sk_bytes).unwrap();
+        let vk = VerifyingKey::deser(&vk_bytes).unwrap();
+        let signature = Signature::deser(&sig_bytes).unwrap();
+
         let ok = vk.verify(message, &signature);
         assert!(ok.is_ok());
 

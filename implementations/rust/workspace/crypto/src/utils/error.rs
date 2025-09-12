@@ -32,6 +32,10 @@ pub enum Error {
     #[error("Try from int error: {0}")]
     DeserializationLengthIntError(#[from] std::num::TryFromIntError),
 
+    /// Occurs when deserializing `ed2219_dalek` signatures or keys
+    #[error("Signature error: {0}")]
+    SignatureDeserError(#[from] ed25519_dalek::SignatureError),
+
     /// Occurs when [encoding][`crate::traits::groups::CryptoGroup::encode`] to the curve fails
     #[error("{0}")]
     EncodingError(String),

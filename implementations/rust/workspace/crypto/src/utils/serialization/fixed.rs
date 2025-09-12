@@ -358,6 +358,26 @@ impl FDeserializable for u32 {
     }
 }
 
+/// Implements [`FSerializable`] for u64
+impl FSerializable for u64 {
+    fn size_bytes() -> usize {
+        8
+    }
+
+    fn ser_into(&self, buffer: &mut Vec<u8>) {
+        let bytes = self.to_be_bytes();
+        buffer.extend_from_slice(&bytes);
+    }
+}
+
+/// Implements [`FDeserializable`] for u64
+impl FDeserializable for u64 {
+    fn deser_f(bytes: &[u8]) -> Result<u64, Error> {
+        let bytes: [u8; 8] = bytes.try_into()?;
+        Ok(u64::from_be_bytes(bytes))
+    }
+}
+
 /// Marker trait for types implementing `FSerializable` and `FDeserializable`
 pub trait FSer: FSerializable + FDeserializable {}
 impl<T: FSerializable + FDeserializable> FSer for T {}

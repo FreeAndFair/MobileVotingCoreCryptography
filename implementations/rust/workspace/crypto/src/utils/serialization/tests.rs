@@ -236,6 +236,7 @@ mod tests {
             Vec<Ciphertext<Ctx, 2>>,
             String,
             u32,
+            u64,
         );
 
         let count = 10;
@@ -249,7 +250,7 @@ mod tests {
             messages.iter().map(|m| keypair.encrypt(&m)).collect();
 
         let tag = "test".to_string();
-        let eg = EG(keypair, messages.clone(), ciphertexts, tag.clone(), 1);
+        let eg = EG(keypair, messages.clone(), ciphertexts, tag.clone(), 1, 1);
 
         let serialized = eg.ser();
 
