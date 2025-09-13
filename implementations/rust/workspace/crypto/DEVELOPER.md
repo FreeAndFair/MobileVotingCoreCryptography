@@ -1,13 +1,28 @@
 # VoteSecure Core Cryptographic Library Development
 
-## ⚠️ Requirements
+### ⚠️ Requirements
 
 This crate requires the **nightly** Rust compiler. To install and use the nightly toolchain, run:
 ```bash
 rustup default nightly
 ```
 
-## Building Documentation
+### Seting up pre-commit hooks
+
+To install (pre-commit hooks)[https://github.com/FreeAndFair/TuskMobileVoting/blob/main/docs/team.md#pre-commit-hooks] (requires python):
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+To manually run pre-commit hooks:
+
+```bash
+pre-commit run --all-files
+```
+
+### Building Documentation
 
 **1. Generate the Documentation**
 
@@ -47,15 +62,25 @@ To run only doctests:
 cargo test --doc
 ```
 
-### Running clippy
+To run all tests _except_ doctests:
+
+```bash
+cargo test --lib --bins --tests
+```
+
+### Lints and static analysis
+
+#### Running [clippy](https://doc.rust-lang.org/clippy/)
 
 ```bash
 cargo clippy
 ```
 
-### Code coverage
+Clippy lint configuration is specified in `Cargo.toml` (TODO: move to workspace)
 
-Install cargo-llvm-cov:
+#### Code coverage
+
+Install [cargo-llvm-cov](https://github.com/taiki-e/cargo-llvm-cov):
 
 ```bash
 cargo install cargo-llvm-cov
@@ -74,9 +99,17 @@ cargo llvm-cov
 cargo llvm-cov report --html --open
 ```
 
-### Supply chain analysis (cargo deny)
+To enable branch analysis
 
-Install cargo deny:
+```bash
+cargo llvm-cov --branch
+```
+
+#### Supply chain analysis
+
+#### Cargo deny
+
+Install [cargo deny](https://embarkstudios.github.io/cargo-deny/index.html):
 
 ```bash
 cargo install cargo-deny
@@ -88,25 +121,37 @@ Run the analysis:
 cargo deny check
 ```
 
-### Automatic code formatting
+#### Cargo vet
+
+Install [cargo vet](https://mozilla.github.io/cargo-vet/index.html):
 
 ```bash
-cargo fmt
+cargo install --locked cargo-vet
 ```
 
-### Manually run pre-commit hooks
+Run the analysis:
 
 ```bash
-pre-commit run --all-files
+cargo vet
 ```
 
-### Show custom warnings
+#### Cargo miri
 
-To display custom warnings when building (test or run),
+You will need to install [miri](https://github.com/rust-lang/miri?tab=readme-ov-file#using-miri) and [cargo-nexttest](https://nexte.st/docs/installation/pre-built-binaries/). Then run
+
+```bash
+cargo miri nextest run -jN
+```
+
+Setting N to available cores (for example `cargo miri nextest run -j12` for a 12 core machine).
+
+#### Custom warnings
+
+To display custom warnings when running `cargo check/build/test/run`,
 pass in ```--features=custom-warnings```:
 
 ```bash
 cargo build --features=custom-warnings
 ```
 
-Custom warnings are implemented in ```macros/custom_warning_macro```.
+Custom warnings are implemented in ```workspace/macros/custom_warning_macro```.

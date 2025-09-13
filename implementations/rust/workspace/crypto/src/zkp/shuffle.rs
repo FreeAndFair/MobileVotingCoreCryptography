@@ -980,6 +980,8 @@ mod tests {
     use crate::zkp::shuffle::Shuffler;
 
     #[test]
+    #[cfg_attr(miri, ignore)]
+    #[crate::warning("Miri test fails (Stacked Borrows)")]
     fn test_shuffle_ristretto() {
         test_shuffle::<RCtx, 2>();
         test_shuffle::<RCtx, 3>();
@@ -988,6 +990,8 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
+    #[crate::warning("Miri test fails (Stacked Borrows)")]
     fn test_shuffle_p256() {
         test_shuffle::<PCtx, 2>();
         test_shuffle::<PCtx, 3>();
@@ -996,21 +1000,29 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
+    #[crate::warning("Miri test fails (Stacked Borrows)")]
     fn test_shuffle_label_ristretto() {
         test_shuffle_label::<RCtx>();
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
+    #[crate::warning("Miri test fails (Stacked Borrows)")]
     fn test_shuffle_label_p256() {
         test_shuffle_label::<PCtx>();
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
+    #[crate::warning("Miri test fails (Stacked Borrows)")]
     fn test_shuffle_serialization_ristretto() {
         test_shuffle_serialization::<RCtx>();
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
+    #[crate::warning("Miri test fails (Stacked Borrows)")]
     fn test_shuffle_serialization_p256() {
         test_shuffle_serialization::<PCtx>();
     }

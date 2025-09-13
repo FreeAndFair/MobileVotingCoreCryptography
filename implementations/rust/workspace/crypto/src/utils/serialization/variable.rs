@@ -26,22 +26,24 @@
 //! - Generic (homogeneous) arrays
 //! - Generic (homogeneous) vectors
 //! - [`LargeVector`] (for performant serialization on large data)
-//! - u32
+//! - u32, u64
 //! - String
 //!
 //! # Derive macro implementations
 //!
-//! The `vser` macro derives the following implementations on annotated structs:
+//! The `VSerializable` macro derives the following implementations on annotated structs:
 //!
 //! - [`VSerializable`], [`VDeserializable`]
 //! - [`TFTuple`]
 //! - [`std::hash::Hash`]
 
 use crate::utils::error::Error;
+use crate::utils::serialization::get_slice;
 use crate::utils::serialization::{FDeserializable, FSerializable};
 
 /// Type for byte length prefixes
 // Ensures that usize can fit in LengthU, for LengthU = 64
+// This justifies code of the form 'expect("usize::MAX <= LengthU::MAX")'
 #[cfg(any(target_pointer_width = "64", target_pointer_width = "32"))]
 pub type LengthU = u64;
 
@@ -136,10 +138,14 @@ impl<T: VDeserializable> VDeserializable for Vec<T> {
         let mut bytes = buffer;
         let mut ret: Vec<Result<T, Error>> = vec![];
         while !bytes.is_empty() {
-            let len_bytes: [u8; LENGTH_BYTES] = bytes[0..LENGTH_BYTES].try_into()?;
+            let len_bytes: [u8; LENGTH_BYTES] = get_slice(bytes, 0..LENGTH_BYTES)?.try_into()?;
             let len: usize = LengthU::from_be_bytes(len_bytes).try_into()?;
-            ret.push(T::deser(&bytes[LENGTH_BYTES..LENGTH_BYTES + len]));
-            bytes = &bytes[LENGTH_BYTES + len..];
+
+            let upper_limit = checked_add(LENGTH_BYTES, len)?;
+            let value = T::deser(get_slice(bytes, LENGTH_BYTES..upper_limit)?);
+            ret.push(value);
+            let tail = upper_limit..bytes.len();
+            bytes = get_slice(bytes, tail)?;
         }
 
         let ret: Result<Vec<T>, Error> = ret.into_iter().collect::<Result<Vec<T>, Error>>();
@@ -202,10 +208,14 @@ impl<T: VDeserializable, const N: usize> VDeserializable for [T; N] {
         let mut results: Vec<Result<T, Error>> = vec![];
 
         for _ in 0..N {
-            let len_bytes: [u8; LENGTH_BYTES] = bytes[0..LENGTH_BYTES].try_into()?;
+            let len_bytes: [u8; LENGTH_BYTES] = get_slice(buffer, 0..LENGTH_BYTES)?.try_into()?;
             let len: usize = LengthU::from_be_bytes(len_bytes).try_into()?;
-            results.push(T::deser(&bytes[LENGTH_BYTES..LENGTH_BYTES + len]));
-            bytes = &bytes[LENGTH_BYTES + len..];
+
+            let upper_limit = checked_add(LENGTH_BYTES, len)?;
+            let slice = get_slice(bytes, LENGTH_BYTES..upper_limit)?;
+            results.push(T::deser(slice));
+            let tail_range = upper_limit..bytes.len();
+            bytes = get_slice(bytes, tail_range)?;
         }
 
         if !bytes.is_empty() {
@@ -289,14 +299,6 @@ impl<T: FSerializable> LargeVector<T> {
     }
 }
 
-impl<T: FSerializable> std::ops::Index<usize> for LargeVector<T> {
-    type Output = T;
-
-    fn index(&self, index: usize) -> &T {
-        &self.0[index]
-    }
-}
-
 use rayon::prelude::*;
 
 /// Size of `LargeVector` serialization chunks
@@ -347,18 +349,18 @@ impl<T: FSerializable + Sync> VSerializable for LargeVector<T> {
 ///
 /// Returns an error if
 ///
-/// - The length prefix slices cannot be converted to array form
-/// - Any of the length prefix arrays cannot be converted to `LengthU`
+/// - The length prefix slice cannot be converted to array form
+/// - The length prefix array cannot be converted to `LengthU`
 /// - Any of the `T` instances cannot be individually deserialized
 /// - The number of data bytes is not equal to `N * T::size_bytes`
 impl<T: FSerializable + FDeserializable + Send> VDeserializable for LargeVector<T> {
     fn deser(buffer: &[u8]) -> Result<Self, Error> {
-        let len_bytes: [u8; LENGTH_BYTES] = buffer[0..LENGTH_BYTES].try_into()?;
+        let len_bytes: [u8; LENGTH_BYTES] = get_slice(buffer, 0..LENGTH_BYTES)?.try_into()?;
         // for LargeVector, the length tag is the number of elements in the vector, not the length of the serialized data
         let len: usize = LengthU::from_be_bytes(len_bytes).try_into()?;
 
-        let bytes = &buffer[LENGTH_BYTES..];
-        let each = bytes.len() / len;
+        let bytes = get_slice(buffer, LENGTH_BYTES..buffer.len())?;
+        let each = checked_div(bytes.len(), len)?;
 
         if each != T::size_bytes() {
             return Err(Error::DeserializationError(
@@ -374,6 +376,9 @@ impl<T: FSerializable + FDeserializable + Send> VDeserializable for LargeVector<
 }
 
 /// Can serialize a type through its reference
+///
+/// This implementation is necessary to leverage tuple conversions,
+/// because `as_tuple` returns a tuple of references.
 impl<T: VSerializable> VSerializable for &T {
     fn ser(&self) -> Vec<u8> {
         T::ser(self)
@@ -434,10 +439,10 @@ impl<A: VSerializable> VSerializable for (A,) {
 /// Special case implementation of `VDeserializable` for 1-tuple
 impl<A: VDeserializable> VDeserializable for (A,) {
     fn deser(buffer: &[u8]) -> Result<Self, Error> {
-        let len_bytes: [u8; LENGTH_BYTES] = buffer[0..LENGTH_BYTES].try_into()?;
+        let len_bytes: [u8; LENGTH_BYTES] = get_slice(buffer, 0..LENGTH_BYTES)?.try_into()?;
         let len: usize = LengthU::from_be_bytes(len_bytes).try_into()?;
 
-        let bytes = &buffer[LENGTH_BYTES..];
+        let bytes = get_slice(buffer, LENGTH_BYTES..buffer.len())?;
         if bytes.len() != len {
             return Err(Error::DeserializationError(
                 "Unexpected byte length for (A,)".into(),
@@ -466,11 +471,13 @@ impl<A: VSerializable, B: VSerializable> VSerializable for (A, B) {
 /// Base case implementation of `VDeserializable` for `generate_tuple_impl` macro
 impl<A: VDeserializable, B: VDeserializable> VDeserializable for (A, B) {
     fn deser(buffer: &[u8]) -> Result<Self, Error> {
-        let len_bytes: [u8; LENGTH_BYTES] = buffer[0..LENGTH_BYTES].try_into()?;
+        let len_bytes: [u8; LENGTH_BYTES] = get_slice(buffer, 0..LENGTH_BYTES)?.try_into()?;
         let len: usize = LengthU::from_be_bytes(len_bytes).try_into()?;
 
-        let a_bytes = &buffer[LENGTH_BYTES..LENGTH_BYTES + len];
-        let b_bytes = &buffer[LENGTH_BYTES + len..];
+        let upper_limit = checked_add(LENGTH_BYTES, len)?;
+        let a_bytes = get_slice(buffer, LENGTH_BYTES..upper_limit)?;
+        let b_range = upper_limit..buffer.len();
+        let b_bytes = get_slice(buffer, b_range)?;
         let a = A::deser(a_bytes)?;
         let b = B::deser(b_bytes)?;
         Ok((a, b))
@@ -545,12 +552,14 @@ macro_rules! generate_tuple_impl {
         // Implementation for VDeserializable
         impl<$head_ty: VDeserializable, $($tail_tys: VDeserializable),+> VDeserializable for ($head_ty, $($tail_tys),+) {
             fn deser(buffer: &[u8]) -> Result<Self, Error> {
-                let len_bytes: [u8; LENGTH_BYTES] = buffer[0..LENGTH_BYTES].try_into()?;
+                let len_bytes: [u8; LENGTH_BYTES] = get_slice(buffer, 0..LENGTH_BYTES)?.try_into()?;
                 let len: usize = LengthU::from_be_bytes(len_bytes)
                     .try_into()?;
 
-                let head_bytes = &buffer[LENGTH_BYTES..LENGTH_BYTES + len];
-                let tail_bytes = &buffer[LENGTH_BYTES + len..];
+                let upper_limit = checked_add(LENGTH_BYTES, len)?;
+                let head_bytes = get_slice(buffer, LENGTH_BYTES..upper_limit)?;
+                let tail_range = upper_limit..buffer.len();
+                let tail_bytes = get_slice(buffer, tail_range)?;
 
                 let head = $head_ty::deser(&head_bytes.to_vec())?;
                 // Recursively deserialize the rest of the tuple.
@@ -592,7 +601,7 @@ pub trait VSer: VSerializable + VDeserializable {}
 
 impl<T: VSerializable + VDeserializable> VSer for T {}
 
-/// Implements [`VSerializable`] for u32
+/// Implements [`VSerializable`] for String
 #[crate::warning("Only used in test structs")]
 impl VSerializable for String {
     fn ser(&self) -> Vec<u8> {
@@ -605,17 +614,29 @@ impl VSerializable for String {
     }
 }
 
-/// Implements [`VDeserializable`] for u32
+/// Implements [`VDeserializable`] for String
 #[crate::warning("Only used in test structs")]
 impl VDeserializable for String {
     fn deser(buffer: &[u8]) -> Result<Self, Error> {
-        let len_bytes: [u8; LENGTH_BYTES] = buffer[0..LENGTH_BYTES].try_into()?;
+        let len_bytes: [u8; LENGTH_BYTES] = get_slice(buffer, 0..LENGTH_BYTES)?.try_into()?;
         let len: usize = LengthU::from_be_bytes(len_bytes).try_into()?;
 
-        let bytes = &buffer[LENGTH_BYTES..LENGTH_BYTES + len];
+        let upper_limit = checked_add(LENGTH_BYTES, len)?;
+        let bytes = get_slice(buffer, LENGTH_BYTES..upper_limit)?;
 
         let string = String::from_utf8(bytes.to_vec())
             .map_err(|_| Error::DeserializationError("Failed to deserialize String".into()))?;
         Ok(string)
     }
+}
+
+/// Helper for checked addition of usize values
+fn checked_add(a: usize, b: usize) -> Result<usize, Error> {
+    a.checked_add(b)
+        .ok_or_else(|| Error::DeserializationError("Length overflow".into()))
+}
+/// Helper for checked division of usize values
+fn checked_div(a: usize, b: usize) -> Result<usize, Error> {
+    a.checked_div(b)
+        .ok_or_else(|| Error::DeserializationError("Division by zero".into()))
 }

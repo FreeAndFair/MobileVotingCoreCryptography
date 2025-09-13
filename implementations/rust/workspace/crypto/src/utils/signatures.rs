@@ -238,6 +238,17 @@ mod tests {
         let ok = vk.verify(message, &signature);
         assert!(ok.is_ok());
 
+        let sk_bytes = sk.ser_f();
+        let vk_bytes = vk.ser_f();
+        let sig_bytes = signature.ser_f();
+
+        let sk = SigningKey::deser_f(&sk_bytes).unwrap();
+        let vk = VerifyingKey::deser_f(&vk_bytes).unwrap();
+        let signature = Signature::deser_f(&sig_bytes).unwrap();
+
+        let ok = vk.verify(message, &signature);
+        assert!(ok.is_ok());
+
         let signature = sk.sign(&[]);
         let ok = vk.verify(&[], &signature);
 

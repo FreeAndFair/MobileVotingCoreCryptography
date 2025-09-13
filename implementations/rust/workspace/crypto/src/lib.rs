@@ -21,9 +21,7 @@
 /// Defines implementation choices for key cryptographic functionalities.
 pub mod context;
 pub mod cryptosystem;
-#[crate::warning(
-    "Asserts are present in this module. Missing checks for threshold validity (P < T). Not optimized."
-)]
+#[crate::warning("Asserts are present in this module. Not optimized.")]
 pub mod dkgd;
 pub mod groups;
 pub mod traits;
@@ -33,3 +31,14 @@ pub mod zkp;
 
 pub use custom_warning_macro::warning;
 pub use vser_derive::VSerializable;
+
+/// Create the `crypto` alias that points to `crate`
+///
+/// This alias allows applying the vser_derive macro within this crate:
+///
+/// `vser_derive` refers to its target traits with `crypto::`, but
+/// _within_ this crate, that reference will not resolve to anything
+/// unless we add this alias. Other crate will resolve correctly
+/// as they will be importing `crypto` as a dependency.
+#[doc(hidden)]
+extern crate self as crypto;

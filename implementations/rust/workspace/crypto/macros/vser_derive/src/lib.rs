@@ -117,7 +117,7 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
     };
 
     let generated_as_tuple_impl = quote! {
-        impl #impl_generics crate::utils::serialization::TFTuple for #name #ty_generics #where_clause {
+        impl #impl_generics crypto::utils::serialization::TFTuple for #name #ty_generics #where_clause {
             type TupleRef<'a> where Self: 'a = ( #( &'a #field_tys, )* );
             type Tuple = ( #( #field_tys, )* );
 
@@ -136,9 +136,9 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
     };
 
     let generated_serializable_impl = quote! {
-        impl #impl_generics crate::utils::serialization::VSerializable for #name #ty_generics #where_clause {
+        impl #impl_generics crypto::utils::serialization::VSerializable for #name #ty_generics #where_clause {
             fn ser(&self) -> Vec<u8> {
-                use crate::utils::serialization::TFTuple;
+                use crypto::utils::serialization::TFTuple;
 
                 let tuple = self.as_tuple();
                 tuple.ser()
@@ -147,9 +147,9 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
     };
 
     let generated_deserializable_impl = quote! {
-        impl #impl_generics crate::utils::serialization::VDeserializable for #name #ty_generics #where_clause {
-            fn deser(bytes: &[u8]) -> Result<Self, crate::utils::error::Error> {
-                use crate::utils::serialization::{TFTuple, VDeserializable};
+        impl #impl_generics crypto::utils::serialization::VDeserializable for #name #ty_generics #where_clause {
+            fn deser(bytes: &[u8]) -> Result<Self, crypto::utils::error::Error> {
+                use crypto::utils::serialization::{TFTuple, VDeserializable};
 
                 let tuple = <Self as TFTuple>::Tuple::deser(bytes)?;
 
@@ -161,7 +161,7 @@ fn impl_exact(ast: &syn::DeriveInput) -> TokenStream {
     let generated_hash_impl = quote! {
         impl #impl_generics std::hash::Hash for #name #ty_generics #where_clause {
             fn hash<H>(&self, h: &mut H) where H: std::hash::Hasher {
-                use crate::utils::serialization::variable::VSerializable;
+                use crypto::utils::serialization::variable::VSerializable;
 
                 let bytes = self.ser();
 

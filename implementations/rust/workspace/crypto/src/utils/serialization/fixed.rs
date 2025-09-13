@@ -26,7 +26,7 @@
 //! - Generic (homogeneous) arrays
 
 use crate::utils::error::Error;
-use crate::utils::serialization::TFTuple;
+use crate::utils::serialization::{TFTuple, get_slice};
 
 /**
  * Types that can be serialized into fixed length byte sequences
@@ -221,8 +221,9 @@ impl<A: FSerializable + FDeserializable, B: FSerializable + FDeserializable> FDe
 {
     fn deser_f(buffer: &[u8]) -> Result<Self, Error> {
         let length_a = A::size_bytes();
-        let a_bytes = &buffer[0..length_a];
-        let b_bytes = &buffer[length_a..];
+
+        let a_bytes = get_slice(buffer, 0..length_a)?;
+        let b_bytes = get_slice(buffer, length_a..buffer.len())?;
         let a = A::deser_f(a_bytes)?;
         let b = B::deser_f(b_bytes)?;
         Ok((a, b))
@@ -295,8 +296,9 @@ macro_rules! generate_tuple_impl {
 
                 // Determine the slice for the head element using its fixed length.
                 let head_len = $head_ty::size_bytes();
-                let head_bytes = &buffer[0..head_len];
-                let tail_bytes = &buffer[head_len..];
+
+                let head_bytes = get_slice(buffer, 0..head_len)?;
+                let tail_bytes = get_slice(buffer, head_len..buffer.len())?;
 
                 // Deserialize the head and the tail recursively.
                 let head = $head_ty::deser_f(head_bytes)?;
