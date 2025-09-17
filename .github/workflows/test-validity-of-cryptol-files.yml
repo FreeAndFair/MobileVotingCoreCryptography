@@ -64,8 +64,13 @@ jobs:
       CRYPTOL_CACHE_KEY: ${{ github.head_ref || github.ref_name }}-${{ matrix.cryptol-project-dir }}
       CRYPTOL_DEFAULT_KEY: main-${{ matrix.cryptol-project-dir }}
     container:
-      # Note: we need the nightly image to support loading projects with docstrings
-      image: ghcr.io/galoisinc/cryptol-remote-api:nightly
+      # Note: we need a bleeding-edge image to support loading projects with docstrings;
+      # unfortunately, the nightly image broke type inference for our code, so we're using
+      # an explicit hash of an image that is known to handle it until we figure out how
+      # to update it or, if this is a bug in Cryptol, until that bug is fixed.
+      #
+      # image: ghcr.io/galoisinc/cryptol-remote-api:nightly
+      image: ghcr.io/galoisinc/cryptol-remote-api@sha256:d660b2ac08306d65211b0eed3b62a38b0c4b13ed389a72fe1f4ed4d3218393eb
       options: --user root
     steps:
       # First, install dependencies (GitHub CLI)
