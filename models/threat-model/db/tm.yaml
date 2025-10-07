@@ -1035,6 +1035,10 @@ attacks:
       instance_of: Corruption
       contexts:
       - EA
+    mitigations:
+    - - Auditable pseudonyms
+      - If pseudonym audits are performed the EA will be caught if it falsely identifies
+        signing public keys as eligible.
 
 # Attacks on Dispute-freeness
 
@@ -1751,6 +1755,15 @@ mitigations:
   - Append-only trustee board
   - Each trustee maintains a local, append-only view of the protocol board.
   - partially-core
+  M30:
+  - Auditable pseudonyms
+  - Pseudonyms can be constructed from auditable, but private, information using
+    a one way function. This allows external auditors to privately verify that the
+    identities certified by the EA are in fact eligible, without revealing those
+    identities to the public (note that even if these identities were revealed,
+    ballots are still protected by encryption).
+  - non-core
+
 
 # Contexts are used when instantiating abstract attacks. They represent the loose
 # notion of "where" the instantiated attack is carried out.

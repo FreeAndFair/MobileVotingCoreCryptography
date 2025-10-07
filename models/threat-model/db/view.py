@@ -43,12 +43,13 @@ def get_attack_mitigation_tree(attack, oos=False, abstract=False, outstanding=Fa
     for mit in attack['mitigations']:
         if mit['mitigation']:
             self['mitigations'].append(mit['mitigation']['name'])
+            found = True
         elif oos:
             rationale = truncate_text(sanitize_text(mit['rationale']))
             self['mitigations'].append(f"{OUT_OF_SCOPE}: {rationale}")
-        found = True
+            found = True
 
-    if attack['instance_of']:
+    if attack['instance_of'] and abstract:
         c = get_attack_mitigation_tree(attack['instance_of'], oos, abstract, outstanding)
         if c is not None:
             self['children'].append(c)
@@ -259,11 +260,11 @@ def main():
     ./view.py -e attack -r my_attack            # prints attacks table, starting at my_attack
     ./view.py -e mitigation                     # prints all mitigations table
     ./view.py -e mitigation -r my_attack        # prints mitigations table applied to my_attack
-    ./view.py -e mitigation -r my_attack -t     # prints mitigations tree applied to my_attack (-o for oos)
+    ./view.py -e mitigation -r my_attack -t     # prints mitigations path for attack my_attack (-o for oos)
     ./view.py -e context                        # prints all contexts
     ./view.py -e outstanding                    # prints all outstanding attacks
     ./view.py -e outstanding -r my_attack       # prints outstanding attacks starting at my_attack
-    ./view.py -e mitigation -t -r my_attack     # prints mitigation path for attack my_attack
+    ./view.py -e mitigation -r my_attack -t -o  # prints mitigations path for attack my_attack (includes oos)
     '''
     parser = argparse.ArgumentParser(description='Display data in table or tree format.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-d', '--database', type=str, help='Path to the SQLite database file',  nargs='?', default="./db.sqlite3")
@@ -364,7 +365,9 @@ def show_mitigation_tree(args, attack_dict):
         root_node = Node(root_attack['name'])
         root_attack = get_attack_mitigation_tree(root_attack, oos=args.oos, abstract=args.abstract, outstanding=False)
 
-        build_mitigation_tree(root_attack, root_node)
+        if root_attack is not None:
+            build_mitigation_tree(root_attack, root_node)
+
         for pre, fill, node in RenderTree(root_node):
             print("%s%s" % (pre, node.name))
     else:

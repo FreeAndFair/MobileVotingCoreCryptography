@@ -2,7 +2,7 @@
     "emeraldwalk.runonsave": {
         "commands": [
             {
-                "match": "db\\\\.+\\.yaml",
+                "match": "models\\\\threat-model\\\\db\\\\.+\\.yaml",
                 "cmd": "python .vscode/highlight_yaml.py ${file}"
             }
         ],
